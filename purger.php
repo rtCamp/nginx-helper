@@ -274,8 +274,6 @@ namespace rtCamp\WP\Nginx{
                 if ($fp = fopen(RT_WP_NGINX_HELPER_PATH .'nginx.log',"a+")) {
                     fwrite($fp, "\n".gmdate("Y-m-d H:i:s ")." | ".$level." | ".$msg);
                     fclose($fp);
-                }else{
-                    echo 'why?';
                 }
             }
 

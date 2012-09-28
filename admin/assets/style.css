@@ -4,6 +4,11 @@ table.rtnginx-table{
     width: 95%;
     margin-bottom: 10px;
 }
+pre#map{
+    background: #e5e5e5 none;
+    border-radius:10px;
+    padding:10px;
+}
 #icon-options-nginx{
     background:transparent url(nginx-icon-32x32.png) center center no-repeat;
 }

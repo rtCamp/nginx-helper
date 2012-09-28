@@ -186,6 +186,10 @@ namespace rtCamp\WP\Nginx{
                             if(is_network_admin() && $rt_wp_nginx_helper->options['enable_map']!=false){
                             ?>
                             <h3>Nginx Map</h3>
+                            <?php if (!is_writable(RT_WP_NGINX_HELPER_PATH .'map.conf')) { ?>
+                            <span class="error fade" style="display : block"><p><?php printf (__("Can't write on map file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper"), RT_WP_NGINX_HELPER_PATH .'map.conf'); ?></p></span>
+                            <?php } ?>
+
                             <table class="form-table rtnginx-table">
                                 <tr>
                                     <th>
@@ -203,7 +207,7 @@ namespace rtCamp\WP\Nginx{
                                         <small>(if your network is small and new sites are not added frequently)</small>
                                     </th>
                                     <td>
-                                        <textarea id="nginxmap" disabled="disabled" cols="45" rows="5"><?php echo $rt_wp_nginx_helper->get_map() ?></textarea>
+                                       <pre id="map"><?php echo $rt_wp_nginx_helper->get_map() ?></pre>
                                     </td>
                                 </tr>
                             </table>
@@ -298,7 +302,7 @@ namespace rtCamp\WP\Nginx{
 
 
         function load_styles(){
-            wp_enqueue_style('rt-nginx-admin-css', WP_PLUGIN_URL . '/nginx/admin/assets/style.css' );
+            wp_enqueue_style('rt-nginx-admin-css', plugins_url('admin/assets/style.css', dirname(__FILE__)));
         }
 
 

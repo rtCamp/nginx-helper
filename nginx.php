@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Nginx
+ * Plugin Name: Nginx Helper
  * Plugin URI: http://rtcamp.com/
  * Description: An nginx helper that serves various functions.
- * Version: 0.1
+ * Version: 1.0
  * Author: rtCamp
  * Author URI: http://rtcamp.com
  * Requires at least: 3.0
@@ -14,7 +14,7 @@ namespace rtCamp\WP\Nginx {
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH', plugin_dir_path(__FILE__) );
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_URL', plugin_dir_url(__FILE__) );
     class Helper{
-        var $version            = '0.1'; // Plugin version
+        var $version            = '1.0'; // Plugin version
         var $db_version         = '0.1'; // DB version, change it to show the upgrade page
         var $minium_WP          = '3.0';
         var $minimum_PHP        = '5.3';
@@ -198,8 +198,7 @@ namespace rtCamp\WP\Nginx {
             $rt_wp_nginx_purger->log( "Default options updated for the new blog (id $blog_id)" );
 
         }
-
-	function update_map(){
+        function get_map(){
             if(!$this->options['enable_map']){
                 return;
             }
@@ -227,6 +226,12 @@ namespace rtCamp\WP\Nginx {
                         foreach($rt_domain_map_sites as $site)
                             $rt_nginx_map .= "\t" . $site->domain . "\t" . $site->site_id . ";\n";
 
+                return $rt_nginx_map;
+            }
+        }
+	function update_map(){
+            if (is_multisite()){
+                $rt_nginx_map = $this->read_map();
                 if ($fp = fopen(RT_WP_NGINX_HELPER_PATH .'map.conf','w+')) {
                     fwrite($fp, $rt_nginx_map);
                     fclose($fp);
@@ -235,16 +240,6 @@ namespace rtCamp\WP\Nginx {
             }
         }
 
-        function get_map(){
-            if(!$this->options['enable_map']){
-                return;
-            }
-            if ($fp = fopen(RT_WP_NGINX_HELPER_PATH .'map.conf',"r")) {
-                $map_contents = fread($fp, filesize(RT_WP_NGINX_HELPER_PATH .'map.conf'));
-                fclose($fp);
-                return $map_contents;
-            }
-        }
     }
 
 }
@@ -297,9 +292,10 @@ namespace{
     }
 
     $plugin = plugin_basename(__FILE__);
-    add_filter("plugin_action_links_$plugin", 'nginx_settings_link' );
-    if(is_network_admin()){
+    if(is_multisite()){
         add_filter("network_admin_plugin_action_links_$plugin", 'nginx_settings_link' );
+    }else{
+        add_filter("plugin_action_links_$plugin", 'nginx_settings_link' );
     }
     function get_feeds($feed_url = 'http://rtcamp.com/blog/feed/') {
             // Get RSS Feed(s)
