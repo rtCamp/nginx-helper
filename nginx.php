@@ -1,15 +1,14 @@
 <?php
 /**
- * Plugin Name: Nginx Helper
- * Plugin URI: http://rtcamp.com/
- * Description: An nginx helper that serves various functions.
- * Version: 1.0
- * Author: rtCamp
- * Author URI: http://rtcamp.com
- * Requires at least: 3.0
- * Tested up to: 3.4.2
- *
- */
+Plugin Name: Nginx Helper
+Plugin URI: http://rtcamp.com/
+Description: An nginx helper that serves various functions.
+Version: 1.0
+Author: rtCamp
+Author URI: http://rtcamp.com
+Requires at least: 3.0
+Tested up to: 3.4.2
+*/
 namespace rtCamp\WP\Nginx {
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH', plugin_dir_path(__FILE__) );
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_URL', plugin_dir_url(__FILE__) );
