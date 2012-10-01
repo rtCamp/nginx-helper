@@ -13,12 +13,12 @@ namespace rtCamp\WP\Nginx{
 	}
 
 	function add_menu()  {
-            add_submenu_page( 'options-general.php', 'Nginx', __( 'Nginx', 'rt_wp_nginx_helper' ), 'install_plugins', 'nginx', array (&$this, 'show_menu') );
+            add_submenu_page( 'options-general.php', 'Nginx Helper', __( 'Nginx Helper', 'rt_wp_nginx_helper' ), 'install_plugins', 'nginx', array (&$this, 'show_menu') );
             //add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function)
 	}
 
         function add_network_menu() {
-            add_submenu_page( 'settings.php', 'Nginx', __( 'Nginx', 'rt_wp_nginx_helper' ), 'install_plugins', 'nginx', array (&$this, 'show_menu'));
+            add_submenu_page( 'settings.php', 'Nginx Helper', __( 'Nginx Helper', 'rt_wp_nginx_helper' ), 'install_plugins', 'nginx', array (&$this, 'show_menu'));
         }
 
 	// load the script for the defined page and load only this code
@@ -61,14 +61,14 @@ namespace rtCamp\WP\Nginx{
                             }
 
                         }
-                        if($rt_wp_nginx_helper->options['enable_purge'] ){
-
+                        if(isset($_POST['enable_purge'])){
+                                                                
                                 $rt_wp_nginx_helper->options['purge_homepage_on_edit']                      = (isset($_POST['purge_homepage_on_edit']) and ($_POST['purge_homepage_on_edit'] == 1) ) ? 1 : 0;
                                 $rt_wp_nginx_helper->options['purge_homepage_on_del']                       = (isset($_POST['purge_homepage_on_del']) and ($_POST['purge_homepage_on_del'] == 1) ) ? 1 : 0;
-
+                            
                                 $rt_wp_nginx_helper->options['purge_archive_on_edit']                       = (isset($_POST['purge_archive_on_edit']) and ($_POST['purge_archive_on_edit'] == 1) ) ? 1 : 0;
                                 $rt_wp_nginx_helper->options['purge_archive_on_del']                        = (isset($_POST['purge_archive_on_del']) and ($_POST['purge_archive_on_del'] == 1) ) ? 1 : 0;
-
+                            
                                 $rt_wp_nginx_helper->options['purge_archive_on_new_comment']                   = (isset($_POST['purge_archive_on_new_comment']) and ($_POST['purge_archive_on_new_comment'] == 1) ) ? 1 : 0;
                                 $rt_wp_nginx_helper->options['purge_archive_on_deleted_comment']               = (isset($_POST['purge_archive_on_deleted_comment']) and ($_POST['purge_archive_on_deleted_comment'] == 1) ) ? 1 : 0;
 
@@ -77,12 +77,12 @@ namespace rtCamp\WP\Nginx{
                                 $rt_wp_nginx_helper->options['purge_page_on_deleted_comment']               = (isset($_POST['purge_page_on_deleted_comment']) and ($_POST['purge_page_on_deleted_comment'] == 1) ) ? 1 : 0;
 
                         }
-                        update_option( "rt_wp_nginx_helper_options", $rt_wp_nginx_helper->options );
+                        update_site_option( "rt_wp_nginx_helper_options", $rt_wp_nginx_helper->options );
 
 
                         $update = 1;
                     }
-                    $rt_wp_nginx_helper->options = get_option("rt_wp_nginx_helper_options");
+                    $rt_wp_nginx_helper->options = get_site_option("rt_wp_nginx_helper_options");
 
 
                     ?>
@@ -112,11 +112,13 @@ namespace rtCamp\WP\Nginx{
                             </table>
 
                             <?php
-                            if($rt_wp_nginx_helper->options['enable_purge']!=false){
+                            if($rt_wp_nginx_helper->options['enable_purge']==false){
+				$displayvar = ' style="display:none"';
+                            }
                             ?>
-                            <h3>Purging Options</h3>
+                            <h3<?php echo $displayvar; ?>>Purging Options</h3>
 
-                            <table class="form-table rtnginx-table">
+                            <table class="form-table rtnginx-table"<?php echo $displayvar; ?>>
                                 <tr valign="top">
                                     <th scope="row"><h4>Purge Homepage:</h4></th>
                                     <td>
@@ -131,7 +133,28 @@ namespace rtCamp\WP\Nginx{
                                     </td>
                                 </tr>
                             </table>
-                            <table class="form-table rtnginx-table">
+                            <table class="form-table rtnginx-table"<?php echo $displayvar; ?>>
+                                <tr valign="top">
+                                    <th scope="row">
+                                        <h4>Purge Post/Page/Custom Post Type:</h4>
+                                    </th>
+                                    <td>
+                                        <fieldset>
+                                            <legend class="screen-reader-text"><span>&nbsp;when a post/page/custom post is published.</span></legend>
+                                            <label for="purge_page_on_mod"><input type="checkbox" value="1" id="purge_page_on_mod" name="purge_page_on_mod"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_mod'], 1 ); ?>>&nbsp;when a <strong>post</strong> is <strong>published</strong>.</label><br />
+                                        </fieldset>
+                                        <fieldset>
+                                            <legend class="screen-reader-text"><span>&nbsp;when a comment is approved/published.</span></legend>
+                                            <label for="purge_page_on_new_comment"><input type="checkbox" value="1" id="purge_page_on_new_comment" name="purge_page_on_new_comment"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_new_comment'], 1 ); ?>>&nbsp;when a <strong>comment</strong> is <strong>approved/published</strong>.</label><br />
+                                        </fieldset>
+                                        <fieldset>
+                                            <legend class="screen-reader-text"><span>&nbsp;when a comment is unapproved/deleted.</span></legend>
+                                            <label for="purge_page_on_deleted_comment"><input type="checkbox" value="1" id="purge_page_on_deleted_comment" name="purge_page_on_deleted_comment"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_deleted_comment'], 1 ); ?>>&nbsp;when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.</label><br />
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="form-table rtnginx-table"<?php echo $displayvar; ?>>
                                 <tr valign="top">
                                     <th scope="row">
                                         <h4>Purge Archives:</h4>
@@ -156,27 +179,6 @@ namespace rtCamp\WP\Nginx{
                                             <label for="purge_archive_on_deleted_comment"><input type="checkbox" value="1" id="purge_archive_on_deleted_comment" name="purge_archive_on_deleted_comment"<?php checked( $rt_wp_nginx_helper->options['purge_archive_on_deleted_comment'], 1 ); ?>>&nbsp;when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.</label><br />
                                         </fieldset>
 
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="form-table rtnginx-table">
-                                <tr valign="top">
-                                    <th scope="row">
-                                        <h4>Purge Post/Page/Custom Post Type:</h4>
-                                    </th>
-                                    <td>
-                                        <fieldset>
-                                            <legend class="screen-reader-text"><span>&nbsp;when a post/page/custom post is published.</span></legend>
-                                            <label for="purge_page_on_mod"><input type="checkbox" value="1" id="purge_page_on_mod" name="purge_page_on_mod"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_mod'], 1 ); ?>>&nbsp;when a <strong>post</strong> is <strong>published</strong>.</label><br />
-                                        </fieldset>
-                                        <fieldset>
-                                            <legend class="screen-reader-text"><span>&nbsp;when a comment is approved/published.</span></legend>
-                                            <label for="purge_page_on_new_comment"><input type="checkbox" value="1" id="purge_page_on_new_comment" name="purge_page_on_new_comment"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_new_comment'], 1 ); ?>>&nbsp;when a <strong>comment</strong> is <strong>approved/published</strong>.</label><br />
-                                        </fieldset>
-                                        <fieldset>
-                                            <legend class="screen-reader-text"><span>&nbsp;when a comment is unapproved/deleted.</span></legend>
-                                            <label for="purge_page_on_deleted_comment"><input type="checkbox" value="1" id="purge_page_on_deleted_comment" name="purge_page_on_deleted_comment"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_deleted_comment'], 1 ); ?>>&nbsp;when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.</label><br />
-                                        </fieldset>
                                     </td>
                                 </tr>
                             </table>
@@ -211,7 +213,6 @@ namespace rtCamp\WP\Nginx{
                                     </td>
                                 </tr>
                             </table>
-                            <?php } ?>
 
                             <?php
                             if($rt_wp_nginx_helper->options['enable_log']!=false){

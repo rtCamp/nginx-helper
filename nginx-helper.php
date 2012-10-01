@@ -1,9 +1,9 @@
 <?php
-/**
+/*
 Plugin Name: Nginx Helper
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.1
+Version: 1.2
 Author: rtCamp
 Author URI: http://rtcamp.com
 Requires at least: 3.0
@@ -230,7 +230,7 @@ namespace rtCamp\WP\Nginx {
         }
 	function update_map(){
             if (is_multisite()){
-                $rt_nginx_map = $this->read_map();
+                $rt_nginx_map = $this->get_map();
                 if ($fp = fopen(RT_WP_NGINX_HELPER_PATH .'map.conf','w+')) {
                     fwrite($fp, $rt_nginx_map);
                     fclose($fp);
