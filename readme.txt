@@ -3,7 +3,7 @@ Contributors: rtcamp,rahul286,saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.0
+Stable tag: 1.1
 
 Makes WordPress super fast and super friendly with nginx!
 
@@ -26,3 +26,4 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 == Changelog ==
 1.0: First release
+1.0.1: Fixed map logging and creation methods.

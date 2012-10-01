@@ -1,0 +1,42 @@
+commit 58996db40fc816dfcec65e3bf581353889c61db2
+Author: yapapaya <saurabh@yapapaya.com>
+Date:   Mon Oct 1 08:41:44 2012 +0530
+
+    none
+
+commit 64e750d5c45b0c20d2f27215d2b0c2489f502414
+Merge: d1a8990 52327a6
+Author: yapapaya <saurabh@yapapaya.com>
+Date:   Fri Sep 28 14:45:26 2012 +0530
+
+    Merge branch 'master' of https://github.com/rtCamp/nginx-helper
+
+commit d1a8990c489ba66ebc46b62f21d97bb2253ac286
+Author: yapapaya <saurabh@yapapaya.com>
+Date:   Fri Sep 28 14:35:13 2012 +0530
+
+    Some minor style and presentation revisions and bug fixes
+
+commit 52327a66b6e0e548727ad0a433b15021ebe0c37d
+Author: Admin <admin@rtcamp.com>
+Date:   Thu Sep 27 13:31:00 2012 +0530
+
+    readme.md
+
+commit 3c474e4a8d30d03249a384e88fa9a8ec17fefb1e
+Author: Saurabh Shukla <saurabh@yapapaya.com>
+Date:   Thu Sep 27 12:43:59 2012 +0530
+
+    First Release
+
+commit 1d4088444820ea30bb95ce574895584aaa6dbc53
+Author: Saurabh Shukla <saurabh@saurabh-RV409-RV509-RV709.(none)>
+Date:   Thu Sep 27 12:36:38 2012 +0530
+
+    First Release
+
+commit 815f944726974f1cbfb899219da1b5e6f2128586
+Author: Rahul Bansal <rahul.bansal@rtcamp.com>
+Date:   Tue Sep 18 06:05:57 2012 -0700
+
+    Initial commit
