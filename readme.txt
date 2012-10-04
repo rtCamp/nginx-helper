@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.3
+Stable tag: 1.3.1
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -19,6 +19,7 @@ Helps WordPress-Nginx work together nicely using fastcgi/proxy cache purging, ng
 = Tutorials =
 
 You will need to follow one ore more tutorials below to get desired fundtionality:
+
 * [Nginx Map + WordPress-Multisite + Static Files Handling](http://rtcamp.com/tutorials/nginx-maps-wordpress-multisite-static-files-handling/)
 * [Nginx + WordPress + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-nginx-fastcgi-cache-purge-conditional/)
 * [Nginx + WordPress-Multisite (Subdirectories) + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-multisite-subdirectories-nginx-fastcgi-cache-purge/)
@@ -50,10 +51,18 @@ Definietly yes. `WPMU_ACCEL_REDIRECT` reduceds load on PHP, but it still ask Wor
 
 = FAQ - Nginx Fastcgi Cache Purge =
 
+**Q. Does it work for custom posts and taxonomies?**
+Yes. It handles all post-types same way.
+
+For any page on your site, try purging cache manullay for it, by following instructions mentioned in next answer.
+
+
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
+
 For any page on your site, try purging cache manullay for it, by following instructions mentioned in next answer.
 
 **Q. I need to flush a cached page immediately! How do I do that?**
+
 Nginx helper plugin try to handle all common cases when you need to purge a cached copy of page. e.g. a post is edited, a comment is approved on a post, etc.
 
 If you come across any URL like `http://example.com/hello-world/' you can simply 'purge' before path-part of URL.

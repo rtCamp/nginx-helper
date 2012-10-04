@@ -18,11 +18,11 @@ SVNUSER="rtcamp" # your svn username
 
 # Let's begin...
 echo ".........................................."
-echo 
+echo
 echo "Preparing to deploy wordpress plugin"
-echo 
+echo
 echo ".........................................."
-echo 
+echo
 
 # Check version in readme.txt is the same as plugin file
 NEWVERSION1=`grep "^Stable tag" $GITPATH/readme.txt | awk -F' ' '{print $3}'`
@@ -46,7 +46,7 @@ echo "Pushing latest commit to origin, with tags"
 git push origin master
 git push origin master --tags
 
-echo 
+echo
 echo "Creating local copy of SVN repo ..."
 svn co $SVNURL $SVNPATH
 
@@ -58,7 +58,9 @@ svn propset svn:ignore "deploy.sh
 README.md
 .git
 .gitattributes
-.gitignore" "$SVNPATH/trunk/"
+.gitignore
+map.conf
+nginx.log" "$SVNPATH/trunk/"
 
 echo "Changing directory to SVN and committing to trunk"
 cd $SVNPATH/trunk/
