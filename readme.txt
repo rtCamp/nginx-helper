@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -88,9 +88,13 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+= 1.3.3 =
+
+* Fixed map generation for multi domain installs using domain mapping plugin, where blog ids were not displayed.
+
 = 1.3.2 =
 
-* Fixed map generation for multi domain installs with domain mapping plugin
+* Fixed map generation for multi domain installs with domain mapping plugin.
 
 = 1.3.1 =
 
@@ -98,7 +102,7 @@ Its just that we are hyperactive on our own forum!
 
 = 1.3 =
 
-* Improved Readme
+* Improved Readme.
 
 
 = 1.2 =
@@ -119,5 +123,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.3.2 =
-Fixed map generation for multi domain installs using domain mapping plugin.
+= 1.3.3 =
+Fixed map generation for multi domain installs using domain mapping plugin, where blog ids were not displayed.

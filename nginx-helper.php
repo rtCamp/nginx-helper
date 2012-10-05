@@ -3,7 +3,7 @@
 Plugin Name: Nginx Helper
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.3.2
+Version: 1.3.3
 Author: rtCamp
 Author URI: http://rtcamp.com
 Requires at least: 3.0
@@ -223,7 +223,7 @@ namespace rtCamp\WP\Nginx {
 
                 if($rt_domain_map_sites)
                         foreach($rt_domain_map_sites as $site)
-                            $rt_nginx_map .= "\t" . $site->domain . "\t" . $site->site_id . ";\n";
+                            $rt_nginx_map .= "\t" . $site->domain . "\t" . $site->blog_id . ";\n";
 
                 return $rt_nginx_map;
             }
