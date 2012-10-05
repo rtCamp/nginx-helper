@@ -208,7 +208,7 @@ namespace rtCamp\WP\Nginx {
 
                 $rt_all_blogs   = $wpdb->get_results($wpdb->prepare("SELECT blog_id, domain, path FROM " . $wpdb->blogs . " WHERE site_id = %d AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'", $wpdb->siteid));
                 $wpdb->dmtable = $wpdb->base_prefix . 'domain_mapping';
-                if($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->dmtable}'") != $wpdb->dmtable) {
+                if($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->dmtable}'") == $wpdb->dmtable) {
                     $rt_domain_map_sites = $wpdb->get_results( "SELECT blog_id, domain FROM {$wpdb->dmtable} ORDER BY id DESC" );
                 }
                 $rt_nginx_map   ="";

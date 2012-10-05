@@ -112,6 +112,7 @@ namespace rtCamp\WP\Nginx{
                             </table>
 
                             <?php
+                            $displayvar='';
                             if($rt_wp_nginx_helper->options['enable_purge']==false){
 				$displayvar = ' style="display:none"';
                             }
