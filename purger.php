@@ -6,7 +6,7 @@ namespace rtCamp\WP\Nginx{
 
             global $rt_wp_nginx_helper;
 
-            $cache_ttl = $rt_wp_nginx_helper->options['cache_ttl'];
+            $cache_ttl = 600;
 
             $http_headers['X-Accel-Expires'] = $cache_ttl;
 

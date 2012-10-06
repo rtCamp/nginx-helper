@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -88,6 +88,11 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+= 1.3.4 =
+
+* Fixed duplicate entries generated for maps (Harmless, but doesn't look good!)
+* Added timestamp html comments for cache verification, as described here: http://rtcamp.com/tutorials/checklist-verify-wordpress-nginx-setup/
+
 = 1.3.3 =
 
 * Fixed map generation for multi domain installs using domain mapping plugin, where blog ids were not displayed.
@@ -123,5 +128,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.3.3 =
-Fixed map generation for multi domain installs using domain mapping plugin, where blog ids were not displayed.
+= 1.3.4 =
+Duplicate entries in map cleaned up. Cache info added as html comments for cache verification.
