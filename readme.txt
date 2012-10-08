@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -13,12 +13,12 @@ Helps WordPress-Nginx work together nicely using fastcgi/proxy cache purging, ng
 == Description ==
 
 1. Removes `index.php` from permalinks when using WordPress with nginx.
-1. Add support for nginx fastcgi_cache_purge & proxy_cache_purge directive from [module](https://github.com/FRiCKLE/ngx_cache_purge "ngx_cache_purge module"). Provides settings so you can customize purging rules.
+1. Adds support for nginx fastcgi_cache_purge & proxy_cache_purge directive from [module](https://github.com/FRiCKLE/ngx_cache_purge "ngx_cache_purge module"). Provides settings so you can customize purging rules.
 1. Adds support for nginx `map{..}` on a WordPress-multisite network installation. Using it Nginx can serve PHP file uploads even if PHP/MySQL crashes. Please check tutorials list below for related Nginx config.
 
 = Tutorials =
 
-You will need to follow one ore more tutorials below to get desired fundtionality:
+You will need to follow one ore more tutorials below to get desired functionality:
 
 * [Nginx Map + WordPress-Multisite + Static Files Handling](http://rtcamp.com/tutorials/nginx-maps-wordpress-multisite-static-files-handling/)
 * [Nginx + WordPress + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-nginx-fastcgi-cache-purge-conditional/)
@@ -28,7 +28,11 @@ You will need to follow one ore more tutorials below to get desired fundtionalit
 
 
 == Installation ==
+Automatic Installation
+1.Log in to your WordPress admin panel, navigate to the Plugins menu and click Add New.
+1.In the search field type “Nginx Helper” and click Search Plugins. From the search results, pick Nginx Helper and click Install Now. Wordpress will ask you to confirm to complete the installation.
 
+Manual Installation
 1. Extract the zip file.
 1. Upload them to `/wp-content/plugins/` directory on your WordPress installation.
 1. Then activate the Plugin from Plugins page.
@@ -41,34 +45,43 @@ For proper configuration, check **tutorial list** of [Description tab](http://wo
 
 **Q. Will this work out of the box?**
 
-No. You need to make some changes at Nginx end. Please check **tutorial list** of [Description tab](http://wordpress.org/extend/plugins/nginx-helper/)
+No. You need to make some changes at the Nginx end. Please check **tutorial list** of [Description tab](http://wordpress.org/extend/plugins/nginx-helper/)
 
 = FAQ - Nginx Map =
 
-**Q. On my Multisite, I am alredy using `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**
+**Q. My multisite already uses `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**
 
-Definietly yes. `WPMU_ACCEL_REDIRECT` reduceds load on PHP, but it still ask WordPress i.e. PHP/MySQL to do some work for static files e.g. images in your post. Nginx map handles files by itself which gives you much better performance without using a CDN.
+Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask WordPress i.e. PHP/MySQL to do some work for static files e.g. images in your post. Nginx map lets nginx handle files on its own bypassing wordpress which gives you much better performance without using a CDN.
 
 = FAQ - Nginx Fastcgi Cache Purge =
 
 **Q. Does it work for custom posts and taxonomies?**
 Yes. It handles all post-types same way.
 
-For any page on your site, try purging cache manullay for it, by following instructions mentioned in next answer.
-
-
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
 
-For any page on your site, try purging cache manullay for it, by following instructions mentioned in next answer.
+Manually purging any page from the cache, by following instructions in the previous answer.
+
+Version 1.3.4 onwards, Nginx Helper adds a comment at the end of the html source ('view source' in your favourite browser):
+&lt;!--Cached using Nginx-Helper on 2012-10-08 07:01:45. It took 42 queries executed in 0.280 seconds.--&gt;
+This shows the time when the page was last cached. This date/time will be reset whenever this page is purged and refreshed in the cache.
+
+Just check this comment before and after a manual purge.
+As long as you don't purge the page (or make changes that purge it from the cache), the timestamp will remain as it is, even if you keep refreshing the page. This means the page was served from the cache and it's working!
+
+The rest shows you the database queries and time saved on loading this page. (This would have been the additional resource load, if you weren't using fast-cgi-cache.)
+
 
 **Q. I need to flush a cached page immediately! How do I do that?**
 
-Nginx helper plugin try to handle all common cases when you need to purge a cached copy of page. e.g. a post is edited, a comment is approved on a post, etc.
+Nginx helper plugin handles usual scenarios, when a page in the cache will need purging. For example, when a post is edited or a comment is approved on a post.
 
-If you come across any URL like `http://example.com/hello-world/' you can simply 'purge' before path-part of URL.
-It will become like `http://example.com/purge/hello-world/'
-Just open in browser and cache for `/hello-world/` will be flushed immeditaley!
-
+To purge a page immediately, follow these instructions:
+(eg. http://yoursite.com/about/)
+Between the domain name and the rest of the url, insert '/purge/'.
+So, in the above eg, the purge url will be http://yoursite.com/purge/about/
+Just open this in a browser and the page will be purged instantly.
+Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
 = FAQ - Nginx Map =
 
@@ -88,6 +101,11 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+= 1.3.5 =
+
+* Improved Readme.
+* Improved cache verification comments.
+
 = 1.3.4 =
 
 * Fixed duplicate entries generated for maps (Harmless, but doesn't look good!)
@@ -128,5 +146,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.3.4 =
-Duplicate entries in map cleaned up. Cache info added as html comments for cache verification.
+= 1.3.5 =
+Inproved readme and purge/cache verification comments.
