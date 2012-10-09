@@ -3,7 +3,7 @@
 Plugin Name: Nginx Helper
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.3.5
+Version: 1.3.6
 Author: rtCamp
 Author URI: http://rtcamp.com
 Requires at least: 3.0
@@ -38,7 +38,7 @@ namespace rtCamp\WP\Nginx {
         function start_helper() {
 
             global $rt_wp_nginx_purger;
-            add_action( 'shutdown', array(&$this, 'add_timestamps'), 999);
+            add_action( 'wp_footer', array(&$this, 'add_timestamps'), 99999);
 
             add_action( 'publish_post', array(&$rt_wp_nginx_purger, 'purgePost'), 200, 1);
             add_action( 'publish_page', array(&$rt_wp_nginx_purger, 'purgePost'), 200, 1);
