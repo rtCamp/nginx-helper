@@ -107,7 +107,7 @@ namespace rtCamp\WP\Nginx{
             if ( current_filter() == 'comment_post' || current_filter() == 'wp_set_comment_status' ) {
                 $this->_purge_by_options($_ID, $blog_id, $rt_wp_nginx_helper->options['purge_page_on_new_comment'], $rt_wp_nginx_helper->options['purge_archive_on_new_comment'], $rt_wp_nginx_helper->options['purge_archive_on_new_comment']);
             } else {
-                $this->_purge_by_options($_ID, $blog_id, $rt_wp_nginx_helper_get_options['purge_page_on_mod'], $rt_wp_nginx_helper->options['purge_archive_on_edit'], $rt_wp_nginx_helper->options['purge_homepage_on_edit']);
+                $this->_purge_by_options($_ID, $blog_id, $rt_wp_nginx_helper->options['purge_page_on_mod'], $rt_wp_nginx_helper->options['purge_archive_on_edit'], $rt_wp_nginx_helper->options['purge_archive_on_edit']);
             }
 
             $this->log( "Function purgePost END ^^^" );
