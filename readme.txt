@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.3.8
+Stable tag: 1.3.9
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -101,6 +101,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+= 1.3.9 =
+* Removed extraneous headers.
+
 = 1.3.8 =
 
 * Fixed bug in single post/page/post-type purging code. Thanks to Greg for pointing this out here: http://rtcamp.com/support/topic/updating-post-nginx-helper-purge-cache-post/.
@@ -159,5 +162,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.3.8 =
-Bug fix for single post/post type purge on edit.
+= 1.3.9 =
+Removed unnecessary headers being added.

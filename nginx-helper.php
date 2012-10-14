@@ -3,7 +3,7 @@
 Plugin Name: Nginx Helper
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.3.8
+Version: 1.3.9
 Author: rtCamp
 Author URI: http://rtcamp.com
 Requires at least: 3.0
@@ -13,7 +13,7 @@ namespace rtCamp\WP\Nginx {
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH', plugin_dir_path(__FILE__) );
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_URL', plugin_dir_url(__FILE__) );
     class Helper{
-        var $version            = '1.0'; // Plugin version
+        var $version            = '1.3.9'; // Plugin version
         var $db_version         = '0.1'; // DB version, change it to show the upgrade page
         var $minium_WP          = '3.0';
         var $minimum_PHP        = '5.3';
@@ -58,8 +58,6 @@ namespace rtCamp\WP\Nginx {
 
             add_action( 'transition_post_status', array(&$this, 'set_future_post_option_on_future_status'), 20, 3 );
             add_action( 'delete_post',            array(&$this, 'unset_future_post_option_on_delete'), 20, 1 );
-
-            add_action( 'wp_headers', array(&$rt_wp_nginx_purger, 'correctExpires'), 100, 1 );
 
             add_action( 'nm_check_log_file_size_daily', array(&$rt_wp_nginx_purger, 'checkAndTruncateLogFile'), 100, 1 );
 
@@ -252,7 +250,7 @@ namespace rtCamp\WP\Nginx {
                             "Cached using Nginx-Helper on ".current_time('mysql').". ".
                             "It took ".get_num_queries()." queries executed in ".timer_stop()." seconds.".
                             "-->\n".
-                            "<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->\n";
+                            "<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->";
             echo $timestamps;
         }
 

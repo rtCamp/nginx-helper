@@ -2,25 +2,6 @@
 namespace rtCamp\WP\Nginx{
     class Purger {
 
-        function correctExpires($http_headers) {
-
-            global $rt_wp_nginx_helper;
-
-            $cache_ttl = 600;
-
-            $http_headers['X-Accel-Expires'] = $cache_ttl;
-
-            if ($cache_ttl == 0) {
-                $http_headers['X-NGINX-CACHED']  = "NO";
-            } else {
-                $http_headers['X-NGINX-CACHED']  	= "YES - ".$cache_ttl." secs";
-                $http_headers['X-NGINX-CACHED-AT']  = date('c');
-            }
-
-            return $http_headers;
-
-        }
-
         function purgePostOnComment( $newstatus, $oldstatus, $comment ) {
 
             global $rt_wp_nginx_helper,$blog_id;
