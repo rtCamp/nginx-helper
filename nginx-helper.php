@@ -3,7 +3,7 @@
 Plugin Name: Nginx Helper
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.3.9
+Version: 1.4
 Author: rtCamp
 Author URI: http://rtcamp.com
 Requires at least: 3.0
@@ -13,7 +13,7 @@ namespace rtCamp\WP\Nginx {
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH', plugin_dir_path(__FILE__) );
     define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_URL', plugin_dir_url(__FILE__) );
     class Helper{
-        var $version            = '1.3.9'; // Plugin version
+        var $version            = '1.4'; // Plugin version
         var $db_version         = '0.1'; // DB version, change it to show the upgrade page
         var $minium_WP          = '3.0';
         var $minimum_PHP        = '5.3';
@@ -42,8 +42,8 @@ namespace rtCamp\WP\Nginx {
 
             add_action( 'publish_post', array(&$rt_wp_nginx_purger, 'purgePost'), 200, 1);
             add_action( 'publish_page', array(&$rt_wp_nginx_purger, 'purgePost'), 200, 1);
-            add_action( 'comment_post', array(&$rt_wp_nginx_purger, 'purgePostOnComment'), 200, 1);
-            add_action( 'transition_comment_status', array(&$rt_wp_nginx_purger, 'purgePostOnComment'), 200, 2);
+            add_action( 'wp_insert_comment', array(&$rt_wp_nginx_purger, 'purgePostOnComment'), 200, 2);
+            add_action( 'transition_comment_status', array(&$rt_wp_nginx_purger, 'purgePostOnCommentChange'), 200, 3 );
 
             $args=array('_builtin'=>false);
             $_rt_custom_post_types = get_post_types( $args );

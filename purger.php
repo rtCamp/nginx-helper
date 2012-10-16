@@ -1,39 +1,60 @@
 <?php
 namespace rtCamp\WP\Nginx{
     class Purger {
-
-        function purgePostOnComment( $newstatus, $oldstatus, $comment ) {
+        function purgePostOnComment( $comment_id, $comment ) {
+            $oldstatus  ='';
+            $approved = $comment->comment_approved;
+            
+            if ( $approved == null )
+                    $newstatus = false;
+            elseif ( $approved == '1' )
+                    $newstatus = 'approved';
+            elseif ( $approved == '0' )
+                    $newstatus = 'unapproved';
+            elseif ( $approved == 'spam' )
+                    $newstatus = 'spam';
+            elseif ( $approved == 'trash' )
+                    $newstatus = 'trash';
+            else
+                    $newstatus = false;
+            
+            $this->purgePostOnCommentChange( $newstatus, $oldstatus, $comment );
+        }
+        function purgePostOnCommentChange( $newstatus, $oldstatus, $comment ) {
 
             global $rt_wp_nginx_helper,$blog_id;
             if(!$rt_wp_nginx_helper->options['enable_purge']){
                 return;
             }
-
+            
+            
             $_post_id = $comment->comment_post_ID;
             $_comment_id = $comment->comment_ID;
-
+            
             $this->log( "* * * * *" );
             $this->log( "* Blog :: ".addslashes( get_bloginfo('name') )." ($blog_id)." );
             $this->log( "* Post :: ".get_the_title($_post_id)." ($_post_id)." );
             $this->log( "* Comment :: $_comment_id." );
-
+            $this->log( "* Status Changed from $oldstatus to $newstatus" );
             switch ($newstatus){
-                case 'approve':
+                case 'approved':
                     if($rt_wp_nginx_helper->options['purge_page_on_new_comment']==1){
-                        $this->log( "* Comment ($_comment_id) approved. Post ($_post_id) purged." );
+                        $this->log( "* Comment ($_comment_id) approved. Post ($_post_id) purging..." );
+                        $this->log( "* * * * *" );
+                        $this->purgePost( $_post_id );
                     }
                     break;
                 case 'spam':
+                case 'unapproved':
                 case 'trash':
-                    if($rt_wp_nginx_helper->options['purge_page_on_deleted_comment']==1){
-                        if($oldstatus=='approve'){
-                            $this->log( "* Comment ($_comment_id) removed as ($newstatus). Post ($_post_id) purged." );
+                    if($oldstatus=='approve'){
+                        if($rt_wp_nginx_helper->options['purge_page_on_deleted_comment']==1){
+                            $this->log( "* Comment ($_comment_id) removed as ($newstatus). Post ($_post_id) purging..." );
+                            $this->log( "* * * * *" );
+                            $this->purgePost( $_post_id );
                         }
                     }
-                    $this->log( "* * * * *" );
-                    $this->purgePost( $_post_id );
                     break;
-
             }
 
         }
