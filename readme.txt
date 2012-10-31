@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -28,11 +28,14 @@ You will need to follow one ore more tutorials below to get desired functionalit
 
 
 == Installation ==
+
 Automatic Installation
-1.Log in to your WordPress admin panel, navigate to the Plugins menu and click Add New.
-1.In the search field type “Nginx Helper” and click Search Plugins. From the search results, pick Nginx Helper and click Install Now. Wordpress will ask you to confirm to complete the installation.
+
+1. Log in to your WordPress admin panel, navigate to the Plugins menu and click Add New.
+1. In the search field type “Nginx Helper” and click Search Plugins. From the search results, pick Nginx Helper and click Install Now. Wordpress will ask you to confirm to complete the installation.
 
 Manual Installation
+
 1. Extract the zip file.
 1. Upload them to `/wp-content/plugins/` directory on your WordPress installation.
 1. Then activate the Plugin from Plugins page.
@@ -101,6 +104,11 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.5 =
+* Timestamp now only gets added to content-type text/html
+* Added option to toggle timestamp creation
+
 = 1.4 =
 * Fixed bug related to nomenclature of comment status that caused purge to fail.
 
@@ -165,5 +173,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.4 =
-Bug fix for improper purging on comment.
+= 1.5 =
+Added content-type check to show timestamp only on text/html. Added option to toggle timestamp.
