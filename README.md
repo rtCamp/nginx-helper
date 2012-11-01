@@ -1,3 +1,5 @@
+![alt text](https://plugins.svn.wordpress.org/nginx-helper/assets/banner-772x250.png)
+
 # Nginx #
 
 * **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla),
