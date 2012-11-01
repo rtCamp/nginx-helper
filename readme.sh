@@ -4,7 +4,7 @@
 
 # Variables List
 TITLE=$(head -n1 readme.txt)
-LICENSE=$(cat readme.txt | grep "License URI:" | gawk -F// '{ print $2 }' |  cat readme.txt | grep "License URI:" | cut -d: -f2,3)
+LICENSE=$(cat readme.txt | grep "License URI:" | awk -F// '{ print $2 }' |  cat readme.txt | grep "License URI:" | cut -d: -f2,3)
 #echo $TITLE $LICENSE
 
 # Remove Previous Files
