@@ -1,4 +1,4 @@
-![alt text](https://plugins.svn.wordpress.org/nginx-helper/assets/banner-772x250.png)
+![alt text](https://plugins.svn.wordpress.org/nginx-helper//assets/banner-772x250.png)
 
 # Nginx #
 
@@ -105,6 +105,8 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6 ####
+* Revised code for improved multisite and multidomain mapping.
 #### 1.5 ####
 * Timestamp now only gets added to content-type text/html
 * Added option to toggle timestamp creation
@@ -171,5 +173,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.5 ####
-Added content-type check to show timestamp only on text/html. Added option to toggle timestamp.
+#### 1.6 ####
+Improved multisite, multidomain support!

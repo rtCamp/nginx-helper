@@ -1,36 +1,41 @@
 <?php
+
 namespace rtCamp\WP\Nginx {
-    class Compatibility	{
-        protected $have_nginx;
 
-        public static function instance() {
-                static $self = false;
-                if (!$self) {
-                        $self = new Compatibility();
-                }
+	class Compatibility {
 
-                return $self;
-        }
+		protected $have_nginx;
 
-        private function __construct() {
-                $this->have_nginx = ('nginx' == substr($_SERVER['SERVER_SOFTWARE'], 0, 5));
-                if ($this->have_nginx) {
-                        add_filter('got_rewrite', array($this, 'got_rewrite'), 999);
+		public static function instance() {
+			static $self = false;
+			if ( ! $self ) {
+				$self = new Compatibility();
+			}
 
-                        // For compatibility with several plugins and nginx HTTPS proxying schemes
-                        if (empty($_SERVER['HTTPS']) || 'off' == $_SERVER['HTTPS']) {
-                                unset($_SERVER['HTTPS']);
-                        }
-                }
-        }
+			return $self;
+		}
 
-        public function got_rewrite($got) {
-                return true;
-        }
+		private function __construct() {
+			$this->have_nginx = ('nginx' == substr( $_SERVER[ 'SERVER_SOFTWARE' ], 0, 5 ));
+			if ( $this->have_nginx ) {
+				add_filter( 'got_rewrite', array( $this, 'got_rewrite' ), 999 );
 
-        public function haveNginx() {
-                return $this->have_nginx;
-        }
-    }
+				// For compatibility with several plugins and nginx HTTPS proxying schemes
+				if ( empty( $_SERVER[ 'HTTPS' ] ) || 'off' == $_SERVER[ 'HTTPS' ] ) {
+					unset( $_SERVER[ 'HTTPS' ] );
+				}
+			}
+		}
+
+		public function got_rewrite( $got ) {
+			return true;
+		}
+
+		public function haveNginx() {
+			return $this->have_nginx;
+		}
+
+	}
+
 }
 ?>
