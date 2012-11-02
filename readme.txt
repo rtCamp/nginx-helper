@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.6
+Stable tag: 1.6.1
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -105,8 +105,12 @@ Its just that we are hyperactive on our own forum!
 
 == Changelog ==
 
+= 1.6.1 =
+* Fixed bug in the revised code for improved multisite and multidomain mapping.
+
 = 1.6 =
 * Revised code for improved multisite and multidomain mapping.
+
 = 1.5 =
 * Timestamp now only gets added to content-type text/html
 * Added option to toggle timestamp creation
@@ -175,5 +179,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.6 =
-Improved multisite, multidomain support!
+= 1.6.1 =
+Bug fix for multisite map support.

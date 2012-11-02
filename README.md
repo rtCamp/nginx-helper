@@ -105,8 +105,12 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.1 ####
+* Fixed bug in the revised code for improved multisite and multidomain mapping.
+
 #### 1.6 ####
 * Revised code for improved multisite and multidomain mapping.
+
 #### 1.5 ####
 * Timestamp now only gets added to content-type text/html
 * Added option to toggle timestamp creation
@@ -173,5 +177,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6 ####
-Improved multisite, multidomain support!
+#### 1.6.1 ####
+Bug fix for multisite map support.
