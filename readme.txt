@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -105,6 +105,9 @@ Its just that we are hyperactive on our own forum!
 
 == Changelog ==
 
+= 1.6.3 =
+* Fixed duplicate entries.
+
 = 1.6.2 =
 * Another bug fix in the revised code for improved multisite and multidomain mapping.
 
@@ -182,5 +185,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.6.2 =
-Another bug fix for multisite map support.
+= 1.6.3 =
+Revised multisite map support.

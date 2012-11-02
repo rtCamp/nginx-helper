@@ -105,6 +105,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.3 ####
+* Fixed duplicate entries.
+
 #### 1.6.2 ####
 * Another bug fix in the revised code for improved multisite and multidomain mapping.
 
@@ -180,5 +183,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6.2 ####
-Another bug fix for multisite map support.
+#### 1.6.3 ####
+Revised multisite map support.
