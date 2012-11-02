@@ -3,7 +3,7 @@
 Plugin Name: Nginx Helper
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.6.1
+Version: 1.6.2
 Author: rtCamp
 Author URI: http://rtcamp.com
 Requires at least: 3.0
@@ -214,18 +214,24 @@ namespace rtCamp\WP\Nginx {
 				if ( $rt_all_blogs )
 					foreach ( $rt_all_blogs as $blog ){
 						if ( SUBDOMAIN_INSTALL == "yes" )
-							$rt_nginx_map_array[]['domain'] = $blog->domain;
-							$rt_nginx_map_array[]['id'] = $blog->blog_id;
+							$rt_nginx_map_array[] = array(
+								'domain'=>$blog->domain,
+								'id'	=> $blog->blog_id
+								);
 						}else{
 						if ( $blog->blog_id != 1 )
-							$rt_nginx_map_array[]['domain'] = $blog->path;
-							$rt_nginx_map_array[]['id'] = $blog->blog_id;
+							$rt_nginx_map_array[] = array(
+								'domain'=>$blog->path,
+								'id'	=> $blog->blog_id
+								);
 						}
 
 				if ( $rt_domain_map_sites )
 					foreach ( $rt_domain_map_sites as $site )
-						$rt_nginx_map_array[]['domain'] = $site->domain;
-						$rt_nginx_map_array[]['id'] = $site->blog_id;
+						$rt_nginx_map_array[] = array(
+								'domain'=> $site->domain,
+								'id'	=> $site->blog_id
+								);
 
 
 				foreach ( $rt_nginx_map_array as $blog )
