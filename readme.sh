@@ -90,7 +90,7 @@ sed 's/==/##/g' /tmp/file2 &> /tmp/file1
 sed '/Description/,$s/=/####/g' /tmp/file1 &> /tmp/file2
 
 # Make Text Bold
-sed 's/Contributors:/* **Contributors:**/' /tmp/file2 &> /tmp/file1
-sed 's/Donate link:/* **Donate Link:**/' /tmp/file1 &> /tmp/file2
-sed 's/License:/* **License:**/' /tmp/file2 &> README.md
+sed 's/[Cc]ontributors:/* **Contributors:**/' /tmp/file2 &> /tmp/file1
+sed 's/[Dd]onate [Ll]ink:/* **Donate Link:**/' /tmp/file1 &> /tmp/file2
+sed 's/[Ll]icense:/* **License:**/' /tmp/file2 &> README.md
 
