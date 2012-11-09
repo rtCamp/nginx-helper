@@ -3,7 +3,7 @@
 Plugin Name: Nginx Helper
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.6.3
+Version: 1.6.4
 Author: rtCamp
 Author URI: http://rtcamp.com
 Requires at least: 3.0
@@ -42,6 +42,7 @@ namespace rtCamp\WP\Nginx {
 
 			global $rt_wp_nginx_purger;
 			add_action( 'shutdown', array( &$this, 'add_timestamps' ), 99999 );
+			add_action( 'add_init', array(&$this, 'update_map') );
 
 			add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			add_action( 'publish_page', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
@@ -213,20 +214,24 @@ namespace rtCamp\WP\Nginx {
 
 				if ( $rt_all_blogs )
 					foreach ( $rt_all_blogs as $blog ){
-						if ( SUBDOMAIN_INSTALL == "yes" )
+						if ( SUBDOMAIN_INSTALL == "yes" ){
 							$rt_nginx_map_array[$blog->domain] = $blog->blog_id;
 						}else{
-						if ( $blog->blog_id != 1 )
-							$rt_nginx_map_array[$blog->path] = $blog->blog_id;
+							if ( $blog->blog_id != 1 ){
+								$rt_nginx_map_array[$blog->path] = $blog->blog_id;
+							}
 						}
+					}
 
-				if ( $rt_domain_map_sites )
-					foreach ( $rt_domain_map_sites as $site )
+				if ( $rt_domain_map_sites ){
+					foreach ( $rt_domain_map_sites as $site ){
 						$rt_nginx_map_array[$site->domain] = $site->blog_id;
+					}
+				}
 
-
-				foreach ( $rt_nginx_map_array as $domain=>$domain_id )
+				foreach ( $rt_nginx_map_array as $domain=>$domain_id ){
 					$rt_nginx_map .= "\t" . $domain . "\t" . $domain_id . ";\n";
+				}
 
 				return $rt_nginx_map;
 			}
