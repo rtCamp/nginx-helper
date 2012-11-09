@@ -105,6 +105,10 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.4 ####
+* Improved code for map generation to better conventions since the nesting confused some servers.
+* Added map update process to admin_init for frequent refreshes.
+
 #### 1.6.3 ####
 * Fixed duplicate entries.
 
@@ -183,5 +187,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6.3 ####
-Revised multisite map support.
+#### 1.6.4 ####
+Revised map generation.
