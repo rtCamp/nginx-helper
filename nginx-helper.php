@@ -3,8 +3,7 @@
 Plugin Name: Nginx Helper 
 Plugin URI: http://github.com/murrayjbrown/
 Plugin URI: http://rtcamp.com/
-Description: An nginx helper that serves various functions.
-Enhanced to support mapping for Wordpresss multisite network blogs on multiple nginx servers.
+Description: An nginx helper that serves various functions. (This fork supports mapping for Wordpresss multisite network blogs on multiple nginx servers.)
 Version: 1.6.4a
 Author: mjbrown
 Author: rtCamp
