@@ -1,10 +1,14 @@
 <?php
 /*
-Plugin Name: Nginx Helper
+Plugin Name: Nginx Helper 
+Plugin URI: http://github.com/murrayjbrown/
 Plugin URI: http://rtcamp.com/
 Description: An nginx helper that serves various functions.
-Version: 1.6.4
+Enhanced to support mapping for Wordpresss multisite network blogs on multiple nginx servers.
+Version: 1.6.4a
+Author: mjbrown
 Author: rtCamp
+Author URI: http://mjbrown.com
 Author URI: http://rtcamp.com
 Requires at least: 3.0
 Tested up to: 3.4.2
@@ -210,7 +214,11 @@ namespace rtCamp\WP\Nginx {
 				}
 				$rt_nginx_map = "";
 				$rt_nginx_map_array = array( );
+                $rt_nginx_map_server = '';
 
+                if ( $this->options[ 'enable_map_server' ] ) {
+                    $rt_nginx_map_server = $_SERVER['SERVER_NAME'] . ':';
+                }
 
 				if ( $rt_all_blogs )
 					foreach ( $rt_all_blogs as $blog ){
@@ -230,7 +238,7 @@ namespace rtCamp\WP\Nginx {
 				}
 
 				foreach ( $rt_nginx_map_array as $domain=>$domain_id ){
-					$rt_nginx_map .= "\t" . $domain . "\t" . $domain_id . ";\n";
+					$rt_nginx_map .= "\t" . $rt_nginx_map_server . $domain . "\t" . $domain_id . ";\n";
 				}
 
 				return $rt_nginx_map;

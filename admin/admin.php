@@ -38,6 +38,7 @@ namespace rtCamp\WP\Nginx {
 					$error_log_filesize = false;
 					$rt_wp_nginx_helper->options[ 'enable_purge' ] = (isset( $_POST[ 'enable_purge' ] ) and ($_POST[ 'enable_purge' ] == 1) ) ? 1 : 0;
 					$rt_wp_nginx_helper->options[ 'enable_map' ] = (isset( $_POST[ 'enable_map' ] ) and ($_POST[ 'enable_map' ] == 1) ) ? 1 : 0;
+					$rt_wp_nginx_helper->options[ 'enable_map_server' ] = (isset( $_POST[ 'enable_map_server' ] ) and ($_POST[ 'enable_map_server' ] == 1) ) ? 1 : 0;
 					$rt_wp_nginx_helper->options[ 'enable_log' ] = (isset( $_POST[ 'enable_log' ] ) and ($_POST[ 'enable_log' ] == 1) ) ? 1 : 0;
 					$rt_wp_nginx_helper->options[ 'enable_stamp' ] = (isset( $_POST[ 'enable_stamp' ] ) and ($_POST[ 'enable_stamp' ] == 1) ) ? 1 : 0;
 
@@ -104,6 +105,7 @@ namespace rtCamp\WP\Nginx {
 												<label for="enable_purge"><input type="checkbox" value="1" id="enable_purge" name="enable_purge"<?php checked( $rt_wp_nginx_helper->options[ 'enable_purge' ], 1 ); ?>>Enable Cache Purge (requires external settings for nginx).</label><br />
 						<?php if ( is_network_admin() ) { ?>
 													<label for="enable_map"><input type="checkbox" value="1" id="enable_map" name="enable_map"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map' ], 1 ); ?>>Enable Nginx Map.</label><br />
+                                                    &nbsp;&nbsp&nbsp&nbsp;<label for="enable_map_server"><input type="checkbox" value="1" id="enable_map_server" name="enable_map_server"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map_server' ], 1 ); ?>>Prefix map pattern with server name: <strong><em> <?php echo $_SERVER['SERVER_NAME'] ?>:</em></strong></label><br />
 												<?php } ?>
 												<label for="enable_log"><input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked( $rt_wp_nginx_helper->options[ 'enable_log' ], 1 ); ?>>Enable Logging</label><br />
 												<label for="enable_stamp"><input type="checkbox" value="1" id="enable_stamp" name="enable_stamp"<?php checked( $rt_wp_nginx_helper->options[ 'enable_stamp' ], 1 ); ?>>Enable Nginx Timestamp in HTML</label>
