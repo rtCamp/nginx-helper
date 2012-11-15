@@ -88,6 +88,7 @@ namespace rtCamp\WP\Nginx {
 
 		$rt_wp_nginx_helper_get_options[ 'enable_purge' ] = 1;
 		$rt_wp_nginx_helper_get_options[ 'enable_map' ] = 0;
+		$rt_wp_nginx_helper_get_options[ 'enable_map_server' ] = 0;
 		$rt_wp_nginx_helper_get_options[ 'enable_log' ] = 0;
 		$rt_wp_nginx_helper_get_options[ 'enable_stamp' ] = 1;
 

@@ -1,5 +1,6 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla
+
+Contributors: rtcamp, rahul286, saurabhshukla, mjbrown
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
@@ -104,6 +105,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.6.4a =
+* Added option to prefix the map pattern with the server name (plus ':' delimter) to avert mapping conflicts with multiple nginx multisite network servers.
 
 = 1.6.4 =
 * Improved code for map generation to better conventions since the nesting confused some servers.
