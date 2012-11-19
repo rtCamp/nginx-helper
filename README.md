@@ -1,10 +1,9 @@
-![alt text](https://plugins.svn.wordpress.org/nginx-helper//assets/banner-772x250.png)
-
 # Nginx #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [mjbrown] (http://profiles.wordpress.org/mjbrown),
 
 * **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
+
 
 * **Donate Link:** http://rtcamp.com/donate/
 
@@ -104,6 +103,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 ## Changelog ##
+
+#### 1.6.4a ####
+* Added option to prefix the map pattern with the server name (plus ':' delimter) to avert mapping conflicts with multiple nginx multisite network servers.
 
 #### 1.6.4 ####
 * Improved code for map generation to better conventions since the nesting confused some servers.
