@@ -173,7 +173,7 @@ namespace rtCamp\WP\Nginx {
 											<br />
 											<fieldset>
 												<legend class="screen-reader-text"><span>&nbsp;when a comment is approved/published.</span></legend>
-												<label for="purge_archive_on_new_comment"><input type="checkbox" value="1" id="purge_archive_on_new_comment" name="purge_page_on_new_comment"<?php checked( $rt_wp_nginx_helper->options[ 'purge_archive_on_new_comment' ], 1 ); ?>>&nbsp;when a <strong>comment</strong> is <strong>approved/published</strong>.</label><br />
+												<label for="purge_archive_on_new_comment"><input type="checkbox" value="1" id="purge_archive_on_new_comment" name="purge_archive_on_new_comment"<?php checked( $rt_wp_nginx_helper->options[ 'purge_archive_on_new_comment' ], 1 ); ?>>&nbsp;when a <strong>comment</strong> is <strong>approved/published</strong>.</label><br />
 											</fieldset>
 											<fieldset>
 												<legend class="screen-reader-text"><span>&nbsp;when a comment is unapproved/deleted.</span></legend>

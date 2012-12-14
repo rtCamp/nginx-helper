@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -105,6 +105,9 @@ Its just that we are hyperactive on our own forum!
 
 == Changelog ==
 
+= 1.6.5 =
+* Fixed typo that interfered with archive purge settings. Thanks to [Daan Kortenbach](http://profiles.wordpress.org/daankortenbach/) for pointing this out.
+
 = 1.6.4 =
 * Improved code for map generation to better conventions since the nesting confused some servers.
 * Added map update process to admin_init for frequent refreshes.
@@ -189,5 +192,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.6.4 =
-Revised map generation.
+= 1.6.5 =
+Fixed bug in archive purge settings.
