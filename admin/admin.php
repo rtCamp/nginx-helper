@@ -12,6 +12,7 @@ namespace rtCamp\WP\Nginx {
 			}
 			add_action( 'admin_print_scripts', array( &$this, 'load_scripts' ) );
 			add_action( 'admin_print_styles', array( &$this, 'load_styles' ) );
+			add_action( 'admin_init', array( &$this, 'do_action' ) );
 		}
 
 		function add_menu() {
@@ -102,13 +103,13 @@ namespace rtCamp\WP\Nginx {
 									<table class="form-table">
 										<tr valign="top">
 											<td>
-												<label for="enable_purge"><input type="checkbox" value="1" id="enable_purge" name="enable_purge"<?php checked( $rt_wp_nginx_helper->options[ 'enable_purge' ], 1 ); ?>>Enable Cache Purge (requires external settings for nginx).</label><br />
+												<label for="enable_purge"><input type="checkbox" value="1" id="enable_purge" name="enable_purge"<?php checked( $rt_wp_nginx_helper->options[ 'enable_purge' ], 1 ); ?>>&nbsp;Enable Cache Purge (requires external settings for nginx).</label><br />
 						<?php if ( is_network_admin() ) { ?>
-													<label for="enable_map"><input type="checkbox" value="1" id="enable_map" name="enable_map"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map' ], 1 ); ?>>Enable Nginx Map.</label><br />
-                                                    &nbsp;&nbsp&nbsp&nbsp;<label for="enable_map_server"><input type="checkbox" value="1" id="enable_map_server" name="enable_map_server"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map_server' ], 1 ); ?>>Prefix map pattern with server name: <strong><em> <?php echo $_SERVER['SERVER_NAME'] ?>:</em></strong></label><br />
+													<label for="enable_map"><input type="checkbox" value="1" id="enable_map" name="enable_map"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map' ], 1 ); ?>>&nbsp;Enable Nginx Map.</label><br />
+                                                    &nbsp;&nbsp&nbsp&nbsp;<label for="enable_map_server"><input type="checkbox" value="1" id="enable_map_server" name="enable_map_server"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map_server' ], 1 ); ?>>&nbsp;Prefix map pattern with server name: <strong><em> <?php echo $_SERVER['SERVER_NAME'] ?>:</em></strong></label><br />
 												<?php } ?>
-												<label for="enable_log"><input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked( $rt_wp_nginx_helper->options[ 'enable_log' ], 1 ); ?>>Enable Logging</label><br />
-												<label for="enable_stamp"><input type="checkbox" value="1" id="enable_stamp" name="enable_stamp"<?php checked( $rt_wp_nginx_helper->options[ 'enable_stamp' ], 1 ); ?>>Enable Nginx Timestamp in HTML</label>
+												<label for="enable_log"><input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked( $rt_wp_nginx_helper->options[ 'enable_log' ], 1 ); ?>>&nbsp;Enable Logging</label><br />
+												<label for="enable_stamp"><input type="checkbox" value="1" id="enable_stamp" name="enable_stamp"<?php checked( $rt_wp_nginx_helper->options[ 'enable_stamp' ], 1 ); ?>>&nbsp;Enable Nginx Timestamp in HTML</label>
 											</td>
 										</tr>
 									</table>
@@ -269,6 +270,22 @@ namespace rtCamp\WP\Nginx {
 									<input type="submit" name="smart_http_expire_save" class="button-primary" value="Save" />
 								</p>
 							</form>
+							<div style="height:1px;margin:4em 0 3em 0;background-color:#dfdfdf;"></div>
+							<form action="" method="post">
+								<h3>Manual Purge</h3>
+								<table class="form-table rtnginx-table">
+									<tbody>
+										<tr valign="top">
+											<th scope="row"><h4>Everything:</h4></th>
+											<td valign="middle">
+												<?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
+												<?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
+												<a href="<?php echo $nonced_url; ?>">Purge all URLs</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
 						</div>
 						<div id="rtads" class="metabox-holder align_left">
 					<?php $this->default_admin_sidebar(); ?>
@@ -312,6 +329,38 @@ namespace rtCamp\WP\Nginx {
 			$admin_js = trailingslashit( site_url() ) . '?get_feeds=1';
 			wp_enqueue_script( 'nginx-js', plugins_url( 'admin/assets/nginx.js', dirname( __FILE__ ) ) );
 			wp_localize_script( 'nginx-js', 'news_url', $admin_js );
+		}
+
+		function do_action() {
+			global $rt_wp_nginx_purger;
+			if( !isset( $_REQUEST['nginx_helper_action'] ) )
+				return;
+
+			if( !current_user_can( 'manage_options' ) )
+				wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
+
+			$object = $_REQUEST['nginx_helper_urls'];
+			$action = $_REQUEST['nginx_helper_action'];
+
+			if( $action == 'done' ) {
+				add_action( 'admin_notices', array( &$this, 'show_notice' ) );
+				return;
+			}
+
+			check_admin_referer( 'nginx_helper-purge_all' );
+
+			switch( $action ) {
+				case 'purge':
+				$rt_wp_nginx_purger->purge_them_all();
+				break;
+			}
+
+			wp_redirect( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) );
+
+		}
+
+		function show_notice() {
+			echo '<div class="updated"><p>Purge initiated</p></div>';
 		}
 
 	}
