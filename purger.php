@@ -617,7 +617,7 @@ namespace rtCamp\WP\Nginx {
 			}
 		}
 
-		private function _purge_them_all() {
+		function purge_them_all() {
 
 			$this->log( __( "LET'S PURGE ALL THE BLOG.", "rt_wp_nginx_helper" ) );
 
