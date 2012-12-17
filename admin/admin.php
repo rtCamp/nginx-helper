@@ -12,7 +12,6 @@ namespace rtCamp\WP\Nginx {
 			}
 			add_action( 'admin_print_scripts', array( &$this, 'load_scripts' ) );
 			add_action( 'admin_print_styles', array( &$this, 'load_styles' ) );
-			add_action( 'admin_init', array( &$this, 'do_action' ) );
 		}
 
 		function add_menu() {
@@ -92,8 +91,13 @@ namespace rtCamp\WP\Nginx {
 						<div class="icon32" id="icon-options-nginx"><br /></div>
 						<h2>Nginx Settings</h2>
 						<div id="content_block" class="align_left">
+							<form id="purgeall" action="" method="post">
+										<?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
+										<?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
+										<a href="<?php echo $nonced_url; ?>" class="button-primary">Purge all URLs</a>
+							</form>
 							<form id="post_form" method="post" action="#" name="smart_http_expire_form">
-					<?php if ( ! ( ! is_network_admin() && is_multisite()) ) { ?>
+								<?php if ( ! ( ! is_network_admin() && is_multisite()) ) { ?>
 
 									<input type="hidden" name="is_submit" value="1" />
 
@@ -103,7 +107,7 @@ namespace rtCamp\WP\Nginx {
 										<tr valign="top">
 											<td>
 												<label for="enable_purge"><input type="checkbox" value="1" id="enable_purge" name="enable_purge"<?php checked( $rt_wp_nginx_helper->options[ 'enable_purge' ], 1 ); ?>>&nbsp;Enable Cache Purge (requires external settings for nginx).</label><br />
-						<?php if ( is_network_admin() ) { ?>
+												<?php if ( is_network_admin() ) { ?>
 													<label for="enable_map"><input type="checkbox" value="1" id="enable_map" name="enable_map"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map' ], 1 ); ?>>&nbsp;Enable Nginx Map.</label><br />
 												<?php } ?>
 												<label for="enable_log"><input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked( $rt_wp_nginx_helper->options[ 'enable_log' ], 1 ); ?>>&nbsp;Enable Logging</label><br />
@@ -112,12 +116,12 @@ namespace rtCamp\WP\Nginx {
 										</tr>
 									</table>
 
-						<?php
-						$displayvar = '';
-						if ( $rt_wp_nginx_helper->options[ 'enable_purge' ] == false ) {
-							$displayvar = ' style="display:none"';
-						}
-						?>
+									<?php
+									$displayvar = '';
+									if ( $rt_wp_nginx_helper->options[ 'enable_purge' ] == false ) {
+										$displayvar = ' style="display:none"';
+									}
+									?>
 									<h3<?php echo $displayvar; ?>>Purging Options</h3>
 
 									<table class="form-table rtnginx-table"<?php echo $displayvar; ?>>
@@ -185,10 +189,10 @@ namespace rtCamp\WP\Nginx {
 										</tr>
 									</table>
 
-						<?php
-					}
-					if ( is_network_admin() && $rt_wp_nginx_helper->options[ 'enable_map' ] != false ) {
-						?>
+									<?php
+								}
+								if ( is_network_admin() && $rt_wp_nginx_helper->options[ 'enable_map' ] != false ) {
+									?>
 									<h3>Nginx Map</h3>
 									<?php if ( ! is_writable( RT_WP_NGINX_HELPER_PATH . 'map.conf' ) ) { ?>
 										<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on map file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), RT_WP_NGINX_HELPER_PATH . 'map.conf' ); ?></p></span>
@@ -201,7 +205,7 @@ namespace rtCamp\WP\Nginx {
 												<small>(recommended)</small>
 											</th>
 											<td>
-						<?php echo RT_WP_NGINX_HELPER_PATH . 'map.conf'; ?>
+												<?php echo RT_WP_NGINX_HELPER_PATH . 'map.conf'; ?>
 											</td>
 										</tr>
 										<tr>
@@ -216,12 +220,12 @@ namespace rtCamp\WP\Nginx {
 										</tr>
 									</table>
 
-						<?php
-						if ( $rt_wp_nginx_helper->options[ 'enable_log' ] != false ) {
-							?>
+									<?php
+									if ( $rt_wp_nginx_helper->options[ 'enable_log' ] != false ) {
+										?>
 										<h3>Logging</h3>
 
-							<?php if ( ! is_writable( RT_WP_NGINX_HELPER_PATH . 'nginx.log' ) ) { ?>
+										<?php if ( ! is_writable( RT_WP_NGINX_HELPER_PATH . 'nginx.log' ) ) { ?>
 											<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on log file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), RT_WP_NGINX_HELPER_PATH . 'nginx.log' ); ?></p></span>
 										<?php } ?>
 
@@ -252,7 +256,7 @@ namespace rtCamp\WP\Nginx {
 													<th><label for="log_filesize"><?php _e( 'Max log file size', 'rt_wp_nginx_helper' ); ?></label></th>
 													<td>
 														<input id="log_filesize" class="small-text" type="text" name="log_filesize" value="<?php echo $rt_wp_nginx_helper->options[ 'log_filesize' ] ?>" /> Mb
-							<?php if ( $error_log_filesize ) { ?>
+														<?php if ( $error_log_filesize ) { ?>
 															<span class="error fade" style="display : block"><p><strong><?php echo $error_log_filesize; ?></strong></p></span>
 														<?php } ?>
 													</td>
@@ -261,32 +265,17 @@ namespace rtCamp\WP\Nginx {
 										</table>
 
 										<br />
-						<?php } ?>
+									<?php } ?>
 								<?php } ?>
 
 								<p class="submit">
 									<input type="submit" name="smart_http_expire_save" class="button-primary" value="Save" />
 								</p>
 							</form>
-							<div style="height:1px;margin:4em 0 3em 0;background-color:#dfdfdf;"></div>
-							<form action="" method="post">
-								<h3>Manual Purge</h3>
-								<table class="form-table rtnginx-table">
-									<tbody>
-										<tr valign="top">
-											<th scope="row"><h4>Everything:</h4></th>
-											<td valign="middle">
-												<?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
-												<?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
-												<a href="<?php echo $nonced_url; ?>">Purge all URLs</a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</form>
+
 						</div>
 						<div id="rtads" class="metabox-holder align_left">
-					<?php $this->default_admin_sidebar(); ?>
+							<?php $this->default_admin_sidebar(); ?>
 						</div>
 					</div>
 					<?php
@@ -327,38 +316,6 @@ namespace rtCamp\WP\Nginx {
 			$admin_js = trailingslashit( site_url() ) . '?get_feeds=1';
 			wp_enqueue_script( 'nginx-js', plugins_url( 'admin/assets/nginx.js', dirname( __FILE__ ) ) );
 			wp_localize_script( 'nginx-js', 'news_url', $admin_js );
-		}
-
-		function do_action() {
-			global $rt_wp_nginx_purger;
-			if( !isset( $_REQUEST['nginx_helper_action'] ) )
-				return;
-
-			if( !current_user_can( 'manage_options' ) )
-				wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
-
-			$object = $_REQUEST['nginx_helper_urls'];
-			$action = $_REQUEST['nginx_helper_action'];
-
-			if( $action == 'done' ) {
-				add_action( 'admin_notices', array( &$this, 'show_notice' ) );
-				return;
-			}
-
-			check_admin_referer( 'nginx_helper-purge_all' );
-
-			switch( $action ) {
-				case 'purge':
-				$rt_wp_nginx_purger->purge_them_all();
-				break;
-			}
-
-			wp_redirect( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) );
-
-		}
-
-		function show_notice() {
-			echo '<div class="updated"><p>Purge initiated</p></div>';
 		}
 
 	}

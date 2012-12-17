@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Nginx Helper
-Plugin URI: http://rtcamp.com/
-Description: An nginx helper that serves various functions.
-Version: 1.6.5
-Author: rtCamp
-Author URI: http://rtcamp.com
-Requires at least: 3.0
-Tested up to: 3.4.2
+  Plugin Name: Nginx Helper
+  Plugin URI: http://rtcamp.com/
+  Description: An nginx helper that serves various functions.
+  Version: 1.6.6
+  Author: rtCamp
+  Author URI: http://rtcamp.com
+  Requires at least: 3.0
+  Tested up to: 3.4.2
  */
 
 namespace rtCamp\WP\Nginx {
@@ -42,7 +42,7 @@ namespace rtCamp\WP\Nginx {
 
 			global $rt_wp_nginx_purger;
 			add_action( 'shutdown', array( &$this, 'add_timestamps' ), 99999 );
-			add_action( 'add_init', array(&$this, 'update_map') );
+			add_action( 'add_init', array( &$this, 'update_map' ) );
 
 			add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			add_action( 'publish_page', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
@@ -74,6 +74,7 @@ namespace rtCamp\WP\Nginx {
 			add_action( 'delete_term', array( &$rt_wp_nginx_purger, 'purge_on_term_taxonomy_edited' ), 20, 3 );
 
 			add_action( 'check_ajax_referer', array( &$rt_wp_nginx_purger, 'purge_on_check_ajax_referer' ), 20, 2 );
+			add_action( 'admin_init', array( &$this, 'purge_all' ) );
 		}
 
 		function activate() {
@@ -213,23 +214,23 @@ namespace rtCamp\WP\Nginx {
 
 
 				if ( $rt_all_blogs )
-					foreach ( $rt_all_blogs as $blog ){
-						if ( SUBDOMAIN_INSTALL == "yes" ){
-							$rt_nginx_map_array[$blog->domain] = $blog->blog_id;
-						}else{
-							if ( $blog->blog_id != 1 ){
-								$rt_nginx_map_array[$blog->path] = $blog->blog_id;
+					foreach ( $rt_all_blogs as $blog ) {
+						if ( SUBDOMAIN_INSTALL == "yes" ) {
+							$rt_nginx_map_array[ $blog->domain ] = $blog->blog_id;
+						} else {
+							if ( $blog->blog_id != 1 ) {
+								$rt_nginx_map_array[ $blog->path ] = $blog->blog_id;
 							}
 						}
 					}
 
-				if ( $rt_domain_map_sites ){
-					foreach ( $rt_domain_map_sites as $site ){
-						$rt_nginx_map_array[$site->domain] = $site->blog_id;
+				if ( $rt_domain_map_sites ) {
+					foreach ( $rt_domain_map_sites as $site ) {
+						$rt_nginx_map_array[ $site->domain ] = $site->blog_id;
 					}
 				}
 
-				foreach ( $rt_nginx_map_array as $domain=>$domain_id ){
+				foreach ( $rt_nginx_map_array as $domain => $domain_id ) {
 					$rt_nginx_map .= "\t" . $domain . "\t" . $domain_id . ";\n";
 				}
 
@@ -263,6 +264,36 @@ namespace rtCamp\WP\Nginx {
 					"-->\n" .
 					"<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->";
 			echo $timestamps;
+		}
+
+		function show_notice() {
+			echo '<div class="updated"><p>Purge initiated</p></div>';
+		}
+
+		function purge_all() {
+			global $rt_wp_nginx_purger;
+			if ( ! isset( $_REQUEST[ 'nginx_helper_action' ] ) )
+				return;
+
+			if ( ! current_user_can( 'manage_options' ) )
+				wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
+
+			$action = $_REQUEST[ 'nginx_helper_action' ];
+
+			if ( $action == 'done' ) {
+				add_action( 'admin_notices', array( &$this, 'show_notice' ) );
+				return;
+			}
+
+			check_admin_referer( 'nginx_helper-purge_all' );
+
+			switch ( $action ) {
+				case 'purge':
+					$rt_wp_nginx_purger->purge_them_all();
+					break;
+			}
+
+			wp_redirect( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) );
 		}
 
 	}

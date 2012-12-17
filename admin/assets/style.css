@@ -18,6 +18,14 @@ div#rtads{ width:30%}
 .align_left, .alignleft {
 float: left;
 }
+form#purgeall .button-primary{
+float: right;
+margin-right: 100px;
+height: 32px;
+line-height: 32px;
+font-weight: bold;
+font-size: 16px;
+}
 
 #social .inside a {
 background: url(rtp-social-icons-32-32.png) no-repeat;

@@ -619,7 +619,7 @@ namespace rtCamp\WP\Nginx {
 
 		function purge_them_all() {
 
-			$this->log( __( "LET'S PURGE ALL THE BLOG.", "rt_wp_nginx_helper" ) );
+			$this->log( __( "Let's purge everything!", "rt_wp_nginx_helper" ) );
 
 			$this->_purge_homepage();
 
@@ -630,6 +630,8 @@ namespace rtCamp\WP\Nginx {
 			$this->_purge_all_taxonomies();
 
 			$this->_purge_all_date_archives();
+
+			$this->log( __( "Everthing purged!", "rt_wp_nginx_helper" ) );
 
 			return true;
 		}

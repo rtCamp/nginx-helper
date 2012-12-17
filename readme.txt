@@ -1,9 +1,9 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla
+Contributors: rtcamp, rahul286, saurabhshukla, darren-slatten
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -105,6 +105,9 @@ Its just that we are hyperactive on our own forum!
 
 == Changelog ==
 
+= 1.6.6 =
+* Added Manual 'Purge all URLs' functionality (by [darren-slatten](http://profiles.wordpress.org/darren-slatten/)
+
 = 1.6.5 =
 * Fixed typo that interfered with archive purge settings. Thanks to [Daan Kortenbach](http://profiles.wordpress.org/daankortenbach/) for pointing this out.
 
@@ -192,5 +195,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.6.5 =
-Fixed bug in archive purge settings.
+= 1.6.6 =
+Added manual 'purge all urls' feature
