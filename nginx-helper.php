@@ -254,8 +254,13 @@ namespace rtCamp\WP\Nginx {
 				return;
 			if ( $this->options[ 'enable_stamp' ] != 1 )
 				return;
-			if ( $_SERVER[ "CONTENT_TYPE" ] != 'text/html' )
-				return;
+			foreach (headers_list() as $header) {
+				list($key,$value) = explode(':',$header,2);
+				if($key == 'Content-Type' && strpos(trim($value),'text/html') !== 0) {
+					return;
+				}
+				if($key == 'Content-Type') break;
+			}
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 				return;
 			$timestamps = "\n<!--" .
