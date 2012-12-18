@@ -2,7 +2,7 @@
 
 # Nginx #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [darren-slatten] (http://profiles.wordpress.org/darren-slatten),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [DarrenSlatten] (http://profiles.wordpress.org/DarrenSlatten), [jk3us] (http://profiles.wordpress.org/jk3us),
 
 * **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -105,8 +105,11 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.7 ####
+* Better content-type detection for cache verification comments (by [jk3us](http://profiles.wordpress.org/jk3us)
+
 #### 1.6.6 ####
-* Added Manual 'Purge all URLs' functionality (by [darren-slatten](http://profiles.wordpress.org/darren-slatten/)
+* Added Manual 'Purge all URLs' functionality (by [darren-slatten](http://profiles.wordpress.org/darren-slatten/))
 
 #### 1.6.5 ####
 * Fixed typo that interfered with archive purge settings. Thanks to [Daan Kortenbach](http://profiles.wordpress.org/daankortenbach/) for pointing this out.
@@ -193,5 +196,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6.6 ####
-Added manual 'purge all urls' feature
+#### 1.6.7 ####
+Improved cache verification comments.
