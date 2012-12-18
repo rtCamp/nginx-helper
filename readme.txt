@@ -1,5 +1,5 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, DarrenSlatten, jk3us
+Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.4.2
