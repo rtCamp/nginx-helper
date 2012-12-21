@@ -2,7 +2,7 @@
 
 # Nginx #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [Darren-Slatten] (http://profiles.wordpress.org/Darren-Slatten), [jk3us] (http://profiles.wordpress.org/jk3us),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach),
 
 * **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -105,11 +105,14 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.8 ####
+* [daankortenbach](http://profiles.wordpress.org/daankortenbach) added Purge Cache link to wp-admin bar
+
 #### 1.6.7 ####
-* Better content-type detection for cache verification comments (by [jk3us](http://profiles.wordpress.org/jk3us)
+* [jk3us](http://profiles.wordpress.org/jk3us) added better content-type detection for cache verification comments
 
 #### 1.6.6 ####
-* Added Manual 'Purge all URLs' functionality (by [darren-slatten](http://profiles.wordpress.org/darren-slatten/))
+* [darren-slatten](http://profiles.wordpress.org/darren-slatten/) added Manual 'Purge all URLs' functionality
 
 #### 1.6.5 ####
 * Fixed typo that interfered with archive purge settings. Thanks to [Daan Kortenbach](http://profiles.wordpress.org/daankortenbach/) for pointing this out.
