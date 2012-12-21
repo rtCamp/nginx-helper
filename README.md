@@ -199,5 +199,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6.7 ####
-Improved cache verification comments.
+#### 1.6.8 ####
+Added purge cache to admin bar.
