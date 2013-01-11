@@ -95,7 +95,7 @@ namespace rtCamp\WP\Nginx {
 							<form id="purgeall" action="" method="post">
 										<?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
 										<?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
-										<a href="<?php echo $nonced_url; ?>" class="button-primary">Purge all URLs</a>
+										<a href="<?php echo $nonced_url; ?>" class="button-primary">Faux Purge all URLs</a>
 							</form>
 							<form id="post_form" method="post" action="#" name="smart_http_expire_form">
 								<?php if ( ! ( ! is_network_admin() && is_multisite()) ) { ?>
@@ -289,10 +289,10 @@ namespace rtCamp\WP\Nginx {
 			$nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 			$admin_bar->add_menu( array(
 					'id'    => 'nginx-helper-purge-all',
-					'title' => __( 'Purge Cache', 'rt-nginx' ),
+					'title' => __( 'Faux Purge Cache', 'rt-nginx' ),
 					'href'  => $nonced_url,
 					'meta'  => array(
-						'title' => __( 'Purge Cache', 'rt-nginx' ),
+						'title' => __( 'Faux Purge Cache', 'rt-nginx' ),
 					),
 				)
 			);

@@ -86,6 +86,10 @@ So, in the above eg, the purge url will be http://yoursite.com/purge/about/
 Just open this in a browser and the page will be purged instantly.
 Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
+**Q. There's a 'faux purge all' button? Does it purge the whole site?**
+
+This is a faux purge all. This just tries to cleanse all the cache in its own limited manner. There isn't and can't be a true purge all. See this discussion: http://wordpress.org/support/topic/feature-suggestion-for-additional-purge-options?replies####13.
+
 #### FAQ - Nginx Map ####
 
 **Q. I am using X plugin. Will it work on Nginx?**
@@ -104,6 +108,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 ## Changelog ##
+
+#### 1.6.9 ####
+* Added Faux to Purge all buttons, to avoid misleading users.
 
 #### 1.6.8 ####
 * [daankortenbach](http://profiles.wordpress.org/daankortenbach) added Purge Cache link to wp-admin bar
@@ -199,5 +206,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6.8 ####
-Added purge cache to admin bar.
+#### 1.6.9 ####
+Added faux to all purge all buttons.
