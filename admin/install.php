@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @author: Saurabh Shukla <saurabh.shukla@rtcamp.com>
+ *
+ * Parts of code based off http://wordpress.org/extend/plugins/nginx-manager/ by http://profiles.wordpress.org/hpatoio/ and http://profiles.wordpress.org/rukbat/
+ */
 namespace rtCamp\WP\Nginx {
 	if ( preg_match( '#' . basename( __FILE__ ) . '#', $_SERVER[ 'PHP_SELF' ] ) ) {
 		die( 'You are not allowed to call this page directly.' );
@@ -51,8 +55,6 @@ namespace rtCamp\WP\Nginx {
 
 	function rt_wp_nginx_helper_uninstall() {
 
-		global $rt_wp_nginx_helper, $rt_wp_nginx_purger;
-
 		wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
 
 		delete_site_option( 'rt_wp_nginx_helper_options' );
@@ -73,18 +75,11 @@ namespace rtCamp\WP\Nginx {
 
 	function rt_wp_nginx_helper_get_options() {
 
-		global $rt_wp_nginx_helper;
-
 		$rt_wp_nginx_helper_get_options = array( );
 
 
 		$rt_wp_nginx_helper_get_options[ 'log_level' ] = 'INFO';
 		$rt_wp_nginx_helper_get_options[ 'log_filesize' ] = 5;
-
-		$rt_wp_nginx_helper_get_options[ 'current_db_version' ] = $rt_wp_nginx_helper->db_version;
-
-		$rt_wp_nginx_helper_get_options[ 'mobile_uncache' ] = 1;
-		$rt_wp_nginx_helper_get_options[ 'mobile_regexp' ] = '#2.0 MMP|240x320|400X240|AvantGo|BlackBerry|Blazer|Cellphone|Danger|DoCoMo|Elaine/3.0|EudoraWeb|Googlebot-Mobile|hiptop|IEMobile|KYOCERA/WX310K|LG/U990|MIDP-2.|MMEF20|MOT-V|NetFront|Newt|Nintendo Wii|Nitro|Nokia|Opera Mini|Palm|PlayStation Portable|portalmmm|Proxinet|ProxiNet|SHARP-TQ-GX10|SHG-i900|Small|SonyEricsson|Symbian OS|SymbianOS|TS21i-10|UP.Browser|UP.Link|webOS|Windows CE|WinWAP|YahooSeeker/M1A1-R2D2|NF-Browser|iPhone|iPod|Android|BlackBerry9530|G-TU915 Obigo|LGE VX|webOS|Nokia5800#';
 
 		$rt_wp_nginx_helper_get_options[ 'enable_purge' ] = 1;
 		$rt_wp_nginx_helper_get_options[ 'enable_map' ] = 0;

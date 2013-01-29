@@ -3,7 +3,7 @@
   Plugin Name: Nginx Helper
   Plugin URI: http://rtcamp.com/
   Description: An nginx helper that serves various functions.
-  Version: 1.6.9
+  Version: 1.6.10
   Author: rtCamp
   Author URI: http://rtcamp.com
   Requires at least: 3.0
@@ -16,10 +16,7 @@ namespace rtCamp\WP\Nginx {
 
 	class Helper {
 
-		var $version = '1.4'; // Plugin version
-		var $db_version = '0.1'; // DB version, change it to show the upgrade page
 		var $minium_WP = '3.0';
-		var $minimum_PHP = '5.3';
 		var $options = null;
 
 		function __construct() {
@@ -29,7 +26,6 @@ namespace rtCamp\WP\Nginx {
 					return;
 
 			$this->load_options();
-			$this->define_constant();
 			$this->plugin_name = plugin_basename( __FILE__ );
 
 			register_activation_hook( $this->plugin_name, array( &$this, 'activate' ) );
@@ -87,11 +83,6 @@ namespace rtCamp\WP\Nginx {
 			rt_wp_nginx_helper_uninstall();
 		}
 
-		function define_constant() {
-			define( 'RT_WP_NGINX_HELPER_VERSION', $this->version );
-			define( 'RT_WP_NGINX_HELPER_DB_VERSION', $this->db_version );
-			define( 'RT_WP_NGINX_HELPER_FOLDER', plugin_basename( dirname( __FILE__ ) ) );
-		}
 
 		function required_wp_version() {
 
@@ -110,20 +101,6 @@ namespace rtCamp\WP\Nginx {
 			return true;
 		}
 
-		function required_php_version() {
-
-			$php_ok = version_compare( PHP_VERSION, '5.3', '>=' );
-			if ( ($php_ok == FALSE ) ) {
-				add_action(
-						'admin_notices', create_function(
-								'', 'global $rt_wp_nginx_helper; printf (\'<div id="message" class="error"><p><strong>\' . __(\'Sorry, Nginx Helper requires PHP %s or higher\', "rt_wp_nginx_helper" ) . \'</strong></p></div>\', $rt_wp_nginx_helper->minium_PHP );'
-						)
-				);
-				return false;
-			}
-
-			return true;
-		}
 
 		function load_options() {
 			$this->options = get_site_option( 'rt_wp_nginx_helper_options' );

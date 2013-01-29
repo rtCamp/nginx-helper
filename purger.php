@@ -317,6 +317,7 @@ namespace rtCamp\WP\Nginx {
 							$this->purgeUrl( $resize_image[ 0 ], false );
 					}
 				}
+				$this->purgeURL( get_attachment_link( $attachment_id ) );
 			} else {
 				$this->log( "Media (id $attachment_id) edited: no image", "WARNING" );
 			}

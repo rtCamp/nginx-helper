@@ -109,6 +109,11 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.10 ####
+* Cleaned up code.
+* Added credits for code.
+* Improved attachment purging.
+
 #### 1.6.9 ####
 * Added Faux to Purge all buttons, to avoid misleading users.
 

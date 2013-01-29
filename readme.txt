@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us, daankorten
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.6.9
+Stable tag: 1.6.10
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -108,6 +108,11 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.6.10 =
+* Cleaned up code.
+* Added credits for code.
+* Improved attachment purging.
 
 = 1.6.9 =
 * Added Faux to Purge all buttons, to avoid misleading users.
