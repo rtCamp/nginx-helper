@@ -109,6 +109,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.11 ####
+* Removed comments from Admin screens since, it was interfering with media uploads in 3.5 up.
+
 #### 1.6.10 ####
 * Cleaned up code.
 * Added credits for code.
@@ -211,5 +214,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6.9 ####
-Added faux to all purge all buttons.
+#### 1.6.11 ####
+Fixed bug with 3.5 media uploader

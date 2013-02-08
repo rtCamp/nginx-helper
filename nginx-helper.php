@@ -3,7 +3,7 @@
   Plugin Name: Nginx Helper
   Plugin URI: http://rtcamp.com/
   Description: An nginx helper that serves various functions.
-  Version: 1.6.10
+  Version: 1.6.11
   Author: rtCamp
   Author URI: http://rtcamp.com
   Requires at least: 3.0
@@ -231,6 +231,8 @@ namespace rtCamp\WP\Nginx {
 				return;
 			if ( $this->options[ 'enable_stamp' ] != 1 )
 				return;
+			if (is_admin())
+				return;
 			foreach (headers_list() as $header) {
 				list($key,$value) = explode(':',$header,2);
 				if($key == 'Content-Type' && strpos(trim($value),'text/html') !== 0) {
@@ -238,6 +240,7 @@ namespace rtCamp\WP\Nginx {
 				}
 				if($key == 'Content-Type') break;
 			}
+
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 				return;
 			$timestamps = "\n<!--" .
