@@ -208,7 +208,8 @@ namespace rtCamp\WP\Nginx {
 
 			$parse = parse_url( $url );
 
-			$_url_purge = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge' . $parse[ 'path' ];
+			$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge' . $parse[ 'path' ];
+			$_url_purge = $_url_purge_base;
 
 			if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
 				$_url_purge .= '?' . $parse[ 'query' ];
@@ -217,8 +218,10 @@ namespace rtCamp\WP\Nginx {
 			$this->_do_remote_get( $_url_purge );
 
 			if ( $feed ) {
-				$feed_string = (substr( $parse[ 'path' ], -1 ) != '/') ? "/feed/" : "feed/";
-				$this->_do_remote_get( $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge' . $parse[ 'path' ] . $feed_string );
+				$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
+				$this->_do_remote_get( $feed_url );
+				$this->_do_remote_get( $feed_url . 'atom/' );
+				$this->_do_remote_get( $feed_url . 'rdf/' );
 			}
 		}
 
