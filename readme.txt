@@ -1,9 +1,9 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us, daankortenbach
+Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us, daankortenbach, telofy
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.6.11
+Stable tag: 1.6.12
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -108,6 +108,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.6.12 =
+* [telofy](http://wordpress.org/support/profile/telofy) added purging of atom and RDF feeds.
 
 = 1.6.11 =
 * Removed comments from Admin screens since, it was interfering with media uploads in 3.5 up.
@@ -216,5 +219,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.6.11 =
-Fixed bug with 3.5 media uploader
+= 1.6.12 =
+Added RDF and atom feed purge

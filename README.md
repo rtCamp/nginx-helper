@@ -2,7 +2,7 @@
 
 # Nginx #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy),
 
 * **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -109,6 +109,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.6.12 ####
+* [telofy](http://wordpress.org/support/profile/telofy) added purging of atom and RDF feeds.
+
 #### 1.6.11 ####
 * Removed comments from Admin screens since, it was interfering with media uploads in 3.5 up.
 
@@ -214,5 +217,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.6.11 ####
-Fixed bug with 3.5 media uploader
+#### 1.6.12 ####
+Added RDF and atom feed purge
