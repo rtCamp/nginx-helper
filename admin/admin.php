@@ -220,53 +220,53 @@ namespace rtCamp\WP\Nginx {
 											</td>
 										</tr>
 									</table>
-
-									<?php
-									if ( $rt_wp_nginx_helper->options[ 'enable_log' ] != false ) {
-										?>
-										<h3>Logging</h3>
-
-										<?php if ( ! is_writable( RT_WP_NGINX_HELPER_PATH . 'nginx.log' ) ) { ?>
-											<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on log file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), RT_WP_NGINX_HELPER_PATH . 'nginx.log' ); ?></p></span>
-										<?php } ?>
-
-										<table class="form-table rtnginx-table">
-											<tbody>
-												<tr>
-													<th><label for="rt_wp_nginx_helper_logs_path"><?php _e( 'Logs path', 'rt_wp_nginx_helper' ); ?></label></th>
-													<td><?php echo RT_WP_NGINX_HELPER_PATH ?>nginx.log</td>
-												</tr>
-												<tr>
-													<th><label for="rt_wp_nginx_helper_logs_link"><?php _e( 'View Log', 'rt_wp_nginx_helper' ); ?></label></th>
-													<td><a target="_blank" href="<?php echo RT_WP_NGINX_HELPER_URL ?>nginx.log">Log</a></td>
-												</tr>
-
-												<tr>
-													<th><label for="rt_wp_nginx_helper_log_level"><?php _e( 'Log level', 'rt_wp_nginx_helper' ); ?></label></th>
-													<td>
-														<select name="log_level">
-															<option value="NONE"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'NONE' ); ?>><?php _e( 'None', 'rt_wp_nginx_helper' ); ?></option>
-															<option value="INFO"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'INFO' ); ?>><?php _e( 'Info', 'rt_wp_nginx_helper' ); ?></option>
-															<option value="WARNING"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'WARNING' ); ?>><?php _e( 'Warning', 'rt_wp_nginx_helper' ); ?></option>
-															<option value="ERROR"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'ERROR' ); ?>><?php _e( 'Error', 'rt_wp_nginx_helper' ); ?></option>
-														</select>
-													</td>
-												</tr>
-
-												<tr>
-													<th><label for="log_filesize"><?php _e( 'Max log file size', 'rt_wp_nginx_helper' ); ?></label></th>
-													<td>
-														<input id="log_filesize" class="small-text" type="text" name="log_filesize" value="<?php echo $rt_wp_nginx_helper->options[ 'log_filesize' ] ?>" /> Mb
-														<?php if ( $error_log_filesize ) { ?>
-															<span class="error fade" style="display : block"><p><strong><?php echo $error_log_filesize; ?></strong></p></span>
-														<?php } ?>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-
-										<br />
 									<?php } ?>
+
+								<?php
+								if ( $rt_wp_nginx_helper->options[ 'enable_log' ] != false ) {
+									?>
+									<h3>Logging</h3>
+
+									<?php if ( ! is_writable( RT_WP_NGINX_HELPER_PATH . 'nginx.log' ) ) { ?>
+										<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on log file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), RT_WP_NGINX_HELPER_PATH . 'nginx.log' ); ?></p></span>
+									<?php } ?>
+
+									<table class="form-table rtnginx-table">
+										<tbody>
+											<tr>
+												<th><label for="rt_wp_nginx_helper_logs_path"><?php _e( 'Logs path', 'rt_wp_nginx_helper' ); ?></label></th>
+												<td><?php echo RT_WP_NGINX_HELPER_PATH ?>nginx.log</td>
+											</tr>
+											<tr>
+												<th><label for="rt_wp_nginx_helper_logs_link"><?php _e( 'View Log', 'rt_wp_nginx_helper' ); ?></label></th>
+												<td><a target="_blank" href="<?php echo RT_WP_NGINX_HELPER_URL ?>nginx.log">Log</a></td>
+											</tr>
+
+											<tr>
+												<th><label for="rt_wp_nginx_helper_log_level"><?php _e( 'Log level', 'rt_wp_nginx_helper' ); ?></label></th>
+												<td>
+													<select name="log_level">
+														<option value="NONE"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'NONE' ); ?>><?php _e( 'None', 'rt_wp_nginx_helper' ); ?></option>
+														<option value="INFO"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'INFO' ); ?>><?php _e( 'Info', 'rt_wp_nginx_helper' ); ?></option>
+														<option value="WARNING"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'WARNING' ); ?>><?php _e( 'Warning', 'rt_wp_nginx_helper' ); ?></option>
+														<option value="ERROR"<?php selected( $rt_wp_nginx_helper->options[ 'log_level' ], 'ERROR' ); ?>><?php _e( 'Error', 'rt_wp_nginx_helper' ); ?></option>
+													</select>
+												</td>
+											</tr>
+
+											<tr>
+												<th><label for="log_filesize"><?php _e( 'Max log file size', 'rt_wp_nginx_helper' ); ?></label></th>
+												<td>
+													<input id="log_filesize" class="small-text" type="text" name="log_filesize" value="<?php echo $rt_wp_nginx_helper->options[ 'log_filesize' ] ?>" /> Mb
+													<?php if ( $error_log_filesize ) { ?>
+														<span class="error fade" style="display : block"><p><strong><?php echo $error_log_filesize; ?></strong></p></span>
+													<?php } ?>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+
+									<br />
 								<?php } ?>
 
 								<p class="submit">
