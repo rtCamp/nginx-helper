@@ -213,11 +213,11 @@ namespace rtCamp\WP\Nginx {
 				}
 				$rt_nginx_map = "";
 				$rt_nginx_map_array = array( );
-                $rt_nginx_map_server = '';
+				$rt_nginx_map_server = '';
 
-                if ( $this->options[ 'enable_map_server' ] ) {
-                    $rt_nginx_map_server = $_SERVER['SERVER_NAME'] . ':';
-                }
+				if ( $this->options[ 'enable_map_server' ] ) {
+					$rt_nginx_map_server = $_SERVER['SERVER_NAME'] . ':';
+				}
 
 				if ( $rt_all_blogs )
 					foreach ( $rt_all_blogs as $blog ){
