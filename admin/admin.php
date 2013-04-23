@@ -195,8 +195,8 @@ namespace rtCamp\WP\Nginx {
 								if ( is_network_admin() && $rt_wp_nginx_helper->options[ 'enable_map' ] != false ) {
 									?>
 									<h3>Nginx Map</h3>
-									<?php if ( ! is_writable( RT_WP_NGINX_HELPER_PATH . 'map.conf' ) ) { ?>
-										<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on map file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), RT_WP_NGINX_HELPER_PATH . 'map.conf' ); ?></p></span>
+									<?php if ( ! is_writable( $rt_wp_nginx_helper->functional_asset_path() . 'map.conf' ) ) { ?>
+										<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on map file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), $rt_wp_nginx_helper->functional_asset_path() . 'map.conf' ); ?></p></span>
 									<?php } ?>
 
 									<table class="form-table rtnginx-table">
@@ -206,7 +206,7 @@ namespace rtCamp\WP\Nginx {
 												<small>(recommended)</small>
 											</th>
 											<td>
-												<?php echo RT_WP_NGINX_HELPER_PATH . 'map.conf'; ?>
+												<?php echo $rt_wp_nginx_helper->functional_asset_path() . 'map.conf'; ?>
 											</td>
 										</tr>
 										<tr>
@@ -227,19 +227,19 @@ namespace rtCamp\WP\Nginx {
 									?>
 									<h3>Logging</h3>
 
-									<?php if ( ! is_writable( RT_WP_NGINX_HELPER_PATH . 'nginx.log' ) ) { ?>
-										<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on log file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), RT_WP_NGINX_HELPER_PATH . 'nginx.log' ); ?></p></span>
+									<?php if ( ! is_writable( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ) ) { ?>
+										<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on log file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ); ?></p></span>
 									<?php } ?>
 
 									<table class="form-table rtnginx-table">
 										<tbody>
 											<tr>
 												<th><label for="rt_wp_nginx_helper_logs_path"><?php _e( 'Logs path', 'rt_wp_nginx_helper' ); ?></label></th>
-												<td><?php echo RT_WP_NGINX_HELPER_PATH ?>nginx.log</td>
+												<td><?php echo $rt_wp_nginx_helper->functional_asset_path(); ?>nginx.log</td>
 											</tr>
 											<tr>
 												<th><label for="rt_wp_nginx_helper_logs_link"><?php _e( 'View Log', 'rt_wp_nginx_helper' ); ?></label></th>
-												<td><a target="_blank" href="<?php echo RT_WP_NGINX_HELPER_URL ?>nginx.log">Log</a></td>
+												<td><a target="_blank" href="<?php echo $rt_wp_nginx_helper->functional_asset_url(); ?>nginx.log">Log</a></td>
 											</tr>
 
 											<tr>
@@ -289,10 +289,10 @@ namespace rtCamp\WP\Nginx {
 			$nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 			$admin_bar->add_menu( array(
 					'id'    => 'nginx-helper-purge-all',
-					'title' => __( 'Faux Purge Cache', 'rt-nginx' ),
+					'title' => __( 'Purge Cache', 'rt-nginx' ),
 					'href'  => $nonced_url,
 					'meta'  => array(
-						'title' => __( 'Faux Purge Cache', 'rt-nginx' ),
+						'title' => __( 'Purge Cache', 'rt-nginx' ),
 					),
 				)
 			);

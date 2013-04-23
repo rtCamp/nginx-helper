@@ -3,21 +3,26 @@
   Plugin Name: Nginx Helper
   Plugin URI: http://rtcamp.com/
   Description: An nginx helper that serves various functions.
-  Version: 1.6.13
+  Version: 1.7
   Author: rtCamp
   Author URI: http://rtcamp.com
   Requires at least: 3.0
   Tested up to: 3.5
  */
+if (!defined('RT_WP_NGINX_HELPER_CACHE_PATH')){
+	define( 'RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');
+}
 
 namespace rtCamp\WP\Nginx {
 	define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH', plugin_dir_path( __FILE__ ) );
 	define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_URL', plugin_dir_url( __FILE__ ) );
 
+
 	class Helper {
 
 		var $minium_WP = '3.0';
 		var $options = null;
+		var $plugin_name = 'nginx-helper';
 
 		function __construct() {
 
@@ -215,10 +220,25 @@ namespace rtCamp\WP\Nginx {
 			}
 		}
 
+		function functional_asset_path(){
+			$dir = wp_upload_dir();
+			$path = $dir['basedir'].'\\'.$this->plugin_name.'\\';
+
+			return $path;
+		}
+
+		function functional_asset_url(){
+			$dir = wp_upload_dir();
+			$url = $dir['baseurl'].'/'.$this->plugin_name.'/';
+
+			return $url;
+		}
+
 		function update_map() {
 			if ( is_multisite() ) {
 				$rt_nginx_map = $this->get_map();
-				if ( $fp = fopen( RT_WP_NGINX_HELPER_PATH . 'map.conf', 'w+' ) ) {
+
+				if ( $fp = fopen( $this->functional_asset_path() . 'map.conf', 'w+' ) ) {
 					fwrite( $fp, $rt_nginx_map );
 					fclose( $fp );
 					return true;
@@ -274,7 +294,7 @@ namespace rtCamp\WP\Nginx {
 
 			switch ( $action ) {
 				case 'purge':
-					$rt_wp_nginx_purger->purge_them_all();
+					$rt_wp_nginx_purger->true_purge_all();
 					break;
 			}
 

@@ -270,7 +270,7 @@ namespace rtCamp\WP\Nginx {
 			$log_levels = array( "INFO" => 0, "WARNING" => 1, "ERROR" => 2, "NONE" => 3 );
 
 			if ( $log_levels[ $level ] >= $log_levels[ $rt_wp_nginx_helper->options[ 'log_level' ] ] ) {
-				if ( $fp = fopen( RT_WP_NGINX_HELPER_PATH . 'nginx.log', "a+" ) ) {
+				if ( $fp = fopen( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log', "a+" ) ) {
 					fwrite( $fp, "\n" . gmdate( "Y-m-d H:i:s " ) . " | " . $level . " | " . $msg );
 					fclose( $fp );
 				}
@@ -285,17 +285,17 @@ namespace rtCamp\WP\Nginx {
 
 			$maxSizeAllowed = (is_numeric( $rt_wp_nginx_helper->options[ 'log_filesize' ] )) ? $rt_wp_nginx_helper->options[ 'log_filesize' ] * 1048576 : 5242880;
 
-			$fileSize = filesize( RT_WP_NGINX_HELPER_PATH . 'nginx.log' );
+			$fileSize = filesize( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' );
 
 			if ( $fileSize > $maxSizeAllowed ) {
 
 				$offset = $fileSize - $maxSizeAllowed;
 
-				if ( $file_content = file_get_contents( RT_WP_NGINX_HELPER_PATH . 'nginx.log', NULL, NULL, $offset ) ) {
+				if ( $file_content = file_get_contents( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log', NULL, NULL, $offset ) ) {
 
 					if ( $file_content = strstr( $file_content, "\n" ) ) {
 
-						if ( $fp = fopen( RT_WP_NGINX_HELPER_PATH . 'nginx.log', "w+" ) ) {
+						if ( $fp = fopen( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log', "w+" ) ) {
 							fwrite( $fp, $file_content );
 							fclose( $fp );
 						}
@@ -671,6 +671,32 @@ namespace rtCamp\WP\Nginx {
 			}
 
 			return true;
+		}
+
+		function true_purge_all(){
+			$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH);
+			$this->log( "* * * * *" );
+			$this->log( "* Purged Everything!" );
+			$this->log( "* * * * *" );
+		}
+
+		function unlinkRecursive( $dir ) {
+			if ( ! $dh = opendir( $dir ) ) {
+				return;
+			}
+			while ( false !== ($obj = readdir( $dh )) ) {
+				if ( $obj == '.' || $obj == '..' ) {
+					continue;
+				}
+
+				if ( ! unlink( $dir . '/' . $obj ) ) {
+					unlinkRecursive( $dir . '/' . $obj, true );
+				}
+			}
+
+			closedir( $dh );
+
+			return;
 		}
 
 	}

@@ -1,9 +1,9 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us, daankortenbach, telofy
+Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us, daankortenbach, telofy, pjv
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.6.13
+Stable tag: 1.7
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -86,9 +86,13 @@ So, in the above eg, the purge url will be http://yoursite.com/purge/about/
 Just open this in a browser and the page will be purged instantly.
 Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
-**Q. There's a 'faux purge all' button? Does it purge the whole site?**
+**Q. There's a 'purge all' button? Does it purge the whole site?**
 
-This is a faux purge all. This just tries to cleanse all the cache in its own limited manner. There isn't and can't be a true purge all. See this discussion: http://wordpress.org/support/topic/feature-suggestion-for-additional-purge-options?replies=13.
+Yes, it does. It physically empties the cache directory. It is set by default to `/var/run/nginx-cache/`.
+
+If your cache directory is different, you can override this in your wp-config.php by adding
+`define('RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');`
+Replace the path with your own.
 
 = FAQ - Nginx Map =
 
@@ -108,6 +112,11 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.7 =
+* True full cache purge added.
+* Map file location changed to uploads' directory to fix http://rtcamp.com/support/topic/plugin-update-removes-map-file/
+* Log file location also changed to uploads' directory.
 
 = 1.6.13 =
 * [pjv](http://profiles.wordpress.org/pjv/) changed the way home url is accessed. Instead of site option, the plugin now uses home_url() function.
@@ -222,5 +231,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.6.13 =
-Changed home url method.
+= 1.7 =
+Added true purge all. Updated log and map file locations.
