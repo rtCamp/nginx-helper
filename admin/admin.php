@@ -95,7 +95,7 @@ namespace rtCamp\WP\Nginx {
 							<form id="purgeall" action="" method="post">
 										<?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
 										<?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
-										<a href="<?php echo $nonced_url; ?>" class="button-primary">Faux Purge all URLs</a>
+										<a href="<?php echo $nonced_url; ?>" class="button-primary">Purge Cache</a>
 							</form>
 							<form id="post_form" method="post" action="#" name="smart_http_expire_form">
 								<?php if ( ! ( ! is_network_admin() && is_multisite()) ) { ?>
@@ -227,7 +227,14 @@ namespace rtCamp\WP\Nginx {
 									?>
 									<h3>Logging</h3>
 
-									<?php if ( ! is_writable( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ) ) { ?>
+									<?php
+									if ( ! is_writable( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ) ) {
+										$rt_wp_nginx_purger->log( "+++++++++" );
+										$rt_wp_nginx_purger->log( "+Log Test" );
+										$rt_wp_nginx_purger->log( "+++++++++" );
+									}
+									if ( ! is_writable( $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ) ) {
+									?>
 										<span class="error fade" style="display : block"><p><?php printf( __( "Can't write on log file.<br /><br />Check you have write permission on <strong>%s</strong>", "rt_wp_nginx_helper" ), $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ); ?></p></span>
 									<?php } ?>
 

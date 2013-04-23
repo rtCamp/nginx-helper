@@ -9,10 +9,6 @@
   Requires at least: 3.0
   Tested up to: 3.5
  */
-if (!defined('RT_WP_NGINX_HELPER_CACHE_PATH')){
-	define( 'RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');
-}
-
 namespace rtCamp\WP\Nginx {
 	define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH', plugin_dir_path( __FILE__ ) );
 	define( 'rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_URL', plugin_dir_url( __FILE__ ) );
@@ -79,7 +75,13 @@ namespace rtCamp\WP\Nginx {
 		}
 
 		function activate() {
+
+			$path = $this->functional_asset_path();
+			if(!is_dir($path)){
+				mkdir($path);
+			}
 			include_once (RT_WP_NGINX_HELPER_PATH . 'admin/install.php');
+
 			rt_wp_nginx_helper_install();
 		}
 
@@ -222,14 +224,13 @@ namespace rtCamp\WP\Nginx {
 
 		function functional_asset_path(){
 			$dir = wp_upload_dir();
-			$path = $dir['basedir'].'\\'.$this->plugin_name.'\\';
-
+			$path = $dir['basedir'].'/nginx-helper/';
 			return $path;
 		}
 
 		function functional_asset_url(){
 			$dir = wp_upload_dir();
-			$url = $dir['baseurl'].'/'.$this->plugin_name.'/';
+			$url = $dir['baseurl'].'/nginx-helper/';
 
 			return $url;
 		}
@@ -306,6 +307,10 @@ namespace rtCamp\WP\Nginx {
 }
 
 namespace {
+
+	if (!defined('RT_WP_NGINX_HELPER_CACHE_PATH')){
+		define( 'RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');
+	}
 	global $current_blog;
 
 	if ( is_admin() ) {
