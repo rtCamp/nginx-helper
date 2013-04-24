@@ -27,7 +27,7 @@ namespace rtCamp\WP\Nginx {
 		// load the script for the defined page and load only this code
 		function show_menu() {
 
-			global $rt_wp_nginx_helper;
+			global $rt_wp_nginx_helper, $rt_wp_nginx_purger;;
 
 			$required_page = $_GET[ 'page' ];
 			switch ( $required_page ) {

@@ -113,6 +113,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.7.1 ####
+* Fixes bug in true purge and admin screen.
+
 #### 1.7 ####
 * True full cache purge added.
 * Map file location changed to uploads' directory to fix http://rtcamp.com/support/topic/plugin-update-removes-map-file/
@@ -229,5 +232,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.7 ####
+#### 1.7.1 ####
 Added true purge all. Updated log and map file locations.
