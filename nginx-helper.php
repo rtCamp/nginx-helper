@@ -3,7 +3,7 @@
   Plugin Name: Nginx Helper
   Plugin URI: http://rtcamp.com/
   Description: An nginx helper that serves various functions.
-  Version: 1.7.1
+  Version: 1.7.2
   Author: rtCamp
   Author URI: http://rtcamp.com
   Requires at least: 3.0
@@ -309,7 +309,7 @@ namespace rtCamp\WP\Nginx {
 namespace {
 
 	if (!defined('RT_WP_NGINX_HELPER_CACHE_PATH')){
-		define( 'RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');
+		define( 'RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache');
 	}
 	global $current_blog;
 

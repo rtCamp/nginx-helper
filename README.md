@@ -113,6 +113,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.7.2 ####
+* [pjv](http://profiles.wordpress.org/pjv/) fixed bug in logging file.
+
 #### 1.7.1 ####
 * Fixes bug in true purge and admin screen.
 
