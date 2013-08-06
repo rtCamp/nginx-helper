@@ -689,7 +689,7 @@ namespace rtCamp\WP\Nginx {
 					continue;
 				}
 
-				if ( ! unlink( $dir . '/' . $obj ) ) {
+				if ( ! @unlink( $dir . '/' . $obj ) ) {
 					$this->unlinkRecursive( $dir . '/' . $obj, true );
 				}
 			}
