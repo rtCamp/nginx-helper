@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us, daankorten
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -92,6 +92,7 @@ Yes, it does. It physically empties the cache directory. It is set by default to
 
 If your cache directory is different, you can override this in your wp-config.php by adding
 `define('RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');`
+
 Replace the path with your own.
 
 = FAQ - Nginx Map =
@@ -112,6 +113,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.7.3 =
+* Suppressed `unlink` related error-messages which can be safely ignored.
 
 = 1.7.2 =
 * [pjv](http://profiles.wordpress.org/pjv/) fixed bug in logging file.

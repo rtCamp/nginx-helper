@@ -674,13 +674,15 @@ namespace rtCamp\WP\Nginx {
 		}
 
 		function true_purge_all(){
-			$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH);
+			$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH, false);
 			$this->log( "* * * * *" );
 			$this->log( "* Purged Everything!" );
 			$this->log( "* * * * *" );
 		}
 
-		function unlinkRecursive( $dir ) {
+		/** Source - http://stackoverflow.com/a/1360437/156336 **/		
+		
+		function unlinkRecursive( $dir, $deleteRootToo ) {
 			if ( ! $dh = opendir( $dir ) ) {
 				return;
 			}
@@ -692,6 +694,10 @@ namespace rtCamp\WP\Nginx {
 				if ( ! @unlink( $dir . '/' . $obj ) ) {
 					$this->unlinkRecursive( $dir . '/' . $obj, true );
 				}
+			}
+			
+			if ($deleteRootToo){
+				rmdir($dir);
 			}
 
 			closedir( $dh );
