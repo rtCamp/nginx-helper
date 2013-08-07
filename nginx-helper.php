@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Nginx Helper
-  Plugin URI: http://rtcamp.com/
+  Plugin URI: http://rtcamp.com/nginx-helper/
   Description: An nginx helper that serves various functions.
   Version: 1.7.3
   Author: rtCamp
