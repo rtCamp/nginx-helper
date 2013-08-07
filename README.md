@@ -44,21 +44,27 @@ For proper configuration, check **tutorial list** of [Description tab](http://wo
 
 ## Frequently Asked Questions ##
 
+**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for uptodate FAQ's. 
+
 #### FAQ - Installation/Comptability ####
 
 **Q. Will this work out of the box?**
 
-No. You need to make some changes at the Nginx end. Please check **tutorial list** of [Description tab](http://wordpress.org/extend/plugins/nginx-helper/)
-
-#### FAQ - Nginx Map ####
-
-**Q. My multisite already uses `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**
-
-Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask WordPress i.e. PHP/MySQL to do some work for static files e.g. images in your post. Nginx map lets nginx handle files on its own bypassing wordpress which gives you much better performance without using a CDN.
+No. You need to make some changes at the Nginx end. Please check [tutorial list](http://rtcamp.com/wordpress-nginx/tutorials)
 
 #### FAQ - Nginx Fastcgi Cache Purge ####
 
+**Q. There's a 'purge all' button? Does it purge the whole site?**
+
+Yes, it does. It physically empties the cache directory. It is set by default to `/var/run/nginx-cache/`.
+
+If your cache directory is different, you can override this in your wp-config.php by adding
+`define('RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');`
+
+Replace the path with your own.
+
 **Q. Does it work for custom posts and taxonomies?**
+
 Yes. It handles all post-types same way.
 
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
@@ -86,15 +92,12 @@ So, in the above eg, the purge url will be http://yoursite.com/purge/about/
 Just open this in a browser and the page will be purged instantly.
 Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
-**Q. There's a 'purge all' button? Does it purge the whole site?**
-
-Yes, it does. It physically empties the cache directory. It is set by default to `/var/run/nginx-cache/`.
-
-If your cache directory is different, you can override this in your wp-config.php by adding
-`define('RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');`
-Replace the path with your own.
 
 #### FAQ - Nginx Map ####
+
+**Q. My multisite already uses `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**
+
+Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask WordPress i.e. PHP/MySQL to do some work for static files e.g. images in your post. Nginx map lets nginx handle files on its own bypassing wordpress which gives you much better performance without using a CDN.
 
 **Q. I am using X plugin. Will it work on Nginx?**
 
@@ -112,6 +115,10 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 ## Changelog ##
+
+#### 1.7.3 ####
+* Suppressed `unlink` related error-messages which can be safely ignored.
+* Fixed a bug in purge-all option.
 
 #### 1.7.2 ####
 * [pjv](http://profiles.wordpress.org/pjv/) fixed bug in logging file.
@@ -200,7 +207,7 @@ Its just that we are hyperactive on our own forum!
 #### 1.3.4 ####
 
 * Fixed duplicate entries generated for maps (Harmless, but doesn't look good!)
-* Added timestamp html comments for cache verification, as described here: http://rtcamp.com/tutorials/checklist-verify-wordpress-nginx-setup/
+* Added timestamp html comments for cache verification, as described here: http://rtcamp.com/wordpress-nginx/tutorials/checklist/
 
 #### 1.3.3 ####
 
@@ -218,7 +225,6 @@ Its just that we are hyperactive on our own forum!
 
 * Improved Readme.
 
-
 #### 1.2 ####
 
 * Fixed map generation error.
@@ -235,5 +241,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.7.1 ####
-Added true purge all. Updated log and map file locations.
+#### 1.7.3 ####
+Fixed true purge all.
