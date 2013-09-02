@@ -81,10 +81,10 @@ namespace rtCamp\WP\Nginx {
 		$rt_wp_nginx_helper_get_options[ 'log_level' ] = 'INFO';
 		$rt_wp_nginx_helper_get_options[ 'log_filesize' ] = 5;
 
-		$rt_wp_nginx_helper_get_options[ 'enable_purge' ] = 1;
+		$rt_wp_nginx_helper_get_options[ 'enable_purge' ] = 0;
 		$rt_wp_nginx_helper_get_options[ 'enable_map' ] = 0;
 		$rt_wp_nginx_helper_get_options[ 'enable_log' ] = 0;
-		$rt_wp_nginx_helper_get_options[ 'enable_stamp' ] = 1;
+		$rt_wp_nginx_helper_get_options[ 'enable_stamp' ] = 0;
 
 		$rt_wp_nginx_helper_get_options[ 'purge_homepage_on_new' ] = 1;
 		$rt_wp_nginx_helper_get_options[ 'purge_homepage_on_edit' ] = 1;
