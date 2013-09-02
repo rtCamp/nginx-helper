@@ -1,9 +1,9 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, Darren Slatten, jk3us, daankortenbach, telofy, pjv
+Contributors: rtcamp, rahul286, saurabhshukla, faishal, Darren Slatten, jk3us, daankortenbach, telofy, pjv
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.6
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -115,6 +115,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.7.4 =
+* Disable purge and stamp by defualt.
 
 = 1.7.3 =
 * Suppressed `unlink` related error-messages which can be safely ignored.
@@ -243,5 +246,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.7.3 =
-Fixed true purge all.
+= 1.7.4 =
+ Disable purge and html stamp by defualt.
