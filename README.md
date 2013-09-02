@@ -2,7 +2,7 @@
 
 # Nginx #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [faishal] (http://profiles.wordpress.org/faishal), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv),
 
 * **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -115,6 +115,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 ## Changelog ##
+
+#### 1.7.4 ####
+* Disable purge and stamp by defualt.
 
 #### 1.7.3 ####
 * Suppressed `unlink` related error-messages which can be safely ignored.
@@ -241,5 +244,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.7.3 ####
-Fixed true purge all.
+#### 1.7.4 ####
+ Disable purge and html stamp by defualt.
