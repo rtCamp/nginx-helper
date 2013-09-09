@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla, faishal, Darren Slatten, jk3us, d
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.6
-Stable tag: 1.7.4
+Stable tag: 1.7.5
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -115,6 +115,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.7.5 =
+* Fixed option name mismatch issue to purge homepage on delete.
 
 = 1.7.4 =
 * Disable purge and stamp by defualt.
@@ -246,5 +249,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.7.4 =
- Disable purge and html stamp by defualt.
+= 1.7.5 =
+Fixed option name mismatch issue to purge homepage on delete.
