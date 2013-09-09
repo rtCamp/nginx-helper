@@ -116,6 +116,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.7.5 ####
+* Fixed option name mismatch issue to purge homepage on delete.
+
 #### 1.7.4 ####
 * Disable purge and stamp by defualt.
 
@@ -244,5 +247,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.7.4 ####
- Disable purge and html stamp by defualt.
+#### 1.7.5 ####
+Fixed option name mismatch issue to purge homepage on delete.
