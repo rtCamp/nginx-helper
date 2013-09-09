@@ -344,7 +344,7 @@ namespace rtCamp\WP\Nginx {
 
 
 
-				if ( $rt_wp_nginx_helper->options[ 'purge_homepage_on_delete' ] == 1 ) {
+				if ( $rt_wp_nginx_helper->options[ 'purge_homepage_on_del' ] == 1 ) {
 					$this->_purge_homepage();
 				}
 
