@@ -12,7 +12,9 @@ namespace rtCamp\WP\Nginx {
 			}
 			add_action( 'admin_print_scripts', array( &$this, 'load_scripts' ) );
 			add_action( 'admin_print_styles', array( &$this, 'load_styles' ) );
-			add_action( 'admin_bar_menu', array( &$this, 'add_toolbar_purge_item' ), 100 );
+			if ( current_user_can( 'manage_options' ) ){
+				add_action( 'admin_bar_menu', array( &$this, 'add_toolbar_purge_item' ), 100 );
+			}
 		}
 
 		function add_menu() {
