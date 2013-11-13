@@ -12,9 +12,8 @@ namespace rtCamp\WP\Nginx {
 			}
 			add_action( 'admin_print_scripts', array( &$this, 'load_scripts' ) );
 			add_action( 'admin_print_styles', array( &$this, 'load_styles' ) );
-			if ( current_user_can( 'manage_options' ) ){
-				add_action( 'admin_bar_menu', array( &$this, 'add_toolbar_purge_item' ), 100 );
-			}
+                        add_action( 'admin_bar_menu', array( &$this, 'add_toolbar_purge_item' ), 100 );
+                        
 		}
 
 		function add_menu() {
@@ -302,6 +301,7 @@ namespace rtCamp\WP\Nginx {
 		}
 
 		function add_toolbar_purge_item( $admin_bar ) {
+                        if ( ! current_user_can( 'manage_options' ) ) return;
 			$purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) );
 			$nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 			$admin_bar->add_menu( array(
