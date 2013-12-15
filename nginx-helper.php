@@ -225,14 +225,13 @@ namespace rtCamp\WP\Nginx {
 		function functional_asset_path(){
 			$dir = wp_upload_dir();
 			$path = $dir['basedir'].'/nginx-helper/';
-			return $path;
+            return apply_filters('nginx_asset_path', $path);
 		}
 
 		function functional_asset_url(){
 			$dir = wp_upload_dir();
 			$url = $dir['baseurl'].'/nginx-helper/';
-
-			return $url;
+            return apply_filters('nginx_asset_url', $url);
 		}
 
 		function update_map() {
