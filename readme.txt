@@ -1,5 +1,5 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, faishal, Darren Slatten, jk3us, daankortenbach, telofy, pjv
+Contributors: rtcamp, rahul286, saurabhshukla, faishal, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 3.8
@@ -253,5 +253,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.7.5 =
-Fixed option name mismatch issue to purge homepage on delete.
+= 1.7.6 =
+Update backed ui issue and add language support.
