@@ -88,17 +88,23 @@ namespace rtCamp\WP\Nginx {
 					$rt_wp_nginx_helper->options = get_site_option( "rt_wp_nginx_helper_options" );
 					?>
 
-					<div class="wrap">
-
-						<div class="icon32" id="icon-options-nginx"><br /></div>
-						<h2>Nginx Settings</h2>
-						<div id="content_block" class="align_left">
+                    <div class="wrap rt-nginx-wrapper">
+                        <h2>Nginx Settings</h2>
+                        <div id="poststuff">
+                            <div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
+                                <div id="post-body-content" class="postbox">
+                                    <h3 class="hndle">
+                                        <span>Plugin Options</span>
+                                    </h3>
 							<form id="purgeall" action="" method="post">
-										<?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
-										<?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
-										<a href="<?php echo $nonced_url; ?>" class="button-primary">Purge Cache</a>
+                                                            <div class="inside">
+                                                                <?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
+                                                                <?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
+                                                                <a href="<?php echo $nonced_url; ?>" class="button-primary">Purge Cache</a>
+                                                            </div>
 							</form>
 							<form id="post_form" method="post" action="#" name="smart_http_expire_form">
+                                                            <div class="inside">
 								<?php if ( ! ( ! is_network_admin() && is_multisite()) ) { ?>
 
 									<input type="hidden" name="is_submit" value="1" />
@@ -288,13 +294,16 @@ namespace rtCamp\WP\Nginx {
 								<p class="submit">
 									<input type="submit" name="smart_http_expire_save" class="button-primary" value="Save" />
 								</p>
+                                        </div> <!-- End of .inside -->
 							</form>
 
 						</div>
-						<div id="rtads" class="metabox-holder align_left">
-							<?php $this->default_admin_sidebar(); ?>
-						</div>
-					</div>
+                                <div id="postbox-container-1" class="postbox-container">
+                                    <?php $this->default_admin_sidebar(); ?>
+                                </div>
+                            </div> <!-- End of #post-body -->
+                        </div> <!-- End of #poststuff -->
+                    </div> <!-- End of .wrap -->
 					<?php
 					break;
 			}
@@ -353,4 +362,3 @@ namespace rtCamp\WP\Nginx {
 	}
 
 }
-?>
