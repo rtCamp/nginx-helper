@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nginx Helper 1.7.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-23 15:05+0530\n"
-"PO-Revision-Date: 2013-12-23 15:26+0530\n"
+"POT-Creation-Date: 2013-12-23 15:37+0530\n"
+"PO-Revision-Date: 2013-12-23 15:37+0530\n"
 "Last-Translator: faishal <faishal.saiyed@rtcamp.com>\n"
 "Language-Team: rtCampers <support@rtcamp.com>\n"
 "Language: en\n"
@@ -16,19 +16,19 @@ msgstr ""
 "X-Generator: Poedit 1.6.3\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../nginx-helper.php:256
+#: ../nginx-helper.php:257
 msgid "Purge initiated"
 msgstr ""
 
-#: ../nginx-helper.php:339
+#: ../nginx-helper.php:340
 msgid "Settings"
 msgstr ""
 
-#: ../nginx-helper.php:366
+#: ../nginx-helper.php:367
 msgid "No items"
 msgstr ""
 
-#: ../nginx-helper.php:371
+#: ../nginx-helper.php:372
 msgid "Posted "
 msgstr ""
 
