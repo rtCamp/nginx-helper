@@ -1,45 +1,17 @@
+.clearfix { *zoom: 1; }
+.clearfix:before, .clearfix:after { content: " "; display: table; }
+.clearfix:after { clear: both; }
 h4 { margin: 0; }
 .rt-nginx-wrapper .form-table td { padding: 5px; }
 .form-table th, .form-wrap label { vertical-align: middle; }
 table.rtnginx-table { border-bottom: 1px solid #EEE; }
-pre#map{
-    background: #e5e5e5 none;
-    border-radius:10px;
-    padding:10px;
-}
+pre#map { background: #e5e5e5 none; border-radius: 10px; padding: 10px; }
 .wrap h2 { background: url(nginx-icon-32x32.png) 0 6px no-repeat rgba(0, 0, 0, 0); padding-left: 40px; }
-form#purgeall .button-primary{
-float: right;
-height: 32px;
-line-height: 32px;
-font-weight: bold;
-font-size: 16px;
-}
-#social .inside a {
-background: url(rtp-social-icons-32-32.png) no-repeat;
-display: inline-block;
-height: 35px;
-margin: 0 0 0 9px;
-padding: 0;
-text-indent: -9999px;
-text-transform: uppercase;
-width: 35px;
-}
-#social .inside a.rt-nginx-facebook {
-background-position: 0 0;
-}
-#social .inside a.rt-nginx-facebook:hover {
-background-position: 0 -44px;
-}
-#social .inside a.rt-nginx-twitter {
-background-position: -44px 0;
-}
-#social .inside a.rt-nginx-twitter:hover {
-background-position: -44px -44px;
-}
-#social .inside a.rt-nginx-rss {
-background-position: -88px 0;
-}
-#social .inside a.rt-nginx-rss:hover {
-background-position: -88px -44px;
-}
+form#purgeall .button-primary { float: right; height: 32px; line-height: 32px; font-weight: bold; font-size: 16px; }
+.nh-aligncenter { display: block; text-align: center; line-height: 2; }
+#latest_news .inside ul { margin: 0 0 0 12px }
+    #latest_news .inside ul li { list-style: square; padding: 0 0 7px; }
+#social .inside a { background-color: #666;color: #FFF;display: inline-block;height: 30px;font-size: 1.25rem;line-height: 30px;margin: 10px 20px 0 0;overflow: hidden;padding: 0;text-align: center;text-decoration: none;width: 30px;-webkit-border-radius: 1000px;-moz-border-radius: 1000px;border-radius: 1000px; }
+    #social .inside .nginx-helper-rss:hover { background-color: #FAA33D; }
+    #social .inside .nginx-helper-facebook:hover { background-color: #537BBD; }
+    #social .inside .nginx-helper-twitter:hover { background-color: #40BFF5; }

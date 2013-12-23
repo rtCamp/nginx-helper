@@ -10,17 +10,16 @@ namespace rtCamp\WP\Nginx {
 	}
 
 	function rt_wp_nginx_helper_install() {
-
 		global $wp_roles, $rt_wp_nginx_helper;
 
-		if ( ! current_user_can( 'activate_plugins' ) )
-			return;
+                if ( ! current_user_can( 'activate_plugins' ) ) {
+                    return;
+                }
 
 		$role = get_role( 'administrator' );
 
-
 		if ( empty( $role ) ) {
-			update_site_option( "rt_wp_nginx_helper_init_check", __( 'Sorry, you need to be an administrator to use Nginx Helper', "rt_wp_nginx_helper" ) );
+			update_site_option( "rt_wp_nginx_helper_init_check", __( 'Sorry, you need to be an administrator to use Nginx Helper', 'nginx-helper' ) );
 			return;
 		}
 
@@ -54,12 +53,8 @@ namespace rtCamp\WP\Nginx {
 	}
 
 	function rt_wp_nginx_helper_uninstall() {
-
 		wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
-
 		delete_site_option( 'rt_wp_nginx_helper_options' );
-
-
 		rt_wp_nginx_helper_remove_capability( 'Nginx Helper | Config' );
 		rt_wp_nginx_helper_remove_capability( 'Nginx Helper | Purge cache' );
 	}
@@ -74,10 +69,7 @@ namespace rtCamp\WP\Nginx {
 	}
 
 	function rt_wp_nginx_helper_get_options() {
-
 		$rt_wp_nginx_helper_get_options = array( );
-
-
 		$rt_wp_nginx_helper_get_options[ 'log_level' ] = 'INFO';
 		$rt_wp_nginx_helper_get_options[ 'log_filesize' ] = 5;
 
@@ -103,6 +95,4 @@ namespace rtCamp\WP\Nginx {
 
 		return $rt_wp_nginx_helper_get_options;
 	}
-
 }
-?>
