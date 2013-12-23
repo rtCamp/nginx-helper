@@ -10,8 +10,8 @@ namespace rtCamp\WP\Nginx {
 			} else {
 				add_action( 'admin_menu', array( &$this, 'add_menu' ) );
 			}
-			add_action( 'admin_print_scripts', array( &$this, 'load_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'load_styles' ) );
+			add_action( 'admin_print_scripts-settings_page_nginx', array( &$this, 'load_scripts' ) );
+			add_action( 'admin_print_styles-settings_page_nginx', array( &$this, 'load_styles' ) );
                         add_action( 'admin_bar_menu', array( &$this, 'add_toolbar_purge_item' ), 100 );
                         
 		}
@@ -88,43 +88,65 @@ namespace rtCamp\WP\Nginx {
 					$rt_wp_nginx_helper->options = get_site_option( "rt_wp_nginx_helper_options" );
 					?>
 
-					<div class="wrap">
-
-						<div class="icon32" id="icon-options-nginx"><br /></div>
-						<h2>Nginx Settings</h2>
-						<div id="content_block" class="align_left">
+                    <div class="wrap rt-nginx-wrapper">
+                        <h2>Nginx Settings</h2>
+                        <div id="poststuff">
+                            <div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
+                                <div id="post-body-content" class="postbox">
+                                    <h3 class="hndle">
+                                        <span>Plugin Options</span>
+                                    </h3>
 							<form id="purgeall" action="" method="post">
-										<?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
-										<?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
-										<a href="<?php echo $nonced_url; ?>" class="button-primary">Purge Cache</a>
+                                                            <div class="inside">
+                                                                <?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
+                                                                <?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
+                                                                <a href="<?php echo $nonced_url; ?>" class="button-primary">Purge Cache</a>
+                                                            </div>
 							</form>
 							<form id="post_form" method="post" action="#" name="smart_http_expire_form">
+                                                            <div class="inside">
 								<?php if ( ! ( ! is_network_admin() && is_multisite()) ) { ?>
 
 									<input type="hidden" name="is_submit" value="1" />
-
-									<h3>Plugin Options</h3>
-
-									<table class="form-table">
-										<tr valign="top">
-											<td>
-												<label for="enable_purge"><input type="checkbox" value="1" id="enable_purge" name="enable_purge"<?php checked( $rt_wp_nginx_helper->options[ 'enable_purge' ], 1 ); ?>>&nbsp;Enable Cache Purge (requires external settings for nginx).</label><br />
-												<?php if ( is_network_admin() ) { ?>
-													<label for="enable_map"><input type="checkbox" value="1" id="enable_map" name="enable_map"<?php checked( $rt_wp_nginx_helper->options[ 'enable_map' ], 1 ); ?>>&nbsp;Enable Nginx Map.</label><br />
-												<?php } ?>
-												<label for="enable_log"><input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked( $rt_wp_nginx_helper->options[ 'enable_log' ], 1 ); ?>>&nbsp;Enable Logging</label><br />
-												<label for="enable_stamp"><input type="checkbox" value="1" id="enable_stamp" name="enable_stamp"<?php checked( $rt_wp_nginx_helper->options[ 'enable_stamp' ], 1 ); ?>>&nbsp;Enable Nginx Timestamp in HTML</label>
-											</td>
-										</tr>
-									</table>
-
+                                                                            <table class="form-table">
+                                                                                <tr valign="top">
+                                                                                    <td>
+                                                                                        <input type="checkbox" value="1" id="enable_purge" name="enable_purge" <?php checked($rt_wp_nginx_helper->options['enable_purge'], 1); ?> />
+                                                                                        <label for="enable_purge">Enable Cache Purge (requires external settings for nginx)</label>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <?php if (is_network_admin()) { ?>
+                                                                                    <tr valign="top">
+                                                                                        <td>
+                                                                                            <input type="checkbox" value="1" id="enable_map" name="enable_map"<?php checked($rt_wp_nginx_helper->options['enable_map'], 1); ?> />
+                                                                                            <label for="enable_map">Enable Nginx Map.</label>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                <?php } ?>
+                                                                                <tr valign="top">
+                                                                                    <td>
+                                                                                        <input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked($rt_wp_nginx_helper->options['enable_log'], 1); ?> />
+                                                                                        <label for="enable_log">Enable Logging</label>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr valign="top">
+                                                                                    <td>
+                                                                                        <input type="checkbox" value="1" id="enable_stamp" name="enable_stamp"<?php checked($rt_wp_nginx_helper->options['enable_stamp'], 1); ?> />
+                                                                                        <label for="enable_stamp">Enable Nginx Timestamp in HTML</label>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div> <!-- End of .inside -->
 									<?php
 									$displayvar = '';
 									if ( $rt_wp_nginx_helper->options[ 'enable_purge' ] == false ) {
 										$displayvar = ' style="display:none"';
 									}
 									?>
-									<h3<?php echo $displayvar; ?>>Purging Options</h3>
+                                                                        <h3 class="hndle"<?php echo $displayvar; ?>>
+                                                                            <span>Purging Options</span>
+                                                                        </h3>
+                                                                        <div class="inside">
 
 									<table class="form-table rtnginx-table"<?php echo $displayvar; ?>>
 										<tr valign="top">
@@ -288,13 +310,16 @@ namespace rtCamp\WP\Nginx {
 								<p class="submit">
 									<input type="submit" name="smart_http_expire_save" class="button-primary" value="Save" />
 								</p>
+                                        </div> <!-- End of .inside -->
 							</form>
 
 						</div>
-						<div id="rtads" class="metabox-holder align_left">
-							<?php $this->default_admin_sidebar(); ?>
-						</div>
-					</div>
+                                <div id="postbox-container-1" class="postbox-container">
+                                    <?php $this->default_admin_sidebar(); ?>
+                                </div>
+                            </div> <!-- End of #post-body -->
+                        </div> <!-- End of #poststuff -->
+                    </div> <!-- End of .wrap -->
 					<?php
 					break;
 			}
@@ -353,4 +378,3 @@ namespace rtCamp\WP\Nginx {
 	}
 
 }
-?>

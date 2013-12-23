@@ -1,32 +1,20 @@
-table.rtnginx-table{
-    padding: 10px;
-    border: 1px #CCC solid;
-    width: 95%;
-    margin-bottom: 10px;
-}
+h4 { margin: 0; }
+.rt-nginx-wrapper .form-table td { padding: 5px; }
+.form-table th, .form-wrap label { vertical-align: middle; }
+table.rtnginx-table { border-bottom: 1px solid #EEE; }
 pre#map{
     background: #e5e5e5 none;
     border-radius:10px;
     padding:10px;
 }
-#icon-options-nginx{
-    background:transparent url(nginx-icon-32x32.png) center center no-repeat;
-}
-div#content_block form { padding-left: 25px }
-div#content_block { width: 70% }
-div#rtads{ width:30%}
-.align_left, .alignleft {
-float: left;
-}
+.wrap h2 { background: url(nginx-icon-32x32.png) 0 6px no-repeat rgba(0, 0, 0, 0); padding-left: 40px; }
 form#purgeall .button-primary{
 float: right;
-margin-right: 100px;
 height: 32px;
 line-height: 32px;
 font-weight: bold;
 font-size: 16px;
 }
-
 #social .inside a {
 background: url(rtp-social-icons-32-32.png) no-repeat;
 display: inline-block;
@@ -55,5 +43,3 @@ background-position: -88px 0;
 #social .inside a.rt-nginx-rss:hover {
 background-position: -88px -44px;
 }
-
-
