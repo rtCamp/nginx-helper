@@ -10,8 +10,8 @@ namespace rtCamp\WP\Nginx {
 			} else {
 				add_action( 'admin_menu', array( &$this, 'add_menu' ) );
 			}
-			add_action( 'admin_print_scripts', array( &$this, 'load_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'load_styles' ) );
+			add_action( 'admin_print_scripts-settings_page_nginx', array( &$this, 'load_scripts' ) );
+			add_action( 'admin_print_styles-settings_page_nginx', array( &$this, 'load_styles' ) );
                         add_action( 'admin_bar_menu', array( &$this, 'add_toolbar_purge_item' ), 100 );
                         
 		}
