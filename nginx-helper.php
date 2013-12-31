@@ -324,7 +324,9 @@ namespace {
                 $status = 302;
             }
 
-            $location = wp_sanitize_redirect($location);
+            if (function_exists('wp_sanitize_redirect')) {
+                $location = wp_sanitize_redirect($location);
+            }
             header('Location: ' . $location, true, $status);
         }
 
