@@ -92,11 +92,8 @@ namespace rtCamp\WP\Nginx {
             global $wp_version;
             $wp_ok = version_compare($wp_version, $this->minium_WP, '>=');
             if (($wp_ok == FALSE)) {
-                add_action(
-                        'admin_notices', create_function(
-                                '', 'global $rt_wp_nginx_helper; printf (\'<div id="message" class="error"><p><strong>\' . __(\'Sorry, Nginx Helper requires WordPress %s or higher\', "nginx-helper" ) . \'</strong></p></div>\', $rt_wp_nginx_helper->minium_WP );'
-                        )
-                );
+                add_action( 'admin_notices', create_function( '', 'global $rt_wp_nginx_helper; printf (\'<div id="message" class="error"><p><strong>\' . __(\'Sorry, Nginx Helper requires WordPress %s or higher\', "nginx-helper" ) . \'</strong></p></div>\', $rt_wp_nginx_helper->minium_WP );' ) );
+                add_action( 'network_admin_notices', create_function( '', 'global $rt_wp_nginx_helper; printf (\'<div id="message" class="error"><p><strong>\' . __(\'Sorry, Nginx Helper requires WordPress %s or higher\', "nginx-helper" ) . \'</strong></p></div>\', $rt_wp_nginx_helper->minium_WP );' ) );
                 return false;
             }
 
@@ -269,6 +266,7 @@ namespace rtCamp\WP\Nginx {
 
             if ($action == 'done') {
                 add_action('admin_notices', array(&$this, 'show_notice'));
+                add_action('network_admin_notices', array(&$this, 'show_notice'));
                 return;
             }
 
