@@ -10,9 +10,6 @@ namespace rtCamp\WP\Nginx {
                 <div class="inside">
                     <table class="form-table">
                         <tr valign="top">
-                            <th colspan="2"><?php _e( 'Need Help!, ask your queries on our forums:', 'nginx-helper' ); ?></th>
-                        </tr>
-                        <tr valign="top">
                             <th><?php _e( 'Free Support', 'nginx-helper' ); ?></th>
                             <td>
                                 <a href="https://rtcamp.com/support/forum/wordpress-nginx/" title="<?php _e( 'Free Support Forum', 'nginx-helper' ); ?>" target="_blank"><?php _e( 'Link to forum', 'nginx-helper' ); ?></a>
