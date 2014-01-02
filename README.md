@@ -2,7 +2,7 @@
 
 # Nginx #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [faishal] (http://profiles.wordpress.org/faishal), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [faishal] (http://profiles.wordpress.org/faishal), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36), [jinnko] (http://profiles.wordpress.org/jinnko),
 
 * **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -115,6 +115,10 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 ## Changelog ##
+
+#### 1.8 ####
+* New admin UI
+* Fix missing wp_sanitize_redirect function call
 
 #### 1.7.6 ####
 * Update Backend UI
@@ -251,5 +255,5 @@ Its just that we are hyperactive on our own forum!
 * First release
 
 
-#### 1.7.6 ####
-Update backed ui issue and add language support.
+#### 1.8 ####
+New admin UI and Fix missing wp_sanitize_redirect function call
