@@ -342,11 +342,10 @@ namespace {
         return $links;
     }
 
-    $plugin = plugin_basename(__FILE__);
     if (is_multisite()) {
-        add_filter("network_admin_plugin_action_links_$plugin", 'nginx_settings_link');
+        add_filter("network_admin_plugin_action_links_" . plugin_basename(__FILE__), 'nginx_settings_link');
     } else {
-        add_filter("plugin_action_links_$plugin", 'nginx_settings_link');
+        add_filter("plugin_action_links_" . plugin_basename(__FILE__), 'nginx_settings_link');
     }
 
     function get_feeds($feed_url = 'http://rtcamp.com/blog/feed/') {
