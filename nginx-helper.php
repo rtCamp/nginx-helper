@@ -274,6 +274,7 @@ namespace rtCamp\WP\Nginx {
 
             switch ($action) {
                 case 'purge':
+                    $rt_wp_nginx_purger->purge_them_all();
                     $rt_wp_nginx_purger->true_purge_all();
                     break;
             }
