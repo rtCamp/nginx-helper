@@ -1,9 +1,9 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, faishal, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36,jinnko
+Contributors: rtcamp, rahul286, saurabhshukla, faishal, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36,jinnko,weskoop
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
-Tested up to: 3.8
-Stable tag: 1.8
+Tested up to: 3.9.1
+Stable tag: 1.8.1
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -115,6 +115,10 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.8.1 =
+* Tested with wordpress 3.9.1
+* Fix confilct with Mailchimp's Social plugin
 
 = 1.8 =
 * New admin UI

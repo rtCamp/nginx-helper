@@ -3,12 +3,12 @@
   Plugin Name: Nginx Helper
   Plugin URI: http://rtcamp.com/nginx-helper/
   Description: An nginx helper that serves various functions.
-  Version: 1.8
+  Version: 1.8.1
   Author: rtCamp
   Author URI: http://rtcamp.com
   Text Domain: nginx-helper
   Requires at least: 3.0
-  Tested up to: 3.8
+  Tested up to: 3.9.1
  */
 
 namespace rtCamp\WP\Nginx {
