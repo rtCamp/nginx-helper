@@ -37,14 +37,14 @@ namespace rtCamp\WP\Nginx {
          * Add setting sub-menu for single site
          */
         function add_menu() {
-            add_submenu_page( 'options-general.php', __( 'Nginx Helper', 'nginx-helper' ), __( 'Nginx Helper', 'nginx-helper' ), 'install_plugins', 'nginx', array( &$this, 'nginx_create_admin_page' ) );
+            add_submenu_page( 'options-general.php', __( 'Nginx Helper', 'nginx-helper' ), __( 'Nginx Helper', 'nginx-helper' ), 'manage_options', 'nginx', array( &$this, 'nginx_create_admin_page' ) );
         }
 
         /**
          * Add setting sub-menu for multi site
          */
         function add_network_menu() {
-            add_submenu_page( 'settings.php', __( 'Nginx Helper', 'nginx-helper' ), __( 'Nginx Helper', 'nginx-helper' ), 'install_plugins', 'nginx', array( &$this, 'nginx_create_admin_page' ) );
+            add_submenu_page( 'settings.php', __( 'Nginx Helper', 'nginx-helper' ), __( 'Nginx Helper', 'nginx-helper' ), 'manage_options', 'nginx', array( &$this, 'nginx_create_admin_page' ) );
         }
 
         /**
