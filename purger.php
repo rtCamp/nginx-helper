@@ -313,7 +313,7 @@ namespace rtCamp\WP\Nginx {
 				$this->purgeUrl( wp_get_attachment_url( $attachment_id ), false );
 				$attachment = wp_get_attachment_metadata( $attachment_id );
 
-				if ( $attachment[ 'sizes' ] ) {
+				if ( ! empty( $attachment[ 'sizes' ] ) && is_array( $attachment[ 'sizes' ] ) ) {
 					foreach ( $attachment[ 'sizes' ] as $size_name => $size ) {
 						$resize_image = wp_get_attachment_image_src( $attachment_id, $size_name );
 						if ( $resize_image )
