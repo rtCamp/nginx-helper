@@ -1,9 +1,9 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, faishal, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36,jinnko,weskoop
+Contributors: rtcamp, rahul286, saurabhshukla, faishal, desaiuditd, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36,jinnko,weskoop
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.0
-Stable tag: 1.8.2
+Stable tag: 1.8.3
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -44,7 +44,7 @@ For proper configuration, check **tutorial list** of [Description tab](http://wo
 
 == Frequently Asked Questions ==
 
-**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for uptodate FAQ's. 
+**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for uptodate FAQ's.
 
 = FAQ - Installation/Comptability =
 
@@ -115,6 +115,10 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.8.3 =
+* Tested with WordPress 4.0
+* Fix issue #69
 
 = 1.8.1 =
 * Tested with wordpress 3.9.1
@@ -261,5 +265,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.8 =
-New admin UI and Fix missing wp_sanitize_redirect function call
+= 1.8.3 =
+Tested with WordPress 4.0, Fix issue #69
