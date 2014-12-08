@@ -1,9 +1,9 @@
 === Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, faishal, desaiuditd, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36,jinnko,weskoop
+Contributors: rtcamp, rahul286, saurabhshukla, faishal, desaiuditd, rittesh.patel, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36,jinnko,weskoop
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.0
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -115,6 +115,9 @@ Its just that we are hyperactive on our own forum!
 2. Remaining settings
 
 == Changelog ==
+
+= 1.8.4 =
+* Fix undefined index issue and correct "purge_archive_on_del" key
 
 = 1.8.3 =
 * Tested with WordPress 4.0
@@ -265,5 +268,5 @@ Its just that we are hyperactive on our own forum!
 
 == Upgrade Notice ==
 
-= 1.8.3 =
-Tested with WordPress 4.0, Fix issue #69
+= 1.8.4 =
+Fix undefined index issue and correct "purge_archive_on_del" key
