@@ -116,7 +116,7 @@ namespace rtCamp\WP\Nginx {
             }
 
             if ($new_status == 'future') {
-                if ($post && $post->post_status == 'future' && ( ( $post->post_type == 'post' || $post->post_type == 'page' ) || ( in_array($post->post_type, $this->options['custom_post_types_recognized']) ) )) {
+                if ($post && $post->post_status == 'future' && ( ( $post->post_type == 'post' || $post->post_type == 'page' ) || ( isset( $this->options['custom_post_types_recognized'] ) && in_array($post->post_type, $this->options['custom_post_types_recognized']) ) )) {
                     $rt_wp_nginx_purger->log("Set/update future_posts option (post id = " . $post->ID . " and blog id = " . $blog_id . ")");
                     $this->options['future_posts'][$blog_id][$post->ID] = strtotime($post->post_date_gmt) + 60;
                     update_site_option("rt_wp_nginx_helper_global_options", $this->options);

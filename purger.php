@@ -349,7 +349,7 @@ namespace rtCamp\WP\Nginx {
 				}
 
 
-				$this->_purge_by_options( $post->ID, $blog_id, false, $rt_wp_nginx_helper->options[ 'purge_archive_on_delete' ], $rt_wp_nginx_helper->options[ 'purge_archive_on_delete' ] );
+				$this->_purge_by_options( $post->ID, $blog_id, false, $rt_wp_nginx_helper->options[ 'purge_archive_on_del' ], $rt_wp_nginx_helper->options[ 'purge_archive_on_del' ] );
 
 
 
