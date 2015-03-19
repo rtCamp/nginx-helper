@@ -1,0 +1,16 @@
+box: wercker/default
+
+build:
+    steps:
+        # Execute the bundle install step, a step provided by wercker
+        # Execute a custom script step.
+        - script:
+            name: download bash
+            code: wget https://raw.github.com/rtCamp/wp-plugin-bootstrap/master/deploy-common.sh
+
+deploy:
+    steps:
+        # Execute Deploy-Common
+        - script:
+            name: download bash
+            code: bash deploy-common.sh
