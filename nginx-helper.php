@@ -20,6 +20,7 @@ namespace rtCamp\WP\Nginx {
         var $minium_WP = '3.0';
         var $options = null;
         var $plugin_name = 'nginx-helper';
+        const WP_CLI_COMMAND = 'nginx-helper';
 
         function __construct() {
 
@@ -70,6 +71,12 @@ namespace rtCamp\WP\Nginx {
             add_action('delete_term', array(&$rt_wp_nginx_purger, 'purge_on_term_taxonomy_edited'), 20, 3);
             add_action('check_ajax_referer', array(&$rt_wp_nginx_purger, 'purge_on_check_ajax_referer'), 20, 2);
             add_action('admin_init', array(&$this, 'purge_all'));
+
+            // Load WP-CLI command
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                require_once RT_WP_NGINX_HELPER_PATH . 'wp-cli.php';
+                \WP_CLI::add_command( self::WP_CLI_COMMAND, 'Nginx_Helper_WP_CLI_Command' );
+            }
         }
 
         function activate() {

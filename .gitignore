@@ -2,3 +2,4 @@
 *.swp
 map.conf
 nginx.log
+.idea
