@@ -117,7 +117,7 @@ Its just that we are hyperactive on our own forum!
 == Changelog ==
 
 = 1.8.5 =
-* Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/) 
+* Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/)
 
 = 1.8.4 =
 * Fix undefined index issue and correct "purge_archive_on_del" key
