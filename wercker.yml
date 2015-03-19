@@ -8,4 +8,5 @@ deploy:
         svnuser: $SVNUSER
         svnpass: $SVNPASS                    #wordpress.org password
         gituser: $GITUSER
-        gitpass: $GITPASS                  #github.com password
+        gitpass: $GITPASS                    #github.com password
+        gitemail: git@example.com            #github.com password
