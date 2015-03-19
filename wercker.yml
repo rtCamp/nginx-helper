@@ -1,16 +1,8 @@
 box: wercker/default
 
-# build:
-#     steps:
-#         # Execute the bundle install step, a step provided by wercker
-#         # Execute a custom script step.
-#         - script:
-#             name: download and execute deploy script
-#             code: wget wget -qO deploy rt.cx/deploy && sudo bash deploy
-
 deploy:
   steps:
-    - rtcamp/wordpress-svn:
+    - rahul286/wordpress-svn:
         pluginslug: nginx-helper
         mainfile: nginx-helper.php
         svnuser: $SVNUSER
