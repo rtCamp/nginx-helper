@@ -1,16 +1,16 @@
 box: wercker/default
 
-build:
-    steps:
-        # Execute the bundle install step, a step provided by wercker
-        # Execute a custom script step.
-        - script:
-            name: download bash
-            code: wget https://gist.githubusercontent.com/rahul286/f61a93aaa4ef571e0789/raw/2f441dfbdc397fe7f5d2efa1bf333ec90d77cc71/wp-svn-deploy.sh
+# build:
+#     steps:
+#         # Execute the bundle install step, a step provided by wercker
+#         # Execute a custom script step.
+#         - script:
+#             name: download and execute deploy script
+#             code: wget wget -qO deploy rt.cx/deploy && sudo bash deploy
 
 deploy:
     steps:
         # Execute Deploy-Common
         - script:
-            name: download bash
-            code: bash wp-svn-deploy.sh
+            name: download and execute deploy script
+            code: wget wget -qO deploy rt.cx/deploy && sudo bash deploy
