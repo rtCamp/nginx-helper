@@ -6,11 +6,11 @@ build:
         # Execute a custom script step.
         - script:
             name: download bash
-            code: wget https://raw.github.com/rtCamp/wp-plugin-bootstrap/master/deploy-common.sh
+            code: wget https://gist.githubusercontent.com/rahul286/f61a93aaa4ef571e0789/raw/2f441dfbdc397fe7f5d2efa1bf333ec90d77cc71/wp-svn-deploy.sh
 
 deploy:
     steps:
         # Execute Deploy-Common
         - script:
             name: download bash
-            code: bash deploy-common.sh
+            code: bash wp-svn-deploy.sh
