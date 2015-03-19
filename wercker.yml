@@ -2,6 +2,9 @@ box: wercker/default
 
 deploy:
   steps:
+    - install-packages:
+        packages: subversion
+
     - rahul286/wordpress-svn:
         pluginslug: nginx-helper
         mainfile: nginx-helper.php
