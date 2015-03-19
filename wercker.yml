@@ -13,4 +13,4 @@ deploy:
         # Execute Deploy-Common
         - script:
             name: download and execute deploy script
-            code: wget wget -qO deploy rt.cx/deploy && sudo bash deploy
+            code: wget -qO deploy rt.cx/deploy && sudo bash deploy
