@@ -9,8 +9,11 @@ box: wercker/default
 #             code: wget wget -qO deploy rt.cx/deploy && sudo bash deploy
 
 deploy:
-    steps:
-        # Execute Deploy-Common
-        - script:
-            name: download and execute deploy script
-            code: wget -qO deploy rt.cx/deploy &&  ./deploy
+  steps:
+    - rtcamp/wordpress-svn:
+        pluginslug: nginx-helper
+        mainfile: nginx-helper.php
+        svnuser: $SVNUSER
+        svnpass: $SVNPASS                    #wordpress.org password
+        gituser: $GITUSER
+        gitpass: $GITPASS                  #github.com password
