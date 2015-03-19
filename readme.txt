@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla, faishal, desaiuditd, rittesh.pate
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.0
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -116,6 +116,9 @@ Its just that we are hyperactive on our own forum!
 
 == Changelog ==
 
+= 1.8.5 =
+* Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/) 
+
 = 1.8.4 =
 * Fix undefined index issue and correct "purge_archive_on_del" key
 
@@ -139,7 +142,7 @@ Its just that we are hyperactive on our own forum!
 * Fixed option name mismatch issue to purge homepage on delete.
 
 = 1.7.4 =
-* Disable purge and stamp by defualt.
+* Disable purge and stamp by default.
 
 = 1.7.3 =
 * Suppressed `unlink` related error-messages which can be safely ignored.
