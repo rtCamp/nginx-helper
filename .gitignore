@@ -3,3 +3,6 @@
 map.conf
 nginx.log
 .idea
+_builds
+_projects
+_steps

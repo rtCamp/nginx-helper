@@ -1,9 +1,17 @@
-box: wercker/default
+box: ubuntu
+
+build:
+  steps:
+
+    # install gitbook itself
+    - script:
+        name: placehoder
+        code: echo "nothing to build"
 
 deploy:
   steps:
-    - install-packages:
-        packages: subversion
+    # - install-packages:
+    #     packages: subversion
 
     - rahul286/wordpress-svn:
         pluginslug: nginx-helper
