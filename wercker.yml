@@ -9,10 +9,10 @@ build:
 
 deploy:
   steps:
-    - install-packages:
-        packages: subversion git wget
+    # - install-packages:
+        # packages: subversion git wget
 
-    - rahul286/wordpress-svn:
+    - rtcamp/wordpress-svn:
         pluginslug: nginx-helper
         mainfile: nginx-helper.php
         svnuser: $SVNUSER
