@@ -3,7 +3,6 @@ box: ubuntu
 build:
   steps:
 
-    # install gitbook itself
     - script:
         name: placehoder
         code: echo "nothing to build"
