@@ -9,8 +9,8 @@ build:
 
 deploy:
   steps:
-    # - install-packages:
-    #     packages: subversion
+    - install-packages:
+        packages: subversion git wget
 
     - rahul286/wordpress-svn:
         pluginslug: nginx-helper
