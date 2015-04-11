@@ -1,14 +1,14 @@
-=== Nginx ===
-Contributors: rtcamp, rahul286, saurabhshukla, faishal, desaiuditd, rittesh.patel, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, manishsongirkar36,jinnko,weskoop
+=== Nginx Helper ===
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko,weskoop
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.0
-Stable tag: 1.8.5
+Stable tag: 1.8.6
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
 
-Helps WordPress-Nginx work together nicely using fastcgi/proxy cache purging, nginx map{}, rewrite  support for permalinks & more
+Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
 
 == Description ==
 
@@ -101,20 +101,22 @@ Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask Word
 
 **Q. I am using X plugin. Will it work on Nginx?**
 
-Most likely yes. A wordpress plugin, if not using explictly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
+Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
 
 
 = Still need help! =
 
-Post your problem in [our free support forum](http://rtcamp.com/support/forum/wordpress-nginx/) or wordpress.org forum here. We answer questions everywhere. Including Nginx official forum, serverfault, stackoverflow, etc.
-Its just that we are hyperactive on our own forum!
-
+Please post your problem in [our free support forum](http://community.rtcamp.com/c/wordpress-nginx).
 
 == Screenshots ==
 1. Nginx plugin settings
 2. Remaining settings
 
 == Changelog ==
+
+= 1.8.6 =
+* Removed wercker.yml from plugin zip/svn.
+* Updated readme
 
 = 1.8.5 =
 * Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/)

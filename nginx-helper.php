@@ -2,13 +2,13 @@
 /*
   Plugin Name: Nginx Helper
   Plugin URI: http://rtcamp.com/nginx-helper/
-  Description: An nginx helper that serves various functions.
-  Version: 1.8.5
+  Description: Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
+  Version: 1.8.6
   Author: rtCamp
   Author URI: http://rtcamp.com
   Text Domain: nginx-helper
   Requires at least: 3.0
-  Tested up to: 4.0
+  Tested up to: 4.1
  */
 
 namespace rtCamp\WP\Nginx {
