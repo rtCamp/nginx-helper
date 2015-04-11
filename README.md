@@ -116,6 +116,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.8.5 ####
+* Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/)
+
 #### 1.8.4 ####
 * Fix undefined index issue and correct "purge_archive_on_del" key
 
@@ -139,7 +142,7 @@ Its just that we are hyperactive on our own forum!
 * Fixed option name mismatch issue to purge homepage on delete.
 
 #### 1.7.4 ####
-* Disable purge and stamp by defualt.
+* Disable purge and stamp by default.
 
 #### 1.7.3 ####
 * Suppressed `unlink` related error-messages which can be safely ignored.
