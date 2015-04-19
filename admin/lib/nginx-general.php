@@ -48,6 +48,8 @@ namespace rtCamp\WP\Nginx {
                 $rt_wp_nginx_helper->options['purge_page_on_mod'] = ( isset( $_POST['purge_page_on_mod'] ) and ( $_POST['purge_page_on_mod'] == 1 ) ) ? 1 : 0;
                 $rt_wp_nginx_helper->options['purge_page_on_new_comment'] = ( isset( $_POST['purge_page_on_new_comment'] ) and ( $_POST['purge_page_on_new_comment'] == 1 ) ) ? 1 : 0;
                 $rt_wp_nginx_helper->options['purge_page_on_deleted_comment'] = ( isset( $_POST['purge_page_on_deleted_comment'] ) and ( $_POST['purge_page_on_deleted_comment'] == 1 ) ) ? 1 : 0;
+
+                $rt_wp_nginx_helper->options['purge_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'get_request';
             }
             update_site_option( 'rt_wp_nginx_helper_options', $rt_wp_nginx_helper->options );
             $update = 1;
@@ -245,6 +247,31 @@ namespace rtCamp\WP\Nginx {
                                     </label><br />
                                 </fieldset>
 
+                            </td>
+                            </tr>
+                        </table>
+                        <table class="form-table rtnginx-table">
+                            <tr valign="top">
+                                <th scope="row">
+                            <h4><?php _e('Purge Method:', 'nginx-helper'); ?></h4>
+                            </th>
+                            <td>
+                                <fieldset>
+                                    <legend class="screen-reader-text">
+                                        <span>&nbsp;<?php _e('when a post/page/custom post is published.', 'nginx-helper'); ?></span>
+                                    </legend>
+                                    <label for="purge_method_get_request">
+                                        <input type="radio" value="get_request" id="purge_method_get_request" name="purge_method"<?php checked($rt_wp_nginx_helper->options['purge_method'], 'get_request'); ?>>
+                                        &nbsp;<?php _e('Using a GET request to <strong>PURGE/url</strong> (Default option)', 'nginx-helper'); ?><br />
+                                        <small><?php _e('Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. ', 'nginx-helper'); ?></small>
+                                    </label><br />
+                                    <label for="purge_method_unlink_files">
+                                        <input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method"<?php checked($rt_wp_nginx_helper->options['purge_method'], 'unlink_files'); ?>>
+                                        &nbsp;<?php _e('Delete local server cache files', 'nginx-helper'); ?><br />
+                                        <small><?php _e('Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper'); ?></small>
+
+                                    </label><br />
+                                </fieldset>
                             </td>
                             </tr>
                         </table>

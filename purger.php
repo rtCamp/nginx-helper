@@ -204,24 +204,97 @@ namespace rtCamp\WP\Nginx {
 
 		function purgeUrl( $url, $feed = true ) {
 
+			global $rt_wp_nginx_helper;
+
 			$this->log( "- Purging URL | " . $url );
 
 			$parse = parse_url( $url );
 
-			$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge' . $parse[ 'path' ];
-			$_url_purge = $_url_purge_base;
+			switch ($rt_wp_nginx_helper->options['purge_method']) {
+				case 'unlink_files':
+					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . $parse[ 'path' ];
+					$_url_purge = $_url_purge_base;
 
-			if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
-				$_url_purge .= '?' . $parse[ 'query' ];
+					if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
+						$_url_purge .= '?' . $parse[ 'query' ];
+					}
+
+					$this->_delete_cache_file_for( $_url_purge );
+
+					if ( $feed ) {
+						$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
+						$this->_delete_cache_file_for( $feed_url );
+						$this->_delete_cache_file_for( $feed_url . 'atom/' );
+						$this->_delete_cache_file_for( $feed_url . 'rdf/' );
+					}
+					break;
+				case 'get_request':
+					// Go to default case
+				default:
+					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge' . $parse[ 'path' ];
+					$_url_purge = $_url_purge_base;
+
+					if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
+						$_url_purge .= '?' . $parse[ 'query' ];
+					}
+
+					$this->_do_remote_get( $_url_purge );
+
+					if ( $feed ) {
+						$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
+						$this->_do_remote_get( $feed_url );
+						$this->_do_remote_get( $feed_url . 'atom/' );
+						$this->_do_remote_get( $feed_url . 'rdf/' );
+					}
+					break;
 			}
 
-			$this->_do_remote_get( $_url_purge );
+		}
 
-			if ( $feed ) {
-				$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
-				$this->_do_remote_get( $feed_url );
-				$this->_do_remote_get( $feed_url . 'atom/' );
-				$this->_do_remote_get( $feed_url . 'rdf/' );
+		/*********************
+		* Deletes local cache files without a 3rd party nginx module.
+		*
+		* Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri").
+		*
+		* Read more on how this works here: 
+		* https://www.digitalocean.com/community/tutorials/how-to-setup-fastcgi-caching-with-nginx-on-your-vps#purging-the-cache
+		**********************/
+		private function _delete_cache_file_for( $url ) {
+
+			// Verify cache path is set
+			if (!defined('RT_WP_NGINX_HELPER_CACHE_PATH')) {
+				$this->log('Error purging because RT_WP_NGINX_HELPER_CACHE_PATH was not defined. URL: '.$url, 'ERROR');
+				return false;
+			}
+
+			// Verify URL is valid
+			$url_data = parse_url($url);
+			if(!$url_data) {
+				$this->log('Error purging because specified URL did not appear to be valid. URL: '.$url, 'ERROR');
+			    return false;
+			}
+
+			// Build a hash of the URL
+			$hash = md5($url_data['scheme'].'GET'.$url_data['host'].$url_data['path']);
+
+			// Ensure trailing slash
+			$cache_path = RT_WP_NGINX_HELPER_CACHE_PATH;
+			$cache_path = (substr($cache_path, -1) == '/') ? $cache_path : $cache_path.'/';
+			
+			// Set path to cached file
+			$cached_file = $cache_path . substr($hash, -1) . '/' . substr($hash,-3,2) . '/' . $hash;
+
+			// Verify cached file exists
+			if (!file_exists($cached_file)) {
+				$this->log( "- - " . $url . " is currently not cached (checked for file: $cached_file)" );
+				return false;
+			}
+
+			// Delete the cached file
+			if (unlink($cached_file)) {
+				$this->log( "- - " . $url . " *** PURGED ***" );
+			} else {
+				$this->log("- - An error occurred deleting the cache file. Check the server logs for a PHP warning.", "ERROR");
 			}
 		}
 
