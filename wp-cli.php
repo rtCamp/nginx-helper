@@ -21,7 +21,7 @@ if ( ! class_exists( 'Nginx_Helper_WP_CLI_Command' ) ) {
 		 * Subcommand to purge all cache from Nginx
 		 *
 		 * Examples:
-		 * wp nginx-helper purge_all
+		 * wp nginx-helper purge-all
 		 *
 		 * @subcommand purge-all
 		 */
