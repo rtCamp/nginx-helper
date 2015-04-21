@@ -2,8 +2,8 @@
 Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko,weskoop
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
-Tested up to: 4.0
-Stable tag: 1.8.7
+Tested up to: 4.2
+Stable tag: 1.8.8
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -113,6 +113,9 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 2. Remaining settings
 
 == Changelog ==
+
+= 1.8.8 =
+* Added option to purge cache without nginx purge module - by [bcole808](https://profiles.wordpress.org/bcole808/)
 
 = 1.8.7 =
 * Added action `rt_nginx_helper_purge_all` to purge cache from other plugins - by [gungeekatx](https://profiles.wordpress.org/gungeekatx/)
@@ -272,7 +275,6 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 = 1.0 =
 
 * First release
-
 
 == Upgrade Notice ==
 
