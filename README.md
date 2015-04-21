@@ -2,13 +2,13 @@
 
 # Nginx Helper #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [faishal] (http://profiles.wordpress.org/faishal), [desaiuditd] (http://profiles.wordpress.org/desaiuditd), [rittesh.patel] (http://profiles.wordpress.org/rittesh.patel), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36), [jinnko] (http://profiles.wordpress.org/jinnko), [weskoop] (http://profiles.wordpress.org/weskoop),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36), [faishal] (http://profiles.wordpress.org/faishal), [desaiuditd] (http://profiles.wordpress.org/desaiuditd), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [jinnko] (http://profiles.wordpress.org/jinnko), [weskoop] (http://profiles.wordpress.org/weskoop),
 
 * **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
 
 * **Donate Link:** http://rtcamp.com/donate/
 
-Helps WordPress-Nginx work together nicely using fastcgi/proxy cache purging, nginx map{}, rewrite  support for permalinks & more
+Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
 
 ## Description ##
 
@@ -101,20 +101,28 @@ Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask Word
 
 **Q. I am using X plugin. Will it work on Nginx?**
 
-Most likely yes. A wordpress plugin, if not using explictly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
+Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
 
 
 #### Still need help! ####
 
-Post your problem in [our free support forum](http://rtcamp.com/support/forum/wordpress-nginx/) or wordpress.org forum here. We answer questions everywhere. Including Nginx official forum, serverfault, stackoverflow, etc.
-Its just that we are hyperactive on our own forum!
-
+Please post your problem in [our free support forum](http://community.rtcamp.com/c/wordpress-nginx).
 
 ## Screenshots ##
 1. Nginx plugin settings
 2. Remaining settings
 
 ## Changelog ##
+
+#### 1.8.8 ####
+* Added option to purge cache without nginx purge module - by [bcole808](https://profiles.wordpress.org/bcole808/)
+
+#### 1.8.7 ####
+* Added action `rt_nginx_helper_purge_all` to purge cache from other plugins - by [gungeekatx](https://profiles.wordpress.org/gungeekatx/)
+
+#### 1.8.6 ####
+* Removed wercker.yml from plugin zip/svn.
+* Updated readme
 
 #### 1.8.5 ####
 * Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/)
@@ -267,7 +275,6 @@ Its just that we are hyperactive on our own forum!
 #### 1.0 ####
 
 * First release
-
 
 #### 1.8.4 ####
 Fix undefined index issue and correct "purge_archive_on_del" key
