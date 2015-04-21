@@ -261,7 +261,7 @@ namespace rtCamp\WP\Nginx {
                                         <span>&nbsp;<?php _e('when a post/page/custom post is published.', 'nginx-helper'); ?></span>
                                     </legend>
                                     <label for="purge_method_get_request">
-                                        <input type="radio" value="get_request" id="purge_method_get_request" name="purge_method"<?php checked($rt_wp_nginx_helper->options['purge_method'], 'get_request'); ?>>
+                                        <input type="radio" value="get_request" id="purge_method_get_request" name="purge_method"<?php checked(($rt_wp_nginx_helper->options['purge_method']) ? $rt_wp_nginx_helper->options['purge_method'] : 'get_request', 'get_request'); ?>>
                                         &nbsp;<?php _e('Using a GET request to <strong>PURGE/url</strong> (Default option)', 'nginx-helper'); ?><br />
                                         <small><?php _e('Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. ', 'nginx-helper'); ?></small>
                                     </label><br />
