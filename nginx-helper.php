@@ -1,14 +1,14 @@
 <?php
 /*
   Plugin Name: Nginx Helper
-  Plugin URI: http://rtcamp.com/nginx-helper/
-  Description: An nginx helper that serves various functions.
-  Version: 1.8.4
+  Plugin URI: https://rtcamp.com/nginx-helper/
+  Description: Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
+  Version: 1.8.9
   Author: rtCamp
-  Author URI: http://rtcamp.com
+  Author URI: https://rtcamp.com
   Text Domain: nginx-helper
   Requires at least: 3.0
-  Tested up to: 4.0
+  Tested up to: 4.2
  */
 
 namespace rtCamp\WP\Nginx {
@@ -20,6 +20,7 @@ namespace rtCamp\WP\Nginx {
         var $minium_WP = '3.0';
         var $options = null;
         var $plugin_name = 'nginx-helper';
+        const WP_CLI_COMMAND = 'nginx-helper';
 
         function __construct() {
 
@@ -70,6 +71,15 @@ namespace rtCamp\WP\Nginx {
             add_action('delete_term', array(&$rt_wp_nginx_purger, 'purge_on_term_taxonomy_edited'), 20, 3);
             add_action('check_ajax_referer', array(&$rt_wp_nginx_purger, 'purge_on_check_ajax_referer'), 20, 2);
             add_action('admin_init', array(&$this, 'purge_all'));
+
+            // expose action to allow other plugins to purge the cache
+            add_action('rt_nginx_helper_purge_all', array(&$this, 'true_purge_all'));
+
+            // Load WP-CLI command
+            if ( defined( 'WP_CLI' ) && WP_CLI ) {
+                require_once RT_WP_NGINX_HELPER_PATH . 'wp-cli.php';
+                \WP_CLI::add_command( self::WP_CLI_COMMAND, 'Nginx_Helper_WP_CLI_Command' );
+            }
         }
 
         function activate() {
@@ -255,7 +265,6 @@ namespace rtCamp\WP\Nginx {
         }
 
         function purge_all() {
-            global $rt_wp_nginx_purger;
             if (!isset($_REQUEST['nginx_helper_action']))
                 return;
 
@@ -274,10 +283,15 @@ namespace rtCamp\WP\Nginx {
 
             switch ($action) {
                 case 'purge':
-                    $rt_wp_nginx_purger->true_purge_all();
+                    $this->true_purge_all();
                     break;
             }
             wp_redirect(add_query_arg(array('nginx_helper_action' => 'done')));
+        }
+
+        function true_purge_all() {
+            global $rt_wp_nginx_purger;
+            $rt_wp_nginx_purger->true_purge_all();
         }
 
         /**

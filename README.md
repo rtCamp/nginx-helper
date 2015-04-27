@@ -1,6 +1,6 @@
 ![alt text](https://plugins.svn.wordpress.org/nginx-helper//assets/banner-772x250.png)
 
-# Nginx #
+# Nginx Helper #
 
 * **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [faishal] (http://profiles.wordpress.org/faishal), [desaiuditd] (http://profiles.wordpress.org/desaiuditd), [rittesh.patel] (http://profiles.wordpress.org/rittesh.patel), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36), [jinnko] (http://profiles.wordpress.org/jinnko), [weskoop] (http://profiles.wordpress.org/weskoop),
 
@@ -116,6 +116,9 @@ Its just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.8.5 ####
+* Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/)
+
 #### 1.8.4 ####
 * Fix undefined index issue and correct "purge_archive_on_del" key
 
@@ -139,7 +142,7 @@ Its just that we are hyperactive on our own forum!
 * Fixed option name mismatch issue to purge homepage on delete.
 
 #### 1.7.4 ####
-* Disable purge and stamp by defualt.
+* Disable purge and stamp by default.
 
 #### 1.7.3 ####
 * Suppressed `unlink` related error-messages which can be safely ignored.
