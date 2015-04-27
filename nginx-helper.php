@@ -286,7 +286,7 @@ namespace rtCamp\WP\Nginx {
                     $this->true_purge_all();
                     break;
             }
-            wp_redirect(add_query_arg(array('nginx_helper_action' => 'done')));
+            wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
         }
 
         function true_purge_all() {
