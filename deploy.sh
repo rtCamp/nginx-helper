@@ -29,7 +29,7 @@ fi
 # Let's begin...
 echo ".........................................."
 echo
-echo "Preparing to deploy wordpress plugin"
+echo "Preparing to deploy WordPress plugin"
 echo
 echo ".........................................."
 echo
