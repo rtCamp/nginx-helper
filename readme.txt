@@ -8,17 +8,17 @@ License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
 
-Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
+Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does a few more things.
 
 == Description ==
 
 1. Removes `index.php` from permalinks when using WordPress with nginx.
 1. Adds support for nginx fastcgi_cache_purge & proxy_cache_purge directive from [module](https://github.com/FRiCKLE/ngx_cache_purge "ngx_cache_purge module"). Provides settings so you can customize purging rules.
-1. Adds support for nginx `map{..}` on a WordPress-multisite network installation. Using it Nginx can serve PHP file uploads even if PHP/MySQL crashes. Please check tutorials list below for related Nginx config.
+1. Adds support for nginx `map{..}` on a WordPress-multisite network installation. Using it, Nginx can serve PHP file uploads even if PHP/MySQL crashes. Please check the tutorial list below for related Nginx configurations.
 
 = Tutorials =
 
-You will need to follow one ore more tutorials below to get desired functionality:
+You will need to follow one or more tutorials below to get desired functionality:
 
 * [Nginx Map + WordPress-Multisite + Static Files Handling](http://rtcamp.com/tutorials/nginx-maps-wordpress-multisite-static-files-handling/)
 * [Nginx + WordPress + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-nginx-fastcgi-cache-purge-conditional/)
@@ -40,17 +40,17 @@ Manual Installation
 1. Upload them to `/wp-content/plugins/` directory on your WordPress installation.
 1. Then activate the Plugin from Plugins page.
 
-For proper configuration, check **tutorial list** of [Description tab](http://wordpress.org/extend/plugins/nginx-helper/)
+For proper configuration, check out our **tutorial list** in the [Description tab](http://wordpress.org/extend/plugins/nginx-helper).
 
 == Frequently Asked Questions ==
 
-**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for uptodate FAQ's.
+**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for up-to-date FAQs.
 
 = FAQ - Installation/Comptability =
 
 **Q. Will this work out of the box?**
 
-No. You need to make some changes at the Nginx end. Please check [tutorial list](http://rtcamp.com/wordpress-nginx/tutorials)
+No. You need to make some changes at the Nginx end. Please check our [tutorial list](http://rtcamp.com/wordpress-nginx/tutorials).
 
 = FAQ - Nginx Fastcgi Cache Purge =
 
@@ -65,18 +65,16 @@ Replace the path with your own.
 
 **Q. Does it work for custom posts and taxonomies?**
 
-Yes. It handles all post-types same way.
+Yes. It handles all post-types the same way.
 
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
 
 Manually purging any page from the cache, by following instructions in the previous answer.
 
-Version 1.3.4 onwards, Nginx Helper adds a comment at the end of the html source ('view source' in your favourite browser):
-&lt;!--Cached using Nginx-Helper on 2012-10-08 07:01:45. It took 42 queries executed in 0.280 seconds.--&gt;
-This shows the time when the page was last cached. This date/time will be reset whenever this page is purged and refreshed in the cache.
+Version 1.3.4 onwards, Nginx Helper adds a comment at the end of the HTML source ('view source' in your favourite browser):
+`&lt;!--Cached using Nginx-Helper on 2012-10-08 07:01:45. It took 42 queries executed in 0.280 seconds.--&gt;`. This shows the time when the page was last cached. This date/time will be reset whenever this page is purged and refreshed in the cache. Just check this comment before and after a manual purge.
 
-Just check this comment before and after a manual purge.
-As long as you don't purge the page (or make changes that purge it from the cache), the timestamp will remain as it is, even if you keep refreshing the page. This means the page was served from the cache and it's working!
+As long as you don't purge the page (or make changes that purge it from the cache), the timestamp will remain as is, even if you keep refreshing the page. This means the page was served from the cache and it's working!
 
 The rest shows you the database queries and time saved on loading this page. (This would have been the additional resource load, if you weren't using fast-cgi-cache.)
 
@@ -86,11 +84,12 @@ The rest shows you the database queries and time saved on loading this page. (Th
 Nginx helper plugin handles usual scenarios, when a page in the cache will need purging. For example, when a post is edited or a comment is approved on a post.
 
 To purge a page immediately, follow these instructions:
-(eg. http://yoursite.com/about/)
-Between the domain name and the rest of the url, insert '/purge/'.
-So, in the above eg, the purge url will be http://yoursite.com/purge/about/
-Just open this in a browser and the page will be purged instantly.
-Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
+
+* Let's say we have a page at the following domain: http://yoursite.com/about.
+* Between the domain name and the rest of the URL, insert '/purge/'. 
+* So, in the above example, the purge URL will be http://yoursite.com/purge/about. 
+* Just open this in a browser and the page will be purged instantly. 
+* Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
 
 = FAQ - Nginx Map =
@@ -174,7 +173,7 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 * Log file location also changed to uploads' directory.
 
 = 1.6.13 =
-* [pjv](http://profiles.wordpress.org/pjv/) changed the way home url is accessed. Instead of site option, the plugin now uses home_url() function.
+* [pjv](http://profiles.wordpress.org/pjv/) changed the way home URL is accessed. Instead of site option, the plugin now uses home_URL() function.
 
 = 1.6.12 =
 * [telofy](http://wordpress.org/support/profile/telofy) added purging of atom and RDF feeds.
