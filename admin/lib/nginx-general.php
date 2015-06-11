@@ -82,7 +82,7 @@ namespace rtCamp\WP\Nginx {
             </h3>
             <form id="purgeall" action="" method="post" class="clearfix">
                 <div class="inside">
-                    <?php $purge_url = esc_url( add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ) ); ?>
+                    <?php $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) ); ?>
                     <?php $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' ); ?>
                     <table class="form-table">
                         <tr valign="top">
