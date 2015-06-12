@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desai
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.2
-Stable tag: 1.8.10
+Stable tag: 1.8.11
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -86,9 +86,9 @@ Nginx helper plugin handles usual scenarios, when a page in the cache will need 
 To purge a page immediately, follow these instructions:
 
 * Let's say we have a page at the following domain: http://yoursite.com/about.
-* Between the domain name and the rest of the URL, insert '/purge/'. 
-* So, in the above example, the purge URL will be http://yoursite.com/purge/about. 
-* Just open this in a browser and the page will be purged instantly. 
+* Between the domain name and the rest of the URL, insert '/purge/'.
+* So, in the above example, the purge URL will be http://yoursite.com/purge/about.
+* Just open this in a browser and the page will be purged instantly.
 * Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
 

@@ -114,6 +114,10 @@ It's just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.8.11 ####
+Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
+[javisperez](https://github.com/javisperez)
+
 #### 1.8.5 ####
 * Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/)
 
