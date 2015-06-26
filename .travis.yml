@@ -27,11 +27,11 @@ before_script:
 - cat ~/.my.cnf
 - sudo nginx -t
 - sudo service nginx reload
-- cd /var/www/wp.localtest.me/htdocs/ && ls
+- cd /var/www/wp.localtest.me/htdocs/wp-content/plugins/ && ls
 - wp --allow-root plugin delete nginx-helper
 - mkdir nginx-helper
 - cd $PLUGIN_DIR
-- cp -Rf * /var/www/wp.localtest.me/htdocs/wp-content/plugins/nginx-helper
+- cp -Rf * /var/www/wp.localtest.me/htdocs/wp-content/plugins/nginx-helper/
 - wp plugin activate --all
 - cd $PLUGIN_DIR
 - cd tests/functional/
