@@ -1,14 +1,14 @@
-![alt text](https://plugins.svn.wordpress.org/nginx-helper/assets/banner-772x250.png)
+![alt text](https://plugins.svn.wordpress.org/nginx-helper//assets/banner-772x250.png)
 
 # Nginx Helper #
 
-* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [faishal] (http://profiles.wordpress.org/faishal), [desaiuditd] (http://profiles.wordpress.org/desaiuditd), [rittesh.patel] (http://profiles.wordpress.org/rittesh.patel), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36), [jinnko] (http://profiles.wordpress.org/jinnko), [weskoop] (http://profiles.wordpress.org/weskoop),
+* **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36), [faishal] (http://profiles.wordpress.org/faishal), [desaiuditd] (http://profiles.wordpress.org/desaiuditd), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [jinnko] (http://profiles.wordpress.org/jinnko), [weskoop] (http://profiles.wordpress.org/weskoop), [bcole808] (http://profiles.wordpress.org/bcole808), [gungeekatx] (http://profiles.wordpress.org/gungeekatx),
 
-* **License:** [GPL v2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
+* **License:** [GPL v2 or later] ( http://www.gnu.org/licenses/gpl-2.0.html)
 
-* **Donate Link:** http://rtcamp.com/donate
+* **Donate Link:** http://rtcamp.com/donate/
 
-Helps WordPress-Nginx work together nicely using fastcgi/proxy cache purging, nginx map{}, rewrite  support for permalinks, and more.
+Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does a few more things.
 
 ## Description ##
 
@@ -44,7 +44,7 @@ For proper configuration, check out our **tutorial list** in the [Description ta
 
 ## Frequently Asked Questions ##
 
-**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for up-to-date FAQ's.
+**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for up-to-date FAQs.
 
 #### FAQ - Installation/Comptability ####
 
@@ -71,19 +71,20 @@ Yes. It handles all post-types the same way.
 
 Manually purging any page from the cache, by following instructions in the previous answer.
 
-Version 1.3.4 onwards, Nginx Helper adds a comment at the end of the html source ('view source' in your favourite browser):
-&lt;!--Cached using Nginx-Helper on 2012-10-08 07:01:45. It took 42 queries executed in 0.280 seconds.--&gt;
-This shows the time when the page was last cached. This date/time will be reset whenever this page is purged and refreshed in the cache. Just check this comment before and after a manual purge.
+Version 1.3.4 onwards, Nginx Helper adds a comment at the end of the HTML source ('view source' in your favourite browser):
+`&lt;!--Cached using Nginx-Helper on 2012-10-08 07:01:45. It took 42 queries executed in 0.280 seconds.--&gt;`. This shows the time when the page was last cached. This date/time will be reset whenever this page is purged and refreshed in the cache. Just check this comment before and after a manual purge.
 
-As long as you don't purge the page (or make changes that purge it from the cache), the timestamp will remain as it is, even if you keep refreshing the page. This means the page was served from the cache and it's working!
+As long as you don't purge the page (or make changes that purge it from the cache), the timestamp will remain as is, even if you keep refreshing the page. This means the page was served from the cache and it's working!
 
-The rest shows you the database queries and time saved on loading this page. (This would have been the additional resource load if you weren't using fast-cgi-cache.)
+The rest shows you the database queries and time saved on loading this page. (This would have been the additional resource load, if you weren't using fast-cgi-cache.)
+
 
 **Q. I need to flush a cached page immediately! How do I do that?**
 
 Nginx helper plugin handles usual scenarios, when a page in the cache will need purging. For example, when a post is edited or a comment is approved on a post.
 
 To purge a page immediately, follow these instructions:
+
 * Let's say we have a page at the following domain: http://yoursite.com/about.
 * Between the domain name and the rest of the URL, insert '/purge/'.
 * So, in the above example, the purge URL will be http://yoursite.com/purge/about.
@@ -99,14 +100,12 @@ Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask Word
 
 **Q. I am using X plugin. Will it work on Nginx?**
 
-Most likely yes. A wordpress plugin, if not using explictly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
+Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
 
 
 #### Still need help! ####
 
-Post your problem in [our free support forum](http://rtcamp.com/support/forum/wordpress-nginx/) or on the WordPress.org forum here. We answer questions everywhere. Including Nginx official forum, Server Fault, Stack Overflow, etc.
-It's just that we are hyperactive on our own forum!
-
+Please post your problem in [our free support forum](http://community.rtcamp.com/c/wordpress-nginx).
 
 ## Screenshots ##
 1. Nginx plugin settings
@@ -114,9 +113,31 @@ It's just that we are hyperactive on our own forum!
 
 ## Changelog ##
 
+#### 1.8.13 ####
+Fixed PHP notice for an undefined index when "Enable Logging" is not set.
+
+#### 1.8.12 ####
+Updated readme and changelog
+
 #### 1.8.11 ####
 Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 [javisperez](https://github.com/javisperez)
+
+#### 1.8.10 ####
+* Security bug fix
+
+#### 1.8.9 ####
+* Default setting fix and wp-cli example correction - by [bcole808](https://profiles.wordpress.org/bcole808/)
+
+#### 1.8.8 ####
+* Added option to purge cache without nginx purge module - by [bcole808](https://profiles.wordpress.org/bcole808/)
+
+#### 1.8.7 ####
+* Added action `rt_nginx_helper_purge_all` to purge cache from other plugins - by [gungeekatx](https://profiles.wordpress.org/gungeekatx/)
+
+#### 1.8.6 ####
+* Removed wercker.yml from plugin zip/svn.
+* Updated readme
 
 #### 1.8.5 ####
 * Added WP_CLI support - by [Udit Desai](https://profiles.wordpress.org/desaiuditd/)
@@ -162,7 +183,7 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 * Log file location also changed to uploads' directory.
 
 #### 1.6.13 ####
-* [pjv](http://profiles.wordpress.org/pjv/) changed the way home url is accessed. Instead of site option, the plugin now uses home_url() function.
+* [pjv](http://profiles.wordpress.org/pjv/) changed the way home URL is accessed. Instead of site option, the plugin now uses home_URL() function.
 
 #### 1.6.12 ####
 * [telofy](http://wordpress.org/support/profile/telofy) added purging of atom and RDF feeds.
@@ -269,7 +290,6 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 #### 1.0 ####
 
 * First release
-
 
 #### 1.8.4 ####
 Fix undefined index issue and correct "purge_archive_on_del" key
