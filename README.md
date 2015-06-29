@@ -1,5 +1,7 @@
 ![alt text](https://plugins.svn.wordpress.org/nginx-helper/assets/banner-772x250.png)
 
+[![Build Status](https://travis-ci.org/iam404/nginx-helper.svg?branch=master)](https://travis-ci.org/iam404/nginx-helper)
+
 # Nginx Helper #
 
 * **Contributors:** [rtcamp] (http://profiles.wordpress.org/rtcamp), [rahul286] (http://profiles.wordpress.org/rahul286), [saurabhshukla] (http://profiles.wordpress.org/saurabhshukla), [faishal] (http://profiles.wordpress.org/faishal), [desaiuditd] (http://profiles.wordpress.org/desaiuditd), [rittesh.patel] (http://profiles.wordpress.org/rittesh.patel), [Darren] (http://profiles.wordpress.org/Darren), [Slatten] (http://profiles.wordpress.org/Slatten), [jk3us] (http://profiles.wordpress.org/jk3us), [daankortenbach] (http://profiles.wordpress.org/daankortenbach), [telofy] (http://profiles.wordpress.org/telofy), [pjv] (http://profiles.wordpress.org/pjv), [llonchj] (http://profiles.wordpress.org/llonchj), [manishsongirkar36] (http://profiles.wordpress.org/manishsongirkar36), [jinnko] (http://profiles.wordpress.org/jinnko), [weskoop] (http://profiles.wordpress.org/weskoop),
