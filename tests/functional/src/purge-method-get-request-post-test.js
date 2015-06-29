@@ -83,6 +83,7 @@ module.exports = {
       .assert.containsText("#main", "test title for nightwatch test")
       .assert.containsText("#main", "test post for nightwatch test update")
   },
+/*
   'Step seven : Update  Archives check (Admin && Date)': function(browser) {
     var data = browser.globals;
     browser
@@ -95,6 +96,7 @@ module.exports = {
       .assert.containsText("#main", "test title for nightwatch test")
       .assert.containsText("#main", "test post for nightwatch test update")
   },
+  */
 
   'Step eight : Set as trash ': function(browser) {
     var data = browser.globals;
