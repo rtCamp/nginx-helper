@@ -308,13 +308,13 @@ namespace rtCamp\WP\Nginx {
 
 		function true_purge_all()
 		{
-			//$redis = new \Predis\Profile\RedisVersion300;
-			//$retval = $redis->executeCommand( 'FLUSHDB' );
-			//$connection = new \Predis\Connection\StreamConnection;
-			//$connection->connect();
-			global $rt_wp_nginx_purger, $wp_object_cache;
-			$wp_object_cache->flush();
-			$rt_wp_nginx_purger->true_purge_all();
+		    //$redis = new \Predis\Profile\RedisVersion300;
+		    //$retval = $redis->executeCommand( 'FLUSHDB' );
+		    //$connection = new \Predis\Connection\StreamConnection;
+		    //$connection->connect();
+		    global $rt_wp_nginx_purger, $wp_object_cache;
+		    $wp_object_cache->flush();
+		    $rt_wp_nginx_purger->true_purge_all();
 		}
 
 		/**
@@ -342,7 +342,7 @@ namespace {
 	}
 
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'purger.php');
-	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'includes/predis.php');
+    require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'includes/predis.php');
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'compatibility.php');
 
 	global $rt_wp_nginx_helper, $rt_wp_nginx_purger, $rt_wp_nginx_compatibility;
