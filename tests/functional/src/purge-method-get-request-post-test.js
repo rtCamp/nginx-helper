@@ -86,8 +86,8 @@ module.exports = {
   'Step seven : Update  Archives check (Admin && Date)': function(browser) {
     var data = browser.globals;
     browser
-      .url(data.URLS.LOGIN)
-      .click('xpath', '//a[text()="admin"]')
+      .url(data.URLS.LOGIN + 'author/admin/')
+
       .assert.containsText("#main", "test title for nightwatch test")
       .assert.containsText("#main", "test post for nightwatch test update")
       .url(data.URLS.LOGIN)
