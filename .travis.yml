@@ -32,6 +32,7 @@ before_script:
 - mkdir nginx-helper
 - cd $PLUGIN_DIR
 - cp -Rf * /var/www/wp.localtest.me/htdocs/wp-content/plugins/nginx-helper/
+- cd /var/www/wp.localtest.me/htdocs/
 - wp plugin activate --all
 - cd $PLUGIN_DIR
 - cd tests/functional/
