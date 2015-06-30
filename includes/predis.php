@@ -4024,7 +4024,6 @@ abstract class AbstractConnection implements NodeConnectionInterface
      */
     public function executeCommand(CommandInterface $command)
     {
-		die('acac');
         $this->writeRequest($command);
 
         return $this->readResponse($command);
@@ -4248,7 +4247,6 @@ class StreamConnection extends AbstractConnection
      */
     public function connect()
     {
-		die('acdasda');
         if (parent::connect() && $this->initCommands) {
             foreach ($this->initCommands as $command) {
                 $this->executeCommand($command);
@@ -4966,7 +4964,6 @@ class WebdisConnection implements NodeConnectionInterface
      */
     public function executeCommand(CommandInterface $command)
     {
-		die('acacasda');
         $resource = $this->resource;
         $commandId = $this->getCommandId($command);
 
@@ -5338,7 +5335,6 @@ class PhpiredisSocketConnection extends AbstractConnection
      */
     public function connect()
     {
-		die('acacasdas');
         if (parent::connect()) {
             $this->connectWithTimeout($this->parameters);
 
@@ -8151,7 +8147,6 @@ class Client implements ClientInterface
     public function executeRaw(array $arguments, &$error = null)
     {
         $error = false;
-		die('acadasdc');
         $response = $this->connection->executeCommand(
             new RawCommand($arguments)
         );
@@ -8172,7 +8167,6 @@ class Client implements ClientInterface
      */
     public function __call($commandID, $arguments)
     {
-		die('acacsadasda');
         return $this->executeCommand(
             $this->createCommand($commandID, $arguments)
         );
@@ -8191,7 +8185,6 @@ class Client implements ClientInterface
      */
     public function executeCommand(CommandInterface $command)
     {
-		die('aasdasdasdc');
         $response = $this->connection->executeCommand($command);
 
         if ($response instanceof ResponseInterface) {
@@ -8217,7 +8210,6 @@ class Client implements ClientInterface
      */
     protected function onErrorResponse(CommandInterface $command, ErrorResponseInterface $response)
     {
-		die('acasaaaaac');
         if ($command instanceof ScriptCommand && $response->getErrorType() === 'NOSCRIPT') {
             $eval = $this->createCommand('EVAL');
             $eval->setRawArguments($command->getEvalArguments());
@@ -9409,7 +9401,6 @@ abstract class CursorBasedIterator implements Iterator
      */
     protected function fetch()
     {
-die('acacsdasd');
 		list($cursor, $elements) = $this->executeCommand();
 
         if (!$cursor) {
@@ -9511,7 +9502,6 @@ class SortedSetKey extends CursorBasedIterator
      */
     protected function executeCommand()
     {
-		die('acaaaaaac');
         return $this->client->zscan($this->key, $this->cursor, $this->getScanOptions());
     }
 
@@ -9557,7 +9547,6 @@ class SetKey extends CursorBasedIterator
      */
     protected function executeCommand()
     {
-		die('acaccccc');
         return $this->client->sscan($this->key, $this->cursor, $this->getScanOptions());
     }
 }
@@ -9586,7 +9575,6 @@ class Keyspace extends CursorBasedIterator
      */
     protected function executeCommand()
     {
-		die('acaasasdxsac');
         return $this->client->scan($this->cursor, $this->getScanOptions());
     }
 }
@@ -9619,7 +9607,6 @@ class HashKey extends CursorBasedIterator
      */
     protected function executeCommand()
     {
-		die('acacsdasda');
         return $this->client->hscan($this->key, $this->cursor, $this->getScanOptions());
     }
 
@@ -9716,7 +9703,6 @@ class ListKey implements Iterator
      */
     protected function executeCommand()
     {
-		die('aczzzzac');
         return $this->client->lrange($this->key, $this->position + 1, $this->position + $this->count);
     }
 
@@ -9726,7 +9712,6 @@ class ListKey implements Iterator
      */
     protected function fetch()
     {
-		die('acazzzc');
         $elements = $this->executeCommand();
 
         if (count($elements) < $this->count) {
@@ -10645,7 +10630,6 @@ class RedisCluster implements ClusterInterface, IteratorAggregate, Countable
         if (!$connection && !$connection = $this->getRandomConnection()) {
             return array();
         }
-die('acacqqqq');
         $command = RawCommand::create('CLUSTER', 'SLOTS');
         $response = $connection->executeCommand($command);
 
@@ -10879,7 +10863,6 @@ die('acacqqqq');
         }
 
         $this->move($connection, $slot);
-		die('acaeeeec');
         $response = $this->executeCommand($command);
 
         return $response;
@@ -10900,7 +10883,6 @@ die('acacqqqq');
         if (!$connection = $this->getConnectionById($connectionID)) {
             $connection = $this->createConnection($connectionID);
         }
-die('acawwwwc');
         $connection->executeCommand(RawCommand::create('ASKING'));
         $response = $connection->executeCommand($command);
 
@@ -10928,7 +10910,6 @@ die('acawwwwc');
      */
     public function executeCommand(CommandInterface $command)
     {
-		die('acacwqawad');
         $connection = $this->getConnection($command);
         $response = $connection->executeCommand($command);
 
@@ -11208,7 +11189,6 @@ class PredisCluster implements ClusterInterface, IteratorAggregate, Countable
      */
     public function executeCommand(CommandInterface $command)
     {
-		die('acacasdasd');
         return $this->getConnection($command)->executeCommand($command);
     }
 
@@ -11222,7 +11202,6 @@ class PredisCluster implements ClusterInterface, IteratorAggregate, Countable
     public function executeCommandOnNodes(CommandInterface $command)
     {
         $responses = array();
-		die('acaasdasdasc');
         foreach ($this->pool as $connection) {
             $responses[] = $connection->executeCommand($command);
         }
@@ -11467,7 +11446,6 @@ class MasterSlaveReplication implements ReplicationInterface
      */
     public function executeCommand(CommandInterface $command)
     {
-		die('acaasdasdasdasdc');
         return $this->getConnection($command)->executeCommand($command);
     }
 
@@ -11561,7 +11539,6 @@ class Pipeline implements ClientContextInterface
      */
     public function executeCommand(CommandInterface $command)
     {
-		die('acacasdasdas');
         $this->recordCommand($command);
 
         return $this;
@@ -11903,7 +11880,6 @@ class Atomic extends Pipeline
     protected function executePipeline(ConnectionInterface $connection, SplQueue $commands)
     {
         $profile = $this->getClient()->getProfile();
-		die('acactttt');
         $connection->executeCommand($profile->createCommand('multi'));
 
         foreach ($commands as $command) {
@@ -14363,7 +14339,6 @@ class MultiExec implements ClientContextInterface
      */
     public function __call($method, $arguments)
     {
-		die('acacffff');
         return $this->executeCommand(
             $this->client->createCommand($method, $arguments)
         );
@@ -14381,7 +14356,6 @@ class MultiExec implements ClientContextInterface
      */
     protected function call($commandID, array $arguments = array())
     {
-		die('acachhhh');
         $response = $this->client->executeCommand(
             $this->client->createCommand($commandID, $arguments)
         );
@@ -14406,7 +14380,6 @@ class MultiExec implements ClientContextInterface
     public function executeCommand(CommandInterface $command)
     {
         $this->initialize();
-		echo "O:KALKSA";die();
         if ($this->state->isCAS()) {
             return $this->client->executeCommand($command);
         }
@@ -14513,7 +14486,6 @@ class MultiExec implements ClientContextInterface
      */
     public function exec()
     {
-		var_dump("DDDDD");die();
         return $this->execute();
     }
 
@@ -14901,7 +14873,6 @@ class Consumer implements Iterator
      */
     protected function start()
     {
-		die('aa');
         $this->client->executeCommand(
             $this->client->createCommand('MONITOR')
         );
