@@ -9,6 +9,7 @@ namespace rtCamp\WP\Nginx {
 		$update = 0;
 		$error_time = false;
 		$error_log_filesize = false;
+		$rt_wp_nginx_helper->options['enable_purge'] = (isset( $_POST['enable_purge'] ) and ( $_POST['enable_purge'] == 1) ) ? 1 : 0;
 		$rt_wp_nginx_helper->options['cache_method'] = (isset( $_POST['cache_method'] ) ) ? $_POST['cache_method'] : 'enable_fastcgi';
 		$rt_wp_nginx_helper->options['enable_map'] = (isset( $_POST['enable_map'] ) and ( $_POST['enable_map'] == 1) ) ? 1 : 0;
 		$rt_wp_nginx_helper->options['enable_log'] = (isset( $_POST['enable_log'] ) and ( $_POST['enable_log'] == 1) ) ? 1 : 0;
@@ -36,7 +37,7 @@ namespace rtCamp\WP\Nginx {
 					$rt_wp_nginx_helper->update_map();
 				}
 			}
-			if ( isset( $_POST['cache_method'] ) && $_POST['cache_method'] = "enable_fastcgi" ) {
+			if ( isset( $_POST['enable_purge'] ) ) {
 				$rt_wp_nginx_helper->options['purge_homepage_on_edit'] = ( isset( $_POST['purge_homepage_on_edit'] ) and ( $_POST['purge_homepage_on_edit'] == 1 ) ) ? 1 : 0;
 				$rt_wp_nginx_helper->options['purge_homepage_on_del'] = ( isset( $_POST['purge_homepage_on_del'] ) and ( $_POST['purge_homepage_on_del'] == 1 ) ) ? 1 : 0;
 
@@ -56,9 +57,6 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['redis_hostname'] = ( isset( $_POST['redis_hostname'] ) ) ? $_POST['redis_hostname'] : '127.0.0.1';
 				$rt_wp_nginx_helper->options['redis_port'] = ( isset( $_POST['redis_port'] ) ) ? $_POST['redis_port'] : '6379';
 				$rt_wp_nginx_helper->options['redis_prefix'] = ( isset( $_POST['redis_prefix'] ) ) ? $_POST['redis_prefix'] : 'nginx-cache:';
-			}
-			if ( isset( $_POST['cache_method'] ) ) {
-				$rt_wp_nginx_helper->options['enable_purge'] = 1;
 			}
 			update_site_option( 'rt_wp_nginx_helper_options', $rt_wp_nginx_helper->options );
 			$update = 1;
@@ -93,6 +91,21 @@ namespace rtCamp\WP\Nginx {
 		<form id="post_form" method="post" action="#" name="smart_http_expire_form" class="clearfix">
 			<div class="postbox">
 				<h3 class="hndle">
+					<span><?php _e( 'Purging Options', 'nginx-helper' ); ?></span>
+				</h3>
+				<div class="inside">
+					<table class="form-table">
+						<tr valign="top">
+							<td>
+								<input type="checkbox" value="1" id="enable_purge" name="enable_purge"<?php checked( $rt_wp_nginx_helper->options['enable_purge'], 1 ); ?> />
+								<label for="enable_purge"><?php _e( 'Enable Purge', 'nginx-helper' ); ?></label>
+							</td>
+						</tr>
+					</table>
+				</div> <!-- End of .inside -->
+			</div>
+			<div class="postbox enable_purge"<?php echo ( $rt_wp_nginx_helper->options['enable_purge'] == false ) ? ' style="display: none;"' : ''; ?>>
+				<h3 class="hndle">
 					<span><?php _e( 'Caching Method', 'nginx-helper' ); ?></span>
 				</h3>
 				<?php if ( !(!is_network_admin() && is_multisite() ) ) { ?>
@@ -118,36 +131,70 @@ namespace rtCamp\WP\Nginx {
 						</table>
 					</div> <!-- End of .inside -->
 				</div>
-				<div class="postbox cache_method_fastcgi"<?php echo ( $rt_wp_nginx_helper->options['cache_method'] == "enable_fastcgi" ) ? '' : ' style="display: none;"'; ?>>
-					<h3 class="hndle">
-						<span><?php _e( 'Purge Method', 'nginx-helper' ); ?></span>
-					</h3>
-					<div class="inside">
-						<table class="form-table rtnginx-table">
-							<tr valign="top">
-								<td>
-									<fieldset>
-										<legend class="screen-reader-text">
-											<span>&nbsp;<?php _e( 'when a post/page/custom post is published.', 'nginx-helper' ); ?></span>
-										</legend>
-										<label for="purge_method_get_request">
-											<input type="radio" value="get_request" id="purge_method_get_request" name="purge_method"<?php checked( isset( $rt_wp_nginx_helper->options['purge_method'] ) ? $rt_wp_nginx_helper->options['purge_method'] : 'get_request', 'get_request' ); ?>>
-											&nbsp;<?php _e( 'Using a GET request to <strong>PURGE/url</strong> (Default option)', 'nginx-helper' ); ?><br />
-											<small><?php _e( 'Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. ', 'nginx-helper' ); ?></small>
-										</label><br />
-										<label for="purge_method_unlink_files">
-											<input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method"<?php checked( isset( $rt_wp_nginx_helper->options['purge_method'] ) ? $rt_wp_nginx_helper->options['purge_method'] : '', 'unlink_files' ); ?>>
-											&nbsp;<?php _e( 'Delete local server cache files', 'nginx-helper' ); ?><br />
-											<small><?php _e( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' ); ?></small>
+				<div class="enable_purge">
+					<div class="postbox cache_method_fastcgi"<?php echo ( $rt_wp_nginx_helper->options['enable_purge'] == true && $rt_wp_nginx_helper->options['cache_method'] == "enable_fastcgi" ) ? '' : ' style="display: none;"'; ?>>
+						<h3 class="hndle">
+							<span><?php _e( 'Purge Method', 'nginx-helper' ); ?></span>
+						</h3>
+						<div class="inside">
+							<table class="form-table rtnginx-table">
+								<tr valign="top">
+									<td>
+										<fieldset>
+											<legend class="screen-reader-text">
+												<span>&nbsp;<?php _e( 'when a post/page/custom post is published.', 'nginx-helper' ); ?></span>
+											</legend>
+											<label for="purge_method_get_request">
+												<input type="radio" value="get_request" id="purge_method_get_request" name="purge_method"<?php checked( isset( $rt_wp_nginx_helper->options['purge_method'] ) ? $rt_wp_nginx_helper->options['purge_method'] : 'get_request', 'get_request' ); ?>>
+												&nbsp;<?php _e( 'Using a GET request to <strong>PURGE/url</strong> (Default option)', 'nginx-helper' ); ?><br />
+												<small><?php _e( 'Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. ', 'nginx-helper' ); ?></small>
+											</label><br />
+											<label for="purge_method_unlink_files">
+												<input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method"<?php checked( isset( $rt_wp_nginx_helper->options['purge_method'] ) ? $rt_wp_nginx_helper->options['purge_method'] : '', 'unlink_files' ); ?>>
+												&nbsp;<?php _e( 'Delete local server cache files', 'nginx-helper' ); ?><br />
+												<small><?php _e( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' ); ?></small>
 
-										</label><br />
-									</fieldset>
-								</td>
-							</tr>
-						</table>
-					</div> <!-- End of .inside -->
+											</label><br />
+										</fieldset>
+									</td>
+								</tr>
+							</table>
+						</div> <!-- End of .inside -->
+					</div>
+					<div class="postbox cache_method_redis"<?php echo ( $rt_wp_nginx_helper->options['enable_purge'] == true && $rt_wp_nginx_helper->options['cache_method'] == "enable_redis" ) ? '' : ' style="display: none;"'; ?>>
+						<h3 class="hndle">
+							<span><?php _e( 'Redis Settings', 'nginx-helper' ); ?></span>
+						</h3>
+						<div class="inside">
+							<table class="form-table rtnginx-table">
+								<?php
+								$redis_hostname = ( empty( $rt_wp_nginx_helper->options['redis_hostname'] ) ) ? '127.0.0.1' : $rt_wp_nginx_helper->options['redis_hostname'];
+								$redis_port = ( empty( $rt_wp_nginx_helper->options['redis_port'] ) ) ? '6379' : $rt_wp_nginx_helper->options['redis_port'];
+								$redis_prefix = ( empty( $rt_wp_nginx_helper->options['redis_prefix'] ) ) ? 'nginx-cache:' : $rt_wp_nginx_helper->options['redis_prefix'];
+								?>
+								<tr>
+									<th><label for="redis_hostname"><?php _e( 'Hostname', 'nginx-helper' ); ?></label></th>
+									<td>
+										<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo $redis_hostname; ?>" />
+									</td>
+								</tr>
+								<tr>
+									<th><label for="redis_port"><?php _e( 'Port', 'nginx-helper' ); ?></label></th>
+									<td>
+										<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo $redis_port; ?>" />
+									</td>
+								</tr>
+								<tr>
+									<th><label for="redis_prefix"><?php _e( 'Prefix', 'nginx-helper' ); ?></label></th>
+									<td>
+										<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo $redis_prefix; ?>" />
+									</td>
+								</tr>
+							</table>
+						</div> <!-- End of .inside -->
+					</div>
 				</div>
-				<div class="postbox cache_method_fastcgi"<?php echo ( $rt_wp_nginx_helper->options['cache_method'] == "enable_fastcgi" ) ? '' : ' style="display: none;"'; ?>>
+				<div class="postbox enable_purge"<?php echo ( $rt_wp_nginx_helper->options['enable_purge'] == false ) ? ' style="display: none;"' : ''; ?>>
 					<h3 class="hndle">
 						<span><?php _e( 'Purging Conditions', 'nginx-helper' ); ?></span>
 					</h3>
@@ -259,38 +306,6 @@ namespace rtCamp\WP\Nginx {
 								</fieldset>
 
 							</td>
-							</tr>
-						</table>
-					</div> <!-- End of .inside -->
-				</div>
-				<div class="postbox cache_method_redis"<?php echo ( $rt_wp_nginx_helper->options['cache_method'] == "enable_redis" ) ? '' : ' style="display: none;"'; ?>>
-					<h3 class="hndle">
-						<span><?php _e( 'Redis Settings', 'nginx-helper' ); ?></span>
-					</h3>
-					<div class="inside">
-						<table class="form-table rtnginx-table">
-							<?php
-							$redis_hostname = ( empty( $rt_wp_nginx_helper->options['redis_hostname'] ) ) ? '127.0.0.1' : $rt_wp_nginx_helper->options['redis_hostname'];
-							$redis_port = ( empty( $rt_wp_nginx_helper->options['redis_port'] ) ) ? '6379' : $rt_wp_nginx_helper->options['redis_port'];
-							$redis_prefix = ( empty( $rt_wp_nginx_helper->options['redis_prefix'] ) ) ? 'nginx-cache:' : $rt_wp_nginx_helper->options['redis_prefix'];
-							?>
-							<tr>
-								<th><label for="redis_hostname"><?php _e( 'Hostname', 'nginx-helper' ); ?></label></th>
-								<td>
-									<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo $redis_hostname; ?>" />
-								</td>
-							</tr>
-							<tr>
-								<th><label for="redis_port"><?php _e( 'Port', 'nginx-helper' ); ?></label></th>
-								<td>
-									<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo $redis_port; ?>" />
-								</td>
-							</tr>
-							<tr>
-								<th><label for="redis_prefix"><?php _e( 'Prefix', 'nginx-helper' ); ?></label></th>
-								<td>
-									<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo $redis_prefix; ?>" />
-								</td>
 							</tr>
 						</table>
 					</div> <!-- End of .inside -->

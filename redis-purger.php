@@ -4,6 +4,11 @@ namespace rtCamp\WP\Nginx {
 
 	class Redispurger {
 
+		public function __construct()
+		{
+			require_once RT_WP_NGINX_HELPER_PATH . 'includes/redis-delete.php';
+		}
+
 		function purgePostOnComment( $comment_id, $comment )
 		{
 			$oldstatus = '';
@@ -206,7 +211,6 @@ namespace rtCamp\WP\Nginx {
 
 		function purgeUrl( $url, $feed = true )
 		{
-			require_once RT_WP_NGINX_HELPER_PATH . 'includes/redis-delete.php';
 			global $rt_wp_nginx_helper;
 
 			$this->log( "- Purging URL | " . $url );
@@ -654,15 +658,11 @@ namespace rtCamp\WP\Nginx {
 
 		function true_purge_all()
 		{
-			require_once RT_WP_NGINX_HELPER_PATH . 'includes/redis-delete.php';
 			global $rt_wp_nginx_helper;
 			$this->log( "* * * * *" );
 			$this->log( "* Purged Everything!" );
 			$this->log( "* * * * *" );
-			$host = $rt_wp_nginx_helper->options['redis_hostname'];
-			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
-			$url = $prefix . "*" . $host . "*";
-			delete_keys_by_wildcard( $url );
+			delete_multi_keys("*");
 		}
 
 	}

@@ -38,4 +38,5 @@ jQuery( document ).ready( function() {
 	nginx_show_option( 'cache_method_redis' );
 	nginx_show_option( 'enable_map' );
 	nginx_show_option( 'enable_log' );
+	nginx_show_option( 'enable_purge' );
 } );

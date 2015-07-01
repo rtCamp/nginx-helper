@@ -5,10 +5,11 @@
 require_once 'predis.php';
 Predis\Autoloader::register();
 
-$rt_wp_nginx_helper_options = get_site_option( 'rt_wp_nginx_helper_options' );
-$host = $rt_wp_nginx_helper_options['redis_hostname'];
-$port = $rt_wp_nginx_helper_options['redis_port'];
-global $myredis;
+global $myredis, $rt_wp_nginx_helper;
+
+$host = $rt_wp_nginx_helper->options['redis_hostname'];
+$port = $rt_wp_nginx_helper->options['redis_port'];
+
 //Lua Script
 $lua = <<<LUA
 local k =  0
@@ -41,8 +42,24 @@ try {
 function delete_multi_keys( $key )
 {
 	global $myredis;
+	$matching_keys = $myredis->keys( $key );
+	foreach ( $matching_keys as $key => $value ) {
+		$myredis->executeRaw( ['DEL', $value ] );
+	}
+}
 
-//TODO :: implementation
+/*
+ *  Delete all the keys from currently selected database
+ */
+
+function flush_entire_db()
+{
+	global $myredis;
+	if ( !empty( $myredis ) ) {
+		return $myredis->flushdb();
+	} else {
+		return false;
+	}
 }
 
 /*
@@ -55,6 +72,8 @@ function delete_single_key( $key )
 	global $myredis;
 	if ( !empty( $myredis ) ) {
 		return $myredis->executeRaw( ['DEL', $key ] );
+	} else {
+		return false;
 	}
 }
 
@@ -77,10 +96,9 @@ function delete_keys_by_wildcard( $pattern )
 	 */
 	if ( !empty( $myredis ) ) {
 		return $myredis->eval( $lua, 1, $pattern );
+	} else {
+		return false;
 	}
 }
 
-//Example Usage
-//echo delete_keys_by_wildcard("foo*");
-//echo delete_single_key("bar");
 ?>
