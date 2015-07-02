@@ -3,7 +3,10 @@ Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desai
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 1.9
+Stable tag: 1.9.1
+later (of-.1course)
+Fix purging for custom post types
+
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -112,6 +115,9 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 2. Remaining settings
 
 == Changelog ==
+
+= 1.9.1 =
+Fix purging for custom post types
 
 = 1.9 =
 Added Redis cache purge support.

@@ -73,6 +73,7 @@ README.md
 .git
 .gitattributes
 .gitignore
+tests
 map.conf
 nginx.log" "$SVNPATH/trunk/"
 

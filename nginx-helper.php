@@ -3,7 +3,7 @@
   Plugin Name: Nginx Helper
   Plugin URI: https://rtcamp.com/nginx-helper/
   Description: Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
-  Version: 1.9
+  Version: 1.9.1
   Author: rtCamp
   Author URI: https://rtcamp.com
   Text Domain: nginx-helper
@@ -49,20 +49,21 @@ namespace rtCamp\WP\Nginx {
 			add_action( 'shutdown', array( &$this, 'add_timestamps' ), 99999 );
 			add_action( 'add_init', array( &$this, 'update_map' ) );
 
-			add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
-			add_action( 'publish_page', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
+			add_action( 'save_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
+			// add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
+			// add_action( 'publish_page', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			add_action( 'wp_insert_comment', array( &$rt_wp_nginx_purger, 'purgePostOnComment' ), 200, 2 );
 			add_action( 'transition_comment_status', array( &$rt_wp_nginx_purger, 'purgePostOnCommentChange' ), 200, 3 );
 
-			$args = array( '_builtin' => false );
-			$_rt_custom_post_types = get_post_types( $args );
-			if ( isset( $post_types ) && !empty( $post_types ) ) {
-				if ( $this->options['rt_wp_custom_post_types'] == true ) {
-					foreach ( $_rt_custom_post_types as $post_type ) {
-						add_action( 'publish_' . trim( $post_type ), array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
-					}
-				}
-			}
+			// $args = array( '_builtin' => false );
+			// $_rt_custom_post_types = get_post_types( $args );
+			// if ( isset( $post_types ) && !empty( $post_types ) ) {
+			// 	if ( $this->options['rt_wp_custom_post_types'] == true ) {
+			// 		foreach ( $_rt_custom_post_types as $post_type ) {
+			// 			add_action( 'publish_' . trim( $post_type ), array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
+			// 		}
+			// 	}
+			// }
 
 			add_action( 'transition_post_status', array( &$this, 'set_future_post_option_on_future_status' ), 20, 3 );
 			add_action( 'delete_post', array( &$this, 'unset_future_post_option_on_delete' ), 20, 1 );
@@ -432,4 +433,3 @@ namespace {
 
 	add_action( 'init', 'fetch_feeds' );
 }
-
