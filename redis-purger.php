@@ -218,7 +218,7 @@ namespace rtCamp\WP\Nginx {
 			$parse = parse_url( $url );
 			$host = $rt_wp_nginx_helper->options['redis_hostname'];
 			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
-			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $host . $parse['path'];
+			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
 			delete_single_key( $_url_purge_base );
 		}
 

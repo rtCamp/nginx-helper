@@ -3,7 +3,7 @@
   Plugin Name: Nginx Helper
   Plugin URI: https://rtcamp.com/nginx-helper/
   Description: Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
-  Version: 1.9.1
+  Version: 1.9.2
   Author: rtCamp
   Author URI: https://rtcamp.com
   Text Domain: nginx-helper
@@ -49,7 +49,7 @@ namespace rtCamp\WP\Nginx {
 			add_action( 'shutdown', array( &$this, 'add_timestamps' ), 99999 );
 			add_action( 'add_init', array( &$this, 'update_map' ) );
 
-			add_action( 'save_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
+			//add_action( 'save_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			// add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			// add_action( 'publish_page', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			add_action( 'wp_insert_comment', array( &$rt_wp_nginx_purger, 'purgePostOnComment' ), 200, 2 );
@@ -126,10 +126,14 @@ namespace rtCamp\WP\Nginx {
 		{
 
 			global $blog_id, $rt_wp_nginx_purger;
-			if ( !$this->options['enable_purge'] ) {
+            $skip_status = array( 'auto-draft', 'draft', 'inherit', 'trash', 'pending' );
+            $purge_status = array( 'publish', 'future' );
+            
+			if ( !$this->options['enable_purge'] || in_array( $old_status, $skip_status ) ) {
 				return;
 			}
-			if ( $old_status != $new_status && $old_status != 'inherit' && $new_status != 'inherit' && $old_status != 'auto-draft' && $new_status != 'auto-draft' && $new_status != 'publish' && !wp_is_post_revision( $post->ID ) ) {
+			
+            if( in_array( $old_status, $purge_status ) || in_array( $new_status, $purge_status ) ) {
 				$rt_wp_nginx_purger->log( "Purge post on transition post STATUS from " . $old_status . " to " . $new_status );
 				$rt_wp_nginx_purger->purgePost( $post->ID );
 			}

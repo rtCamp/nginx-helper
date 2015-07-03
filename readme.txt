@@ -1,9 +1,9 @@
 === Nginx Helper ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 later (of-.1course)
 Fix purging for custom post types
 
@@ -115,6 +115,9 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 2. Remaining settings
 
 == Changelog ==
+
+= 1.9.2 =
+Fix purging for Redis cache and FastCGI cache
 
 = 1.9.1 =
 Fix purging for custom post types
