@@ -53,13 +53,14 @@ module.exports = {
       .wplogin(data.URLS.LOGIN, data.TESTADMINUSERNAME, data.TESTADMINPASSWORD)
       .url(data.URLS.LOGIN + urlp)
       .click('.post-edit-link')
-
-      .clearValue('textarea[id="content"]')
-      .setValue('textarea[id="content"]', "test page content updated")
+      .clearValue('#title')
+      .setValue('#title', "test page title updated")
       .click('#publish')
+      .pause(2000)
       .wplogout()
       .url(data.URLS.LOGIN + urlp)
-      .assert.containsText("#main", "test page content updated")
+      .verify.containsText(".entry-title", "test page title updated")
+      .verify.containsText(".site-main", "test page created for testing")
 },
 
   'Step four : Page comment check ': function(browser) {
