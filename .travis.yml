@@ -27,7 +27,7 @@ before_script:
 - sudo nginx -t
 - sudo service nginx reload
 - cd /var/www/wp.localtest.me/htdocs/wp-content/plugins/ && ls
-- wp --allow-root plugin delete w3-total-cache
+- wp --allow-root plugin deactivate w3-total-cache
 - wp --allow-root plugin delete nginx-helper
 - mkdir nginx-helper
 - cd $PLUGIN_DIR
