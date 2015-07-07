@@ -21,13 +21,13 @@ before_script:
 - source /etc/bash_completion.d/ee_auto.rc
 - sudo ee -v
 - sudo lsb_release  -a
-- sudo ee site create wp.localtest.me --wp --user=ADMINUSER --email=prabuddha.chakraborty@rtcamp.com --pass=ADMINPASS
+- sudo ee site create wp.localtest.me --wpfc --user=ADMINUSER --email=prabuddha.chakraborty@rtcamp.com --pass=ADMINPASS
 - sudo chmod 777 -R /var/www
-#- sudo bash -c 'echo "127.0.0.1	rtmediatest.com	www.rtmediatest.com" >> /etc/hosts'
 - cat ~/.my.cnf
 - sudo nginx -t
 - sudo service nginx reload
 - cd /var/www/wp.localtest.me/htdocs/wp-content/plugins/ && ls
+- wp --allow-root plugin deactivate w3-total-cache
 - wp --allow-root plugin delete nginx-helper
 - mkdir nginx-helper
 - cd $PLUGIN_DIR
