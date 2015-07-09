@@ -662,7 +662,8 @@ namespace rtCamp\WP\Nginx {
 			$this->log( "* * * * *" );
 			$this->log( "* Purged Everything!" );
 			$this->log( "* * * * *" );
-			delete_multi_keys("*");
+			//delete_multi_keys("*");
+            delete_keys_by_wildcard("*");
         }
 
 	}

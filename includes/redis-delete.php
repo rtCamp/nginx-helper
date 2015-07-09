@@ -3,7 +3,7 @@
 //TODO:: phpRedis based implementation https://github.com/phpredis/phpredis#eval
 //include predis (php implementation for redis)
 
-global $myredis, $rt_wp_nginx_helper, $redis_api;
+global $myredis, $rt_wp_nginx_helper, $redis_api, $lua;
 
 $host = $rt_wp_nginx_helper->options['redis_hostname'];
 $port = $rt_wp_nginx_helper->options['redis_port'];
@@ -106,7 +106,7 @@ function delete_single_key( $key )
 
 function delete_keys_by_wildcard( $pattern )
 {
-	global $myredis;
+	global $myredis, $lua, $redis_api;
 	/*
 	  Lua Script block to delete multiple keys using wildcard
 	  Script will return count i.e. number of keys deleted
@@ -116,9 +116,13 @@ function delete_keys_by_wildcard( $pattern )
 	/*
 	  Call redis eval and return value from lua script
 	 */
-	if ( !empty( $myredis ) ) {
-		$res = $myredis->eval( $lua_script ); //, array(1), array( $pattern ) );
-	} else {
+	if ( ! empty( $myredis ) ) {
+        if( $redis_api == 'predis') {
+            return $myredis->eval( $lua, 1, $pattern );
+        } else if( $redis_api == 'php-redis') {
+            return $myredis->eval( $lua, array( $pattern ), 1 );
+        }
+    } else {
 		return false;
 	}
 }

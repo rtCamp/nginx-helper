@@ -309,5 +309,6 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 == Upgrade Notice ==
 
-= 1.9 =
-Added Redis cache purge support.
+= 1.9.3 =
+* Added PhpRedis API support.
+* Fixed cache purging link in admin bar.
