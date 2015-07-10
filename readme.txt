@@ -1,21 +1,19 @@
 === Nginx Helper ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, Darren Slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel
-Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, rewrite, permalinks
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123
+Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 1.9.3
-later (of-.1course)
-Fix purging for custom post types
-
+Stable tag: 1.9.4
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
 
-Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does a few more things.
+Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/published. Also does few more things.
 
 == Description ==
 
 1. Removes `index.php` from permalinks when using WordPress with nginx.
+1. Adds support for purging redis-cache when used as full-page cache created using [nginx-srcache-module](https://github.com/openresty/srcache-nginx-module#caching-with-redis)
 1. Adds support for nginx fastcgi_cache_purge & proxy_cache_purge directive from [module](https://github.com/FRiCKLE/ngx_cache_purge "ngx_cache_purge module"). Provides settings so you can customize purging rules.
 1. Adds support for nginx `map{..}` on a WordPress-multisite network installation. Using it, Nginx can serve PHP file uploads even if PHP/MySQL crashes. Please check the tutorial list below for related Nginx configurations.
 
@@ -118,7 +116,11 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 
 = 1.9.3 =
 * Added PhpRedis API support.
+* Added redis-lua script support to purge complete cache very fast.
+* Added composer.json support
 * Fixed cache purging link in admin bar.
+* Updated the initial settings to include the 'purge_method' [#99](https://github.com/rtCamp/nginx-helper/pull/99) - by
+[gagan0123](https://github.com/gagan0123)
 
 = 1.9.2 =
 Fix purging for Redis cache and FastCGI cache

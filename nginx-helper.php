@@ -2,7 +2,7 @@
 /*
   Plugin Name: Nginx Helper
   Plugin URI: https://rtcamp.com/nginx-helper/
-  Description: Cleans nginx's fastcgi/proxy cache whenever a post is edited/published. Also does few more things.
+  Description: Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/published. Also does few more things.
   Version: 1.9.3
   Author: rtCamp
   Author URI: https://rtcamp.com
@@ -128,11 +128,11 @@ namespace rtCamp\WP\Nginx {
 			global $blog_id, $rt_wp_nginx_purger;
             $skip_status = array( 'auto-draft', 'draft', 'inherit', 'trash', 'pending' );
             $purge_status = array( 'publish', 'future' );
-            
+
 			if ( !$this->options['enable_purge'] || in_array( $old_status, $skip_status ) ) {
 				return;
 			}
-			
+
             if( in_array( $old_status, $purge_status ) || in_array( $new_status, $purge_status ) ) {
 				$rt_wp_nginx_purger->log( "Purge post on transition post STATUS from " . $old_status . " to " . $new_status );
 				$rt_wp_nginx_purger->purgePost( $post->ID );

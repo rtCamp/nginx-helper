@@ -1,0 +1,20 @@
+{
+    "name": "rtcamp/nginx-helper",
+    "description": "Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/published. Also does few more things.",
+    "keywords": ["wordpress", "plugin", "nginx", "nginx-helper", "fastcgi", "redis-cahce", "redis", "cache"],
+    "homepage": "https://rtcamp.com/nginx-helper/",
+    "license": "GPLv2",
+    "authors": [{
+        "name": "rtCamp",
+        "email": "admin@rtcamp.com",
+        "homepage": "https://rtcamp.com"
+    }],
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=5.3.2",
+        "composer/installers": "v1.0.6"
+    },
+    "require-dev": {
+        "wpreadme2markdown/wpreadme2markdown": "*"
+    }
+}
