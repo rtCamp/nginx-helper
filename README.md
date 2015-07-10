@@ -8,7 +8,7 @@
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 **Donate Link:** http://rtcamp.com/donate/  
 
-Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/published. Also does few more things.
+Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/published. Also does a few more things.
 
 ## Description ##
 
