@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desai
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 1.9.4
+Stable tag: 1.9.3
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
