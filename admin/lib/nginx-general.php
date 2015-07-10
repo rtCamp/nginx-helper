@@ -386,11 +386,7 @@ namespace rtCamp\WP\Nginx {
 						$log = fopen( $path . 'nginx.log', 'w' );
 						fclose( $log );
 					}
-					if ( is_writable( $path . 'nginx.log' ) ) {
-						$rt_wp_nginx_purger->log( "+++++++++" );
-						$rt_wp_nginx_purger->log( "+Log Test" );
-						$rt_wp_nginx_purger->log( "+++++++++" );
-					}
+					
 					if ( !is_writable( $path . 'nginx.log' ) ) {
 						?>
 						<span class="error fade" style="display : block"><p><?php printf( __( 'Can\'t write on log file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper' ), $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ); ?></p></span><?php }

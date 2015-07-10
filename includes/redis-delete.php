@@ -2,13 +2,36 @@
 
 //TODO:: phpRedis based implementation https://github.com/phpredis/phpredis#eval
 //include predis (php implementation for redis)
-require_once 'predis.php';
-Predis\Autoloader::register();
 
-global $myredis, $rt_wp_nginx_helper;
+global $myredis, $rt_wp_nginx_helper, $redis_api, $lua;
 
 $host = $rt_wp_nginx_helper->options['redis_hostname'];
 $port = $rt_wp_nginx_helper->options['redis_port'];
+$redis_api = '';
+
+if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
+    try {
+        $myredis = new Redis();
+        $myredis->connect( $host, $port );
+        $redis_api = 'php-redis';
+    } catch ( Exception $e ) {}
+} else {
+    if( ! class_exists( 'Predis\Autoloader' ) ) {
+        require_once 'predis.php';
+    }
+    Predis\Autoloader::register();
+    
+    //redis server parameter
+    $myredis = new Predis\Client( [
+        'host' => $host,
+        'port' => $port,
+    ] );
+    //connect
+    try {
+        $myredis->connect();
+        $redis_api = 'predis';
+    } catch ( Exception $e ) {}
+}
 
 //Lua Script
 $lua = <<<LUA
@@ -21,31 +44,25 @@ end
 return k
 LUA;
 
-//redis server parameter
-$myredis = new Predis\Client( [
-	'host' => $host,
-	'port' => $port,
-		] );
-
-//connect
-try {
-	$myredis->connect();
-} catch ( Exception $e ) {
-	
-}
-
-
 /*
   Delete multiple single keys without wildcard using redis pipeline feature to speed up things
  */
 
 function delete_multi_keys( $key )
 {
-	global $myredis;
-	$matching_keys = $myredis->keys( $key );
-	foreach ( $matching_keys as $key => $value ) {
-		$myredis->executeRaw( ['DEL', $value ] );
-	}
+	global $myredis, $redis_api;
+    if ( !empty( $myredis ) ) {
+        $matching_keys = $myredis->keys( $key );
+        if( $redis_api == 'predis') {
+            foreach ( $matching_keys as $key => $value ) {
+                $myredis->executeRaw( ['DEL', $value ] );
+            }
+        } else if( $redis_api == 'php-redis') {
+            return $myredis->del( $matching_keys );
+        }
+    } else {
+        return false;
+    }
 }
 
 /*
@@ -69,9 +86,14 @@ function flush_entire_db()
 
 function delete_single_key( $key )
 {
-	global $myredis;
+	global $myredis, $redis_api;
+    
 	if ( !empty( $myredis ) ) {
-		return $myredis->executeRaw( ['DEL', $key ] );
+        if( $redis_api == 'predis') {
+            return $myredis->executeRaw( ['DEL', $key ] );
+        } else if( $redis_api == 'php-redis') {
+            return $myredis->del( $key );
+        }
 	} else {
 		return false;
 	}
@@ -84,7 +106,7 @@ function delete_single_key( $key )
 
 function delete_keys_by_wildcard( $pattern )
 {
-	global $myredis, $lua;
+	global $myredis, $lua, $redis_api;
 	/*
 	  Lua Script block to delete multiple keys using wildcard
 	  Script will return count i.e. number of keys deleted
@@ -94,9 +116,13 @@ function delete_keys_by_wildcard( $pattern )
 	/*
 	  Call redis eval and return value from lua script
 	 */
-	if ( !empty( $myredis ) ) {
-		return $myredis->eval( $lua, 1, $pattern );
-	} else {
+	if ( ! empty( $myredis ) ) {
+        if( $redis_api == 'predis') {
+            return $myredis->eval( $lua, 1, $pattern );
+        } else if( $redis_api == 'php-redis') {
+            return $myredis->eval( $lua, array( $pattern ), 1 );
+        }
+    } else {
 		return false;
 	}
 }

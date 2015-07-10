@@ -1,6 +1,6 @@
 ![alt text](https://plugins.svn.wordpress.org/nginx-helper/assets/banner-772x250.png)
 
-[![Build Status](https://travis-ci.org/iam404/nginx-helper.svg?branch=master)](https://travis-ci.org/iam404/nginx-helper)
+[![Build Status](https://travis-ci.org/rtCamp/nginx-helper.svg?branch=master)](https://travis-ci.org/rtCamp/nginx-helper)
 
 # Nginx Helper #
 
