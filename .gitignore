@@ -1,0 +1,14 @@
+*.DS_Store
+*.swp
+map.conf
+nginx.log
+.idea
+_builds
+_projects
+_steps
+node_modules
+npm-debug.log
+tests/functional/node_modules/
+/tests/functional/reports/
+selenium-*.jar
+vendor
