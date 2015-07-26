@@ -1,0 +1,501 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Nginx Helper 1.7.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-01-02 17:41+0530\n"
+"PO-Revision-Date: 2014-01-02 17:41+0530\n"
+"Last-Translator: rtCamp <support@rtcamp.com>\n"
+"Language-Team: rtCampers <support@rtcamp.com>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../nginx-helper.php:254
+msgid "Purge initiated"
+msgstr ""
+
+#: ../nginx-helper.php:340
+msgid "Settings"
+msgstr ""
+
+#: ../nginx-helper.php:367
+msgid "No items"
+msgstr ""
+
+#: ../nginx-helper.php:372
+msgid "Posted "
+msgstr ""
+
+#: ../purger.php:366
+#, php-format
+msgid "Purging homepage '%s'"
+msgstr ""
+
+#: ../purger.php:376
+msgid "Purging personal urls"
+msgstr ""
+
+#: ../purger.php:384
+msgid "No personal urls available"
+msgstr ""
+
+#: ../purger.php:392
+msgid "Purging category archives"
+msgstr ""
+
+#: ../purger.php:396
+#, php-format
+msgid "Purging category '%d'"
+msgstr ""
+
+#: ../purger.php:406
+msgid "Purging tags archives"
+msgstr ""
+
+#: ../purger.php:410 ../purger.php:468
+#, php-format
+msgid "Purging tag '%s' (id %d)"
+msgstr ""
+
+#: ../purger.php:420
+msgid "Purging post custom taxonomies related"
+msgstr ""
+
+#: ../purger.php:424 ../purger.php:485
+#, php-format
+msgid "Purging custom taxonomy '%s'"
+msgstr ""
+
+#: ../purger.php:434 ../purger.php:495
+#, php-format
+msgid "Your built-in taxonomy '%s' has param '_builtin' set to false."
+msgstr ""
+
+#: ../purger.php:438 ../purger.php:499
+msgid "No custom taxonomies"
+msgstr ""
+
+#: ../purger.php:446
+msgid "Purging all categories"
+msgstr ""
+
+#: ../purger.php:451
+#, php-format
+msgid "Purging category '%s' (id %d)"
+msgstr ""
+
+#: ../purger.php:455
+msgid "No categories archives"
+msgstr ""
+
+#: ../purger.php:463
+msgid "Purging all tags"
+msgstr ""
+
+#: ../purger.php:472
+msgid "No tags archives"
+msgstr ""
+
+#: ../purger.php:480
+msgid "Purging all custom taxonomies"
+msgstr ""
+
+#: ../purger.php:516
+msgid "Purging all posts, pages and custom post types."
+msgstr ""
+
+#: ../purger.php:526
+#, php-format
+msgid "Purging post id '%d' (post type '%s')"
+msgstr ""
+
+#: ../purger.php:530
+msgid "No posts"
+msgstr ""
+
+#: ../purger.php:538
+msgid "Purging all date-based archives."
+msgstr ""
+
+#: ../purger.php:553
+msgid "Purging all daily archives."
+msgstr ""
+
+#: ../purger.php:566
+#, php-format
+msgid "Purging daily archive '%s/%s/%s'"
+msgstr ""
+
+#: ../purger.php:570
+msgid "No daily archives"
+msgstr ""
+
+#: ../purger.php:578
+msgid "Purging all monthly archives."
+msgstr ""
+
+#: ../purger.php:591
+#, php-format
+msgid "Purging monthly archive '%s/%s'"
+msgstr ""
+
+#: ../purger.php:595
+msgid "No monthly archives"
+msgstr ""
+
+#: ../purger.php:603
+msgid "Purging all yearly archives."
+msgstr ""
+
+#: ../purger.php:616
+#, php-format
+msgid "Purging yearly archive '%s'"
+msgstr ""
+
+#: ../purger.php:620
+msgid "No yearly archives"
+msgstr ""
+
+#: ../purger.php:626
+msgid "Let's purge everything!"
+msgstr ""
+
+#: ../purger.php:638
+msgid "Everthing purged!"
+msgstr ""
+
+#: ../purger.php:645
+msgid "Term taxonomy edited or deleted"
+msgstr ""
+
+#: ../purger.php:648
+#, php-format
+msgid "Term taxonomy '%s' edited, (tt_id '%d', term_id '%d', taxonomy '%s')"
+msgstr ""
+
+#: ../purger.php:650
+#, php-format
+msgid ""
+"A term taxonomy has been deleted from taxonomy '%s', (tt_id '%d', term_id "
+"'%d')"
+msgstr ""
+
+#: ../purger.php:663
+msgid "Widget saved, moved or removed in a sidebar"
+msgstr ""
+
+#: ../admin/admin.php:26
+msgid "General"
+msgstr ""
+
+#: ../admin/admin.php:30
+msgid "Support"
+msgstr ""
+
+#: ../admin/admin.php:40 ../admin/admin.php:47
+msgid "Nginx Helper"
+msgstr ""
+
+#: ../admin/admin.php:78
+msgid "Nginx Settings"
+msgstr ""
+
+#: ../admin/admin.php:123 ../admin/lib/nginx-general.php:79
+#: ../admin/lib/nginx-general.php:89
+msgid "Purge Cache"
+msgstr ""
+
+#: ../admin/install.php:22
+msgid "Sorry, you need to be an administrator to use Nginx Helper"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:26
+msgid "Log file size must be a number"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:61
+msgid "Settings saved."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:87
+msgid "Purge All Cache"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:99
+msgid "Plugin Options"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:109
+#, php-format
+msgid ""
+"Enable Cache Purge (<a target=\"_blank\" href=\"%s\" title=\"External "
+"settings for nginx\">requires external settings for nginx</a>)"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:117
+msgid "Enable Nginx Map."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:124
+msgid "Enable Logging"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:130
+msgid "Enable Nginx Timestamp in HTML"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:139
+msgid "Purging Options"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:145
+msgid "Purge Homepage:"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:149
+msgid "when a post/page/custom post is modified or added."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:153 ../admin/lib/nginx-general.php:216
+msgid ""
+"when a <strong>post</strong> (or page/custom post) is <strong>modified</"
+"strong> or <strong>added</strong>."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:158
+msgid "when an existing post/page/custom post is modified."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:162 ../admin/lib/nginx-general.php:225
+msgid ""
+"when a <strong>published post</strong> (or page/custom post) is "
+"<strong>trashed</strong>."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:170
+msgid "Purge Post/Page/Custom Post Type:"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:175
+msgid "when a post/page/custom post is published."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:179
+msgid "when a <strong>post</strong> is <strong>published</strong>."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:184
+msgid "when a comment is approved/published."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:188 ../admin/lib/nginx-general.php:235
+msgid "when a <strong>comment</strong> is <strong>approved/published</strong>."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:193
+msgid "when a comment is unapproved/deleted."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:197 ../admin/lib/nginx-general.php:244
+msgid "when a <strong>comment</strong> is <strong>unapproved/deleted</strong>."
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:206
+msgid "Purge Archives:"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:207
+msgid "(date, category, tag, author, custom taxonomies)"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:212
+msgid "when an post/page/custom post is modified or added.</span>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:221
+msgid "when an existing post/page/custom post is trashed.</span>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:231
+msgid "when a comment is approved/published.</span>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:240
+msgid "when a comment is unapproved/deleted.</span>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:259
+msgid "Nginx Map"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:263
+#, php-format
+msgid ""
+"Can't write on map file.<br /><br />Check you have write permission on "
+"<strong>%s</strong>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:268
+msgid ""
+"Nginx Map path to include in nginx settings<br /><small>(recommended)</small>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:274
+msgid ""
+"Or,<br />Text to manually copy and paste in nginx settings<br /><small>(if "
+"your network is small and new sites are not added frequently)</small>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:286
+msgid "Logging Options"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:304
+#, php-format
+msgid ""
+"Can't write on log file.<br /><br />Check you have write permission on "
+"<strong>%s</strong>"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:310
+msgid "Logs path"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:314
+msgid "View Log"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:315
+msgid "Log"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:318
+msgid "Log level"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:321
+msgid "None"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:322
+msgid "Info"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:323
+msgid "Warning"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:324
+msgid "Error"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:329
+msgid "Max log file size"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:331
+msgid "Mb"
+msgstr ""
+
+#: ../admin/lib/nginx-general.php:342
+msgid "Save All Changes"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:8
+msgid "Need Help?"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:11
+#, php-format
+msgid "Please use our <a href=\"%s\">free support forum</a>."
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:17
+msgid "Getting Social is Good"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:20
+msgid "Become a fan on Facebook"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:21
+msgid "Follow us on Twitter"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:22
+msgid "Add to Circle"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:23
+msgid "Subscribe to our feeds"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:29
+msgid "Useful Links"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:34
+msgid "WordPress-Nginx Solutions"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:37
+msgid "WordPress Theme Devleopment"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:40
+msgid "WordPress Plugin Development"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:43
+msgid "WordPress Consultancy"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:46
+msgid "easyengine (ee)"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:53
+msgid "Click to toggle"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:54
+msgid "Latest News"
+msgstr ""
+
+#: ../admin/lib/nginx-sidebar.php:55
+msgid "Loading..."
+msgstr ""
+
+#: ../admin/lib/nginx-support.php:8
+msgid "Support Forums"
+msgstr ""
+
+#: ../admin/lib/nginx-support.php:13
+msgid "Need Help!, ask your queries on our forums:"
+msgstr ""
+
+#: ../admin/lib/nginx-support.php:16
+msgid "Free Support"
+msgstr ""
+
+#: ../admin/lib/nginx-support.php:18
+msgid "Free Support Forum"
+msgstr ""
+
+#: ../admin/lib/nginx-support.php:18 ../admin/lib/nginx-support.php:24
+msgid "Link to forum"
+msgstr ""
+
+#: ../admin/lib/nginx-support.php:22
+msgid "Premium Support"
+msgstr ""
+
+#: ../admin/lib/nginx-support.php:24
+msgid "Premium Support Forum"
+msgstr ""
