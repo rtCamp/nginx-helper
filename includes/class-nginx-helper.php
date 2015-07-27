@@ -83,10 +83,10 @@ class Nginx_Helper {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Plugin_Name_Loader. Orchestrates the hooks of the plugin.
-	 * - Plugin_Name_i18n. Defines internationalization functionality.
-	 * - Plugin_Name_Admin. Defines all hooks for the admin area.
-	 * - Plugin_Name_Public. Defines all hooks for the public side of the site.
+	 * - Nginx_Helper_Loader. Orchestrates the hooks of the plugin.
+	 * - Nginx_Helper_i18n. Defines internationalization functionality.
+	 * - Nginx_Helper_Admin. Defines all hooks for the admin area.
+	 * - Nginx_Helper_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -126,7 +126,7 @@ class Nginx_Helper {
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Plugin_Name_i18n class in order to set the domain and to register the hook
+	 * Uses the Nginx_Helper_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    2.0.0
@@ -149,12 +149,22 @@ class Nginx_Helper {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
+        global $nginx_helper_admin;
+        
+		$nginx_helper_admin = new Nginx_Helper_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		$plugin_admin = new Nginx_Helper_Admin( $this->get_plugin_name(), $this->get_version() );
-
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
+		$this->loader->add_action( 'admin_enqueue_scripts', $nginx_helper_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $nginx_helper_admin, 'enqueue_scripts' );
+        
+        if ( is_multisite() ) {
+            $this->loader->add_action( 'network_admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );
+        } else {
+            $this->loader->add_action( 'admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );
+        }
+        
+        $this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'nginx_helper_toolbar_purge_link', 100 );
+        $this->loader->add_action( 'wp_ajax_rt_get_feeds', $nginx_helper_admin, 'nginx_helper_get_feeds' );
+        
 	}
 
 	/**
@@ -212,5 +222,4 @@ class Nginx_Helper {
 	public function get_version() {
 		return $this->version;
 	}
-
 }

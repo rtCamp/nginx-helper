@@ -29,7 +29,7 @@ class Nginx_Helper_i18n {
 	/**
 	 * The domain specified for this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since    2.0.0
 	 * @access   private
 	 * @var      string    $domain    The domain identifier for this plugin.
 	 */
