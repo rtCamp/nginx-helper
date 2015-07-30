@@ -19,3 +19,4 @@ form#purgeall .button-primary:hover, form#purgeall .button-primary:focus { backg
     #social .inside .nginx-helper-facebook:hover { background-color: #537BBD; }
     #social .inside .nginx-helper-twitter:hover { background-color: #40BFF5; }
     #social .inside .nginx-helper-gplus:hover { background-color: #DD4B39; }
+.rt-purge_url { width: 100%; }

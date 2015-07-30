@@ -2,13 +2,13 @@
 **Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123  
 **Tags:** nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks  
 **Requires at least:** 3.0  
-**Tested up to:** 4.2.2  
-**Stable tag:** 1.9.3  
+**Tested up to:** 4.2.3  
+**Stable tag:** 1.9.5  
 **License:** GPLv2 or later (of-course)  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 **Donate Link:** http://rtcamp.com/donate/  
 
-Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/published. Also does few more things.
+Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does few more things.
 
 ## Description ##
 
@@ -117,6 +117,13 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 
 
 ## Changelog ##
+
+### 1.9.5 ###
+Added custom purge URL option.
+
+### 1.9.4 ###
+* Added redis server connection timeout.
+* Added RedisException handling.
 
 ### 1.9.3 ###
 * Added PhpRedis API support.
@@ -315,6 +322,5 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ## Upgrade Notice ##
 
-### 1.9.3 ###
-* Added PhpRedis API support.
-* Fixed cache purging link in admin bar.
+### 1.9.5 ###
+Added custom purge URL option.

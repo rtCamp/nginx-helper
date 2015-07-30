@@ -52,6 +52,8 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['purge_page_on_deleted_comment'] = ( isset( $_POST['purge_page_on_deleted_comment'] ) and ( $_POST['purge_page_on_deleted_comment'] == 1 ) ) ? 1 : 0;
 
 				$rt_wp_nginx_helper->options['purge_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'get_request';
+                
+                $rt_wp_nginx_helper->options['purge_url'] = ( isset( $_POST['purge_url'] ) && ! empty( $_POST['purge_url'] ) ) ? esc_textarea( $_POST['purge_url'] ) : '';
 			}
 			if ( isset( $_POST['cache_method'] ) && $_POST['cache_method'] = "enable_redis" ) {
 				$rt_wp_nginx_helper->options['redis_hostname'] = ( isset( $_POST['redis_hostname'] ) ) ? $_POST['redis_hostname'] : '127.0.0.1';
@@ -308,6 +310,23 @@ namespace rtCamp\WP\Nginx {
 							</td>
 							</tr>
 						</table>
+                        <table class="form-table rtnginx-table">
+							<tr valign="top">
+								<th scope="row">
+                                    <h4><?php _e( 'Custom Purge URL:', 'nginx-helper' ); ?></h4>
+                                </th>
+                                <td>
+                                    <textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo isset( $rt_wp_nginx_helper->options['purge_url'] ) ? $rt_wp_nginx_helper->options['purge_url'] : '';?></textarea>
+                                    <p class="description">
+                                        Add one URL per line. URL should not contain domain name.
+                                        <br>
+                                        Eg: To purge http://example.com/sample-page/ add <strong>/sample-page/</strong> in above textarea.
+                                        <br>
+                                        '*' will only work with redis cache server.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
 					</div> <!-- End of .inside -->
 				</div>
 				<div class="postbox">
