@@ -14,7 +14,11 @@ if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
         $myredis = new Redis();
         $myredis->connect( $host, $port, 5 );
         $redis_api = 'php-redis';
-    } catch ( Exception $e ) { $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); }
+    } catch ( Exception $e ) { 
+        if( isset($rt_wp_nginx_purger) && !empty($rt_wp_nginx_purger) ) {
+            $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); 
+        }
+    }
 } else {
     if( ! class_exists( 'Predis\Autoloader' ) ) {
         require_once 'predis.php';
@@ -30,7 +34,11 @@ if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
     try {
         $myredis->connect();
         $redis_api = 'predis';
-    } catch ( Exception $e ) { $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); }
+    } catch ( Exception $e ) { 
+        if( isset($rt_wp_nginx_purger) && !empty($rt_wp_nginx_purger) ) {
+            $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); 
+        }
+    }
 }
 
 //Lua Script

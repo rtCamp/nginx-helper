@@ -3,7 +3,7 @@ Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desai
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 Requires at least: 3.0
 Tested up to: 4.3
-Stable tag: 1.9.5
+Stable tag: 1.9.6
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: http://rtcamp.com/donate/
@@ -113,6 +113,10 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 2. Remaining settings
 
 == Changelog ==
+
+= 1.9.6 =
+* Fixed cache purging on post publish.
+* Error fixed when redis server not installed.
 
 = 1.9.5 =
 Added custom purge URL option.
@@ -318,5 +322,6 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 == Upgrade Notice ==
 
-= 1.9.5 =
-Added custom purge URL option.
+= 1.9.6 =
+* Fixed cache purging on post publish.
+* Error fixed when redis server not installed.
