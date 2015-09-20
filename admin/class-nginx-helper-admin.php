@@ -48,6 +48,15 @@ class Nginx_Helper_Admin {
 	 * @var      string    $settings_tabs    Various settings tabs.
 	 */
 	private $settings_tabs;
+    
+    /**
+	 * Purge options.
+	 *
+	 * @since    2.0.0
+	 * @access   public
+	 * @var      string    $options    Purge options.
+	 */
+	public $options;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -73,6 +82,8 @@ class Nginx_Helper_Admin {
                 'menu_slug'     => 'support'
             ) )
         );
+        
+        $this->options = $this->nginx_helper_settings();
 	}
 
 	/**
@@ -124,8 +135,6 @@ class Nginx_Helper_Admin {
             return;
         }
         wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
-        $news_url = trailingslashit( site_url() ) . '?get_feeds=1';
-        wp_localize_script( $this->plugin_name, 'news_url', $news_url );
     }
     
     /**
