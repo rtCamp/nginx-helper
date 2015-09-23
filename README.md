@@ -61,6 +61,7 @@ Yes, it does. It physically empties the cache directory. It is set by default to
 
 If your cache directory is different, you can override this in your wp-config.php by adding
 `define('RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');`
+or override this in the plugin settings. Settings in wp-config.php take precedence over plugin setting.
 
 Replace the path with your own.
 

@@ -52,8 +52,10 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['purge_page_on_deleted_comment'] = ( isset( $_POST['purge_page_on_deleted_comment'] ) and ( $_POST['purge_page_on_deleted_comment'] == 1 ) ) ? 1 : 0;
 
 				$rt_wp_nginx_helper->options['purge_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'get_request';
-                
+
                 $rt_wp_nginx_helper->options['purge_url'] = ( isset( $_POST['purge_url'] ) && ! empty( $_POST['purge_url'] ) ) ? esc_textarea( $_POST['purge_url'] ) : '';
+
+				$rt_wp_nginx_helper->options['cache_path'] = ( isset( $_POST['cache_path'] ) ) ? $_POST['cache_path'] : '/var/run/nginx-cache/';
 			}
 			if ( isset( $_POST['cache_method'] ) && $_POST['cache_method'] = "enable_redis" ) {
 				$rt_wp_nginx_helper->options['redis_hostname'] = ( isset( $_POST['redis_hostname'] ) ) ? $_POST['redis_hostname'] : '127.0.0.1';
@@ -154,9 +156,13 @@ namespace rtCamp\WP\Nginx {
 											<label for="purge_method_unlink_files">
 												<input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method"<?php checked( isset( $rt_wp_nginx_helper->options['purge_method'] ) ? $rt_wp_nginx_helper->options['purge_method'] : '', 'unlink_files' ); ?>>
 												&nbsp;<?php _e( 'Delete local server cache files', 'nginx-helper' ); ?><br />
-												<small><?php _e( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' ); ?></small>
-
+												<small><?php _e( 'Checks for matching cache file in <strong>Cache Path</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' ); ?></small>
 											</label><br />
+											<?php if (defined('RT_WP_NGINX_HELPER_CACHE_PATH')) : ?>
+											<?php $cache_path = ( empty( $rt_wp_nginx_helper->options['cache_path'] ) ) ? '/var/run/nginx-cache/' : $rt_wp_nginx_helper->options['cache_path']; ?>
+											<label for="cache_path"><?php _e( 'Cache Path', 'nginx-helper' ); ?></label>
+											<input id="cache_path" class="medium-text" type="text" name="cache_path" value="<?php echo $cache_path; ?>" />
+											<?php endif; ?>
 										</fieldset>
 									</td>
 								</tr>
@@ -405,7 +411,7 @@ namespace rtCamp\WP\Nginx {
 						$log = fopen( $path . 'nginx.log', 'w' );
 						fclose( $log );
 					}
-					
+
 					if ( !is_writable( $path . 'nginx.log' ) ) {
 						?>
 						<span class="error fade" style="display : block"><p><?php printf( __( 'Can\'t write on log file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper' ), $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ); ?></p></span><?php }
