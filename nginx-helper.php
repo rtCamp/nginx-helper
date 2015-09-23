@@ -344,13 +344,12 @@ namespace {
 	global $rt_wp_nginx_helper, $rt_wp_nginx_purger, $rt_wp_nginx_compatibility;
 	$rt_wp_nginx_helper = new \rtCamp\WP\Nginx\Helper;
 
-	if ( !defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
-		if ( $rt_wp_nginx_helper->options['cache_path']) {
-			define('RT_WP_NGINX_HELPER_CACHE_PATH',$rt_wp_nginx_helper->options['cache_path']);
-		} else
-		{
-			define('RT_WP_NGINX_HELPER_CACHE_PATH', '/var/run/nginx-cache');
-		}
+	if ( ! defined('RT_WP_NGINX_HELPER_CACHE_PATH') )
+	{
+		define('RT_WP_NGINX_HELPER_CACHE_PATH', '/var/run/nginx-cache');
+	} elseif ( $rt_wp_nginx_helper->options['cache_path'])
+	{
+		define('RT_WP_NGINX_HELPER_CACHE_PATH', $rt_wp_nginx_helper->options['cache_path']);
 	}
 
 	if ( !empty( $rt_wp_nginx_helper->options['cache_method'] ) && $rt_wp_nginx_helper->options['cache_method'] == "enable_redis" ) {
