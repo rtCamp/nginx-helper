@@ -381,6 +381,23 @@ if ( is_multisite() ) {
                         </td>
                     </tr>
                 </table>
+                <table class="form-table rtnginx-table">
+                    <tr valign="top">
+                        <th scope="row">
+                            <h4><?php _e('Custom Purge URL:', 'nginx-helper'); ?></h4>
+                        </th>
+                        <td>
+                            <textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo $nginx_helper_admin->options['purge_url']; ?></textarea>
+                            <p class="description">
+                                Add one URL per line. URL should not contain domain name.
+                                <br>
+                                Eg: To purge http://example.com/sample-page/ add <strong>/sample-page/</strong> in above textarea.
+                                <br>
+                                '*' will only work with redis cache server.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
             </div> <!-- End of .inside -->
         </div>
         <div class="postbox">
@@ -513,9 +530,9 @@ if ( is_multisite() ) {
                             </label>
                         </th>
                         <td>
-                            <pre>
+                            <code>
                                 <?php echo $log_path . 'nginx.log'; ?>
-                            </pre>
+                            </code>
                         </td>
                     </tr>
                     <tr>
