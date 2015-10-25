@@ -19,7 +19,7 @@
  */
 abstract class Purger {
 
-    abstract public function purgeUrl();
+    abstract public function purgeUrl( $url, $feed );
 
     abstract public function purgeAll();
 
@@ -138,7 +138,7 @@ abstract class Purger {
             );
         }
 
-        $this->purgeUrls();
+        $this->customPurgeUrls();
 
         $this->log("Function purgePost END ^^^");
     }
@@ -317,7 +317,7 @@ abstract class Purger {
         $log_levels = array( "INFO" => 0, "WARNING" => 1, "ERROR" => 2, "NONE" => 3 );
 
         if ( $log_levels[ $level ] >= $log_levels[ $nginx_helper_admin->options['log_level'] ] ) {
-            if ( $fp = fopen( $nginx_helper_admin->get_log_path . 'nginx.log', "a+" ) ) {
+            if ( $fp = fopen( $nginx_helper_admin->get_log_path() . 'nginx.log', "a+" ) ) {
                 fwrite( $fp, "\n" . gmdate( "Y-m-d H:i:s " ) . " | " . $level . " | " . $msg );
                 fclose( $fp );
             }

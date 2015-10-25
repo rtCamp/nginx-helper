@@ -23,14 +23,18 @@
 class Nginx_Helper_Deactivator {
 
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
+	 * Schedule event to check log file size daily. Remove nginx helper capability.
 	 *
 	 * @since    2.0.0
 	 */
 	public static function deactivate() {
-
+        
+        wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
+        
+        $role = get_role( 'administrator' );
+      
+        $role->remove_cap( 'Nginx Helper | Config' );
+		$role->remove_cap( 'Nginx Helper | Purge cache' );
 	}
 
 }

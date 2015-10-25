@@ -31,6 +31,20 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
+ * Base URL of plugin
+ */
+if( !defined( 'NGINX_HELPER_BASEURL' ) ) {
+    define( 'NGINX_HELPER_BASEURL', plugin_dir_url( __FILE__ ) );
+}
+
+/**
+ * Base Name of plugin
+ */
+if( !defined( 'NGINX_HELPER_BASENAME' ) ) {
+    define( 'NGINX_HELPER_BASENAME', plugin_basename( __FILE__ ) );
+}
+
+/**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-nginx-helper-activator.php
  */

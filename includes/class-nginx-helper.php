@@ -56,6 +56,15 @@ class Nginx_Helper {
 	 * @var      string    $version    The current version of the plugin.
 	 */
 	protected $version;
+    
+    /**
+	 * Minimum WordPress Version Required.
+	 *
+	 * @since    2.0.0
+	 * @access   public
+	 * @var      string    $minium_WP
+	 */
+	protected $minimum_wp;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -70,12 +79,20 @@ class Nginx_Helper {
 
 		$this->plugin_name = 'nginx-helper';
 		$this->version = '2.0.0';
-
+        $this->minimum_WP = '3.0';
+        
+        if ( !$this->required_wp_version() ) {
+            return;
+        }
+        
+        if ( !defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
+            define( 'RT_WP_NGINX_HELPER_CACHE_PATH', '/var/run/nginx-cache' );
+        }
+        
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		//$this->define_public_hooks();
-
 	}
 
 	/**
@@ -107,7 +124,12 @@ class Nginx_Helper {
 		 * of the plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-nginx-helper-i18n.php';
-
+        
+        /**
+		 * The class responsible for defining all actions that required for purging urls.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-purger.php';
+        
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
@@ -149,23 +171,57 @@ class Nginx_Helper {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-        global $nginx_helper_admin;
+        global $nginx_helper_admin, $nginx_purger;
         
 		$nginx_helper_admin = new Nginx_Helper_Admin( $this->get_plugin_name(), $this->get_version() );
-
-		$this->loader->add_action( 'admin_enqueue_scripts', $nginx_helper_admin, 'enqueue_styles' );
+        
+        if ( !empty( $nginx_helper_admin->options['cache_method'] ) && $nginx_helper_admin->options['cache_method'] == "enable_redis") {
+            if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis extension if installed.
+                require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-phpredis-purger.php';
+                $nginx_purger = new PhpRedis_Purger();
+            } else {
+                require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-predis-purger.php';
+                $nginx_purger = new Predis_Purger();
+            }
+        } else {
+            require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';
+            $nginx_purger = new FastCGI_Purger();
+        }
+        
+        $this->loader->add_action( 'admin_enqueue_scripts', $nginx_helper_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $nginx_helper_admin, 'enqueue_scripts' );
         
         if ( is_multisite() ) {
             $this->loader->add_action( 'network_admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );
+            $this->loader->add_filter( "network_admin_plugin_action_links_" . NGINX_HELPER_BASENAME, $nginx_helper_admin, 'nginx_helper_settings_link' );
         } else {
             $this->loader->add_action( 'admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );
+            $this->loader->add_filter( "plugin_action_links_" . NGINX_HELPER_BASENAME, $nginx_helper_admin, 'nginx_helper_settings_link' );
         }
         
         $this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'nginx_helper_toolbar_purge_link', 100 );
         $this->loader->add_action( 'wp_ajax_rt_get_feeds', $nginx_helper_admin, 'nginx_helper_get_feeds' );
         
-	}
+        $this->loader->add_action( 'shutdown', $nginx_helper_admin, 'add_timestamps', 99999 );
+        $this->loader->add_action( 'add_init', $nginx_helper_admin, 'update_map' );
+        
+        // Add actions to purge.
+        $this->loader->add_action( 'wp_insert_comment', $nginx_purger, 'purgePostOnComment', 200, 2 );
+        $this->loader->add_action( 'transition_comment_status', $nginx_purger, 'purgePostOnCommentChange', 200, 3 );
+        $this->loader->add_action( 'transition_post_status', $nginx_helper_admin, 'set_future_post_option_on_future_status', 20, 3 );
+        $this->loader->add_action( 'delete_post', $nginx_helper_admin, 'unset_future_post_option_on_delete', 20, 1 );
+        $this->loader->add_action( 'nm_check_log_file_size_daily', $nginx_purger, 'checkAndTruncateLogFile', 100, 1 );
+        $this->loader->add_action( 'edit_attachment', $nginx_purger, 'purgeImageOnEdit', 100, 1 );
+        $this->loader->add_action( 'wpmu_new_blog', $nginx_helper_admin, 'update_new_blog_options', 10, 1 );
+        $this->loader->add_action( 'transition_post_status', $nginx_purger, 'purge_on_post_moved_to_trash', 20, 3 );
+        $this->loader->add_action( 'edit_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
+        $this->loader->add_action( 'delete_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
+        $this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20, 2 );
+        $this->loader->add_action( 'admin_init', $nginx_helper_admin, 'purge_all' );
+
+        // expose action to allow other plugins to purge the cache
+        $this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purgeAll' );
+    }
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
@@ -222,4 +278,42 @@ class Nginx_Helper {
 	public function get_version() {
 		return $this->version;
 	}
+    
+    /**
+     * Check wp version.
+	 *
+	 * @since     2.0.0 
+     * @global type $wp_version
+     * @return boolean
+     */
+    public function required_wp_version() {
+        global $wp_version;
+        
+        $wp_ok = version_compare( $wp_version, $this->minimum_wp, '>=' );
+        
+        if ( ( false == $wp_ok ) ) {
+            add_action( 'admin_notices', array( &$this, 'display_notices' ) );
+            add_action( 'network_admin_notices', array( &$this, 'display_notices' ) );
+            return false;
+        }
+
+        return true;
+    }
+    
+    /**
+     * Dispay plugin notices.
+     */
+    public function display_notices() {
+?>    
+    <div id="message" class="error">
+        <p>
+            <strong>
+                <?php
+                    echo __( 'Sorry, Nginx Helper requires WordPress ' . $this->minimum_WP . ' or higher', 'nginx-helper' );
+                ?>
+            </strong>
+        </p>
+    </div>
+<?php
+    }
 }

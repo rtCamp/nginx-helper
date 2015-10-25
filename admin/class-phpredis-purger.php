@@ -34,9 +34,15 @@ class PhpRedis_Purger extends Purger {
 	 * @since    2.0.0
 	 */
 	public function __construct() {
+        global $nginx_helper_admin;
+        
         try {
             $this->redis_object = new Redis();
-            $this->redis_object->connect($host, $port, 5);
+            $this->redis_object->connect(
+                $nginx_helper_admin->options['redis_hostname'],
+                $nginx_helper_admin->options['redis_port'],
+                5
+            );
         } catch ( Exception $e ) {
             $this->log( $e->getMessage(), 'ERROR' );
         }
@@ -45,25 +51,35 @@ class PhpRedis_Purger extends Purger {
     public function purgeAll() {
         global $nginx_helper_admin;
         
-        $this->log("* * * * *");
-        $this->log("* Purged Everything!");
-        $this->log("* * * * *");
-        $this->delete_keys_by_wildcard("*");
+        $this->log( "* * * * *" );
+        $this->log( "* Purged Everything!" );
+        $total_keys_purged = $this->delete_keys_by_wildcard( "*" );
+        if( $total_keys_purged ) {
+            $this->log( "Total {$total_keys_purged} urls purged." );
+        } else {
+            $this->log( "No Cache found." );
+        }
+        $this->log( "* * * * *" );
     }
     
     public function purgeUrl( $url, $feed = true ) {
         global $nginx_helper_admin;
 
-        $this->log( "- Purging URL | " . $url );
-
         $parse = parse_url( $url );
         $host = $nginx_helper_admin->options['redis_hostname'];
         $prefix = $nginx_helper_admin->options['redis_prefix'];
         $_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
-        $this->delete_single_key( $_url_purge_base );
+        $is_purged = $this->delete_single_key( $_url_purge_base );
+        
+        if( $is_purged ) {
+            $this->log( "- Purged URL | " . $url );
+        } else {
+            $this->log( "- Cache Not Found | " . $url, 'ERROR' );
+        }
+        $this->log( "* * * * *" );
     }
 
-    public function purge_urls() {
+    public function customPurgeUrls() {
         global $nginx_helper_admin;
 
         $parse = parse_url( site_url() );
@@ -83,7 +99,7 @@ class PhpRedis_Purger extends Purger {
                     if ( $status ) {
                         $this->log( "- Purge URL | " . $purge_url );
                     } else {
-                        $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+                        $this->log( "- Cache Not Found | " . $purge_url, 'ERROR' );
                     }
                 } else {
                     $purge_url = $_url_purge_base . $purge_url;
@@ -91,7 +107,7 @@ class PhpRedis_Purger extends Purger {
                     if ( $status ) {
                         $this->log( "- Purge Wild Card URL | " . $purge_url . " | " . $status . " url purged" );
                     } else {
-                        $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+                        $this->log( "- Cache Not Found | " . $purge_url, 'ERROR' );
                     }
                 }
             }

@@ -101,3 +101,4 @@ form#purgeall .button-primary:focus {
 #social .inside .nginx-helper-gplus:hover {
     background-color: #DD4B39;
 }
+.rt-purge_url { width: 100%; } 

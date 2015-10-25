@@ -66,7 +66,7 @@ class FastCGI_Purger extends Purger {
         }
     }
     
-    public function purge_urls() {
+    public function customPurgeUrls() {
         global $nginx_helper_admin;
 
         $parse = parse_url( site_url() );

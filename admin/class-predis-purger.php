@@ -38,7 +38,7 @@ class Predis_Purger extends Purger {
         global $nginx_helper_admin;
         
         if ( ! class_exists( 'Predis\Autoloader' ) ) {
-            require_once 'predis.php';
+            require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/predis.php';
         }
         Predis\Autoloader::register();
 
@@ -76,7 +76,7 @@ class Predis_Purger extends Purger {
         $this->delete_single_key( $_url_purge_base );
     }
 
-    public function purge_urls() {
+    public function customPurgeUrls() {
         global $nginx_helper_admin;
 
         $parse = parse_url( site_url() );

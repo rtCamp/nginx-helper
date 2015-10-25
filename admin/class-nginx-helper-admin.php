@@ -57,6 +57,15 @@ class Nginx_Helper_Admin {
 	 * @var      string    $options    Purge options.
 	 */
 	public $options;
+    
+    /**
+	 * WP-CLI Command.
+	 *
+	 * @since    2.0.0
+	 * @access   public
+	 * @var      string    $options    WP-CLI Command.
+	 */
+	const WP_CLI_COMMAND = 'nginx-helper';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -222,6 +231,7 @@ class Nginx_Helper_Admin {
             'redis_hostname'                    => '127.0.0.1',
             'redis_port'                        => '6379',
             'redis_prefix'                      => 'nginx-cache:',
+            'purge_url'                         => '',
         );
     }
     
@@ -235,6 +245,19 @@ class Nginx_Helper_Admin {
             get_site_option( 'rt_wp_nginx_helper_options', array() ), 
             $this->nginx_helper_default_settings()
         );
+    }
+    
+    public function nginx_helper_settings_link( $links ) {
+        
+        if ( is_network_admin() ) {
+            $setting_page = 'settings.php';
+        } else {
+            $setting_page = 'options-general.php';
+        }
+        
+        $settings_link = '<a href="' . admin_url( $setting_page . '?page=nginx' ). '">' . __( 'Settings', 'nginx-helper' ) . '</a>';
+        array_unshift( $links, $settings_link );
+        return $links;
     }
     
     /**
@@ -299,5 +322,230 @@ class Nginx_Helper_Admin {
 		</ul>
         <?php
         die();
+    }
+    
+    /**
+     * Add time stamps in html.
+     */
+    public function add_timestamps() {
+       
+        if ( is_admin() || $this->options['enable_purge'] != 1 || $this->options['enable_stamp'] != 1 ) {
+            return;
+        }
+        
+        foreach ( headers_list() as $header ) {
+            list( $key, $value ) = explode( ':', $header, 2 );
+            if ( 'Content-Type' == $key && strpos( trim( $value ), 'text/html' ) !== 0 ) {
+                return;
+            }
+            if ( 'Content-Type' == $key ) {
+                break;
+            }
+        }
+
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { 
+            return;
+        }
+        
+        $timestamps = "\n<!--" .
+                "Cached using Nginx-Helper on " . current_time('mysql') . ". " .
+                "It took " . get_num_queries() . " queries executed in " . timer_stop() . " seconds." .
+                "-->\n" .
+                "<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->";
+        
+        echo $timestamps;
+    }
+    
+    /**
+     * Get map
+     * @global type $wpdb
+     * @return string
+     */
+    public function get_map() {
+        
+        if ( !$this->options['enable_map'] ) {
+            return;
+        }
+
+        if ( is_multisite() ) {
+            global $wpdb;
+
+            $rt_all_blogs = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT blog_id, domain, path FROM " . $wpdb->blogs . " WHERE site_id = %d AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'",
+                    $wpdb->siteid
+                )
+            );
+            
+            $wpdb->dmtable = $wpdb->base_prefix . 'domain_mapping';
+            
+            $rt_domain_map_sites = '';
+            if ( $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->dmtable}'") == $wpdb->dmtable ) {
+                $rt_domain_map_sites = $wpdb->get_results( "SELECT blog_id, domain FROM {$wpdb->dmtable} ORDER BY id DESC" );
+            }
+            
+            $rt_nginx_map = "";
+            $rt_nginx_map_array = array();
+
+            if ( $rt_all_blogs )
+                foreach ( $rt_all_blogs as $blog ) {
+                    if ( "yes" == SUBDOMAIN_INSTALL ) {
+                        $rt_nginx_map_array[ $blog->domain ] = $blog->blog_id;
+                    } else {
+                        if ( 1 != $blog->blog_id ) {
+                            $rt_nginx_map_array[ $blog->path ] = $blog->blog_id;
+                        }
+                    }
+                }
+
+            if ( $rt_domain_map_sites ) {
+                foreach ( $rt_domain_map_sites as $site ) {
+                    $rt_nginx_map_array[ $site->domain ] = $site->blog_id;
+                }
+            }
+
+            foreach ( $rt_nginx_map_array as $domain => $domain_id ) {
+                $rt_nginx_map .= "\t" . $domain . "\t" . $domain_id . ";\n";
+            }
+
+            return $rt_nginx_map;
+        }
+    }
+
+    /**
+     * Update map
+     */
+    public function update_map() {
+        
+        if ( is_multisite() ) {
+            $rt_nginx_map = $this->get_map();
+
+            if ( $fp = fopen( $this->get_log_path() . 'map.conf', 'w+' ) ) {
+                fwrite( $fp, $rt_nginx_map );
+                fclose( $fp );
+            }
+        }
+    }
+    
+    /**
+     * Purge url when post status is changed.
+     * 
+     * @global type $blog_id
+     * @global object $nginx_purger
+     * @param string $new_status
+     * @param string $old_status
+     * @param object $post
+     */
+    public function set_future_post_option_on_future_status( $new_status, $old_status, $post ) {
+        global $blog_id, $nginx_purger;
+        
+        if ( !$this->options['enable_purge'] ) {
+            return;
+        }
+        
+        $purge_status = array( 'publish', 'future' );
+        
+        if ( in_array( $old_status, $purge_status ) || in_array( $new_status, $purge_status ) ) {
+            $nginx_purger->log( "Purge post on transition post STATUS from " . $old_status . " to " . $new_status );
+            $nginx_purger->purgePost( $post->ID );
+        }
+
+        if ( 'future' == $new_status ) {
+            if ( $post && 'future' == $post->post_status && 
+               ( ( 'post' == $post->post_type || 'page' == $post->post_type ) || 
+               ( isset( $this->options['custom_post_types_recognized'] ) &&
+               in_array( $post->post_type, $this->options['custom_post_types_recognized'] ) ) ) ) {
+                
+                $nginx_purger->log( "Set/update future_posts option ( post id = " . $post->ID . " and blog id = " . $blog_id . " )" );
+                $this->options['future_posts'][ $blog_id ][ $post->ID ] = strtotime( $post->post_date_gmt ) + 60;
+                update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
+            }
+        }
+    }
+    
+    /**
+     * Unset future post option on delete
+     * @global type $blog_id
+     * @global type $nginx_purger
+     * @param type $post_id
+     */
+    public function unset_future_post_option_on_delete( $post_id ) {
+        global $blog_id, $nginx_purger;
+        
+        if ( !$this->options['enable_purge'] ) {
+            return;
+        }
+        
+        if ( $post_id && !wp_is_post_revision( $post_id ) ) {
+            if ( isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) &&
+                    count( $this->options['future_posts'][ $blog_id ][ $post_id] ) ) {
+                
+                $nginx_purger->log( "Unset future_posts option ( post id = " . $post_id . " and blog id = " . $blog_id . " )" );
+                unset( $this->options['future_posts'][ $blog_id ][ $post_id ] );
+                update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
+
+                if ( !count( $this->options['future_posts'][ $blog_id ] ) ) {
+                    unset( $this->options['future_posts'][ $blog_id ] );
+                    update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
+                }
+            }
+        }
+    }
+    
+    /**
+     * Update map when new blog added in multisite.
+     * @global type $nginx_purger
+     * @param type $blog_id
+     */
+    public function update_new_blog_options( $blog_id ) {
+        global $rt_wp_nginx_purger;
+        
+        $nginx_purger->log( "New site added ( id $blog_id )" );
+        $this->update_map();
+        $nginx_purger->log( "New site added to nginx map ( id $blog_id )" );
+        $helper_options = $this->nginx_helper_default_settings();
+        update_blog_option( $blog_id, "rt_wp_nginx_helper_options", $helper_options );
+        $nginx_purger->log( "Default options updated for the new blog ( id $blog_id )" );
+    }
+    
+    /**
+     * Purge all urls.
+     * @global type $nginx_purger
+     */
+    public function purge_all() {
+        global $nginx_purger;
+        
+        if ( !isset( $_REQUEST['nginx_helper_action'] ) ) {
+            return;
+        }
+
+        if ( !current_user_can( 'manage_options' ) ) {
+            wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
+        }
+
+        $action = $_REQUEST['nginx_helper_action'];
+
+        if ( 'done' == $action ) {
+            add_action( 'admin_notices', array( &$this, 'display_notices' ) );
+            add_action( 'network_admin_notices', array( &$this, 'display_notices' ) );
+            return;
+        }
+        
+        check_admin_referer( 'nginx_helper-purge_all' );
+
+        switch ( $action ) {
+            case 'purge':
+                $nginx_purger->purgeAll();
+                break;
+        }
+        
+        wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
+    }
+    
+    /**
+     * Dispay plugin notices.
+     */
+    public function display_notices() {
+        echo '<div class="updated"><p>' . __( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
     }
 }
