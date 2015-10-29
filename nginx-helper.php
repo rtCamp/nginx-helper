@@ -225,11 +225,17 @@ namespace rtCamp\WP\Nginx {
 			}
 		}
 
+		/**
+		 * Returns path to functional(helper) assets directory
+		 *
+		 * @todo this could be done once on plugin init and check if wp_mkdir_p() !== true or not writable and notify admin
+		 */
 		function functional_asset_path()
 		{
 			$dir = wp_upload_dir();
-			$path = $dir['basedir'] . '/nginx-helper/';
-			return apply_filters( 'nginx_asset_path', $path );
+			$path = apply_filters( 'nginx_asset_path', $dir['basedir'] . '/nginx-helper/' );
+			wp_mkdir_p( $path );
+			return $path;
 		}
 
 		function functional_asset_url()
