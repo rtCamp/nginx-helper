@@ -802,7 +802,7 @@ namespace rtCamp\WP\Nginx {
 						    
 						    if( strpos( $purge_url, '*' ) === false ) {
 						        $purge_url = $_url_purge_base . $purge_url;
-						        $this->log( "- Purging URL | " . $url );
+						        $this->log( "- Purging URL | " . $purge_url );
 						        $this->_delete_cache_file_for( $purge_url );
 						    }
 						}
