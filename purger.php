@@ -780,16 +780,16 @@ namespace rtCamp\WP\Nginx {
 			return;
 		}
         
-        	function purge_urls() {
+		function purge_urls() {
 
 			global $rt_wp_nginx_helper;
 
 			$parse = parse_url( site_url() );
 
-                        $purge_urls = isset( $rt_wp_nginx_helper->options['purge_url'] ) && ! empty( $rt_wp_nginx_helper->options['purge_url'] ) ?
-                        	explode( "\r\n", $rt_wp_nginx_helper->options['purge_url'] ) : array();
+			$purge_urls = isset( $rt_wp_nginx_helper->options['purge_url'] ) && ! empty( $rt_wp_nginx_helper->options['purge_url'] ) ?
+				explode( "\r\n", $rt_wp_nginx_helper->options['purge_url'] ) : array();
 
-                        $purge_urls = apply_filters('rt_nginx_helper_purge_urls', $purge_urls);
+			$purge_urls = apply_filters('rt_nginx_helper_purge_urls', $purge_urls);
 
 			switch ($rt_wp_nginx_helper->options['purge_method']) {
 
