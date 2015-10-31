@@ -789,7 +789,8 @@ namespace rtCamp\WP\Nginx {
 			$purge_urls = isset( $rt_wp_nginx_helper->options['purge_url'] ) && ! empty( $rt_wp_nginx_helper->options['purge_url'] ) ?
 				explode( "\r\n", $rt_wp_nginx_helper->options['purge_url'] ) : array();
 
-			$purge_urls = apply_filters('rt_nginx_helper_purge_urls', $purge_urls);
+                        // Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed
+			$purge_urls = apply_filters('rt_nginx_helper_purge_urls', $purge_urls, false);
 
 			switch ($rt_wp_nginx_helper->options['purge_method']) {
 
