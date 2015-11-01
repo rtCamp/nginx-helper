@@ -70,14 +70,18 @@ class FastCGI_Purger extends Purger {
         global $nginx_helper_admin;
 
         $parse = parse_url( site_url() );
+        
+        $purge_urls = isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ?
+            explode( "\r\n", $nginx_helper_admin->options['purge_url'] ) : array();
 
+        // Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed
+        $purge_urls = apply_filters( 'rt_nginx_helper_purge_urls', $purge_urls, false );
+            
         switch ( $nginx_helper_admin->options['purge_method'] ) {
             case 'unlink_files':
                 $_url_purge_base = $parse['scheme'] . '://' . $parse['host'];
 
-                if ( isset( $nginx_helper_admin->options['purge_url'] ) && ! empty($nginx_helper_admin->options['purge_url'] ) ) {
-                    $purge_urls = explode( "\r\n", $nginx_helper_admin->options['purge_url'] );
-
+                if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
                     foreach ( $purge_urls as $purge_url ) {
                         $purge_url = trim( $purge_url );
 
@@ -94,9 +98,7 @@ class FastCGI_Purger extends Purger {
             default:
                 $_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . '/purge';
 
-                if ( isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ) {
-                    $purge_urls = explode( "\r\n", $nginx_helper_admin->options['purge_url'] );
-
+                if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
                     foreach ( $purge_urls as $purge_url ) {
                         $purge_url = trim( $purge_url );
 

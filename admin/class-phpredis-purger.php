@@ -87,9 +87,13 @@ class PhpRedis_Purger extends Purger {
         $prefix = $nginx_helper_admin->options['redis_prefix'];
         $_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'];
 
-        if ( isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ) {
-            $purge_urls = explode( "\r\n", $nginx_helper_admin->options['purge_url'] );
-
+        $purge_urls = isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ?
+            explode( "\r\n", $nginx_helper_admin->options['purge_url'] ) : array();
+			
+        // Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed
+        $purge_urls = apply_filters( 'rt_nginx_helper_purge_urls', $purge_urls, true );
+        
+        if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
             foreach ( $purge_urls as $purge_url ) {
                 $purge_url = trim( $purge_url );
 
