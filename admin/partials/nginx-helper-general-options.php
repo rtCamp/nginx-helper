@@ -17,29 +17,29 @@ $error_log_filesize = false;
 if( isset( $_POST['smart_http_expire_save'] ) ) {
     unset( $_POST['smart_http_expire_save'] );
     unset( $_POST['is_submit'] );
-    
+
     $nginx_settings = wp_parse_args(
         $_POST,
         $nginx_helper_admin->nginx_helper_default_settings()
     );
-    
+
     if ( ( ! is_numeric( $nginx_settings['log_filesize'] ) ) || ( empty( $nginx_settings['log_filesize'] ) ) ) {
         $error_log_filesize = __( 'Log file size must be a number.', 'nginx-helper' );
         unset( $nginx_settings['log_filesize'] );
     }
-    
+
     if ( $nginx_settings['enable_map'] ) {
         $nginx_helper_admin->update_map();
     }
-    
+
     update_site_option( 'rt_wp_nginx_helper_options', $nginx_settings );
-    
+
     echo '<div class="updated"><p>' . __( 'Settings saved.', 'nginx-helper' ) . '</p></div>';
 }
 
 $nginx_helper_settings = $nginx_helper_admin->nginx_helper_settings();
-$log_path = $nginx_helper_admin->get_log_path();
-$log_url = $nginx_helper_admin->get_log_url();
+$log_path = $nginx_helper_admin->functional_asset_path();
+$log_url = $nginx_helper_admin->functional_asset_url();
 
 /**
  * Get setting url for single multiple with subdomain OR multiple with subdirectory site.
@@ -73,7 +73,7 @@ if ( is_multisite() ) {
             </table>
         </div> <!-- End of .inside -->
     </div>
-    
+
     <?php if ( ! ( ! is_network_admin() && is_multisite() ) ) { ?>
         <div class="postbox enable_purge"<?php echo ( $nginx_helper_settings['enable_purge'] == false ) ? ' style="display: none;"' : ''; ?>>
             <h3 class="hndle">
@@ -86,11 +86,11 @@ if ( is_multisite() ) {
                         <td>
                             <input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php checked( $nginx_helper_settings['cache_method'], "enable_fastcgi" ); ?> />
                             <label for="cache_method_fastcgi">
-                                <?php 
+                                <?php
                                 printf(
-                                    __('nginx Fastcgi cache (<a target="_blank" href="%s" title="External settings for nginx">requires external settings for nginx</a>)', 'nginx-helper'), 
+                                    __('nginx Fastcgi cache (<a target="_blank" href="%s" title="External settings for nginx">requires external settings for nginx</a>)', 'nginx-helper'),
                                     $nginx_setting_link
-                                ); 
+                                );
                                 ?>
                             </label>
                         </td>
@@ -125,13 +125,13 @@ if ( is_multisite() ) {
                                     <label for="purge_method_get_request">
                                         <input type="radio" value="get_request" id="purge_method_get_request" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'get_request' ); ?>>
                                         &nbsp;
-                                        <?php 
+                                        <?php
                                             _e( 'Using a GET request to <strong>PURGE/url</strong> (Default option)', 'nginx-helper' );
                                         ?>
                                         <br />
                                         <small>
-                                            <?php 
-                                                _e( 'Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. ', 'nginx-helper' ); 
+                                            <?php
+                                                _e( 'Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. ', 'nginx-helper' );
                                             ?>
                                         </small>
                                     </label>
@@ -139,13 +139,13 @@ if ( is_multisite() ) {
                                     <label for="purge_method_unlink_files">
                                         <input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'unlink_files' ); ?>>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'Delete local server cache files', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'Delete local server cache files', 'nginx-helper' );
                                         ?>
                                         <br />
                                         <small>
-                                            <?php 
-                                                _e( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' ); 
+                                            <?php
+                                                _e( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' );
                                             ?>
                                         </small>
                                     </label>
@@ -197,16 +197,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'when a post/page/custom post is modified or added.', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'when a post/page/custom post is modified or added.', 'nginx-helper' );
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_homepage_on_edit">
                                     <input type="checkbox" value="1" id="purge_homepage_on_edit" name="purge_homepage_on_edit" <?php checked( $nginx_helper_settings['purge_homepage_on_edit'], 1 ); ?> />
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -215,16 +215,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'when an existing post/page/custom post is modified.', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'when an existing post/page/custom post is modified.', 'nginx-helper' );
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_homepage_on_del">
                                     <input type="checkbox" value="1" id="purge_homepage_on_del" name="purge_homepage_on_del" <?php checked( $nginx_helper_settings['purge_homepage_on_del'], 1 ); ?> />
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -243,16 +243,16 @@ if ( is_multisite() ) {
                             <fieldset>
                                 <legend class="screen-reader-text">
                                     <span>&nbsp;
-                                        <?php 
-                                            _e( 'when a post/page/custom post is published.', 'nginx-helper'); 
+                                        <?php
+                                            _e( 'when a post/page/custom post is published.', 'nginx-helper');
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_page_on_mod">
                                     <input type="checkbox" value="1" id="purge_page_on_mod" name="purge_page_on_mod" <?php checked( $nginx_helper_settings['purge_page_on_mod'], 1 ); ?>>
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>post</strong> is <strong>published</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>post</strong> is <strong>published</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -261,16 +261,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'when a comment is approved/published.', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'when a comment is approved/published.', 'nginx-helper' );
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_page_on_new_comment">
                                     <input type="checkbox" value="1" id="purge_page_on_new_comment" name="purge_page_on_new_comment" <?php checked( $nginx_helper_settings['purge_page_on_new_comment'], 1 ); ?>>
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -279,16 +279,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e('when a comment is unapproved/deleted.', 'nginx-helper'); 
+                                        <?php
+                                            _e('when a comment is unapproved/deleted.', 'nginx-helper');
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_page_on_deleted_comment">
                                     <input type="checkbox" value="1" id="purge_page_on_deleted_comment" name="purge_page_on_deleted_comment" <?php checked( $nginx_helper_settings['purge_page_on_deleted_comment'], 1 ); ?>>
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -309,16 +309,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'when an post/page/custom post is modified or added.</span>', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'when an post/page/custom post is modified or added.</span>', 'nginx-helper' );
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_archive_on_edit">
                                     <input type="checkbox" value="1" id="purge_archive_on_edit" name="purge_archive_on_edit" <?php checked( $nginx_helper_settings['purge_archive_on_edit'], 1 ); ?> />
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -327,16 +327,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'when an existing post/page/custom post is trashed.</span>', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'when an existing post/page/custom post is trashed.</span>', 'nginx-helper' );
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_archive_on_del">
                                     <input type="checkbox" value="1" id="purge_archive_on_del" name="purge_archive_on_del"<?php checked( $nginx_helper_settings['purge_archive_on_del'], 1 ); ?> />
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -346,16 +346,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'when a comment is approved/published.</span>', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'when a comment is approved/published.</span>', 'nginx-helper' );
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_archive_on_new_comment">
                                     <input type="checkbox" value="1" id="purge_archive_on_new_comment" name="purge_archive_on_new_comment" <?php checked( $nginx_helper_settings['purge_archive_on_new_comment'], 1 ); ?> />
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -364,16 +364,16 @@ if ( is_multisite() ) {
                                 <legend class="screen-reader-text">
                                     <span>
                                         &nbsp;
-                                        <?php 
-                                            _e( 'when a comment is unapproved/deleted.</span>', 'nginx-helper' ); 
+                                        <?php
+                                            _e( 'when a comment is unapproved/deleted.</span>', 'nginx-helper' );
                                         ?>
                                     </span>
                                 </legend>
                                 <label for="purge_archive_on_deleted_comment">
                                     <input type="checkbox" value="1" id="purge_archive_on_deleted_comment" name="purge_archive_on_deleted_comment" <?php checked( $nginx_helper_settings['purge_archive_on_deleted_comment'], 1 ); ?> />
                                     &nbsp;
-                                    <?php 
-                                        _e( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' ); 
+                                    <?php
+                                        _e( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' );
                                     ?>
                                 </label>
                                 <br />
@@ -446,26 +446,26 @@ if ( is_multisite() ) {
                 <span><?php _e( 'Nginx Map', 'nginx-helper' ); ?></span>
             </h3>
             <div class="inside">
-                <?php 
+                <?php
                 if ( ! is_writable( $log_path . 'map.conf' ) ) { ?>
                     <span class="error fade" style="display: block">
                         <p>
-                            <?php 
-                                printf( 
-                                    __( 'Can\'t write on map file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper'), 
+                            <?php
+                                printf(
+                                    __( 'Can\'t write on map file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper'),
                                     $log_path . 'map.conf'
-                                ); 
+                                );
                             ?>
                         </p>
                     </span>
-                <?php 
+                <?php
                 }
                 ?>
                 <table class="form-table rtnginx-table">
                     <tr>
                         <th>
-                            <?php 
-                                _e( 'Nginx Map path to include in nginx settings<br /><small>(recommended)</small>', 'nginx-helper' ); 
+                            <?php
+                                _e( 'Nginx Map path to include in nginx settings<br /><small>(recommended)</small>', 'nginx-helper' );
                             ?>
                         </th>
                         <td>
@@ -476,8 +476,8 @@ if ( is_multisite() ) {
                     </tr>
                     <tr>
                         <th>
-                            <?php 
-                                _e( 'Or,<br />Text to manually copy and paste in nginx settings<br /><small>(if your network is small and new sites are not added frequently)</small>', 'nginx-helper' ); 
+                            <?php
+                                _e( 'Or,<br />Text to manually copy and paste in nginx settings<br /><small>(if your network is small and new sites are not added frequently)</small>', 'nginx-helper' );
                             ?>
                         </th>
                         <td>
@@ -489,8 +489,8 @@ if ( is_multisite() ) {
                 </table>
             </div> <!-- End of .inside -->
         </div>
-    <?php 
-    } 
+    <?php
+    }
     ?>
     <div class="postbox enable_log"<?php echo ( $nginx_helper_settings['enable_log'] == false ) ? ' style="display: none;"' : ''; ?>>
         <h3 class="hndle">
@@ -509,15 +509,15 @@ if ( is_multisite() ) {
             ?>
                 <span class="error fade" style="display : block">
                     <p>
-                        <?php 
+                        <?php
                             printf(
                                 __( 'Can\'t write on log file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper' ),
-                                $log_path . 'nginx.log' 
-                            ); 
+                                $log_path . 'nginx.log'
+                            );
                         ?>
                     </p>
                 </span>
-            <?php 
+            <?php
                 }
             ?>
 
@@ -542,7 +542,7 @@ if ( is_multisite() ) {
                             </label>
                         </th>
                         <td>
-                            <a target="_blank" href="<?php echo $log_url . 'nginx.log'; ?>"> 
+                            <a target="_blank" href="<?php echo $log_url . 'nginx.log'; ?>">
                                 <?php _e( 'Log', 'nginx-helper' ); ?>
                             </a>
                         </td>
@@ -569,8 +569,8 @@ if ( is_multisite() ) {
                             </label>
                         </th>
                         <td>
-                            <input id="log_filesize" class="small-text" type="text" name="log_filesize" value="<?php echo $nginx_helper_settings['log_filesize'] ?>" /> 
-                            <?php 
+                            <input id="log_filesize" class="small-text" type="text" name="log_filesize" value="<?php echo $nginx_helper_settings['log_filesize'] ?>" />
+                            <?php
                                 _e( 'Mb', 'nginx-helper' );
                                 if ( $error_log_filesize ) {
                             ?>
@@ -585,7 +585,7 @@ if ( is_multisite() ) {
             </table>
         </div> <!-- End of .inside -->
     </div>
-    <?php 
-        submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true ); 
+    <?php
+        submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true );
     ?>
 </form><!-- End of #post_form -->

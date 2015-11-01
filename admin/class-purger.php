@@ -226,15 +226,15 @@ abstract class Purger {
             }
         }
     }
-    
+
     /*
      * Deletes local cache files without a 3rd party nginx module.
      * Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri").
-     * Read more on how this works here: 
+     * Read more on how this works here:
      * https://www.digitalocean.com/community/tutorials/how-to-setup-fastcgi-caching-with-nginx-on-your-vps#purging-the-cache
      */
     private function _delete_cache_file_for( $url ) {
-        
+
         // Verify cache path is set
         if ( ! defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
             $this->log( 'Error purging because RT_WP_NGINX_HELPER_CACHE_PATH was not defined. URL: ' . $url, 'ERROR' );
@@ -271,7 +271,7 @@ abstract class Purger {
             $this->log( "- - An error occurred deleting the cache file. Check the server logs for a PHP warning.", "ERROR" );
         }
     }
-    
+
     private function _do_remote_get( $url ) {
 
         $response = wp_remote_get( $url );
@@ -294,7 +294,7 @@ abstract class Purger {
             }
         }
     }
-    
+
     public function checkHttpConnection() {
 
         $purgeURL = plugins_url( "nginx-manager/check-proxy.php" );
@@ -306,10 +306,10 @@ abstract class Purger {
 
         return "KO";
     }
-    
+
     public function log( $msg, $level = 'INFO' ) {
         global $nginx_helper_admin;
-        
+
         if ( !$nginx_helper_admin->options['enable_log'] ) {
             return;
         }
@@ -317,7 +317,7 @@ abstract class Purger {
         $log_levels = array( "INFO" => 0, "WARNING" => 1, "ERROR" => 2, "NONE" => 3 );
 
         if ( $log_levels[ $level ] >= $log_levels[ $nginx_helper_admin->options['log_level'] ] ) {
-            if ( $fp = fopen( $nginx_helper_admin->get_log_path() . 'nginx.log', "a+" ) ) {
+            if ( $fp = fopen( $nginx_helper_admin->functional_asset_path() . 'nginx.log', "a+" ) ) {
                 fwrite( $fp, "\n" . gmdate( "Y-m-d H:i:s " ) . " | " . $level . " | " . $msg );
                 fclose( $fp );
             }
@@ -325,19 +325,19 @@ abstract class Purger {
 
         return true;
     }
-    
+
     public function checkAndTruncateLogFile() {
         global $nginx_helper_admin;
 
         $maxSizeAllowed = ( is_numeric( $nginx_helper_admin->options['log_filesize'] ) ) ? $nginx_helper_admin->options['log_filesize'] * 1048576 : 5242880;
 
-        $fileSize = filesize( $nginx_helper_admin->get_log_path() . 'nginx.log' );
+        $fileSize = filesize( $nginx_helper_admin->functional_asset_path() . 'nginx.log' );
 
         if ( $fileSize > $maxSizeAllowed ) {
             $offset = $fileSize - $maxSizeAllowed;
-            if ( $file_content = file_get_contents( $nginx_helper_admin->get_log_path() . 'nginx.log', NULL, NULL, $offset ) ) {
+            if ( $file_content = file_get_contents( $nginx_helper_admin->functional_asset_path() . 'nginx.log', NULL, NULL, $offset ) ) {
                 if ( $file_content = strstr( $file_content, "\n" ) ) {
-                    if ( $fp = fopen( $nginx_helper_admin->get_log_path() . 'nginx.log', "w+" ) ) {
+                    if ( $fp = fopen( $nginx_helper_admin->functional_asset_path() . 'nginx.log', "w+" ) ) {
                         fwrite( $fp, $file_content );
                         fclose( $fp );
                     }
@@ -345,7 +345,7 @@ abstract class Purger {
             }
         }
     }
-    
+
     public function purgeImageOnEdit( $attachment_id ) {
 
         $this->log( "Purging media on edit BEGIN ===" );
@@ -371,7 +371,7 @@ abstract class Purger {
 
     public function purge_on_post_moved_to_trash( $new_status, $old_status, $post ) {
         global $nginx_helper_admin, $blog_id;
-        
+
         if ( ! $nginx_helper_admin->options['enable_purge'] ) {
             return;
         }
@@ -393,13 +393,13 @@ abstract class Purger {
                 $nginx_helper_admin->options['purge_archive_on_del'],
                 $nginx_helper_admin->options['purge_archive_on_del']
             );
-            
+
             $this->log( "Function purge_on_post_moved_to_trash ( post id " . $post->ID . " ) END ===" );
         }
 
         return true;
     }
-    
+
     private function _purge_homepage() {
 
         $homepage_url = trailingslashit( home_url() );
@@ -477,7 +477,7 @@ abstract class Purger {
 
         return true;
     }
-    
+
     private function _purge_all_categories() {
 
         $this->log( __( "Purging all categories", "nginx-helper" ) );
@@ -493,7 +493,7 @@ abstract class Purger {
 
         return true;
     }
-    
+
     private function _purge_all_posttags() {
 
         $this->log( __( "Purging all tags", "nginx-helper" ) );
@@ -509,7 +509,7 @@ abstract class Purger {
 
         return true;
     }
-    
+
     private function _purge_all_customtaxa() {
 
         $this->log( __( "Purging all custom taxonomies", "nginx-helper" ) );
@@ -533,7 +533,7 @@ abstract class Purger {
 
         return true;
     }
-    
+
     private function _purge_all_taxonomies() {
 
         $this->_purge_all_categories();
@@ -542,7 +542,7 @@ abstract class Purger {
 
         return true;
     }
-    
+
     private function _purge_all_posts() {
 
         $this->log( __( "Purging all posts, pages and custom post types.", "nginx-helper" ) );
@@ -564,7 +564,7 @@ abstract class Purger {
 
         return true;
     }
-    
+
     private function _purge_all_date_archives() {
 
         $this->log( __( "Purging all date-based archives.", "nginx-helper" ) );
@@ -575,7 +575,7 @@ abstract class Purger {
 
         return true;
     }
-    
+
     private function _purge_all_daily_archives() {
         global $wpdb;
 
@@ -591,7 +591,7 @@ abstract class Purger {
 
         if ( $_daily_archives = $wpdb->get_results( $_query_daily_archives ) ) {
             foreach ( $_daily_archives as $_da ) {
-                $this->log( 
+                $this->log(
                     sprintf(
                         "+ " . __( "Purging daily archive '%s/%s/%s'", "nginx-helper" ), $_da->year, $_da->month, $_da->dayofmonth ) );
                 $this->purgeUrl( get_day_link( $_da->year, $_da->month, $_da->dayofmonth ) );
@@ -600,7 +600,7 @@ abstract class Purger {
             $this->log("- " . __( "No daily archives", "nginx-helper" ) );
         }
     }
-    
+
     private function _purge_all_monthly_archives() {
         global $wpdb;
 
@@ -646,7 +646,7 @@ abstract class Purger {
             $this->log( "- " . __( "No yearly archives", "nginx-helper" ) );
         }
     }
-    
+
     public function purge_them_all() {
 
         $this->log( __( "Let's purge everything!", "nginx-helper" ) );
@@ -658,7 +658,7 @@ abstract class Purger {
         $this->log( __( "Everthing purged!", "nginx-helper" ) );
         return true;
     }
-    
+
     public function purge_on_term_taxonomy_edited( $term_id, $tt_id, $taxon ) {
 
         $this->log( __( "Term taxonomy edited or deleted", "nginx-helper" ) );
@@ -686,9 +686,9 @@ abstract class Purger {
         }
         return true;
     }
-    
+
     /*
-     * Source - http://stackoverflow.com/a/1360437/156336 
+     * Source - http://stackoverflow.com/a/1360437/156336
      */
     public function unlinkRecursive( $dir, $deleteRootToo ) {
         if ( ! $dh = opendir( $dir ) ) {

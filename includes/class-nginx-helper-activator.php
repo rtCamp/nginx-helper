@@ -24,18 +24,18 @@ class Nginx_Helper_Activator {
 
 	/**
 	 * Create log directory. Add capability of nginx helper.
-     * Schedule event to check log file size daily. 
+     * Schedule event to check log file size daily.
 	 *
 	 * @since    2.0.0
 	 */
 	public static function activate() {
         global $wp_roles, $nginx_helper_admin;
-        
-        $path = $nginx_helper_admin->get_log_path();
+
+        $path = $nginx_helper_admin->functional_asset_path();
         if ( !is_dir( $path ) ) {
             mkdir( $path );
         }
-        
+
         if ( !current_user_can( 'activate_plugins' ) ) {
             return;
         }
@@ -52,7 +52,7 @@ class Nginx_Helper_Activator {
 
 		$role->add_cap( 'Nginx Helper | Config' );
 		$role->add_cap( 'Nginx Helper | Purge cache' );
-        
+
         wp_schedule_event( time(), 'daily', 'rt_wp_nginx_helper_check_log_file_size_daily' );
     }
 }

@@ -39,7 +39,7 @@ class Nginx_Helper_Admin {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
-    
+
     /**
 	 * Various settings tabs.
 	 *
@@ -48,7 +48,7 @@ class Nginx_Helper_Admin {
 	 * @var      string    $settings_tabs    Various settings tabs.
 	 */
 	private $settings_tabs;
-    
+
     /**
 	 * Purge options.
 	 *
@@ -57,7 +57,7 @@ class Nginx_Helper_Admin {
 	 * @var      string    $options    Purge options.
 	 */
 	public $options;
-    
+
     /**
 	 * WP-CLI Command.
 	 *
@@ -91,7 +91,7 @@ class Nginx_Helper_Admin {
                 'menu_slug'     => 'support'
             ) )
         );
-        
+
         $this->options = $this->nginx_helper_settings();
 	}
 
@@ -101,7 +101,7 @@ class Nginx_Helper_Admin {
 	 * @since    2.0.0
 	 */
 	public function enqueue_styles( $hook ) {
-        
+
         /**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -113,7 +113,7 @@ class Nginx_Helper_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-        
+
         if ( 'settings_page_nginx' != $hook ) {
             return;
         }
@@ -139,20 +139,20 @@ class Nginx_Helper_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-        
+
         if ( 'settings_page_nginx' != $hook ) {
             return;
         }
         wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
     }
-    
+
     /**
 	 * Add admin menu.
 	 *
 	 * @since    2.0.0
 	 */
     public function nginx_helper_admin_menu() {
-        
+
         if ( is_multisite() ) {
             add_submenu_page(
                 'settings.php',
@@ -160,7 +160,7 @@ class Nginx_Helper_Admin {
                 __( 'Nginx Helper', 'nginx-helper' ),
                 'manage_options',
                 'nginx',
-                array( &$this, 'nginx_helper_setting_page' ) 
+                array( &$this, 'nginx_helper_setting_page' )
             );
         } else {
             add_submenu_page(
@@ -169,16 +169,16 @@ class Nginx_Helper_Admin {
                 __( 'Nginx Helper', 'nginx-helper' ),
                 'manage_options',
                 'nginx',
-                array( &$this, 'nginx_helper_setting_page' ) 
+                array( &$this, 'nginx_helper_setting_page' )
             );
         }
     }
-    
+
     public function nginx_helper_toolbar_purge_link( $wp_admin_bar ) {
         if ( ! current_user_can( 'manage_options' ) ) {
             return;
         }
-        
+
         $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) );
         $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
         $wp_admin_bar->add_menu(
@@ -186,24 +186,24 @@ class Nginx_Helper_Admin {
                 'id'    => 'nginx-helper-purge-all',
                 'title' => __( 'Purge Cache', 'nginx-helper' ),
                 'href'  => $nonced_url,
-                'meta'  => array( 'title' => __( 'Purge Cache', 'nginx-helper' ) ), 
-            ) 
+                'meta'  => array( 'title' => __( 'Purge Cache', 'nginx-helper' ) ),
+            )
         );
     }
-    
+
     /**
      * Display settings.
      * @global $string $pagenow Contain current admin page.
-     * 
+     *
      * @since    2.0.0
      */
     public function nginx_helper_setting_page() {
         include 'partials/nginx-helper-admin-display.php';
     }
-    
+
     /**
      * Default settings.
-     * 
+     *
      * @since    2.0.0
      * @return array
      */
@@ -234,61 +234,61 @@ class Nginx_Helper_Admin {
             'purge_url'                         => '',
         );
     }
-    
+
     /**
      * Get settings.
-     * 
+     *
      * @since    2.0.0
      */
     public function nginx_helper_settings() {
-        return wp_parse_args( 
-            get_site_option( 'rt_wp_nginx_helper_options', array() ), 
+        return wp_parse_args(
+            get_site_option( 'rt_wp_nginx_helper_options', array() ),
             $this->nginx_helper_default_settings()
         );
     }
-    
+
     public function nginx_helper_settings_link( $links ) {
-        
+
         if ( is_network_admin() ) {
             $setting_page = 'settings.php';
         } else {
             $setting_page = 'options-general.php';
         }
-        
+
         $settings_link = '<a href="' . admin_url( $setting_page . '?page=nginx' ). '">' . __( 'Settings', 'nginx-helper' ) . '</a>';
         array_unshift( $links, $settings_link );
         return $links;
     }
-    
+
     /**
-	 * Retrieve the log path.
+	 * Retrieve the asset path.
 	 *
 	 * @since     2.0.0
-	 * @return    string    log path of the plugin.
+	 * @return    string    asset path of the plugin.
 	 */
-	public function get_log_path() {
+	public function functional_asset_path() {
 		$log_dir = wp_upload_dir();
         $log_path = $log_dir['basedir'] . '/nginx-helper/';
-        
-        return apply_filters( 'rt_nginx_helper_log_path', $log_path );
+
+        return apply_filters( 'nginx_asset_path', $log_path );
 	}
-    
+
     /**
-	 * Retrieve the log url.
+	 * Retrieve the asset url.
 	 *
 	 * @since     2.0.0
-	 * @return    string    log url of the plugin.
+	 * @return    string    asset url of the plugin.
 	 */
-	public function get_log_url() {
+	public function functional_asset_url() {
 		$log_dir = wp_upload_dir();
         $log_url = $log_dir['baseurl'] . '/nginx-helper/';
-        
-        return apply_filters( 'rt_nginx_helper_log_url', $log_url );
+
+        return apply_filters( 'nginx_asset_url', $log_url );
 	}
-    
+
     /**
      * Get latest news.
-     * 
+     *
      * @since     2.0.0
      */
     public function nginx_helper_get_feeds() {
@@ -323,16 +323,16 @@ class Nginx_Helper_Admin {
         <?php
         die();
     }
-    
+
     /**
      * Add time stamps in html.
      */
     public function add_timestamps() {
-       
+
         if ( is_admin() || $this->options['enable_purge'] != 1 || $this->options['enable_stamp'] != 1 ) {
             return;
         }
-        
+
         foreach ( headers_list() as $header ) {
             list( $key, $value ) = explode( ':', $header, 2 );
             if ( 'Content-Type' == $key && strpos( trim( $value ), 'text/html' ) !== 0 ) {
@@ -343,26 +343,26 @@ class Nginx_Helper_Admin {
             }
         }
 
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { 
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             return;
         }
-        
+
         $timestamps = "\n<!--" .
                 "Cached using Nginx-Helper on " . current_time('mysql') . ". " .
                 "It took " . get_num_queries() . " queries executed in " . timer_stop() . " seconds." .
                 "-->\n" .
                 "<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->";
-        
+
         echo $timestamps;
     }
-    
+
     /**
      * Get map
      * @global type $wpdb
      * @return string
      */
     public function get_map() {
-        
+
         if ( !$this->options['enable_map'] ) {
             return;
         }
@@ -376,14 +376,14 @@ class Nginx_Helper_Admin {
                     $wpdb->siteid
                 )
             );
-            
+
             $wpdb->dmtable = $wpdb->base_prefix . 'domain_mapping';
-            
+
             $rt_domain_map_sites = '';
             if ( $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->dmtable}'") == $wpdb->dmtable ) {
                 $rt_domain_map_sites = $wpdb->get_results( "SELECT blog_id, domain FROM {$wpdb->dmtable} ORDER BY id DESC" );
             }
-            
+
             $rt_nginx_map = "";
             $rt_nginx_map_array = array();
 
@@ -416,20 +416,20 @@ class Nginx_Helper_Admin {
      * Update map
      */
     public function update_map() {
-        
+
         if ( is_multisite() ) {
             $rt_nginx_map = $this->get_map();
 
-            if ( $fp = fopen( $this->get_log_path() . 'map.conf', 'w+' ) ) {
+            if ( $fp = fopen( $this->functional_asset_path() . 'map.conf', 'w+' ) ) {
                 fwrite( $fp, $rt_nginx_map );
                 fclose( $fp );
             }
         }
     }
-    
+
     /**
      * Purge url when post status is changed.
-     * 
+     *
      * @global type $blog_id
      * @global object $nginx_purger
      * @param string $new_status
@@ -438,31 +438,31 @@ class Nginx_Helper_Admin {
      */
     public function set_future_post_option_on_future_status( $new_status, $old_status, $post ) {
         global $blog_id, $nginx_purger;
-        
+
         if ( !$this->options['enable_purge'] ) {
             return;
         }
-        
+
         $purge_status = array( 'publish', 'future' );
-        
+
         if ( in_array( $old_status, $purge_status ) || in_array( $new_status, $purge_status ) ) {
             $nginx_purger->log( "Purge post on transition post STATUS from " . $old_status . " to " . $new_status );
             $nginx_purger->purgePost( $post->ID );
         }
 
         if ( 'future' == $new_status ) {
-            if ( $post && 'future' == $post->post_status && 
-               ( ( 'post' == $post->post_type || 'page' == $post->post_type ) || 
+            if ( $post && 'future' == $post->post_status &&
+               ( ( 'post' == $post->post_type || 'page' == $post->post_type ) ||
                ( isset( $this->options['custom_post_types_recognized'] ) &&
                in_array( $post->post_type, $this->options['custom_post_types_recognized'] ) ) ) ) {
-                
+
                 $nginx_purger->log( "Set/update future_posts option ( post id = " . $post->ID . " and blog id = " . $blog_id . " )" );
                 $this->options['future_posts'][ $blog_id ][ $post->ID ] = strtotime( $post->post_date_gmt ) + 60;
                 update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
             }
         }
     }
-    
+
     /**
      * Unset future post option on delete
      * @global type $blog_id
@@ -471,15 +471,15 @@ class Nginx_Helper_Admin {
      */
     public function unset_future_post_option_on_delete( $post_id ) {
         global $blog_id, $nginx_purger;
-        
+
         if ( !$this->options['enable_purge'] ) {
             return;
         }
-        
+
         if ( $post_id && !wp_is_post_revision( $post_id ) ) {
             if ( isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) &&
                     count( $this->options['future_posts'][ $blog_id ][ $post_id] ) ) {
-                
+
                 $nginx_purger->log( "Unset future_posts option ( post id = " . $post_id . " and blog id = " . $blog_id . " )" );
                 unset( $this->options['future_posts'][ $blog_id ][ $post_id ] );
                 update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
@@ -491,7 +491,7 @@ class Nginx_Helper_Admin {
             }
         }
     }
-    
+
     /**
      * Update map when new blog added in multisite.
      * @global type $nginx_purger
@@ -499,7 +499,7 @@ class Nginx_Helper_Admin {
      */
     public function update_new_blog_options( $blog_id ) {
         global $rt_wp_nginx_purger;
-        
+
         $nginx_purger->log( "New site added ( id $blog_id )" );
         $this->update_map();
         $nginx_purger->log( "New site added to nginx map ( id $blog_id )" );
@@ -507,14 +507,14 @@ class Nginx_Helper_Admin {
         update_blog_option( $blog_id, "rt_wp_nginx_helper_options", $helper_options );
         $nginx_purger->log( "Default options updated for the new blog ( id $blog_id )" );
     }
-    
+
     /**
      * Purge all urls.
      * @global type $nginx_purger
      */
     public function purge_all() {
         global $nginx_purger;
-        
+
         if ( !isset( $_REQUEST['nginx_helper_action'] ) ) {
             return;
         }
@@ -530,7 +530,7 @@ class Nginx_Helper_Admin {
             add_action( 'network_admin_notices', array( &$this, 'display_notices' ) );
             return;
         }
-        
+
         check_admin_referer( 'nginx_helper-purge_all' );
 
         switch ( $action ) {
@@ -538,10 +538,10 @@ class Nginx_Helper_Admin {
                 $nginx_purger->purgeAll();
                 break;
         }
-        
+
         wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
     }
-    
+
     /**
      * Dispay plugin notices.
      */
