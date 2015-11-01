@@ -665,45 +665,48 @@ namespace rtCamp\WP\Nginx {
 			$this->log( "* Purged Everything!" );
 			$this->log( "* * * * *" );
 			//delete_multi_keys("*");
-            delete_keys_by_wildcard("*");
-        }
-        
-        function purge_urls()
+			delete_keys_by_wildcard("*");
+		}
+		
+		function purge_urls()
 		{
 			global $rt_wp_nginx_helper;
-            
-            $parse = parse_url( site_url() );
+			
+			$parse = parse_url( site_url() );
 			$host = $rt_wp_nginx_helper->options['redis_hostname'];
 			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'];
 			
-            if( isset( $rt_wp_nginx_helper->options['purge_url'] ) && ! empty( $rt_wp_nginx_helper->options['purge_url'] ) ) {
-                $purge_urls = explode( "\r\n", $rt_wp_nginx_helper->options['purge_url'] );
-
-                foreach ($purge_urls as $purge_url ) {
-                    $purge_url = trim( $purge_url );
-
-                    if( strpos( $purge_url, '*' ) === false ) {
-                        $purge_url = $_url_purge_base . $purge_url;
-                        $status = delete_single_key( $purge_url );
-                        if( $status ) {
-                            $this->log( "- Purge URL | " . $purge_url );
-                        } else {
-                            $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+			$purge_urls = isset( $rt_wp_nginx_helper->options['purge_url'] ) && ! empty( $rt_wp_nginx_helper->options['purge_url'] ) ?
+				explode( "\r\n", $rt_wp_nginx_helper->options['purge_url'] ) : array();
+			
+                        // Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed
+                        $purge_urls = apply_filters('rt_nginx_helper_purge_urls', $purge_urls, true);
+                        
+                        if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
+				foreach ($purge_urls as $purge_url ) {
+					$purge_url = trim( $purge_url );
+					
+					if( strpos( $purge_url, '*' ) === false ) {
+						$purge_url = $_url_purge_base . $purge_url;
+						$status = delete_single_key( $purge_url );
+						if( $status ) {
+						    $this->log( "- Purge URL | " . $purge_url );
+						} else {
+						    $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+						}
+					} else {
+						$purge_url = $_url_purge_base . $purge_url;
+						$status = delete_keys_by_wildcard( $purge_url );
+						if( $status ) {
+						    $this->log( "- Purge Wild Card URL | " . $purge_url . " | ". $status . " url purged" );
+						} else {
+						    $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+						}
+					}
+				}
                         }
-                    } else {
-                        $purge_url = $_url_purge_base . $purge_url;
-                        $status = delete_keys_by_wildcard( $purge_url );
-                        if( $status ) {
-                            $this->log( "- Purge Wild Card URL | " . $purge_url . " | ". $status . " url purged" );
-                        } else {
-                            $this->log( "- Not Found | " . $purge_url, 'ERROR' );
-                        }
-                    }
-                }
-            }
-        }
-
+		}
+		
 	}
-
 }
