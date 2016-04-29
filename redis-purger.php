@@ -669,7 +669,7 @@ namespace rtCamp\WP\Nginx {
 			return true;
 		}
 
-		function true_purge_all()
+		function purge_all()
 		{
 			global $rt_wp_nginx_helper;
 			$prefix = trim( $rt_wp_nginx_helper->options['redis_prefix'] );
