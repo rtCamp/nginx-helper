@@ -634,13 +634,12 @@ namespace rtCamp\WP\Nginx {
 
 			$this->log( __( "Purging all daily archives.", "nginx-helper" ) );
 
-			$_query_daily_archives = $wpdb->prepare(
+			$_query_daily_archives =
 					"SELECT YEAR(post_date) AS 'year', MONTH(post_date) AS 'month', DAYOFMONTH(post_date) AS 'dayofmonth', count(ID) as posts
                 FROM $wpdb->posts
                 WHERE post_type = 'post' AND post_status = 'publish'
                 GROUP BY YEAR(post_date), MONTH(post_date), DAYOFMONTH(post_date)
-                ORDER BY post_date DESC"
-			);
+                ORDER BY post_date DESC";
 
 			if ( $_daily_archives = $wpdb->get_results( $_query_daily_archives ) ) {
 
@@ -659,13 +658,12 @@ namespace rtCamp\WP\Nginx {
 
 			$this->log( __( "Purging all monthly archives.", "nginx-helper" ) );
 
-			$_query_monthly_archives = $wpdb->prepare(
+			$_query_monthly_archives =
 					"SELECT YEAR(post_date) AS 'year', MONTH(post_date) AS 'month', count(ID) as posts
                 FROM $wpdb->posts
                 WHERE post_type = 'post' AND post_status = 'publish'
                 GROUP BY YEAR(post_date), MONTH(post_date)
-                ORDER BY post_date DESC"
-			);
+                ORDER BY post_date DESC";
 
 			if ( $_monthly_archives = $wpdb->get_results( $_query_monthly_archives ) ) {
 
@@ -684,13 +682,12 @@ namespace rtCamp\WP\Nginx {
 
 			$this->log( __( "Purging all yearly archives.", "nginx-helper" ) );
 
-			$_query_yearly_archives = $wpdb->prepare(
+			$_query_yearly_archives =
 					"SELECT YEAR(post_date) AS 'year', count(ID) as posts
                 FROM $wpdb->posts
                 WHERE post_type = 'post' AND post_status = 'publish'
                 GROUP BY YEAR(post_date)
-                ORDER BY post_date DESC"
-			);
+                ORDER BY post_date DESC";
 
 			if ( $_yearly_archives = $wpdb->get_results( $_query_yearly_archives ) ) {
 
