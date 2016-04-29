@@ -598,7 +598,7 @@ namespace rtCamp\WP\Nginx {
 			$this->log( __( "Purging all posts, pages and custom post types.", "nginx-helper" ) );
 
 			$args = array(
-				'numberposts' => 0,
+				'numberposts' => -1,
 				'post_type' => 'any',
 				'post_status' => 'publish' );
 
@@ -703,25 +703,6 @@ namespace rtCamp\WP\Nginx {
 			}
 		}
 
-		function purge_them_all() {
-
-			$this->log( __( "Let's purge everything!", "nginx-helper" ) );
-
-			$this->_purge_homepage();
-
-			$this->_purge_personal_urls();
-
-			$this->_purge_all_posts();
-
-			$this->_purge_all_taxonomies();
-
-			$this->_purge_all_date_archives();
-
-			$this->log( __( "Everthing purged!", "nginx-helper" ) );
-
-			return true;
-		}
-
 		function purge_on_term_taxonomy_edited( $term_id, $tt_id, $taxon ) {
 
 			$this->log( __( "Term taxonomy edited or deleted", "nginx-helper" ) );
@@ -755,11 +736,30 @@ namespace rtCamp\WP\Nginx {
 			return true;
 		}
 
-		function true_purge_all(){
-			$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH, false);
-			$this->log( "* * * * *" );
-			$this->log( "* Purged Everything!" );
-			$this->log( "* * * * *" );
+		function purge_all(){
+
+			switch ($rt_wp_nginx_helper->options['purge_method']) {
+
+				case 'unlink_files':
+					$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH, false);
+					$this->log( "* * * * *" );
+					$this->log( "* Purged Everything!" );
+					$this->log( "* * * * *" );
+					break;
+
+				case 'get_request':
+					// Go to default case
+				default:
+					$this->log( __( "Let's purge everything!", "nginx-helper" ) );
+					$this->_purge_homepage();
+					$this->_purge_personal_urls();
+					$this->_purge_all_posts();
+					$this->_purge_all_taxonomies();
+					$this->_purge_all_date_archives();
+					$this->log( __( "Everthing purged!", "nginx-helper" ) );
+					break;
+			}
+
 		}
 
 		/** Source - http://stackoverflow.com/a/1360437/156336 **/		

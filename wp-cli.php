@@ -27,7 +27,7 @@ if ( ! class_exists( 'Nginx_Helper_WP_CLI_Command' ) ) {
 		 */
 		public function purge_all( $args, $assoc_args ) {
 			global $rt_wp_nginx_purger;
-			$rt_wp_nginx_purger->true_purge_all();
+			$rt_wp_nginx_purger->purge_all();
 			$message = __( 'Purged Everything!' );
 			WP_CLI::success( $message );
 		}

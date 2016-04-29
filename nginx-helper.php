@@ -77,7 +77,7 @@ namespace rtCamp\WP\Nginx {
 			add_action( 'admin_init', array( &$this, 'purge_all' ) );
 
 			// expose action to allow other plugins to purge the cache
-			add_action( 'rt_nginx_helper_purge_all', array( &$this, 'true_purge_all' ) );
+			add_action( 'rt_nginx_helper_purge_all', array( $rt_wp_nginx_purger, 'purge_all' ) );
 
 			// Load WP-CLI command
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -288,6 +288,8 @@ namespace rtCamp\WP\Nginx {
 
 		function purge_all()
 		{
+			global $rt_wp_nginx_purger;
+
 			if ( !isset( $_REQUEST['nginx_helper_action'] ) )
 				return;
 
@@ -306,16 +308,10 @@ namespace rtCamp\WP\Nginx {
 
 			switch ( $action ) {
 				case 'purge':
-					$this->true_purge_all();
+					$rt_wp_nginx_purger->purge_all();
 					break;
 			}
 			wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
-		}
-
-		function true_purge_all()
-		{
-			global $rt_wp_nginx_purger;
-			$rt_wp_nginx_purger->true_purge_all();
 		}
 
 		/**
