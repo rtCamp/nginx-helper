@@ -667,11 +667,12 @@ namespace rtCamp\WP\Nginx {
 		function true_purge_all()
 		{
 			global $rt_wp_nginx_helper;
+			$prefix = substr($rt_wp_nginx_helper->options['redis_prefix'],0, -1);
 			$this->log( "* * * * *" );
 			$this->log( "* Purged Everything!" );
 			$this->log( "* * * * *" );
 			//delete_multi_keys("*");
-			delete_keys_by_wildcard("*");
+			delete_keys_by_wildcard($prefix."*");
 		}
 		
 		function purge_urls()
