@@ -109,10 +109,8 @@ namespace rtCamp\WP\Nginx {
 			$this->log( "Function purgePost BEGIN ===" );
 
 			if ( $rt_wp_nginx_helper->options['purge_homepage_on_edit'] == 1 ) {
-				$homepage_url = trailingslashit( home_url() );
-
 				$this->log( "Purging homepage '$homepage_url'" );
-				$this->purgeUrl( $homepage_url );
+				$this->_purge_homepage();
 			}
 
 
@@ -329,10 +327,18 @@ namespace rtCamp\WP\Nginx {
 
 		private function _purge_homepage()
 		{
+			//  WPML installetd?
+			if ( function_exists('icl_get_home_url') )
+			{
+				$homepage_url = trailingslashit( icl_get_home_url() );
+				$this->log( sprintf( __( "Purging homepage (WPML) '%s'", "nginx-helper" ), $homepage_url ) );
+			}
+			else
+			{
+				$homepage_url = trailingslashit( home_url() );
+				$this->log( sprintf( __( "Purging homepage '%s'", "nginx-helper" ), $homepage_url ) );
+			}
 
-			$homepage_url = trailingslashit( home_url() );
-
-			$this->log( sprintf( __( "Purging homepage '%s'", "nginx-helper" ), $homepage_url ) );
 			$this->purgeUrl( $homepage_url );
 
 			return true;
