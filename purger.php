@@ -758,7 +758,7 @@ namespace rtCamp\WP\Nginx {
 		/** Source - http://stackoverflow.com/a/1360437/156336 **/		
 		
 		function unlinkRecursive( $dir, $deleteRootToo ) {
-			if ( ! $dh = opendir( $dir ) ) {
+			if ( ! $dh = @opendir( $dir ) ) {
 				return;
 			}
 			while ( false !== ($obj = readdir( $dh )) ) {
