@@ -726,7 +726,9 @@ namespace rtCamp\WP\Nginx {
 		}
 
 		function true_purge_all(){
-			$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH, false);
+			if( apply_filters( 'rt_nginx_helper_purging_all' ) !== false ) {
+				$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH, false);
+			}
 			$this->log( "* * * * *" );
 			$this->log( "* Purged Everything!" );
 			$this->log( "* * * * *" );
@@ -763,6 +765,10 @@ namespace rtCamp\WP\Nginx {
 
 		function _do_purge_url( $url ) {
 			global $rt_wp_nginx_helper;
+
+			if( apply_filters( 'rt_nginx_helper_purging_url', $url ) === false ) {
+				return;
+			}
 
 			switch ($rt_wp_nginx_helper->options['purge_method']) {
 				case 'unlink_files':
