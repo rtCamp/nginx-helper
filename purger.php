@@ -212,43 +212,20 @@ namespace rtCamp\WP\Nginx {
 
 			$parse = parse_url( $url );
 
-			switch ($rt_wp_nginx_helper->options['purge_method']) {
-				case 'unlink_files':
-					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . $parse[ 'path' ];
-					$_url_purge = $_url_purge_base;
+			$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . $parse[ 'path' ];
+			$_url_purge = $_url_purge_base;
 
-					if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
-						$_url_purge .= '?' . $parse[ 'query' ];
-					}
+			if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
+				$_url_purge .= '?' . $parse[ 'query' ];
+			}
 
-					$this->_delete_cache_file_for( $_url_purge );
+			$this->_do_purge_url( $_url_purge );
 
-					if ( $feed ) {
-						$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
-						$this->_delete_cache_file_for( $feed_url );
-						$this->_delete_cache_file_for( $feed_url . 'atom/' );
-						$this->_delete_cache_file_for( $feed_url . 'rdf/' );
-					}
-                    break;
-				case 'get_request':
-					// Go to default case
-				default:
-					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge' . $parse[ 'path' ];
-					$_url_purge = $_url_purge_base;
-
-					if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
-						$_url_purge .= '?' . $parse[ 'query' ];
-					}
-
-					$this->_do_remote_get( $_url_purge );
-
-					if ( $feed ) {
-						$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
-						$this->_do_remote_get( $feed_url );
-						$this->_do_remote_get( $feed_url . 'atom/' );
-						$this->_do_remote_get( $feed_url . 'rdf/' );
-					}
-                    break;
+			if ( $feed ) {
+				$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
+				$this->_do_purge_url( $feed_url );
+				$this->_do_purge_url( $feed_url . 'atom/' );
+				$this->_do_purge_url( $feed_url . 'rdf/' );
 			}
 
 		}
@@ -783,6 +760,22 @@ namespace rtCamp\WP\Nginx {
 
 			return;
 		}
+
+		function _do_purge_url( $url ) {
+			global $rt_wp_nginx_helper;
+
+			switch ($rt_wp_nginx_helper->options['purge_method']) {
+				case 'unlink_files':
+					$this->_delete_cache_file_for( $url );
+				break;
+
+				case 'get_request':
+					// Go to default case
+					$this->_do_remote_get( $url );
+				default:
+				break;
+			}
+		}
         
 		function purge_urls() {
 
@@ -796,44 +789,19 @@ namespace rtCamp\WP\Nginx {
                         // Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed
 			$purge_urls = apply_filters('rt_nginx_helper_purge_urls', $purge_urls, false);
 
-			switch ($rt_wp_nginx_helper->options['purge_method']) {
+			$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ];
 
-				case 'unlink_files':
-					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ];
-					
-					if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
-						foreach ($purge_urls as $purge_url ) {
-						    $purge_url = trim( $purge_url );
-						    
-						    if( strpos( $purge_url, '*' ) === false ) {
-						        $purge_url = $_url_purge_base . $purge_url;
-						        $this->log( "- Purging URL | " . $purge_url );
-						        $this->_delete_cache_file_for( $purge_url );
-						    }
-						}
-					}
-					break;
+			if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
+				foreach ($purge_urls as $purge_url ) {
+				    $purge_url = trim( $purge_url );
 
-				case 'get_request':
-					// Go to default case
-				default:
-					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge';
-					
-					if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
-						foreach ($purge_urls as $purge_url ) {
-						    $purge_url = trim( $purge_url );
-						    
-						    if( strpos( $purge_url, '*' ) === false ) {
-						        $purge_url = $_url_purge_base . $purge_url;
-						        $this->log( "- Purging URL | " . $purge_url );
-						        $this->_do_remote_get( $purge_url );
-						    }
-						}
-					}
-					break;
-
+				    if( strpos( $purge_url, '*' ) === false ) {
+				        $purge_url = $_url_purge_base . $purge_url;
+				        $this->log( "- Purging URL | " . $purge_url );
+				        $this->_do_purge_url( $purge_url );
+				    }
+				}
 			}
-
 		}
 	}
 }
