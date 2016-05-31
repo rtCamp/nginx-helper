@@ -217,12 +217,16 @@ namespace rtCamp\WP\Nginx {
 
 			$this->log( "- Purging URL | " . $url );
 
+			if( apply_filters( 'rt_nginx_helper_purging_url', $url ) === false ) {
+				return;
+			}
+
 			$parse = parse_url( $url );
 			$host = $rt_wp_nginx_helper->options['redis_hostname'];
 			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
 			delete_single_key( $_url_purge_base );
-        }
+		}
 
 		function log( $msg, $level = 'INFO' )
 		{
@@ -665,7 +669,10 @@ namespace rtCamp\WP\Nginx {
 			$this->log( "* Purged Everything!" );
 			$this->log( "* * * * *" );
 			//delete_multi_keys("*");
-			delete_keys_by_wildcard("*");
+
+			if( apply_filters( 'rt_nginx_helper_purging_all' ) !== false ) {
+				delete_keys_by_wildcard("*");
+			}
 		}
 		
 		function purge_urls()
@@ -689,19 +696,24 @@ namespace rtCamp\WP\Nginx {
 					
 					if( strpos( $purge_url, '*' ) === false ) {
 						$purge_url = $_url_purge_base . $purge_url;
-						$status = delete_single_key( $purge_url );
-						if( $status ) {
-						    $this->log( "- Purge URL | " . $purge_url );
-						} else {
-						    $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+
+						if( apply_filters( 'rt_nginx_helper_purging_url', $url ) !== false ) {
+							$status = delete_single_key( $purge_url );
+							if( $status ) {
+							    $this->log( "- Purge URL | " . $purge_url );
+							} else {
+							    $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+							}
 						}
 					} else {
 						$purge_url = $_url_purge_base . $purge_url;
-						$status = delete_keys_by_wildcard( $purge_url );
-						if( $status ) {
-						    $this->log( "- Purge Wild Card URL | " . $purge_url . " | ". $status . " url purged" );
-						} else {
-						    $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+						if( apply_filters( 'rt_nginx_helper_purging_wildcard', $url ) !== false ) {
+							$status = delete_keys_by_wildcard( $purge_url );
+							if( $status ) {
+							    $this->log( "- Purge Wild Card URL | " . $purge_url . " | ". $status . " url purged" );
+							} else {
+							    $this->log( "- Not Found | " . $purge_url, 'ERROR' );
+							}
 						}
 					}
 				}
