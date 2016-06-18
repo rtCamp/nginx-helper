@@ -205,6 +205,8 @@ namespace rtCamp\WP\Nginx {
 
 			global $rt_wp_nginx_helper;
 
+			$url = rtrim($url, '/') . '/'; // ERICH make sure url ends with a trailing slash  
+
 			$this->log( "- Purging URL | " . $url );
 
 			$parse = parse_url( $url );
