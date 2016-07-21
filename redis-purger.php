@@ -225,7 +225,19 @@ namespace rtCamp\WP\Nginx {
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
 			
 			delete_single_key( $_url_purge_base );
-        }
+			
+			if ( $feed ) {
+				$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
+				$this->log( "- Purging URL | " . $feed_url );
+				delete_single_key( $feed_url );
+				
+				$this->log( "- Purging URL | " . $feed_url . 'atom/' );
+				delete_single_key( $feed_url . 'atom/' );
+				
+				$this->log( "- Purging URL | " . $feed_url . 'rdf/' );
+				delete_single_key( $feed_url . 'rdf/' );
+			}
+		}
 
 		function log( $msg, $level = 'INFO' )
 		{
