@@ -735,18 +735,9 @@ namespace rtCamp\WP\Nginx {
 
 		function purge_all(){
 
-			switch ($rt_wp_nginx_helper->options['purge_method']) {
-
-				case 'unlink_files':
-					$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH, false);
-					$this->log( "* * * * *" );
-					$this->log( "* Purged Everything!" );
-					$this->log( "* * * * *" );
-					break;
+			switch ($rt_wp_nginx_helper->options['purge_all_method']) {
 
 				case 'get_request':
-					// Go to default case
-				default:
 					$this->log( __( "Let's purge everything!", "nginx-helper" ) );
 					$this->_purge_homepage();
 					$this->_purge_personal_urls();
@@ -754,6 +745,15 @@ namespace rtCamp\WP\Nginx {
 					$this->_purge_all_taxonomies();
 					$this->_purge_all_date_archives();
 					$this->log( __( "Everthing purged!", "nginx-helper" ) );
+					break;
+
+				case 'unlink_files':
+					// Go to default case
+				default:
+					$this->unlinkRecursive(RT_WP_NGINX_HELPER_CACHE_PATH, false);
+					$this->log( "* * * * *" );
+					$this->log( "* Purged Everything!" );
+					$this->log( "* * * * *" );
 					break;
 			}
 

@@ -94,6 +94,7 @@ namespace rtCamp\WP\Nginx {
 		$rt_wp_nginx_helper_get_options[ 'purge_page_on_deleted_comment' ] = 1;
 
 		$rt_wp_nginx_helper_get_options[ 'purge_method' ] = 'get_request';
+    $rt_wp_nginx_helper_get_options[ 'purge_all_method' ] = 'get_request';
 
 		return $rt_wp_nginx_helper_get_options;
 	}

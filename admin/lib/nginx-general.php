@@ -52,8 +52,9 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['purge_page_on_deleted_comment'] = ( isset( $_POST['purge_page_on_deleted_comment'] ) and ( $_POST['purge_page_on_deleted_comment'] == 1 ) ) ? 1 : 0;
 
 				$rt_wp_nginx_helper->options['purge_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'get_request';
-                
-                $rt_wp_nginx_helper->options['purge_url'] = ( isset( $_POST['purge_url'] ) && ! empty( $_POST['purge_url'] ) ) ? esc_textarea( $_POST['purge_url'] ) : '';
+				$rt_wp_nginx_helper->options['purge_all_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'unlink_files';
+
+				$rt_wp_nginx_helper->options['purge_url'] = ( isset( $_POST['purge_url'] ) && ! empty( $_POST['purge_url'] ) ) ? esc_textarea( $_POST['purge_url'] ) : '';
 			}
 			if ( isset( $_POST['cache_method'] ) && $_POST['cache_method'] = "enable_redis" ) {
 				$rt_wp_nginx_helper->options['redis_hostname'] = ( isset( $_POST['redis_hostname'] ) ) ? $_POST['redis_hostname'] : '127.0.0.1';
@@ -156,6 +157,34 @@ namespace rtCamp\WP\Nginx {
 												&nbsp;<?php _e( 'Delete local server cache files', 'nginx-helper' ); ?><br />
 												<small><?php _e( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' ); ?></small>
 
+											</label><br />
+										</fieldset>
+									</td>
+								</tr>
+							</table>
+						</div> <!-- End of .inside -->
+					</div>
+					<div class="postbox cache_method_fastcgi"<?php echo ( $rt_wp_nginx_helper->options['enable_purge'] == true && $rt_wp_nginx_helper->options['cache_method'] == "enable_fastcgi" ) ? '' : ' style="display: none;"'; ?>>
+						<h3 class="hndle">
+							<span><?php _e( 'Purge All Method', 'nginx-helper' ); ?></span>
+						</h3>
+						<div class="inside">
+							<table class="form-table rtnginx-table">
+								<tr valign="top">
+									<td>
+										<fieldset>
+											<legend class="screen-reader-text">
+												<span>&nbsp;<?php _e( 'how to purge entire cache', 'nginx-helper' ); ?></span>
+											</legend>
+											<label for="purge_all_method_unlink_files">
+												<input type="radio" value="unlink_files" id="purge_all_method_unlink_files" name="purge_all_method"<?php checked( isset( $rt_wp_nginx_helper->options['purge_all_method'] ) ? $rt_wp_nginx_helper->options['purge_all_method'] : '', 'unlink_files' ); ?>>
+												&nbsp;<?php _e( 'Delete local server cache files (Default option)', 'nginx-helper' ); ?><br />
+												<small><?php _e( 'As above, deletes files directly from the filesystem. This is the quickest method for purging all cached files, but may not work in a multi-user environment where the PHP user does not have access to the cache.', 'nginx-helper' ); ?></small>
+											</label><br />
+											<label for="purge_all_method_get_request">
+												<input type="radio" value="get_request" id="purge_all_method_get_request" name="purge_all_method"<?php checked( isset( $rt_wp_nginx_helper->options['purge_all_method'] ) ? $rt_wp_nginx_helper->options['purge_all_method'] : 'get_request', 'get_request' ); ?>>
+												&nbsp;<?php _e( 'Using a GET request to <strong>PURGE/url</strong>', 'nginx-helper' ); ?><br />
+												<small><?php _e( 'Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. For a large site, this may take a long time, and may even time out.', 'nginx-helper' ); ?></small>
 											</label><br />
 										</fieldset>
 									</td>
