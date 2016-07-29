@@ -735,6 +735,8 @@ namespace rtCamp\WP\Nginx {
 
 		function purge_all(){
 
+			global $rt_wp_nginx_helper;
+
 			switch ($rt_wp_nginx_helper->options['purge_all_method']) {
 
 				case 'get_request':
