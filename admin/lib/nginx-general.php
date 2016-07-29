@@ -52,7 +52,7 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['purge_page_on_deleted_comment'] = ( isset( $_POST['purge_page_on_deleted_comment'] ) and ( $_POST['purge_page_on_deleted_comment'] == 1 ) ) ? 1 : 0;
 
 				$rt_wp_nginx_helper->options['purge_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'get_request';
-				$rt_wp_nginx_helper->options['purge_all_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'unlink_files';
+				$rt_wp_nginx_helper->options['purge_all_method'] = ( isset( $_POST['purge_all_method'] ) ) ? $_POST['purge_all_method'] : 'unlink_files';
 
 				$rt_wp_nginx_helper->options['purge_url'] = ( isset( $_POST['purge_url'] ) && ! empty( $_POST['purge_url'] ) ) ? esc_textarea( $_POST['purge_url'] ) : '';
 			}
