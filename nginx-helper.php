@@ -304,7 +304,9 @@ namespace rtCamp\WP\Nginx {
 				return;
 			}
 
-			check_admin_referer( 'nginx_helper-purge_all' );
+			if ( check_admin_referer( 'nginx_helper-purge_all' ) !== 1 ) {
+				return;
+			}
 
 			switch ( $action ) {
 				case 'purge':
@@ -312,6 +314,7 @@ namespace rtCamp\WP\Nginx {
 					break;
 			}
 			wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
+
 		}
 
 		function true_purge_all()
