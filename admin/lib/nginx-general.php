@@ -6,8 +6,6 @@ namespace rtCamp\WP\Nginx {
 	{
 		global $rt_wp_nginx_helper, $rt_wp_nginx_purger;
 
-		$update = 0;
-		$error_time = false;
 		$error_log_filesize = false;
 		$rt_wp_nginx_helper->options['enable_purge'] = (isset( $_POST['enable_purge'] ) and ( $_POST['enable_purge'] == 1) ) ? 1 : 0;
 		$rt_wp_nginx_helper->options['cache_method'] = (isset( $_POST['cache_method'] ) ) ? $_POST['cache_method'] : 'enable_fastcgi';
@@ -61,7 +59,6 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['redis_prefix'] = ( isset( $_POST['redis_prefix'] ) ) ? $_POST['redis_prefix'] : 'nginx-cache:';
 			}
 			update_site_option( 'rt_wp_nginx_helper_options', $rt_wp_nginx_helper->options );
-			$update = 1;
 		}
 		$rt_wp_nginx_helper->options = get_site_option( 'rt_wp_nginx_helper_options' );
 
@@ -79,7 +76,6 @@ namespace rtCamp\WP\Nginx {
 		/**
 		 * Check for single multiple with subdomain OR multiple with subdirectory site
 		 */
-		$nginx_setting_link = '#';
 		if ( is_multisite() ) {
 			if ( SUBDOMAIN_INSTALL == false ) {
 				$nginx_setting_link = 'https://rtcamp.com/wordpress-nginx/tutorials/multisite/subdirectories/fastcgi-cache-with-purging/';
