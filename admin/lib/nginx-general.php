@@ -421,10 +421,10 @@ namespace rtCamp\WP\Nginx {
 								<th><label for="rt_wp_nginx_helper_log_level"><?php _e( 'Log level', 'nginx-helper' ); ?></label></th>
 								<td>
 									<select name="log_level">
-										<option value="NONE"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'NONE' ); ?>><?php _e( 'None', 'nginx-helper' ); ?></option>
-										<option value="INFO"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'INFO' ); ?>><?php _e( 'Info', 'nginx-helper' ); ?></option>
-										<option value="WARNING"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'WARNING' ); ?>><?php _e( 'Warning', 'nginx-helper' ); ?></option>
-										<option value="ERROR"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'ERROR' ); ?>><?php _e( 'Error', 'nginx-helper' ); ?></option>
+										<option value="NONE"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'NONE' ); ?>><?php _e( 'None', 'nginx-helper' ); ?></option>
+										<option value="INFO"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'INFO' ); ?>><?php _e( 'Info', 'nginx-helper' ); ?></option>
+										<option value="WARNING"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'WARNING' ); ?>><?php _e( 'Warning', 'nginx-helper' ); ?></option>
+										<option value="ERROR"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'ERROR' ); ?>><?php _e( 'Error', 'nginx-helper' ); ?></option>
 									</select>
 								</td>
 							</tr>
