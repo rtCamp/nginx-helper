@@ -122,7 +122,11 @@ namespace rtCamp\WP\Nginx {
             if ( !current_user_can( 'manage_options' ) ) {
                 return;
             }
-            $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'site' ) );
+            if (is_multisite()) {
+                $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'site' ) );
+            } else {
+                $purge_url = add_query_arg( array( 'nginx_helper_action' => 'purge', 'nginx_helper_urls' => 'all' ) );
+            }
             $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
             $admin_bar->add_menu( array( 'id' => 'nginx-helper-purge-all', 'title' => __( 'Purge Cache', 'nginx-helper' ), 'href' => $nonced_url, 'meta' => array( 'title' => __( 'Purge Cache', 'nginx-helper' ), ), ) );
         }
