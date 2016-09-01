@@ -3,7 +3,7 @@
   Plugin Name: Nginx Helper
   Plugin URI: https://rtcamp.com/nginx-helper/
   Description: Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
-  Version: 1.9.7
+  Version: 1.10.0
   Author: rtCamp
   Author URI: https://rtcamp.com
   Text Domain: nginx-helper
@@ -17,18 +17,17 @@ namespace rtCamp\WP\Nginx {
 
 	class Helper {
 
-		var $minium_WP = '3.0';
-		var $options = null;
-		var $plugin_name = 'nginx-helper';
+		private $minium_WP = '3.0';
+		private $plugin_name = 'nginx-helper';
+		public $options = null;
 
 		const WP_CLI_COMMAND = 'nginx-helper';
 
 		function __construct()
 		{
-
-			if ( !$this->required_wp_version() )
-				if ( !$this->required_php_version() )
-					return;
+			if ( ! $this->required_wp_version() && ! version_compare(phpversion(), '5.4.0', '>=') ) {
+				return;
+			}
 
 			// Load Plugin Text Domain
 			add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -46,25 +45,12 @@ namespace rtCamp\WP\Nginx {
 		{
 
 			global $rt_wp_nginx_purger;
+
+			add_action( 'admin_init', array( &$this, 'purge' ) );
 			add_action( 'shutdown', array( &$this, 'add_timestamps' ), 99999 );
 			add_action( 'add_init', array( &$this, 'update_map' ) );
-
-			//add_action( 'save_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
-			// add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
-			// add_action( 'publish_page', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			add_action( 'wp_insert_comment', array( &$rt_wp_nginx_purger, 'purgePostOnComment' ), 200, 2 );
 			add_action( 'transition_comment_status', array( &$rt_wp_nginx_purger, 'purgePostOnCommentChange' ), 200, 3 );
-
-			// $args = array( '_builtin' => false );
-			// $_rt_custom_post_types = get_post_types( $args );
-			// if ( isset( $post_types ) && !empty( $post_types ) ) {
-			// 	if ( $this->options['rt_wp_custom_post_types'] == true ) {
-			// 		foreach ( $_rt_custom_post_types as $post_type ) {
-			// 			add_action( 'publish_' . trim( $post_type ), array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
-			// 		}
-			// 	}
-			// }
-
 			add_action( 'transition_post_status', array( &$this, 'set_future_post_option_on_future_status' ), 20, 3 );
 			add_action( 'delete_post', array( &$this, 'unset_future_post_option_on_delete' ), 20, 1 );
 			add_action( 'nm_check_log_file_size_daily', array( &$rt_wp_nginx_purger, 'checkAndTruncateLogFile' ), 100, 1 );
@@ -74,10 +60,11 @@ namespace rtCamp\WP\Nginx {
 			add_action( 'edit_term', array( &$rt_wp_nginx_purger, 'purge_on_term_taxonomy_edited' ), 20, 3 );
 			add_action( 'delete_term', array( &$rt_wp_nginx_purger, 'purge_on_term_taxonomy_edited' ), 20, 3 );
 			add_action( 'check_ajax_referer', array( &$rt_wp_nginx_purger, 'purge_on_check_ajax_referer' ), 20, 2 );
-			add_action( 'admin_init', array( &$this, 'purge_all' ) );
 
-			// expose action to allow other plugins to purge the cache
-			add_action( 'rt_nginx_helper_purge_all', array( &$this, 'true_purge_all' ) );
+			// expose actions to allow other plugins to purge the cache
+			add_action( 'rt_nginx_helper_purge_all', [ $rt_wp_nginx_purger, 'true_purge_all' ] );
+			// TODO: Only works in Redis atm.
+			add_action( 'rt_nginx_helper_purge_wildcard', [ $rt_wp_nginx_purger, 'purgeWildcard'] );
 
 			// Load WP-CLI command
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -288,7 +275,7 @@ namespace rtCamp\WP\Nginx {
 			echo '<div class="updated"><p>' . __( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
 		}
 
-		function purge_all()
+		function purge()
 		{
 			if ( !isset( $_REQUEST['nginx_helper_action'] ) )
 				return;
@@ -297,6 +284,7 @@ namespace rtCamp\WP\Nginx {
 				wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
 
 			$action = $_REQUEST['nginx_helper_action'];
+			$what_to_purge = $_REQUEST['nginx_helper_urls'];
 
 			if ( $action == 'done' ) {
 				add_action( 'admin_notices', array( &$this, 'show_notice' ) );
@@ -304,20 +292,26 @@ namespace rtCamp\WP\Nginx {
 				return;
 			}
 
-			check_admin_referer( 'nginx_helper-purge_all' );
+			if ( check_admin_referer( 'nginx_helper-purge_all' ) !== 1 ) {
+				return;
+			}
 
-			switch ( $action ) {
-				case 'purge':
-					$this->true_purge_all();
-					break;
+			if ( $action === 'purge' ) {
+				global $rt_wp_nginx_purger;
+
+				switch ( $what_to_purge ) {
+					case 'all':
+						$rt_wp_nginx_purger->true_purge_all();
+						break;
+					case 'site':
+						$rt_wp_nginx_purger->purgeCurrentSite();
+						break;
+					default:
+						// unknown action
+				}
 			}
 			wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
-		}
 
-		function true_purge_all()
-		{
-			global $rt_wp_nginx_purger;
-			$rt_wp_nginx_purger->true_purge_all();
 		}
 
 		/**
@@ -344,6 +338,7 @@ namespace {
 		$rtwpAdminPanel = new \rtCamp\WP\Nginx\Admin();
 	}
 
+	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'Purgeable.php');
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'purger.php');
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'redis-purger.php');
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'compatibility.php');
@@ -352,7 +347,7 @@ namespace {
 	$rt_wp_nginx_helper = new \rtCamp\WP\Nginx\Helper;
 
 	if ( !empty( $rt_wp_nginx_helper->options['cache_method'] ) && $rt_wp_nginx_helper->options['cache_method'] == "enable_redis" ) {
-		$rt_wp_nginx_purger = new \rtCamp\WP\Nginx\Redispurger;
+		$rt_wp_nginx_purger = new \rtCamp\WP\Nginx\Redis_Purger;
 	} else {
 		$rt_wp_nginx_purger = new \rtCamp\WP\Nginx\Purger;
 	}

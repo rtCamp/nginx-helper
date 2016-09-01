@@ -6,8 +6,6 @@ namespace rtCamp\WP\Nginx {
 	{
 		global $rt_wp_nginx_helper, $rt_wp_nginx_purger;
 
-		$update = 0;
-		$error_time = false;
 		$error_log_filesize = false;
 		$rt_wp_nginx_helper->options['enable_purge'] = (isset( $_POST['enable_purge'] ) and ( $_POST['enable_purge'] == 1) ) ? 1 : 0;
 		$rt_wp_nginx_helper->options['cache_method'] = (isset( $_POST['cache_method'] ) ) ? $_POST['cache_method'] : 'enable_fastcgi';
@@ -61,7 +59,6 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['redis_prefix'] = ( isset( $_POST['redis_prefix'] ) ) ? $_POST['redis_prefix'] : 'nginx-cache:';
 			}
 			update_site_option( 'rt_wp_nginx_helper_options', $rt_wp_nginx_helper->options );
-			$update = 1;
 		}
 		$rt_wp_nginx_helper->options = get_site_option( 'rt_wp_nginx_helper_options' );
 
@@ -79,7 +76,6 @@ namespace rtCamp\WP\Nginx {
 		/**
 		 * Check for single multiple with subdomain OR multiple with subdirectory site
 		 */
-		$nginx_setting_link = '#';
 		if ( is_multisite() ) {
 			if ( SUBDOMAIN_INSTALL == false ) {
 				$nginx_setting_link = 'https://rtcamp.com/wordpress-nginx/tutorials/multisite/subdirectories/fastcgi-cache-with-purging/';
@@ -425,10 +421,10 @@ namespace rtCamp\WP\Nginx {
 								<th><label for="rt_wp_nginx_helper_log_level"><?php _e( 'Log level', 'nginx-helper' ); ?></label></th>
 								<td>
 									<select name="log_level">
-										<option value="NONE"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'NONE' ); ?>><?php _e( 'None', 'nginx-helper' ); ?></option>
-										<option value="INFO"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'INFO' ); ?>><?php _e( 'Info', 'nginx-helper' ); ?></option>
-										<option value="WARNING"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'WARNING' ); ?>><?php _e( 'Warning', 'nginx-helper' ); ?></option>
-										<option value="ERROR"<?php selected( $rt_wp_nginx_helper->options['log_level'], 'ERROR' ); ?>><?php _e( 'Error', 'nginx-helper' ); ?></option>
+										<option value="NONE"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'NONE' ); ?>><?php _e( 'None', 'nginx-helper' ); ?></option>
+										<option value="INFO"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'INFO' ); ?>><?php _e( 'Info', 'nginx-helper' ); ?></option>
+										<option value="WARNING"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'WARNING' ); ?>><?php _e( 'Warning', 'nginx-helper' ); ?></option>
+										<option value="ERROR"<?php selected( @$rt_wp_nginx_helper->options['log_level'], 'ERROR' ); ?>><?php _e( 'Error', 'nginx-helper' ); ?></option>
 									</select>
 								</td>
 							</tr>
