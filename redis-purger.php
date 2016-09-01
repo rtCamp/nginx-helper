@@ -109,7 +109,6 @@ namespace rtCamp\WP\Nginx {
 			$this->log( "Function purgePost BEGIN ===" );
 
 			if ( $rt_wp_nginx_helper->options['purge_homepage_on_edit'] == 1 ) {
-				$this->log( "Purging homepage '$homepage_url'" );
 				$this->_purge_homepage();
 			}
 
@@ -212,13 +211,19 @@ namespace rtCamp\WP\Nginx {
 		function purgeUrl( $url, $feed = true )
 		{
 			global $rt_wp_nginx_helper;
-
+			
+			$url = trailingslashit( $url );
+			
 			$this->log( "- Purging URL | " . $url );
-
+			
 			$parse = parse_url( $url );
+			
 			$host = $rt_wp_nginx_helper->options['redis_hostname'];
+			
 			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
+			
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
+			
 			delete_single_key( $_url_purge_base );
         }
 

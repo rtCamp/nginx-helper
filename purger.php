@@ -204,6 +204,8 @@ namespace rtCamp\WP\Nginx {
 		function purgeUrl( $url, $feed = true ) {
 
 			global $rt_wp_nginx_helper;
+			
+			$url = trailingslashit( $url );
 
 			$this->log( "- Purging URL | " . $url );
 
