@@ -74,6 +74,8 @@ function delete_multi_keys( $key )
             return false;
         }
     } catch ( Exception $e ) { $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); }
+
+    return false;
 }
 
 /*
@@ -90,6 +92,8 @@ function flush_entire_db()
             return false;
         }
     } catch ( Exception $e ) { $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); }
+
+    return false;
 }
 
 /*
@@ -111,6 +115,8 @@ function delete_single_key( $key )
             return false;
         }
     } catch ( Exception $e ) { $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); }
+
+    return false;
 }
 
 /*
@@ -141,6 +147,6 @@ function delete_keys_by_wildcard( $pattern )
             return false;
         }
     } catch ( Exception $e ) { $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); }
-}
 
-?>
+	return false;
+}
