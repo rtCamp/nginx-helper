@@ -2,7 +2,7 @@
 
 namespace rtCamp\WP\Nginx {
 
-	class Purger {
+	class Purger implements Purgeable {
 
 		function purgePostOnComment( $comment_id, $comment ) {
 			$oldstatus = '';
@@ -840,5 +840,22 @@ namespace rtCamp\WP\Nginx {
 			}
 
 		}
-	}
+
+		/**
+		 * @inheritdoc
+		 */
+		function purgeCurrentSite() {
+			// TODO: Implement purgeSingleSite() method.
+			// For now, just purge all
+			$this->true_purge_all();
+		}
+
+		/**
+		 * @inheritdoc
+		 */
+		function purgeWildcard( $pattern ) {
+			// TODO: Implement purgeWildcard() method.
+			// For now, just purge all
+			$this->true_purge_all();
+		}}
 }
