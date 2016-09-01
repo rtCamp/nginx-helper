@@ -2,7 +2,7 @@
 
 namespace rtCamp\WP\Nginx {
 
-	class Redispurger {
+	class Redis_Purger implements Purgeable {
 
 		public function __construct()
 		{
@@ -37,7 +37,6 @@ namespace rtCamp\WP\Nginx {
 			if ( !$rt_wp_nginx_helper->options['enable_purge'] ) {
 				return;
 			}
-
 
 			$_post_id = $comment->comment_post_ID;
 			$_comment_id = $comment->comment_ID;
@@ -109,6 +108,7 @@ namespace rtCamp\WP\Nginx {
 			$this->log( "Function purgePost BEGIN ===" );
 
 			if ( $rt_wp_nginx_helper->options['purge_homepage_on_edit'] == 1 ) {
+				$homepage_url = get_site_url();
 				$this->log( "Purging homepage '$homepage_url'" );
 				$this->_purge_homepage();
 			}
@@ -544,7 +544,7 @@ namespace rtCamp\WP\Nginx {
                 WHERE post_type = 'post' AND post_status = 'publish'
                 GROUP BY YEAR(post_date), MONTH(post_date), DAYOFMONTH(post_date)
                 ORDER BY post_date DESC"
-			);
+			, null);
 
 			if ( $_daily_archives = $wpdb->get_results( $_query_daily_archives ) ) {
 
@@ -570,7 +570,7 @@ namespace rtCamp\WP\Nginx {
                 WHERE post_type = 'post' AND post_status = 'publish'
                 GROUP BY YEAR(post_date), MONTH(post_date)
                 ORDER BY post_date DESC"
-			);
+			, null);
 
 			if ( $_monthly_archives = $wpdb->get_results( $_query_monthly_archives ) ) {
 
@@ -596,7 +596,7 @@ namespace rtCamp\WP\Nginx {
                 WHERE post_type = 'post' AND post_status = 'publish'
                 GROUP BY YEAR(post_date)
                 ORDER BY post_date DESC"
-			);
+			, null);
 
 			if ( $_yearly_archives = $wpdb->get_results( $_query_yearly_archives ) ) {
 
@@ -667,20 +667,32 @@ namespace rtCamp\WP\Nginx {
 		function true_purge_all()
 		{
 			global $rt_wp_nginx_helper;
-			$prefix = substr($rt_wp_nginx_helper->options['redis_prefix'],0, -1);
-			$this->log( "* * * * *" );
-			$this->log( "* Purged Everything!" );
-			$this->log( "* * * * *" );
-			//delete_multi_keys("*");
+			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
+			$this->log( "* * * * * * * * * * * *" );
+			$this->log( "* Purged Everything!  *" );
+			$this->log( "* * * * * * * * * * * *" );
 			delete_keys_by_wildcard($prefix."*");
 		}
-		
+
+		/**
+		 * @inheritdoc
+		 */
+		function purgeWildcard($pattern)
+		{
+			global $rt_wp_nginx_helper;
+			$this->log("Purging the pattern: $pattern");
+			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
+			delete_keys_by_wildcard($prefix . $pattern);
+		}
+
+		/**
+		 * Handles custom urls entered on the settings page under "Custom Purge Urls".
+		 */
 		function purge_urls()
 		{
 			global $rt_wp_nginx_helper;
 			
 			$parse = parse_url( site_url() );
-			$host = $rt_wp_nginx_helper->options['redis_hostname'];
 			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'];
 			
@@ -712,8 +724,24 @@ namespace rtCamp\WP\Nginx {
 						}
 					}
 				}
-                        }
+			}
 		}
-		
+
+		/**
+		 * @inheritdoc
+		 */
+		function purgeCurrentSite()
+		{
+			global $rt_wp_nginx_helper;
+
+			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
+			$parse = wp_parse_url( get_site_url() );
+			// 'path' is needed on multisite-subfolder setups.
+			delete_keys_by_wildcard($prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'] . '*');
+
+			$this->log( "* * * * * * * * * * * *" );
+			$this->log( "* Purged Current Site *" );
+			$this->log( "* * * * * * * * * * * *" );
+		}
 	}
 }
