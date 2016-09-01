@@ -338,6 +338,7 @@ namespace {
 		$rtwpAdminPanel = new \rtCamp\WP\Nginx\Admin();
 	}
 
+	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'Purgeable.php');
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'purger.php');
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'redis-purger.php');
 	require_once (rtCamp\WP\Nginx\RT_WP_NGINX_HELPER_PATH . 'compatibility.php');
