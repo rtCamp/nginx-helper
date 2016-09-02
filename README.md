@@ -21,11 +21,11 @@ Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/publ
 
 You will need to follow one or more tutorials below to get desired functionality:
 
-* [Nginx Map + WordPress-Multisite + Static Files Handling](http://rtcamp.com/tutorials/nginx-maps-wordpress-multisite-static-files-handling/)
-* [Nginx + WordPress + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-nginx-fastcgi-cache-purge-conditional/)
-* [Nginx + WordPress-Multisite (Subdirectories) + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-multisite-subdirectories-nginx-fastcgi-cache-purge/)
-* [Nginx + WordPress-Multisite (Subdomains/domain-mapping) + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-multisite-subdomains-domain-mapping-nginx-fastcgi-cache-purge/)
-* [Other WordPress-Nginx Tutorials](http://rtcamp.com/wordpress-nginx/tutorials/)
+* [Nginx Map + WordPress-Multisite + Static Files Handling](https://easyengine.io/wordpress-nginx/tutorials/multisite/static-files-handling/)
+* [Nginx + WordPress + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/single-site/fastcgi-cache-with-purging/)
+* [Nginx + WordPress-Multisite (Subdirectories) + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/multisite/subdirectories/fastcgi-cache-with-purging/)
+* [Nginx + WordPress-Multisite (Subdomains/domain-mapping) + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/multisite/subdomains/fastcgi-cache-with-purging/)
+* [Other WordPress-Nginx Tutorials](https://easyengine.io/wordpress-nginx/tutorials/)
 
 
 ## Installation ##
@@ -45,13 +45,13 @@ For proper configuration, check out our **tutorial list** in the [Description ta
 
 ## Frequently Asked Questions ##
 
-**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for up-to-date FAQs.
+**Important** - Please refer to [https://easyengine.io/nginx-helper/faq](https://easyengine.io/nginx-helper/faq) for up-to-date FAQs.
 
 ### FAQ - Installation/Comptability ###
 
 **Q. Will this work out of the box?**
 
-No. You need to make some changes at the Nginx end. Please check our [tutorial list](http://rtcamp.com/wordpress-nginx/tutorials).
+No. You need to make some changes at the Nginx end. Please check our [tutorial list](https://easyengine.io/wordpress-nginx/tutorials/).
 
 ### FAQ - Nginx Fastcgi Cache Purge ###
 
