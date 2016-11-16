@@ -599,7 +599,7 @@ namespace rtCamp\WP\Nginx {
 
 			$args = array(
 				'numberposts' => -1,
-				'post_type' => 'any',
+				'post_type' => get_post_types( array( 'public' => true ) ),
 				'post_status' => 'publish' );
 
 			if ( $_posts = get_posts( $args ) ) {
