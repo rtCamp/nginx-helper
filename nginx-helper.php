@@ -374,6 +374,8 @@ namespace {
 				$location = wp_sanitize_redirect( $location );
 			}
 			header( 'Location: ' . $location, true, $status );
+
+			return true;
 		}
 
 	}
