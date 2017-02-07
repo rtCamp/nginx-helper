@@ -64,7 +64,9 @@ namespace rtCamp\WP\Nginx {
 
 		foreach ( $check_order as $role ) {
 			$role = get_role( $role );
-			$role->remove_cap( $capability );
+			if ($role) {
+                          $role->remove_cap( $capability );
+                        }
 		}
 	}
 
