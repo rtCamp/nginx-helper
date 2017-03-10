@@ -2,8 +2,8 @@
 **Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint
 **Tags:** nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks  
 **Requires at least:** 3.0  
-**Tested up to:** 4.7 
-**Stable tag:** 1.9.9
+**Tested up to:** 4.7.3
+**Stable tag:** 1.9.10
 **License:** GPLv2 or later (of-course)  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 **Donate Link:** http://rtcamp.com/donate/  
@@ -117,6 +117,10 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 
 
 ## Changelog ##
+
+### 1.9.10 ###
+* Fixed issue where Nginx cache folders deleted on purge. [#131](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
+* Fixed Redis purge all feature for installation where WordPress lives in a separate folder. [#131](https://github.com/rtCamp/nginx-helper/pull/130) - by [pySilver](https://github.com/pySilver)
 
 ### 1.9.9 ###
 * Fix wp_redirect issue. [#131](https://github.com/rtCamp/nginx-helper/pull/131) - by [matt-h](https://github.com/matt-h)
@@ -340,5 +344,6 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ## Upgrade Notice ##
 
-### 1.9.9 ###
-* Fix wp_redirect issue. [#131](https://github.com/rtCamp/nginx-helper/pull/131) - by [matt-h](https://github.com/matt-h)
+### 1.9.10 ###
+* Fixed issue where Nginx cache folders deleted on purge. [#131](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
+* Fixed Redis purge all feature for installation where WordPress lives in a separate folder. [#131](https://github.com/rtCamp/nginx-helper/pull/130) - by [pySilver](https://github.com/pySilver)
