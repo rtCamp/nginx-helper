@@ -115,8 +115,8 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 == Changelog ==
 
 = 1.9.10 =
-* Fixed issue where Nginx cache folders deleted on purge. [#131](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
-* Fixed Redis purge all feature for installation where WordPress lives in a separate folder. [#131](https://github.com/rtCamp/nginx-helper/pull/130) - by [pySilver](https://github.com/pySilver)
+* Fixed issue where Nginx cache folders deleted on purge. [#123](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
+* Fixed Redis purge all feature for installation where WordPress lives in a separate folder. [#130](https://github.com/rtCamp/nginx-helper/pull/130) - by [pySilver](https://github.com/pySilver)
 
 = 1.9.9 =
 * Fix wp_redirect issue. [#131](https://github.com/rtCamp/nginx-helper/pull/131) - by [matt-h](https://github.com/matt-h)
@@ -341,5 +341,5 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 == Upgrade Notice ==
 
 = 1.9.10 =
-* Fixed issue where Nginx cache folders deleted on purge. [#131](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
-* Fixed Redis purge all feature for installation where WordPress lives in a separate folder. [#131](https://github.com/rtCamp/nginx-helper/pull/130) - by [pySilver](https://github.com/pySilver)
+* Fixed issue where Nginx cache folders deleted on purge. [#123](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
+* Fixed Redis purge all feature for installation where WordPress lives in a separate folder. [#130](https://github.com/rtCamp/nginx-helper/pull/130) - by [pySilver](https://github.com/pySilver)
