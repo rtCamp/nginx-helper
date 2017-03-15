@@ -681,10 +681,10 @@ namespace rtCamp\WP\Nginx {
 				delete_keys_by_wildcard( $prefix . '*' );
 				$this->log( '* Purged Everything! * ' );
 			} else { // Else purge only site specific cache
-				$parse = wp_parse_url( get_site_url() );
+				$parse = wp_parse_url( get_home_url() );
 				$parse['path'] = empty( $parse['path'] ) ? '/' : $parse['path'];
 				delete_keys_by_wildcard( $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'] . '*' );
-				$this->log( '* ' . get_site_url() . ' Purged! * ' );
+				$this->log( '* ' . get_home_url() . ' Purged! * ' );
 			}
 			
 			$this->log( '* * * * *' );
