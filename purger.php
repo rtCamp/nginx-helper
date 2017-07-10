@@ -234,7 +234,7 @@ namespace rtCamp\WP\Nginx {
 				case 'get_request':
 					// Go to default case
 				default:
-					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge' . $parse[ 'path' ];
+					$_url_purge_base = $this->_purge_base_url() . $parse[ 'path' ];
 					$_url_purge = $_url_purge_base;
 
 					if ( isset( $parse[ 'query' ] ) && $parse[ 'query' ] != '' ) {
@@ -826,8 +826,8 @@ namespace rtCamp\WP\Nginx {
 				case 'get_request':
 					// Go to default case
 				default:
-					$_url_purge_base = $parse[ 'scheme' ] . '://' . $parse[ 'host' ] . '/purge';
-					
+					$_url_purge_base = $this->_purge_base_url();
+
 					if( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
 						foreach ($purge_urls as $purge_url ) {
 						    $purge_url = trim( $purge_url );
@@ -843,6 +843,15 @@ namespace rtCamp\WP\Nginx {
 
 			}
 
+		}
+
+		private function _purge_base_url() {
+			$parse = parse_url( site_url() );
+
+			$purge_url_base = $parse['scheme'] . '://' . $parse['host'] . '/' . apply_filters( 'rt_nginx_helper_purge_url_path', 'purge' );
+
+			// Prevent users from inserting a trailing '/' that could break the url purging
+			return rtrim( apply_filters( 'rt_nginx_helper_purge_url_base', $purge_url_base ), '/' );
 		}
 	}
 }
