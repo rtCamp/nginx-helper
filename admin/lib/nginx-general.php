@@ -63,7 +63,7 @@ namespace rtCamp\WP\Nginx {
 			update_site_option( 'rt_wp_nginx_helper_options', $rt_wp_nginx_helper->options );
 			$update = 1;
 		}
-		$rt_wp_nginx_helper->options = get_site_option( 'rt_wp_nginx_helper_options' );
+		$rt_wp_nginx_helper->options = wp_parse_args( $rt_wp_nginx_helper->options, get_site_option( 'rt_wp_nginx_helper_options' ) );
 
 		// set default purge method to fastcgi
 		if ( empty( $rt_wp_nginx_helper->options['cache_method'] ) ) {
