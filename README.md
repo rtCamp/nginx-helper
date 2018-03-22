@@ -110,10 +110,10 @@ Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod
 Please post your problem in [our free support forum](http://community.rtcamp.com/c/wordpress-nginx).
 
 ## Screenshots ##
-###1. Nginx plugin settings###
+### 1. Nginx plugin settings ###
 ![Nginx plugin settings](https://ps.w.org/nginx-helper/assets/screenshot-1.png)
 
-###2. Remaining settings###
+### 2. Remaining settings ###
 ![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
 
 
