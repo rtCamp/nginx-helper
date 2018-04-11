@@ -402,7 +402,7 @@ namespace {
 	}
 
 	/**
-	 * Get latest news from https://rtcamp.com
+	 * Get latest news
 	 *
 	 * @return void
 	 */
@@ -414,15 +414,12 @@ namespace {
 			return;
 		}
 
-		$feed_url = 'http://rtcamp.com/blog/feed/';
-
-		// Get RSS Feed.
 		require_once( ABSPATH . WPINC . '/feed.php' );
 
 		$maxitems = 0;
 
 		// Get a SimplePie feed object from the specified feed source.
-		$rss = fetch_feed( $feed_url );
+		$rss = fetch_feed( 'http://rtcamp.com/blog/feed/' );
 
 		// Checks that the object is created correctly.
 		if ( ! is_wp_error( $rss ) ) {
