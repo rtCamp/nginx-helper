@@ -121,6 +121,7 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 
 ### 1.9.11 ###
 * Fixed issue where permalinks without trailing slash does not purging [#124](https://github.com/rtCamp/nginx-helper/issues/124) - by Patrick
+* Check whether role exist or not before removing capability. [#134](https://github.com/rtCamp/nginx-helper/pull/134) - by [1gor](https://github.com/1gor)
 
 ### 1.9.10 ###
 * Fixed issue where Nginx cache folders deleted on purge. [#123](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
@@ -350,3 +351,4 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ### 1.9.11 ###
 * Fixed issue where permalinks without trailing slash does not purging [#124](https://github.com/rtCamp/nginx-helper/issues/124) - by Patrick
+* Check whether role exist or not before removing capability. [#134](https://github.com/rtCamp/nginx-helper/pull/134) - by [1gor](https://github.com/1gor)

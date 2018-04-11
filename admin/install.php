@@ -60,13 +60,14 @@ namespace rtCamp\WP\Nginx {
 	}
 
 	function rt_wp_nginx_helper_remove_capability( $capability ) {
-		$check_order = array( "subscriber", "contributor", "author", "editor", "administrator" );
+		$check_order = array( 'subscriber', 'contributor', 'author', 'editor', 'administrator' );
 
 		foreach ( $check_order as $role ) {
 			$role = get_role( $role );
-			if ($role) {
-                          $role->remove_cap( $capability );
-                        }
+
+			if ( ! empty( $role ) && is_object( $role ) ) {
+				$role->remove_cap( $capability );
+			}
 		}
 	}
 
