@@ -208,24 +208,27 @@ namespace rtCamp\WP\Nginx {
 			}
 		}
 
-		function purgeUrl( $url, $feed = true )
-		{
+		function purgeUrl( $url, $feed = true ) {
+
 			global $rt_wp_nginx_helper;
-			
-			$url = trailingslashit( $url );
-			
-			$this->log( "- Purging URL | " . $url );
-			
+
+			$this->log( '- Purging URL | ' . $url );
+
 			$parse = parse_url( $url );
-			
+
+			if ( ! isset( $parse['path'] ) ) {
+				$parse['path'] = '';
+			}
+
 			$host = $rt_wp_nginx_helper->options['redis_hostname'];
-			
+
 			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
-			
+
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
-			
+
 			delete_single_key( $_url_purge_base );
-        }
+
+		}
 
 		function log( $msg, $level = 'INFO' )
 		{
