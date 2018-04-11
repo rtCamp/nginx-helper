@@ -22,7 +22,7 @@ SVNURL="https://plugins.svn.wordpress.org/$PLUGINSLUG/" # Remote SVN repo on wor
 SVNUSER=$(cat ~/.subversion/auth/svn.simple/* | grep -A4 $(echo $SVNURL | awk -F// '{print $2}' | cut     -d'/' -f1) | tail -n1)
 if [ -z "$SVNUSER" ]
 then
-	SVNUSER="rtcamp"
+	SVNUSER="chandrapatel"
 fi
 
 
