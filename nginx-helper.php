@@ -311,6 +311,7 @@ namespace rtCamp\WP\Nginx {
 					$this->true_purge_all();
 					break;
 			}
+			do_action( 'rt_nginx_helper_cache_purged_all' );
 			wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
 		}
 
