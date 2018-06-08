@@ -277,8 +277,10 @@ namespace rtCamp\WP\Nginx {
 			    return false;
 			}
 
+			$path = isset($url_data['path']) ? $url_data['path'] : '';
+
 			// Build a hash of the URL
-			$hash = md5($url_data['scheme'].'GET'.$url_data['host'].$url_data['path']);
+			$hash = md5($url_data['scheme'].'GET'.$url_data['host'].$path);
 
 			// Ensure trailing slash
 			$cache_path = RT_WP_NGINX_HELPER_CACHE_PATH;
