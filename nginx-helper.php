@@ -66,8 +66,6 @@ namespace rtCamp\WP\Nginx {
 			// 	}
 			// }
 
-			add_action( 'transition_post_status', array( &$this, 'set_future_post_option_on_future_status' ), 20, 3 );
-			add_action( 'delete_post', array( &$this, 'unset_future_post_option_on_delete' ), 20, 1 );
 			add_action( 'rt_wp_nginx_helper_check_log_file_size_daily', array( &$rt_wp_nginx_purger, 'checkAndTruncateLogFile' ), 100, 1 );
 			add_action( 'edit_attachment', array( &$rt_wp_nginx_purger, 'purgeImageOnEdit' ), 100, 1 );
 			add_action( 'wpmu_new_blog', array( &$this, 'update_new_blog_options' ), 10, 1 );
@@ -121,52 +119,6 @@ namespace rtCamp\WP\Nginx {
 		function load_options()
 		{
 			$this->options = get_site_option( 'rt_wp_nginx_helper_options' );
-		}
-
-		function set_future_post_option_on_future_status( $new_status, $old_status, $post )
-		{
-
-			global $blog_id, $rt_wp_nginx_purger;
-            $purge_status = array( 'publish', 'future' );
-
-			if ( !$this->options['enable_purge'] ) {
-				return;
-			}
-
-            if( in_array( $old_status, $purge_status ) || in_array( $new_status, $purge_status ) ) {
-				$rt_wp_nginx_purger->log( "Purge post on transition post STATUS from " . $old_status . " to " . $new_status );
-				$rt_wp_nginx_purger->purgePost( $post->ID );
-			}
-
-			if ( $new_status == 'future' ) {
-				if ( $post && $post->post_status == 'future' && ( ( $post->post_type == 'post' || $post->post_type == 'page' ) || ( isset( $this->options['custom_post_types_recognized'] ) && in_array( $post->post_type, $this->options['custom_post_types_recognized'] ) ) ) ) {
-					$rt_wp_nginx_purger->log( "Set/update future_posts option (post id = " . $post->ID . " and blog id = " . $blog_id . ")" );
-					$this->options['future_posts'][$blog_id][$post->ID] = strtotime( $post->post_date_gmt ) + 60;
-					update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
-				}
-			}
-		}
-
-		function unset_future_post_option_on_delete( $post_id )
-		{
-
-			global $blog_id, $rt_wp_nginx_purger;
-			if ( !$this->options['enable_purge'] ) {
-				return;
-			}
-			if ( $post_id && !wp_is_post_revision( $post_id ) ) {
-
-				if ( isset( $this->options['future_posts'][$blog_id][$post_id] ) && count( $this->options['future_posts'][$blog_id][$post_id] ) ) {
-					$rt_wp_nginx_purger->log( "Unset future_posts option (post id = " . $post_id . " and blog id = " . $blog_id . ")" );
-					unset( $this->options['future_posts'][$blog_id][$post_id] );
-					update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
-
-					if ( !count( $this->options['future_posts'][$blog_id] ) ) {
-						unset( $this->options['future_posts'][$blog_id] );
-						update_site_option( "rt_wp_nginx_helper_global_options", $this->options );
-					}
-				}
-			}
 		}
 
 		function update_new_blog_options( $blog_id )
