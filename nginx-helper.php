@@ -51,7 +51,7 @@ namespace rtCamp\WP\Nginx {
 			add_action( 'shutdown', array( &$this, 'add_timestamps' ), 99999 );
 			add_action( 'add_init', array( &$this, 'update_map' ) );
 
-			//add_action( 'save_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
+			add_action( 'save_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			// add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			// add_action( 'publish_page', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			add_action( 'wp_insert_comment', array( &$rt_wp_nginx_purger, 'purgePostOnComment' ), 200, 2 );
