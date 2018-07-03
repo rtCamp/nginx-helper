@@ -34,13 +34,10 @@ namespace rtCamp\WP\Nginx {
 		}
 
 		if ( is_multisite() ) {
-			$blogs = get_blogs_of_user( true );
-			foreach ( $blogs as $b ) {
-				$rt_wp_nginx_helper_options = get_blog_option( $b->userblog_id, 'rt_wp_nginx_helper_options' );
-				if ( empty( $rt_wp_nginx_helper_options ) ) {
-					$rt_wp_nginx_helper_options = rt_wp_nginx_helper_get_options();
-					update_blog_option( $b->userblog_id, "rt_wp_nginx_helper_options", $rt_wp_nginx_helper_options );
-				}
+			$rt_wp_nginx_helper_options = get_site_option( 'rt_wp_nginx_helper_options', [] );
+			if ( empty( $rt_wp_nginx_helper_options ) ) {
+				$rt_wp_nginx_helper_options = rt_wp_nginx_helper_get_options();
+				update_site_option( "rt_wp_nginx_helper_options", $rt_wp_nginx_helper_options );
 			}
 		} else {
 			$rt_wp_nginx_helper_options = get_option( 'rt_wp_nginx_helper_options' );
