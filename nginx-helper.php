@@ -69,7 +69,7 @@ namespace rtCamp\WP\Nginx {
 
 			add_action( 'transition_post_status', array( &$this, 'set_future_post_option_on_future_status' ), 20, 3 );
 			add_action( 'delete_post', array( &$this, 'unset_future_post_option_on_delete' ), 20, 1 );
-			add_action( 'nm_check_log_file_size_daily', array( &$rt_wp_nginx_purger, 'checkAndTruncateLogFile' ), 100, 1 );
+			add_action( 'rt_wp_nginx_helper_check_log_file_size_daily', array( &$rt_wp_nginx_purger, 'checkAndTruncateLogFile' ), 100, 1 );
 			add_action( 'edit_attachment', array( &$rt_wp_nginx_purger, 'purgeImageOnEdit' ), 100, 1 );
 			add_action( 'wpmu_new_blog', array( &$this, 'update_new_blog_options' ), 10, 1 );
 			add_action( 'transition_post_status', array( &$rt_wp_nginx_purger, 'purge_on_post_moved_to_trash' ), 20, 3 );
