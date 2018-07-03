@@ -39,6 +39,7 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper_options = rt_wp_nginx_helper_get_options();
 				update_site_option( "rt_wp_nginx_helper_options", $rt_wp_nginx_helper_options );
 			}
+			$rt_wp_nginx_helper->update_map();
 		} else {
 			$rt_wp_nginx_helper_options = get_option( 'rt_wp_nginx_helper_options' );
 			if ( empty( $rt_wp_nginx_helper_options ) ) {

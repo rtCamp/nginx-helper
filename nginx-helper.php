@@ -49,7 +49,6 @@ namespace rtCamp\WP\Nginx {
 
 			global $rt_wp_nginx_purger;
 			add_action( 'shutdown', array( &$this, 'add_timestamps' ), 99999 );
-			add_action( 'add_init', array( &$this, 'update_map' ) );
 
 			add_action( 'save_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
 			// add_action( 'publish_post', array( &$rt_wp_nginx_purger, 'purgePost' ), 200, 1 );
@@ -173,13 +172,8 @@ namespace rtCamp\WP\Nginx {
 		function update_new_blog_options( $blog_id )
 		{
 			global $rt_wp_nginx_purger;
-			include_once (RT_WP_NGINX_HELPER_PATH . 'admin/install.php');
-			$rt_wp_nginx_purger->log( "New site added (id $blog_id)" );
 			$this->update_map();
 			$rt_wp_nginx_purger->log( "New site added to nginx map (id $blog_id)" );
-			$helper_options = rt_wp_nginx_helper_get_options();
-			update_blog_option( $blog_id, "rt_wp_nginx_helper_options", $helper_options );
-			$rt_wp_nginx_purger->log( "Default options updated for the new blog (id $blog_id)" );
 		}
 
 		function get_map()
