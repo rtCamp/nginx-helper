@@ -186,21 +186,21 @@ namespace rtCamp\WP\Nginx {
 									<th><label for="redis_hostname"><?php _e( 'Hostname', 'nginx-helper' ); ?></label></th>
 									<td>
 										<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo $redis_hostname; ?>" <?php echo $redis_hostname_readonly; ?> />
-                    <?php if ($redis_hostname_readonly) echo '<br>Overridden by global define'; ?>
+                    <?php if ($redis_hostname_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
 									</td>
 								</tr>
 								<tr>
 									<th><label for="redis_port"><?php _e( 'Port', 'nginx-helper' ); ?></label></th>
 									<td>
 										<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo $redis_port; ?>" <?php echo $redis_port_readonly; ?> />
-                    <?php if ($redis_port_readonly) echo '<br>Overridden by global define'; ?>
+                    <?php if ($redis_port_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
 									</td>
 								</tr>
 								<tr>
 									<th><label for="redis_prefix"><?php _e( 'Prefix', 'nginx-helper' ); ?></label></th>
 									<td>
 										<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo $redis_prefix; ?>" <?php echo $redis_prefix_readonly; ?> />
-                    <?php if ($redis_prefix_readonly) echo '<br>Overridden by global define'; ?>
+                    <?php if ($redis_prefix_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
 									</td>
 								</tr>
 							</table>
