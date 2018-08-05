@@ -173,23 +173,34 @@ namespace rtCamp\WP\Nginx {
 								$redis_hostname = ( empty( $rt_wp_nginx_helper->options['redis_hostname'] ) ) ? '127.0.0.1' : $rt_wp_nginx_helper->options['redis_hostname'];
 								$redis_port = ( empty( $rt_wp_nginx_helper->options['redis_port'] ) ) ? '6379' : $rt_wp_nginx_helper->options['redis_port'];
 								$redis_prefix = ( empty( $rt_wp_nginx_helper->options['redis_prefix'] ) ) ? 'nginx-cache:' : $rt_wp_nginx_helper->options['redis_prefix'];
+
+                $redis_hostname = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $redis_hostname;
+                $redis_port = defined('RT_WP_NGINX_HELPER_REDIS_PORT') ? RT_WP_NGINX_HELPER_REDIS_PORT : $redis_port;
+                $redis_prefix = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $redis_prefix;
+
+                $redis_hostname_readonly = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? 'readonly="readonly"' : '';
+                $redis_port_readonly = defined('RT_WP_NGINX_HELPER_REDIS_PORT') ? 'readonly="readonly"' : '';
+                $redis_prefix_readonly = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? 'readonly="readonly"' : '';
 								?>
 								<tr>
 									<th><label for="redis_hostname"><?php _e( 'Hostname', 'nginx-helper' ); ?></label></th>
 									<td>
-										<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo $redis_hostname; ?>" />
+										<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo $redis_hostname; ?>" <?php echo $redis_hostname_readonly; ?> />
+                    <?php if ($redis_hostname_readonly) echo '<br>Overridden by global define'; ?>
 									</td>
 								</tr>
 								<tr>
 									<th><label for="redis_port"><?php _e( 'Port', 'nginx-helper' ); ?></label></th>
 									<td>
-										<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo $redis_port; ?>" />
+										<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo $redis_port; ?>" <?php echo $redis_port_readonly; ?> />
+                    <?php if ($redis_port_readonly) echo '<br>Overridden by global define'; ?>
 									</td>
 								</tr>
 								<tr>
 									<th><label for="redis_prefix"><?php _e( 'Prefix', 'nginx-helper' ); ?></label></th>
 									<td>
-										<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo $redis_prefix; ?>" />
+										<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo $redis_prefix; ?>" <?php echo $redis_prefix_readonly; ?> />
+                    <?php if ($redis_prefix_readonly) echo '<br>Overridden by global define'; ?>
 									</td>
 								</tr>
 							</table>
