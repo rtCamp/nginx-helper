@@ -94,6 +94,17 @@ To purge a page immediately, follow these instructions:
 * Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
 
+### FAQ - Nginx Redis Cache ###
+
+**Q. Can I override the redis hostname, port and prefix?**
+
+Yes, you can force override the redis hostname, port or prefix by using defines. For example:
+
+`define('RT_WP_NGINX_HELPER_REDIS_HOSTNAME', '10.0.0.1');`
+`define('RT_WP_NGINX_HELPER_REDIS_PORT', '6000');`
+`define('RT_WP_NGINX_HELPER_REDIS_PREFIX', 'page-cache:');`
+
+
 ### FAQ - Nginx Map ###
 
 **Q. My multisite already uses `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**
