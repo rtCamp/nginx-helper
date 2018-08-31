@@ -12,3 +12,4 @@ tests/functional/node_modules/
 /tests/functional/reports/
 selenium-*.jar
 vendor
+.vscode/

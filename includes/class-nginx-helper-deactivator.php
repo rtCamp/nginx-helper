@@ -1,13 +1,8 @@
 <?php
-
 /**
- * Fired during plugin deactivation
- *
- * @link       https://rtcamp.com/nginx-helper/
- * @since      2.0.0
+ * Contains Nginx_Helper_Deactivator class.
  *
  * @package    nginx-helper
- * @subpackage nginx-helper/includes
  */
 
 /**
@@ -16,8 +11,11 @@
  * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      2.0.0
+ * @link       https://rtcamp.com/nginx-helper/
+ *
  * @package    nginx-helper
  * @subpackage nginx-helper/includes
+ *
  * @author     rtCamp
  */
 class Nginx_Helper_Deactivator {
@@ -28,12 +26,11 @@ class Nginx_Helper_Deactivator {
 	 * @since    2.0.0
 	 */
 	public static function deactivate() {
-        
-        wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
-        
-        $role = get_role( 'administrator' );
-      
-        $role->remove_cap( 'Nginx Helper | Config' );
+
+		wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
+
+		$role = get_role( 'administrator' );
+		$role->remove_cap( 'Nginx Helper | Config' );
 		$role->remove_cap( 'Nginx Helper | Purge cache' );
 	}
 
