@@ -81,10 +81,18 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-nginx-helper.php';
  * @since    2.0.0
  */
 function run_nginx_helper() {
-    global $nginx_helper;
-    
+	global $nginx_helper;
+
 	$nginx_helper = new Nginx_Helper();
 	$nginx_helper->run();
+
+	// Load WP-CLI command.
+	if ( defined( 'WP_CLI' ) && WP_CLI ) {
+
+		require_once plugin_dir_path( __FILE__ ) . 'wp-cli.php';
+		\WP_CLI::add_command( 'nginx-helper', 'Nginx_Helper_WP_CLI_Command' );
+
+	}
 
 }
 run_nginx_helper();
