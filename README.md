@@ -1,14 +1,15 @@
 # Nginx Helper #
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123  
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint
+
 **Tags:** nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks  
 **Requires at least:** 3.0  
-**Tested up to:** 4.2.2  
-**Stable tag:** 1.9.3  
+**Tested up to:** 4.9.5
+**Stable tag:** 1.9.11
 **License:** GPLv2 or later (of-course)  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 **Donate Link:** http://rtcamp.com/donate/  
 
-Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/published. Also does few more things.
+Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
 ## Description ##
 
@@ -21,11 +22,11 @@ Cleans nginx's fastcgi/proxy cache or redis-cahce whenever a post is edited/publ
 
 You will need to follow one or more tutorials below to get desired functionality:
 
-* [Nginx Map + WordPress-Multisite + Static Files Handling](http://rtcamp.com/tutorials/nginx-maps-wordpress-multisite-static-files-handling/)
-* [Nginx + WordPress + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-nginx-fastcgi-cache-purge-conditional/)
-* [Nginx + WordPress-Multisite (Subdirectories) + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-multisite-subdirectories-nginx-fastcgi-cache-purge/)
-* [Nginx + WordPress-Multisite (Subdomains/domain-mapping) + fastcgi_purge_cache](http://rtcamp.com/tutorials/wordpress-multisite-subdomains-domain-mapping-nginx-fastcgi-cache-purge/)
-* [Other WordPress-Nginx Tutorials](http://rtcamp.com/wordpress-nginx/tutorials/)
+* [Nginx Map + WordPress-Multisite + Static Files Handling](https://easyengine.io/wordpress-nginx/tutorials/multisite/static-files-handling/)
+* [Nginx + WordPress + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/single-site/fastcgi-cache-with-purging/)
+* [Nginx + WordPress-Multisite (Subdirectories) + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/multisite/subdirectories/fastcgi-cache-with-purging/)
+* [Nginx + WordPress-Multisite (Subdomains/domain-mapping) + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/multisite/subdomains/fastcgi-cache-with-purging/)
+* [Other WordPress-Nginx Tutorials](https://easyengine.io/wordpress-nginx/tutorials/)
 
 
 ## Installation ##
@@ -45,13 +46,13 @@ For proper configuration, check out our **tutorial list** in the [Description ta
 
 ## Frequently Asked Questions ##
 
-**Important** - Please refer to [http://rtcamp.com/nginx-helper/faq](http://rtcamp.com/nginx-helper/faq) for up-to-date FAQs.
+**Important** - Please refer to [https://easyengine.io/nginx-helper/faq](https://easyengine.io/nginx-helper/faq) for up-to-date FAQs.
 
 ### FAQ - Installation/Comptability ###
 
 **Q. Will this work out of the box?**
 
-No. You need to make some changes at the Nginx end. Please check our [tutorial list](http://rtcamp.com/wordpress-nginx/tutorials).
+No. You need to make some changes at the Nginx end. Please check our [tutorial list](https://easyengine.io/wordpress-nginx/tutorials/).
 
 ### FAQ - Nginx Fastcgi Cache Purge ###
 
@@ -109,14 +110,47 @@ Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod
 Please post your problem in [our free support forum](http://community.rtcamp.com/c/wordpress-nginx).
 
 ## Screenshots ##
-###1. Nginx plugin settings###
+### 1. Nginx plugin settings ###
 ![Nginx plugin settings](https://ps.w.org/nginx-helper/assets/screenshot-1.png)
 
-###2. Remaining settings###
+### 2. Remaining settings ###
 ![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
 
 
 ## Changelog ##
+
+### 1.9.11 ###
+* Fixed issue where permalinks without trailing slash does not purging [#124](https://github.com/rtCamp/nginx-helper/issues/124) - by Patrick
+* Check whether role exist or not before removing capability. [#134](https://github.com/rtCamp/nginx-helper/pull/134) - by [1gor](https://github.com/1gor)
+
+### 1.9.10 ###
+* Fixed issue where Nginx cache folders deleted on purge. [#123](https://github.com/rtCamp/nginx-helper/pull/123) - by [johan-chassaing](https://github.com/johan-chassaing)
+* Fixed Redis purge all feature for installation where WordPress lives in a separate folder. [#130](https://github.com/rtCamp/nginx-helper/pull/130) - by [pySilver](https://github.com/pySilver)
+
+### 1.9.9 ###
+* Fix wp_redirect issue. [#131](https://github.com/rtCamp/nginx-helper/pull/131) - by [matt-h](https://github.com/matt-h)
+
+### 1.9.8 ###
+* Fixed homepage cache cleared when WPML plugin used [#116](https://github.com/rtCamp/nginx-helper/pull/116) - by [Niwreg](https://profiles.wordpress.org/niwreg/)
+* Fixed Purge Cache clears the whole Redis cache [#113](https://github.com/rtCamp/nginx-helper/issues/113) - by HansVanEijsden
+* One log file for all site in WPMU.
+* Single site Redis cache purge when click on Purge Cache button in WPMU [#122](https://github.com/rtCamp/nginx-helper/pull/122) - by Lars Støttrup Nielsen
+* Fixed notices and warnings.
+
+### 1.9.7 ###
+* Remove timestamp if cron or wp-cli [#114](https://github.com/rtCamp/nginx-helper/pull/114) - by [samedwards](https://profiles.wordpress.org/samedwards/)
+* Fixed notices and warnings.
+
+### 1.9.6 ###
+* Fixed cache purging on post publish.
+* Error fixed when redis server not installed.
+
+### 1.9.5 ###
+Added custom purge URL option.
+
+### 1.9.4 ###
+* Added redis server connection timeout.
+* Added RedisException handling.
 
 ### 1.9.3 ###
 * Added PhpRedis API support.
@@ -315,6 +349,6 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ## Upgrade Notice ##
 
-### 1.9.3 ###
-* Added PhpRedis API support.
-* Fixed cache purging link in admin bar.
+### 1.9.11 ###
+* Fixed issue where permalinks without trailing slash does not purging [#124](https://github.com/rtCamp/nginx-helper/issues/124) - by Patrick
+* Check whether role exist or not before removing capability. [#134](https://github.com/rtCamp/nginx-helper/pull/134) - by [1gor](https://github.com/1gor)
