@@ -220,9 +220,9 @@ namespace rtCamp\WP\Nginx {
 				$parse['path'] = '';
 			}
 
-			$host = $rt_wp_nginx_helper->options['redis_hostname'];
+            $host = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $rt_wp_nginx_helper->options['redis_hostname'];
 
-			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
+            $prefix = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $rt_wp_nginx_helper->options['redis_prefix'];
 
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
 
@@ -675,7 +675,8 @@ namespace rtCamp\WP\Nginx {
 		function true_purge_all()
 		{
 			global $rt_wp_nginx_helper;
-			$prefix = trim( $rt_wp_nginx_helper->options['redis_prefix'] );
+            $prefix = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $rt_wp_nginx_helper->options['redis_prefix'];
+			$prefix = trim( $prefix );
 			
 			$this->log( '* * * * *' );
 			
@@ -698,8 +699,8 @@ namespace rtCamp\WP\Nginx {
 			global $rt_wp_nginx_helper;
 			
 			$parse = parse_url( site_url() );
-			$host = $rt_wp_nginx_helper->options['redis_hostname'];
-			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
+            $host = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $rt_wp_nginx_helper->options['redis_hostname'];
+            $prefix = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $rt_wp_nginx_helper->options['redis_prefix'];
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'];
 			
 			$purge_urls = isset( $rt_wp_nginx_helper->options['purge_url'] ) && ! empty( $rt_wp_nginx_helper->options['purge_url'] ) ?

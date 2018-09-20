@@ -5,8 +5,8 @@
 
 global $myredis, $rt_wp_nginx_helper, $redis_api, $lua, $rt_wp_nginx_purger;
 
-$host = $rt_wp_nginx_helper->options['redis_hostname'];
-$port = $rt_wp_nginx_helper->options['redis_port'];
+$host = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $rt_wp_nginx_helper->options['redis_hostname'];
+$port = defined('RT_WP_NGINX_HELPER_REDIS_PORT') ? RT_WP_NGINX_HELPER_REDIS_PORT : $rt_wp_nginx_helper->options['redis_port'];
 $redis_api = '';
 
 if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
