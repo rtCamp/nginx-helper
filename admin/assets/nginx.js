@@ -1,7 +1,7 @@
 jQuery( document ).ready( function() {
 	var news_section = jQuery( '#latest_news' );
 	if ( news_section.length > 0 ) {
-		jQuery.get( news_url, function( data ) {
+		jQuery.get( ajaxurl, { action: 'rt_nginx_get_news' }, function( data ) {
 			news_section.find( '.inside' ).html( data );
 		} );
 	}
