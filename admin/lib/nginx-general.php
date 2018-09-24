@@ -52,8 +52,8 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['purge_page_on_deleted_comment'] = ( isset( $_POST['purge_page_on_deleted_comment'] ) and ( $_POST['purge_page_on_deleted_comment'] == 1 ) ) ? 1 : 0;
 
 				$rt_wp_nginx_helper->options['purge_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'get_request';
-                
-                $rt_wp_nginx_helper->options['purge_url'] = ( isset( $_POST['purge_url'] ) && ! empty( $_POST['purge_url'] ) ) ? esc_textarea( $_POST['purge_url'] ) : '';
+
+				$rt_wp_nginx_helper->options['purge_url'] = ( isset( $_POST['purge_url'] ) && ! empty( $_POST['purge_url'] ) ) ? esc_textarea( $_POST['purge_url'] ) : '';
 			}
 			if ( isset( $_POST['cache_method'] ) && $_POST['cache_method'] = "enable_redis" ) {
 				$rt_wp_nginx_helper->options['redis_hostname'] = ( isset( $_POST['redis_hostname'] ) ) ? $_POST['redis_hostname'] : '127.0.0.1';
@@ -174,33 +174,33 @@ namespace rtCamp\WP\Nginx {
 								$redis_port = ( empty( $rt_wp_nginx_helper->options['redis_port'] ) ) ? '6379' : $rt_wp_nginx_helper->options['redis_port'];
 								$redis_prefix = ( empty( $rt_wp_nginx_helper->options['redis_prefix'] ) ) ? 'nginx-cache:' : $rt_wp_nginx_helper->options['redis_prefix'];
 
-                $redis_hostname = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $redis_hostname;
-                $redis_port = defined('RT_WP_NGINX_HELPER_REDIS_PORT') ? RT_WP_NGINX_HELPER_REDIS_PORT : $redis_port;
-                $redis_prefix = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $redis_prefix;
+								$redis_hostname = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $redis_hostname;
+								$redis_port = defined('RT_WP_NGINX_HELPER_REDIS_PORT') ? RT_WP_NGINX_HELPER_REDIS_PORT : $redis_port;
+								$redis_prefix = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $redis_prefix;
 
-                $redis_hostname_readonly = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? 'readonly="readonly"' : '';
-                $redis_port_readonly = defined('RT_WP_NGINX_HELPER_REDIS_PORT') ? 'readonly="readonly"' : '';
-                $redis_prefix_readonly = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? 'readonly="readonly"' : '';
+								$redis_hostname_readonly = defined('RT_WP_NGINX_HELPER_REDIS_HOSTNAME') ? 'readonly="readonly"' : '';
+								$redis_port_readonly = defined('RT_WP_NGINX_HELPER_REDIS_PORT') ? 'readonly="readonly"' : '';
+								$redis_prefix_readonly = defined('RT_WP_NGINX_HELPER_REDIS_PREFIX') ? 'readonly="readonly"' : '';
 								?>
 								<tr>
 									<th><label for="redis_hostname"><?php _e( 'Hostname', 'nginx-helper' ); ?></label></th>
 									<td>
 										<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo $redis_hostname; ?>" <?php echo $redis_hostname_readonly; ?> />
-                    <?php if ($redis_hostname_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
+										<?php if ($redis_hostname_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
 									</td>
 								</tr>
 								<tr>
 									<th><label for="redis_port"><?php _e( 'Port', 'nginx-helper' ); ?></label></th>
 									<td>
 										<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo $redis_port; ?>" <?php echo $redis_port_readonly; ?> />
-                    <?php if ($redis_port_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
+										<?php if ($redis_port_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
 									</td>
 								</tr>
 								<tr>
 									<th><label for="redis_prefix"><?php _e( 'Prefix', 'nginx-helper' ); ?></label></th>
 									<td>
 										<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo $redis_prefix; ?>" <?php echo $redis_prefix_readonly; ?> />
-                    <?php if ($redis_prefix_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
+										<?php if ($redis_prefix_readonly) echo '<p class="description">Overridden by global define</p>'; ?>
 									</td>
 								</tr>
 							</table>
@@ -416,7 +416,7 @@ namespace rtCamp\WP\Nginx {
 						$log = fopen( $path . 'nginx.log', 'w' );
 						fclose( $log );
 					}
-					
+
 					if ( !is_writable( $path . 'nginx.log' ) ) {
 						?>
 						<span class="error fade" style="display : block"><p><?php printf( __( 'Can\'t write on log file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper' ), $rt_wp_nginx_helper->functional_asset_path() . 'nginx.log' ); ?></p></span><?php }
