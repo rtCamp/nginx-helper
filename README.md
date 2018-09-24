@@ -100,11 +100,13 @@ To purge a page immediately, follow these instructions:
 
 Yes, you can force override the redis hostname, port or prefix by defining constant in wp-config.php. For example:
 
-`define('RT_WP_NGINX_HELPER_REDIS_HOSTNAME', '10.0.0.1');`
+```
+define( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME', '10.0.0.1' );
 
-`define('RT_WP_NGINX_HELPER_REDIS_PORT', '6000');`
+define( 'RT_WP_NGINX_HELPER_REDIS_PORT', '6000' );
 
-`define('RT_WP_NGINX_HELPER_REDIS_PREFIX', 'page-cache:');`
+define( 'RT_WP_NGINX_HELPER_REDIS_PREFIX', 'page-cache:' );
+```
 
 
 ### FAQ - Nginx Map ###
