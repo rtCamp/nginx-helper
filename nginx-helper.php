@@ -3,12 +3,12 @@
  * Plugin Name: Nginx Helper
  * Plugin URI: https://rtcamp.com/nginx-helper/
  * Description: Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
- * Version: 1.9.11
+ * Version: 1.9.12
  * Author: rtCamp
  * Author URI: https://rtcamp.com
  * Text Domain: nginx-helper
  * Requires at least: 3.0
- * Tested up to: 4.9.5
+ * Tested up to: 4.9.8
  *
  * @package nginx-helper
  */
@@ -414,12 +414,12 @@ namespace {
 			return;
 		}
 
-		require_once( ABSPATH . WPINC . '/feed.php' );
+		require_once ABSPATH . WPINC . '/feed.php';
 
 		$maxitems = 0;
 
 		// Get a SimplePie feed object from the specified feed source.
-		$rss = fetch_feed( 'http://rtcamp.com/blog/feed/' );
+		$rss = fetch_feed( 'https://rtcamp.com/blog/feed/' );
 
 		// Checks that the object is created correctly.
 		if ( ! is_wp_error( $rss ) ) {
