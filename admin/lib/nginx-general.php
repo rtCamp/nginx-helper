@@ -107,6 +107,18 @@ namespace rtCamp\WP\Nginx {
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
+			<?php
+
+				$is_redis_only = false;
+
+				if (
+					defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) &&
+					defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) &&
+					defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
+				) {
+					$is_redis_only = true;
+				}
+			?>
 			<div class="postbox enable_purge"<?php echo ( $rt_wp_nginx_helper->options['enable_purge'] == false ) ? ' style="display: none;"' : ''; ?>>
 				<h3 class="hndle">
 					<span><?php _e( 'Caching Method', 'nginx-helper' ); ?></span>
@@ -115,6 +127,7 @@ namespace rtCamp\WP\Nginx {
 					<div class="inside">
 						<input type="hidden" name="is_submit" value="1" />
 						<table class="form-table">
+							<?php if ( false === $is_redis_only ) { ?>
 							<tr valign="top">
 								<td>
 									<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php checked( $rt_wp_nginx_helper->options['cache_method'], "enable_fastcgi" ); ?> />
@@ -123,6 +136,7 @@ namespace rtCamp\WP\Nginx {
 									</label>
 								</td>
 							</tr>
+							<?php } ?>
 							<tr valign="top">
 								<td>
 									<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php checked( $rt_wp_nginx_helper->options['cache_method'], "enable_redis" ); ?> />

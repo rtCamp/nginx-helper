@@ -97,6 +97,9 @@ namespace rtCamp\WP\Nginx {
 			}
 			include_once (RT_WP_NGINX_HELPER_PATH . 'admin/install.php');
 			rt_wp_nginx_helper_install();
+
+			// this activate redis cahce by defautl for ee4.
+			$this->rt_wp_activate_redis_for_ee4();
 		}
 
 		function deactivate()
@@ -326,6 +329,36 @@ namespace rtCamp\WP\Nginx {
 		function load_plugin_textdomain()
 		{
 			load_plugin_textdomain( 'nginx-helper', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		}
+
+		/**
+		 * Function to activate redis cache by default only for ee4.
+		 *
+		 * @return void
+		 */
+		function rt_wp_activate_redis_for_ee4() {
+
+			if (
+				! defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ||
+				! defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ||
+				! defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
+			) {
+				return;
+			}
+
+			$rt_wp_nginx_helper_options = get_site_option( 'rt_wp_nginx_helper_options' );
+
+			$rt_wp_nginx_helper_options['enable_purge']                = 1;
+			$rt_wp_nginx_helper_options['cache_method']                = 'enable_redis';
+			$rt_wp_nginx_helper_options['purge_homepage_on_edit']      = 1;
+			$rt_wp_nginx_helper_options['purge_homepage_on_del']       = 1;
+			$rt_wp_nginx_helper_options['purge_page_on_mod']           = 1;
+			$rt_wp_nginx_helper_options['purge_archive_on_edit']       = 1;
+			$rt_wp_nginx_helper_options['purge_archive_on_del']        = 1;
+			$rt_wp_nginx_helper_options['purge_page_on_del_post_page'] = 1;
+
+			update_site_option( 'rt_wp_nginx_helper_options', $rt_wp_nginx_helper_options );
+
 		}
 
 	}
