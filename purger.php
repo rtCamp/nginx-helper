@@ -424,6 +424,10 @@ namespace rtCamp\WP\Nginx {
 					$this->_purge_homepage();
 				}
 
+				if ( 1 == $rt_wp_nginx_helper->options[ 'purge_page_on_del_post_page' ] ) {
+					$this->_purge_single_post( $post );
+				}
+
 
 				$this->_purge_by_options( $post->ID, $blog_id, false, $rt_wp_nginx_helper->options[ 'purge_archive_on_del' ], $rt_wp_nginx_helper->options[ 'purge_archive_on_del' ] );
 
@@ -613,6 +617,21 @@ namespace rtCamp\WP\Nginx {
 			} else {
 				$this->log( "- " . __( "No posts", "nginx-helper" ) );
 			}
+
+			return true;
+		}
+
+		private function _purge_single_post( $post ) {
+
+			if ( empty( $post ) ) {
+				return;
+			}
+
+			$this->log( sprintf( "+ " . __( "Purging post id '%d' (post type '%s')", "nginx-helper" ), $post->ID, $post->post_type ) );
+
+			$url = str_replace( '__trashed', '', get_permalink( $post->ID ) );
+
+			$this->purgeUrl( $url );
 
 			return true;
 		}

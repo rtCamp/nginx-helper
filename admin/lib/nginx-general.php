@@ -50,6 +50,7 @@ namespace rtCamp\WP\Nginx {
 				$rt_wp_nginx_helper->options['purge_page_on_mod'] = ( isset( $_POST['purge_page_on_mod'] ) and ( $_POST['purge_page_on_mod'] == 1 ) ) ? 1 : 0;
 				$rt_wp_nginx_helper->options['purge_page_on_new_comment'] = ( isset( $_POST['purge_page_on_new_comment'] ) and ( $_POST['purge_page_on_new_comment'] == 1 ) ) ? 1 : 0;
 				$rt_wp_nginx_helper->options['purge_page_on_deleted_comment'] = ( isset( $_POST['purge_page_on_deleted_comment'] ) and ( $_POST['purge_page_on_deleted_comment'] == 1 ) ) ? 1 : 0;
+				$rt_wp_nginx_helper->options['purge_page_on_del_post_page'] = ( isset( $_POST['purge_page_on_del_post_page'] ) and ( 1 == $_POST['purge_page_on_del_post_page'] ) ) ? 1 : 0;
 
 				$rt_wp_nginx_helper->options['purge_method'] = ( isset( $_POST['purge_method'] ) ) ? $_POST['purge_method'] : 'get_request';
 
@@ -269,6 +270,14 @@ namespace rtCamp\WP\Nginx {
 										<input type="checkbox" value="1" id="purge_page_on_deleted_comment" name="purge_page_on_deleted_comment"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_deleted_comment'], 1 ); ?>>
 										&nbsp;<?php _e( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' ); ?>
 									</label><br />
+								</fieldset>
+								<fieldset>
+									<legend class="screen-reader-text">
+										<span>&nbsp;<?php _e( 'when an existing post/page/custom post is modified.', 'nginx-helper' ); ?></span>
+									</legend>
+									<label for="purge_page_on_del_post_page">
+										<input type="checkbox" value="1" id="purge_page_on_del_post_page" name="purge_page_on_del_post_page"<?php checked( $rt_wp_nginx_helper->options['purge_page_on_del_post_page'], 1 ); ?> />
+										&nbsp;<?php _e( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>.', 'nginx-helper' ); ?></label><br />
 								</fieldset>
 							</td>
 							</tr>
