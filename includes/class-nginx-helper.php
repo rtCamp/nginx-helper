@@ -92,7 +92,6 @@ class Nginx_Helper {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
-		// $this->define_public_hooks();
 	}
 
 	/**
@@ -139,7 +138,6 @@ class Nginx_Helper {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-nginx-helper-public.php';
 		$this->loader = new Nginx_Helper_Loader();
 
 	}
@@ -290,7 +288,7 @@ class Nginx_Helper {
 
 		$wp_ok = version_compare( $wp_version, $this->minimum_wp, '>=' );
 
-		if ( ( false == $wp_ok ) ) {
+		if ( false === $wp_ok ) {
 			add_action( 'admin_notices', array( &$this, 'display_notices' ) );
 			add_action( 'network_admin_notices', array( &$this, 'display_notices' ) );
 			return false;
@@ -308,7 +306,10 @@ class Nginx_Helper {
 		<p>
 			<strong>
 				<?php
-					echo __( 'Sorry, Nginx Helper requires WordPress ' . $this->minimum_WP . ' or higher', 'nginx-helper' );
+				printf(
+					/* translators: %s is Minimum WP version. */
+					esc_html__( 'Sorry, Nginx Helper requires WordPress %s or higher', 'nginx-helper' ), esc_html( $this->minimum_WP )
+				);
 				?>
 			</strong>
 		</p>

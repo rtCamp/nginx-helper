@@ -58,7 +58,7 @@ abstract class Purger {
 
 		switch ( $newstatus ) {
 			case 'approved':
-				if ( 1 == $nginx_helper_admin->options['purge_page_on_new_comment'] ) {
+				if ( 1 === $nginx_helper_admin->options['purge_page_on_new_comment'] ) {
 					$this->log( '* Comment ( ' . $_comment_id . ' ) approved. Post ( ' . $_post_id . ' ) purging...' );
 					$this->log( '* * * * *' );
 					$this->purgePost( $_post_id );
@@ -67,8 +67,8 @@ abstract class Purger {
 			case 'spam':
 			case 'unapproved':
 			case 'trash':
-				if ( 'approve' == $oldstatus ) {
-					if ( 1 == $nginx_helper_admin->options['purge_page_on_deleted_comment'] ) {
+				if ( 'approve' === $oldstatus ) {
+					if ( 1 === (int)$nginx_helper_admin->options['purge_page_on_deleted_comment'] ) {
 						$this->log( '* Comment ( ' . $_comment_id . ' ) removed as ( ' . $newstatus . ' ). Post ( ' . $_post_id . ' ) purging...' );
 						$this->log( '* * * * *' );
 						$this->purgePost( $_post_id );
@@ -79,6 +79,7 @@ abstract class Purger {
 	}
 
 	public function purgePost( $_ID ) {
+
 		global $nginx_helper_admin, $blog_id;
 
 		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
@@ -118,11 +119,11 @@ abstract class Purger {
 
 		$this->log( 'Function purgePost BEGIN ===' );
 
-		if ( 1 == $nginx_helper_admin->options['purge_homepage_on_edit'] ) {
+		if ( 1 === (int) $nginx_helper_admin->options['purge_homepage_on_edit'] ) {
 			$this->_purge_homepage();
 		}
 
-		if ( 'comment_post' == current_filter() || 'wp_set_comment_status' == current_filter() ) {
+		if ( 'comment_post' === current_filter() || 'wp_set_comment_status' === current_filter() ) {
 			$this->_purge_by_options(
 				$_ID, $blog_id, $nginx_helper_admin->options['purge_page_on_new_comment'], $nginx_helper_admin->options['purge_archive_on_new_comment'], $nginx_helper_admin->options['purge_archive_on_new_comment']
 			);
@@ -138,28 +139,33 @@ abstract class Purger {
 	}
 
 	private function _purge_by_options( $_post_ID, $blog_id, $_purge_page, $_purge_archive, $_purge_custom_taxa ) {
-		global $nginx_helper_admin;
 
 		$_post_type = get_post_type( $_post_ID );
 
 		if ( $_purge_page ) {
-			if ( 'post' == $_post_type || 'page' == $_post_type ) {
+
+			if ( 'post' === $_post_type || 'page' === $_post_type ) {
 				$this->log( 'Purging ' . $_post_type . ' ( id ' . $_post_ID . ', blog id ' . $blog_id . ' ) ' );
 			} else {
 				$this->log( "Purging custom post type '" . $_post_type . "' ( id " . $_post_ID . ', blog id ' . $blog_id . ' )' );
 			}
 
 			$this->purgeUrl( get_permalink( $_post_ID ) );
+
 		}
 
 		if ( $_purge_archive ) {
 
-			if ( function_exists( 'get_post_type_archive_link' ) && ( $_post_type_archive_link = get_post_type_archive_link( $_post_type ) ) ) {
+			$_post_type_archive_link = get_post_type_archive_link( $_post_type );
+
+			if ( function_exists( 'get_post_type_archive_link' ) && $_post_type_archive_link ) {
+
 				$this->log( 'Purging post type archive ( ' . $_post_type . ' )' );
 				$this->purgeUrl( $_post_type_archive_link );
+
 			}
 
-			if ( 'post' == $_post_type ) {
+			if ( 'post' === $_post_type ) {
 				$this->log( 'Purging date' );
 
 				$day   = get_the_time( 'd', $_post_ID );
@@ -177,47 +183,74 @@ abstract class Purger {
 				}
 			}
 
-			if ( $categories = wp_get_post_categories( $_post_ID ) ) {
+			$categories = wp_get_post_categories( $_post_ID );
+
+			if ( ! is_wp_error( $categories ) ) {
+
 				$this->log( 'Purging category archives' );
 
 				foreach ( $categories as $category_id ) {
+
 					$this->log( 'Purging category ' . $category_id );
 					$this->purgeUrl( get_category_link( $category_id ) );
+
 				}
+
 			}
 
-			if ( $tags = get_the_tags( $_post_ID ) ) {
+			$tags = get_the_tags( $_post_ID );
+
+			if ( ! is_wp_error( $tags ) && ! empty( $tags ) ) {
+
 				$this->log( 'Purging tag archives' );
 
 				foreach ( $tags as $tag ) {
+
 					$this->log( 'Purging tag ' . $tag->term_id );
 					$this->purgeUrl( get_tag_link( $tag->term_id ) );
+
 				}
+
 			}
 
-			if ( $author_id = get_post( $_post_ID )->post_author ) {
+			$author_id = get_post( $_post_ID )->post_author;
+
+			if ( ! empty( $author_id ) ) {
+
 				$this->log( 'Purging author archive' );
 				$this->purgeUrl( get_author_posts_url( $author_id ) );
+
 			}
+
 		}
 
 		if ( $_purge_custom_taxa ) {
-			if ( $custom_taxonomies = get_taxonomies(
+
+			$custom_taxonomies = get_taxonomies(
 				array(
 					'public'   => true,
 					'_builtin' => false,
 				)
-			) ) {
+			);
+
+			if ( ! empty( $custom_taxonomies ) ) {
+
 				$this->log( 'Purging custom taxonomies related' );
+
 				foreach ( $custom_taxonomies as $taxon ) {
 
-					if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ) ) ) {
+					if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ), true ) ) {
 
-						if ( $terms = get_the_terms( $_post_ID, $taxon ) ) {
+						$terms = get_the_terms( $_post_ID, $taxon );
+
+						if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+
 							foreach ( $terms as $term ) {
 								$this->purgeUrl( get_term_link( $term, $taxon ) );
 							}
+
 						}
+
 					} else {
 						$this->log( "Your built-in taxonomy '" . $taxon . "' has param '_builtin' set to false.", 'WARNING' );
 					}
@@ -232,7 +265,7 @@ abstract class Purger {
 	 * Read more on how this works here:
 	 * https://www.digitalocean.com/community/tutorials/how-to-setup-fastcgi-caching-with-nginx-on-your-vps#purging-the-cache
 	 */
-	private function _delete_cache_file_for( $url ) {
+	public function _delete_cache_file_for( $url ) {
 
 		// Verify cache path is set
 		if ( ! defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
@@ -271,7 +304,7 @@ abstract class Purger {
 		}
 	}
 
-	private function _do_remote_get( $url ) {
+	public function _do_remote_get( $url ) {
 
 		$response = wp_remote_get( $url );
 
@@ -473,24 +506,36 @@ abstract class Purger {
 
 		$this->log( __( 'Purging post custom taxonomies related', 'nginx-helper' ) );
 
-		if ( $custom_taxonomies = get_taxonomies(
+		$custom_taxonomies = get_taxonomies(
 			array(
 				'public'   => true,
 				'_builtin' => false,
 			)
-		) ) {
+		);
+
+		if ( ! empty( $custom_taxonomies ) ) {
+
 			foreach ( $custom_taxonomies as $taxon ) {
+
 				$this->log( sprintf( '+ ' . __( "Purging custom taxonomy '%s'", 'nginx-helper' ), $taxon ) );
-				if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ) ) ) {
-					if ( $terms = get_the_terms( $_post_id, $taxon ) ) {
+
+				if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ), true ) ) {
+
+					$terms = get_the_terms( $_post_id, $taxon );
+
+					if ( ! is_wp_error( $terms ) && ! empty( $terms ) && is_array( $terms ) ) {
+
 						foreach ( $terms as $term ) {
 							$this->purgeUrl( get_term_link( $term, $taxon ) );
 						}
+
 					}
+
 				} else {
 					$this->log( sprintf( '- ' . __( "Your built-in taxonomy '%s' has param '_builtin' set to false.", 'nginx-helper' ), $taxon ), 'WARNING' );
 				}
 			}
+
 		} else {
 			$this->log( '- ' . __( 'No custom taxonomies', 'nginx-helper' ) );
 		}
@@ -502,13 +547,21 @@ abstract class Purger {
 
 		$this->log( __( 'Purging all categories', 'nginx-helper' ) );
 
-		if ( $_categories = get_categories() ) {
+		$_categories = get_categories();
+
+		if ( ! empty( $_categories ) ) {
+
 			foreach ( $_categories as $c ) {
+
 				$this->log( sprintf( __( "Purging category '%1\$s' ( id %2\$d )", 'nginx-helper' ), $c->name, $c->term_id ) );
 				$this->purgeUrl( get_category_link( $c->term_id ) );
+
 			}
+
 		} else {
+
 			$this->log( __( 'No categories archives', 'nginx-helper' ) );
+
 		}
 
 		return true;
@@ -518,40 +571,62 @@ abstract class Purger {
 
 		$this->log( __( 'Purging all tags', 'nginx-helper' ) );
 
-		if ( $_posttags = get_tags() ) {
+		$_posttags = get_tags();
+
+		if ( ! empty( $_posttags ) ) {
+
 			foreach ( $_posttags as $t ) {
+
 				$this->log( sprintf( __( "Purging tag '%1\$s' ( id %2\$d )", 'nginx-helper' ), $t->name, $t->term_id ) );
 				$this->purgeUrl( get_tag_link( $t->term_id ) );
+
 			}
+
 		} else {
 			$this->log( __( 'No tags archives', 'nginx-helper' ) );
 		}
 
 		return true;
+
 	}
 
 	private function _purge_all_customtaxa() {
 
 		$this->log( __( 'Purging all custom taxonomies', 'nginx-helper' ) );
 
-		if ( $custom_taxonomies = get_taxonomies(
+		$custom_taxonomies = get_taxonomies(
 			array(
 				'public'   => true,
 				'_builtin' => false,
 			)
-		) ) {
+		);
+
+		if ( ! empty( $custom_taxonomies ) ) {
+
 			foreach ( $custom_taxonomies as $taxon ) {
+
 				$this->log( sprintf( '+ ' . __( "Purging custom taxonomy '%s'", 'nginx-helper' ), $taxon ) );
-				if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ) ) ) {
-					if ( $terms = get_terms( $taxon ) ) {
+
+				if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ), true ) ) {
+
+					$terms = get_terms( $taxon );
+
+					if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+
 						foreach ( $terms as $term ) {
+
 							$this->purgeUrl( get_term_link( $term, $taxon ) );
+
 						}
+
 					}
+
 				} else {
 					$this->log( sprintf( '- ' . __( "Your built-in taxonomy '%s' has param '_builtin' set to false.", 'nginx-helper' ), $taxon ), 'WARNING' );
 				}
+
 			}
+
 		} else {
 			$this->log( '- ' . __( 'No custom taxonomies', 'nginx-helper' ) );
 		}
@@ -578,11 +653,17 @@ abstract class Purger {
 			'post_status' => 'publish',
 		);
 
-		if ( $_posts = get_posts( $args ) ) {
+		$_posts = get_posts( $args );
+
+		if ( ! empty( $_posts ) ) {
+
 			foreach ( $_posts as $p ) {
+
 				$this->log( sprintf( '+ ' . __( "Purging post id '%1\$d' ( post type '%2\$s' )", 'nginx-helper' ), $p->ID, $p->post_type ) );
 				$this->purgeUrl( get_permalink( $p->ID ) );
+
 			}
+
 		} else {
 			$this->log( '- ' . __( 'No posts', 'nginx-helper' ) );
 		}
@@ -690,7 +771,7 @@ abstract class Purger {
 
 		$this->log( __( 'Term taxonomy edited or deleted', 'nginx-helper' ) );
 
-		if ( 'edit_term' == current_filter() && $term = get_term( $term_id, $taxon ) ) {
+		if ( 'edit_term' === current_filter() && $term = get_term( $term_id, $taxon ) ) {
 			$this->log( sprintf( __( "Term taxonomy '%1\$s' edited, (tt_id '%2\$d', term_id '%3\$d', taxonomy '%4\$s')", 'nginx-helper' ), $term->name, $tt_id, $term_id, $taxon ) );
 		} elseif ( 'delete_term' == current_filter() ) {
 			$this->log( sprintf( __( "A term taxonomy has been deleted from taxonomy '%1\$s', (tt_id '%2\$d', term_id '%3\$d')", 'nginx-helper' ), $taxon, $term_id, $tt_id ) );

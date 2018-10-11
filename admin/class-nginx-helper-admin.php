@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -316,14 +315,14 @@ class Nginx_Helper_Admin {
 		?>
 		<ul role="list">
 		<?php
-		if ( $maxitems == 0 ) {
-			echo '<li role="listitem">' . __( 'No items', 'nginx-helper' ) . '.</li>';
+		if ( $maxitems === 0 ) {
+			echo '<li role="listitem">' . esc_html_e( 'No items', 'nginx-helper' ) . '.</li>';
 		} else {
 			// Loop through each feed item and display each item as a hyperlink.
 			foreach ( $rss_items as $item ) {
 				?>
 					<li role="listitem">
-						<a href='<?php echo $item->get_permalink(); ?>' title='<?php echo __( 'Posted ', 'nginx-helper' ) . $item->get_date( 'j F Y | g:i a' ); ?>'><?php echo $item->get_title(); ?></a>
+						<a href='<?php echo esc_url( $item->get_permalink() ); ?>' title='<?php echo esc_attr_e( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ); ?>'><?php echo esc_html( $item->get_title() ); ?></a>
 					</li>
 				<?php
 			}
@@ -373,6 +372,7 @@ class Nginx_Helper_Admin {
 				'<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->';
 
 		echo $timestamps;
+
 	}
 
 	/**
@@ -439,13 +439,16 @@ class Nginx_Helper_Admin {
 	public function update_map() {
 
 		if ( is_multisite() ) {
+
 			$rt_nginx_map = $this->get_map();
 
 			if ( $fp = fopen( $this->functional_asset_path() . 'map.conf', 'w+' ) ) {
 				fwrite( $fp, $rt_nginx_map );
 				fclose( $fp );
 			}
+
 		}
+
 	}
 
 	/**
@@ -539,7 +542,9 @@ class Nginx_Helper_Admin {
 	public function purge_all() {
 		global $nginx_purger;
 
-		if ( ! isset( $_REQUEST['nginx_helper_action'] ) ) {
+		$action = get_query_var( 'nginx_helper_action', false );
+
+		if ( empty( $action ) ) {
 			return;
 		}
 
@@ -547,12 +552,12 @@ class Nginx_Helper_Admin {
 			wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
 		}
 
-		$action = $_REQUEST['nginx_helper_action'];
+		if ( 'done' === $action ) {
 
-		if ( 'done' == $action ) {
 			add_action( 'admin_notices', array( &$this, 'display_notices' ) );
 			add_action( 'network_admin_notices', array( &$this, 'display_notices' ) );
 			return;
+
 		}
 
 		check_admin_referer( 'nginx_helper-purge_all' );
@@ -571,6 +576,6 @@ class Nginx_Helper_Admin {
 	 * Dispay plugin notices.
 	 */
 	public function display_notices() {
-		echo '<div class="updated"><p>' . __( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
+		echo '<div class="updated"><p>' . esc_html_e( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
 	}
 }
