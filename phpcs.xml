@@ -24,7 +24,16 @@
     <exclude-pattern>*/admin/predis.php</exclude-pattern> <!-- Predis library file -->
 
     <!-- Include the WordPress standard. -->
-    <rule ref="WordPress-VIP-Go"/>
+    <rule ref="WordPress-VIP-Go">
+        <exclude name="WordPress.VIP.FileSystemWritesDisallow.directory_mkdir" />
+        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
+        <exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_is_writable" />
+        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose" />
+        <exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_fwrite" />
+        <exclude name="WordPress.VIP.FileSystemWritesDisallow.directory_rmdir" />
+        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
+        <exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_unlink" />
+    </rule>
     <rule ref="WordPress-Docs"/>
 
     <!-- Verify that the text_domain is set to the desired text-domain.
