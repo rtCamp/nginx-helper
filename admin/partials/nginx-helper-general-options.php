@@ -15,17 +15,29 @@ global $nginx_helper_admin;
 $error_log_filesize = false;
 
 $args = array(
-	'enable_purge'           => FILTER_SANITIZE_STRING,
-	'is_submit'              => FILTER_SANITIZE_STRING,
-	'redis_hostname'         => FILTER_SANITIZE_STRING,
-	'redis_port'             => FILTER_SANITIZE_STRING,
-	'redis_prefix'           => FILTER_SANITIZE_STRING,
-	'purge_homepage_on_edit' => FILTER_SANITIZE_STRING,
-	'purge_homepage_on_del'  => FILTER_SANITIZE_STRING,
-	'purge_url'              => FILTER_SANITIZE_STRING,
-	'log_level'              => FILTER_SANITIZE_STRING,
-	'log_filesize'           => FILTER_SANITIZE_STRING,
-	'smart_http_expire_save' => FILTER_SANITIZE_STRING,
+	'enable_purge'                     => FILTER_SANITIZE_STRING,
+	'enable_stamp'                     => FILTER_SANITIZE_STRING,
+	'purge_method'                     => FILTER_SANITIZE_STRING,
+	'is_submit'                        => FILTER_SANITIZE_STRING,
+	'redis_hostname'                   => FILTER_SANITIZE_STRING,
+	'redis_port'                       => FILTER_SANITIZE_STRING,
+	'redis_prefix'                     => FILTER_SANITIZE_STRING,
+	'purge_homepage_on_edit'           => FILTER_SANITIZE_STRING,
+	'purge_homepage_on_del'            => FILTER_SANITIZE_STRING,
+	'purge_url'                        => FILTER_SANITIZE_STRING,
+	'log_level'                        => FILTER_SANITIZE_STRING,
+	'log_filesize'                     => FILTER_SANITIZE_STRING,
+	'smart_http_expire_save'           => FILTER_SANITIZE_STRING,
+	'cache_method'                     => FILTER_SANITIZE_STRING,
+	'enable_map'                       => FILTER_SANITIZE_STRING,
+	'enable_log'                       => FILTER_SANITIZE_STRING,
+	'purge_archive_on_edit'            => FILTER_SANITIZE_STRING,
+	'purge_archive_on_del'             => FILTER_SANITIZE_STRING,
+	'purge_archive_on_new_comment'     => FILTER_SANITIZE_STRING,
+	'purge_archive_on_deleted_comment' => FILTER_SANITIZE_STRING,
+	'purge_page_on_mod'                => FILTER_SANITIZE_STRING,
+	'purge_page_on_new_comment'        => FILTER_SANITIZE_STRING,
+	'purge_page_on_deleted_comment'    => FILTER_SANITIZE_STRING,
 );
 
 $all_inputs = filter_input_array(INPUT_POST, $args);
@@ -102,7 +114,7 @@ if ( is_multisite() ) {
 				<table class="form-table">
 					<tr valign="top">
 						<td>
-							<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php checked( $nginx_helper_settings['cache_method'], 'enable_fastcgi' ); ?> />
+							<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_fastcgi' ); ?> />
 							<label for="cache_method_fastcgi">
 								<?php
 									printf(
@@ -115,7 +127,7 @@ if ( is_multisite() ) {
 					</tr>
 					<tr valign="top">
 						<td>
-							<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php checked( $nginx_helper_settings['cache_method'], 'enable_redis' ); ?> />
+							<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_redis' ); ?> />
 							<label for="cache_method_redis">
 								<?php printf( esc_html__( 'Redis cache', 'nginx-helper' ) ); ?>
 							</label>
@@ -125,7 +137,7 @@ if ( is_multisite() ) {
 			</div> <!-- End of .inside -->
 		</div>
 		<div class="enable_purge">
-			<div class="postbox cache_method_fastcgi"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+			<div class="postbox cache_method_fastcgi"  <?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : 'style="display: none;"'; ?> >
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Purge Method', 'nginx-helper' ); ?></span>
 				</h3>
@@ -508,7 +520,7 @@ if ( is_multisite() ) {
 					</tr>
 					<tr valign="top">
 						<td>
-							<input type="checkbox" value="1" id="enable_stamp" name="enable_stamp"<?php checked( $nginx_helper_settings['enable_stamp'], 1 ); ?> />
+							<input type="checkbox" value="1" id="enable_stamp" name="enable_stamp" <?php checked( $nginx_helper_settings['enable_stamp'], 1 ); ?> />
 							<label for="enable_stamp">
 								<?php esc_html_e( 'Enable Nginx Timestamp in HTML', 'nginx-helper' ); ?>
 							</label>

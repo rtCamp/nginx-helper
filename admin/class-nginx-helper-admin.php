@@ -242,24 +242,22 @@ class Nginx_Helper_Admin {
 
 		return array(
 			'enable_purge'                     => 0,
-			'cache_method'                     => '',
-			'purge_method'                     => '',
+			'cache_method'                     => 'enable_fastcgi',
+			'purge_method'                     => 'get_request',
 			'enable_map'                       => 0,
 			'enable_log'                       => 0,
 			'log_level'                        => 'INFO',
 			'log_filesize'                     => '5',
 			'enable_stamp'                     => 0,
-			'purge_homepage_on_new'            => 0,
-			'purge_homepage_on_edit'           => 0,
-			'purge_homepage_on_del'            => 0,
-			'purge_archive_on_new'             => 0,
-			'purge_archive_on_edit'            => 0,
-			'purge_archive_on_del'             => 0,
+			'purge_homepage_on_edit'           => 1,
+			'purge_homepage_on_del'            => 1,
+			'purge_archive_on_edit'            => 1,
+			'purge_archive_on_del'             => 1,
 			'purge_archive_on_new_comment'     => 0,
 			'purge_archive_on_deleted_comment' => 0,
-			'purge_page_on_mod'                => 0,
-			'purge_page_on_new_comment'        => 0,
-			'purge_page_on_deleted_comment'    => 0,
+			'purge_page_on_mod'                => 1,
+			'purge_page_on_new_comment'        => 1,
+			'purge_page_on_deleted_comment'    => 1,
 			'redis_hostname'                   => '127.0.0.1',
 			'redis_port'                       => '6379',
 			'redis_prefix'                     => 'nginx-cache:',
@@ -275,20 +273,22 @@ class Nginx_Helper_Admin {
 	 */
 	public function nginx_helper_settings() {
 
-		$options = get_site_option( 'rt_wp_nginx_helper_options', array( 'redis_hostname' => '', 'redis_port' => '', 'redis_prefix' => '' ) );
+		$options = get_site_option( 'rt_wp_nginx_helper_options', array( 'redis_hostname' => '127.0.0.1', 'redis_port' => '6379', 'redis_prefix' => 'nginx-cache:' ) );
 
-		$options['redis_hostname'] = defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $options['redis_hostname'];
-		$options['redis_port']     = defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ? RT_WP_NGINX_HELPER_REDIS_PORT : $options['redis_port'];
-		$options['redis_prefix']   = defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' ) ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $options['redis_prefix'];
-
-		$options['redis_hostname_readonly'] = defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ? true : false;
-		$options['redis_port_readonly']     = defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ? true : false;
-		$options['redis_prefix_readonly']   = defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' ) ? true : false;
-
-		return wp_parse_args(
+		$data = wp_parse_args(
 			$options,
 			$this->nginx_helper_default_settings()
 		);
+
+		$data['redis_hostname'] = defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $data['redis_hostname'];
+		$data['redis_port']     = defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ? RT_WP_NGINX_HELPER_REDIS_PORT : $data['redis_port'];
+		$data['redis_prefix']   = defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' ) ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $data['redis_prefix'];
+
+		$data['redis_hostname_readonly'] = defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ? true : false;
+		$data['redis_port_readonly']     = defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ? true : false;
+		$data['redis_prefix_readonly']   = defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' ) ? true : false;
+
+		return $data;
 
 	}
 
@@ -432,7 +432,7 @@ class Nginx_Helper_Admin {
 				"-->\n" .
 				'<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->';
 
-		echo wp_kses( $timestamps, array() );
+		echo $timestamps;//wp_kses( $timestamps, array() );
 
 	}
 
@@ -636,7 +636,7 @@ class Nginx_Helper_Admin {
 
 		global $nginx_purger;
 
-		$action = get_query_var( 'nginx_helper_action', false );
+		$action = filter_input( INPUT_GET, 'nginx_helper_action', FILTER_SANITIZE_STRING );
 
 		if ( empty( $action ) ) {
 			return;
@@ -671,7 +671,7 @@ class Nginx_Helper_Admin {
 	 * Dispay plugin notices.
 	 */
 	public function display_notices() {
-		echo '<div class="updated"><p>' . esc_html_e( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
+		echo '<div class="updated"><p>' . esc_html__( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
 	}
 
 }
