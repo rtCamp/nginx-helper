@@ -24,7 +24,7 @@ class FastCGI_Purger extends Purger {
 	 * @param string $url URL.
 	 * @param bool   $feed Weather it is feed or not.
 	 */
-	public function purgeUrl( $url, $feed = true ) {
+	public function purge_url( $url, $feed = true ) {
 
 		global $nginx_helper_admin;
 
@@ -49,16 +49,17 @@ class FastCGI_Purger extends Purger {
 				$this->_delete_cache_file_for( $_url_purge );
 
 				if ( $feed ) {
+
 					$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
 					$this->_delete_cache_file_for( $feed_url );
 					$this->_delete_cache_file_for( $feed_url . 'atom/' );
 					$this->_delete_cache_file_for( $feed_url . 'rdf/' );
+
 				}
 				break;
 
 			case 'get_request':
-				// Go to default case
-
+				// Go to default case.
 			default:
 				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . '/purge' . $parse['path'];
 				$_url_purge      = $_url_purge_base;
@@ -86,7 +87,7 @@ class FastCGI_Purger extends Purger {
 	/**
 	 * Function to custom purge urls.
 	 */
-	public function customPurgeUrls() {
+	public function custom_purge_urls() {
 
 		global $nginx_helper_admin;
 
@@ -95,7 +96,7 @@ class FastCGI_Purger extends Purger {
 		$purge_urls = isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ?
 			explode( "\r\n", $nginx_helper_admin->options['purge_url'] ) : array();
 
-		// Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed
+		// Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed.
 		$purge_urls = apply_filters( 'rt_nginx_helper_purge_urls', $purge_urls, false );
 
 		switch ( $nginx_helper_admin->options['purge_method'] ) {
@@ -123,8 +124,7 @@ class FastCGI_Purger extends Purger {
 				break;
 
 			case 'get_request':
-				// Go to default case
-
+				// Go to default case.
 			default:
 				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . '/purge';
 
@@ -154,9 +154,9 @@ class FastCGI_Purger extends Purger {
 	/**
 	 * Purge everything.
 	 */
-	public function purgeAll() {
+	public function purge_all() {
 
-		$this->unlinkRecursive( RT_WP_NGINX_HELPER_CACHE_PATH, false );
+		$this->unlink_recursive( RT_WP_NGINX_HELPER_CACHE_PATH, false );
 		$this->log( '* * * * *' );
 		$this->log( '* Purged Everything!' );
 		$this->log( '* * * * *' );

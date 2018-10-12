@@ -34,7 +34,7 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 		<p>
 			<?php
 				printf(
-					wp_kses( "%1$s <a href='%2$s'>%3$s</a>.", array( 'a' => array( 'href' => array() ) ) ),
+					wp_kses( '%1$s <a href=\'%2$s\'>%3$s</a>.', array( 'a' => array( 'href' => array() ) ) ),
 					esc_html__( 'Please use our', 'nginx-helper' ), esc_url( 'http://rtcamp.com/support/forum/wordpress-nginx/' ), esc_html__( 'free support forum', 'nginx-helper' )
 				);
 			?>

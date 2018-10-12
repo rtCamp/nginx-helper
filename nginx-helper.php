@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The plugin bootstrap file
  *
@@ -22,7 +21,7 @@
  * Text Domain:       nginx-helper
  * Domain Path:       /languages
  * Requires at least: 3.0
- * Tested up to: 4.2.2
+ * Tested up to: 4.9.8
  */
 
 // If this file is called directly, abort.
@@ -81,6 +80,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-nginx-helper.php';
  * @since    2.0.0
  */
 function run_nginx_helper() {
+
 	global $nginx_helper;
 
 	$nginx_helper = new Nginx_Helper();

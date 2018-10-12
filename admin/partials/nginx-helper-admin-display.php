@@ -25,29 +25,33 @@ global $pagenow;
 			<div id="post-body-content">
 				<?php
 				/* Show settinhs tabs */
-				$tab = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
-				$current_setting_tab = ( ! empty( $tab ) ) ? $tab : 'general';
+				$current_tab = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
+				$current_setting_tab = ( ! empty( $current_tab ) ) ? $current_tab : 'general';
 
 				echo '<h2 class="nav-tab-wrapper">';
 				foreach ( $this->settings_tabs as $setting_tab => $setting_name ) {
+
 					$class = ( $setting_tab === $current_setting_tab ) ? ' nav-tab-active' : '';
 					echo '<a class="nav-tab' . esc_attr( $class ) . '" href="?page=nginx&tab=' . esc_attr( $setting_name['menu_slug'] ) . '">' . esc_html( $setting_name['menu_title'] ) . '</a>';
+
 				}
 				echo '</h2>';
 
 				switch ( $current_setting_tab ) {
+
 					case 'general':
-						include plugin_dir_path(__FILE__ ) . 'admin/partials/nginx-helper-general-options.php';
+						include plugin_dir_path(__FILE__ ) . 'nginx-helper-general-options.php';
 						break;
 					case 'support':
-						include plugin_dir_path(__FILE__ ) . 'admin/partials/nginx-helper-support-options.php';
+						include plugin_dir_path(__FILE__ ) . 'nginx-helper-support-options.php';
 						break;
+
 				}
 				?>
 			</div> <!-- End of #post-body-content -->
 			<div id="postbox-container-1" class="postbox-container">
 				<?php
-					require plugin_dir_path(__FILE__ ) . 'admin/partials/nginx-helper-sidebar-display.php';
+					require plugin_dir_path(__FILE__ ) . 'nginx-helper-sidebar-display.php';
 				?>
 			</div> <!-- End of #postbox-container-1 -->
 		</div> <!-- End of #post-body -->

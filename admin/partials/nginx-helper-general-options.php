@@ -14,12 +14,29 @@ global $nginx_helper_admin;
 
 $error_log_filesize = false;
 
-if ( isset( $_POST['smart_http_expire_save'] ) ) {
-	unset( $_POST['smart_http_expire_save'] );
-	unset( $_POST['is_submit'] );
+$args = array(
+	'enable_purge'           => FILTER_SANITIZE_STRING,
+	'is_submit'              => FILTER_SANITIZE_STRING,
+	'redis_hostname'         => FILTER_SANITIZE_STRING,
+	'redis_port'             => FILTER_SANITIZE_STRING,
+	'redis_prefix'           => FILTER_SANITIZE_STRING,
+	'purge_homepage_on_edit' => FILTER_SANITIZE_STRING,
+	'purge_homepage_on_del'  => FILTER_SANITIZE_STRING,
+	'purge_url'              => FILTER_SANITIZE_STRING,
+	'log_level'              => FILTER_SANITIZE_STRING,
+	'log_filesize'           => FILTER_SANITIZE_STRING,
+	'smart_http_expire_save' => FILTER_SANITIZE_STRING,
+);
+
+$all_inputs = filter_input_array(INPUT_POST, $args);
+
+if ( isset( $all_inputs['smart_http_expire_save'] ) && 'Save All Changes' === $all_inputs['smart_http_expire_save'] ) {
+
+	unset( $all_inputs['smart_http_expire_save'] );
+	unset( $all_inputs['is_submit'] );
 
 	$nginx_settings = wp_parse_args(
-		$_POST,
+		$all_inputs,
 		$nginx_helper_admin->nginx_helper_default_settings()
 	);
 
@@ -35,6 +52,7 @@ if ( isset( $_POST['smart_http_expire_save'] ) ) {
 	update_site_option( 'rt_wp_nginx_helper_options', $nginx_settings );
 
 	echo '<div class="updated"><p>' . esc_html__( 'Settings saved.', 'nginx-helper' ) . '</p></div>';
+
 }
 
 $nginx_helper_settings = $nginx_helper_admin->nginx_helper_settings();
@@ -75,7 +93,7 @@ if ( is_multisite() ) {
 	</div>
 
 	<?php if ( ! ( ! is_network_admin() && is_multisite() ) ) { ?>
-		<div class="postbox enable_purge"<?php echo ( false === $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
+		<div class="postbox enable_purge"<?php echo ( empty( $nginx_helper_settings['enable_purge'] ) ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Caching Method', 'nginx-helper' ); ?></span>
 			</h3>
@@ -107,7 +125,7 @@ if ( is_multisite() ) {
 			</div> <!-- End of .inside -->
 		</div>
 		<div class="enable_purge">
-			<div class="postbox cache_method_fastcgi"<?php echo ( true === $nginx_helper_settings['enable_purge'] && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+			<div class="postbox cache_method_fastcgi"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Purge Method', 'nginx-helper' ); ?></span>
 				</h3>
@@ -165,7 +183,7 @@ if ( is_multisite() ) {
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
-			<div class="postbox cache_method_redis"<?php echo ( true === $nginx_helper_settings['enable_purge'] && 'enable_redis' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+			<div class="postbox cache_method_redis"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_redis' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Redis Settings', 'nginx-helper' ); ?></span>
 				</h3>
@@ -174,26 +192,53 @@ if ( is_multisite() ) {
 						<tr>
 							<th><label for="redis_hostname"><?php esc_html_e( 'Hostname', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" />
+								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" <?php echo ( $nginx_helper_settings['redis_hostname_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_hostname_readonly'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
 							</td>
 						</tr>
 						<tr>
 							<th><label for="redis_port"><?php esc_html_e( 'Port', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" />
+								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" <?php echo ( $nginx_helper_settings['redis_port_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_port_readonly'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
 							</td>
 						</tr>
 						<tr>
 							<th><label for="redis_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" />
+								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['redis_prefix_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_prefix_readonly'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
 							</td>
 						</tr>
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
 		</div>
-		<div class="postbox enable_purge"<?php echo ( false === $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
+		<div class="postbox enable_purge"<?php echo ( empty( $nginx_helper_settings['enable_purge'] ) ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Purging Conditions', 'nginx-helper' ); ?></span>
 			</h3>
@@ -477,7 +522,7 @@ if ( is_multisite() ) {
 
 if ( is_network_admin() ) {
 	?>
-		<div class="postbox enable_map"<?php echo ( false === $nginx_helper_settings['enable_map'] ) ? ' style="display: none;"' : ''; ?>>
+		<div class="postbox enable_map"<?php echo ( empty( $nginx_helper_settings['enable_map'] ) ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Nginx Map', 'nginx-helper' ); ?></span>
 			</h3>
@@ -525,7 +570,7 @@ if ( is_network_admin() ) {
 						</th>
 						<td>
 							<pre id="map">
-							<?php echo $nginx_helper_admin->get_map(); ?>
+							<?php echo esc_html( $nginx_helper_admin->get_map() ); ?>
 							</pre>
 						</td>
 					</tr>
@@ -535,7 +580,7 @@ if ( is_network_admin() ) {
 	<?php
 }
 ?>
-	<div class="postbox enable_log"<?php echo ( false === $nginx_helper_settings['enable_log'] ) ? ' style="display: none;"' : ''; ?>>
+	<div class="postbox enable_log"<?php echo ( empty( $nginx_helper_settings['enable_log'] ) ) ? ' style="display: none;"' : ''; ?>>
 		<h3 class="hndle">
 			<span><?php esc_html_e( 'Logging Options', 'nginx-helper' ); ?></span>
 		</h3>

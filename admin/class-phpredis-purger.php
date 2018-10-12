@@ -33,24 +33,28 @@ class PhpRedis_Purger extends Purger {
 	 * @since    2.0.0
 	 */
 	public function __construct() {
+
 		global $nginx_helper_admin;
 
 		try {
+
 			$this->redis_object = new Redis();
 			$this->redis_object->connect(
 				$nginx_helper_admin->options['redis_hostname'],
 				$nginx_helper_admin->options['redis_port'],
 				5
 			);
+
 		} catch ( Exception $e ) {
 			$this->log( $e->getMessage(), 'ERROR' );
 		}
+
 	}
 
 	/**
 	 * Purge all cache.
 	 */
-	public function purgeAll() {
+	public function purge_all() {
 
 		$this->log( '* * * * *' );
 		$this->log( '* Purged Everything!' );
@@ -69,10 +73,10 @@ class PhpRedis_Purger extends Purger {
 	/**
 	 * Purge url.
 	 *
-	 * @param string $url
-	 * @param bool   $feed
+	 * @param string $url URL to purge.
+	 * @param bool   $feed Feed or not.
 	 */
-	public function purgeUrl( $url, $feed = true ) {
+	public function purge_url( $url, $feed = true ) {
 
 		global $nginx_helper_admin;
 
@@ -97,9 +101,9 @@ class PhpRedis_Purger extends Purger {
 	}
 
 	/**
-	 * custom purge urls.
+	 * Custom purge urls.
 	 */
-	public function customPurgeUrls() {
+	public function custom_purge_urls() {
 
 		global $nginx_helper_admin;
 
@@ -110,7 +114,7 @@ class PhpRedis_Purger extends Purger {
 		$purge_urls = isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ?
 			explode( "\r\n", $nginx_helper_admin->options['purge_url'] ) : array();
 
-		// Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed
+		// Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed.
 		$purge_urls = apply_filters( 'rt_nginx_helper_purge_urls', $purge_urls, true );
 
 		if ( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
@@ -153,7 +157,7 @@ class PhpRedis_Purger extends Purger {
 	 * Single Key Delete Example
 	 * e.g. $key can be nginx-cache:httpGETexample.com/
 	 *
-	 * @param $key
+	 * @param string $key Key.
 	 *
 	 * @return int
 	 */
@@ -177,13 +181,13 @@ class PhpRedis_Purger extends Purger {
 	 *
 	 * Call redis eval and return value from lua script
 	 *
-	 * @param string $pattern
+	 * @param string $pattern pattern.
 	 *
 	 * @return mixed
 	 */
 	public function delete_keys_by_wildcard( $pattern ) {
 
-		// Lua Script
+		// Lua Script.
 		$lua = <<<LUA
 local k =  0
 for i, name in ipairs(redis.call('KEYS', KEYS[1]))
