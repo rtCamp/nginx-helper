@@ -12,7 +12,7 @@
 
 global $nginx_helper_admin;
 
-$error_log_filesize = false;
+	$error_log_filesize = false;
 
 $args = array(
 	'enable_purge'                     => FILTER_SANITIZE_STRING,

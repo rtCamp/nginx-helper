@@ -636,7 +636,13 @@ class Nginx_Helper_Admin {
 
 		global $nginx_purger;
 
-		$action = filter_input( INPUT_GET, 'nginx_helper_action', FILTER_SANITIZE_STRING );
+		$method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
+
+		if ( 'post' === $method ) {
+			$action = filter_input( INPUT_POST, 'nginx_helper_action', FILTER_SANITIZE_STRING );
+		} else {
+			$action = filter_input( INPUT_GET, 'nginx_helper_action', FILTER_SANITIZE_STRING );
+		}
 
 		if ( empty( $action ) ) {
 			return;
@@ -655,7 +661,6 @@ class Nginx_Helper_Admin {
 		}
 
 		check_admin_referer( 'nginx_helper-purge_all' );
-
 		switch ( $action ) {
 			case 'purge':
 				$nginx_purger->purge_all();
