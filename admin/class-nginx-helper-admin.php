@@ -432,7 +432,7 @@ class Nginx_Helper_Admin {
 				"-->\n" .
 				'<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->';
 
-		echo $timestamps;//wp_kses( $timestamps, array() );
+		echo wp_kses( $timestamps, array() );
 
 	}
 
@@ -638,7 +638,7 @@ class Nginx_Helper_Admin {
 
 		$method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
 
-		if ( 'post' === $method ) {
+		if ( 'POST' === $method ) {
 			$action = filter_input( INPUT_POST, 'nginx_helper_action', FILTER_SANITIZE_STRING );
 		} else {
 			$action = filter_input( INPUT_GET, 'nginx_helper_action', FILTER_SANITIZE_STRING );
