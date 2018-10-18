@@ -220,7 +220,7 @@ class Nginx_Helper {
 		$this->loader->add_action( 'transition_post_status', $nginx_purger, 'purge_on_post_moved_to_trash', 20, 3 );
 		$this->loader->add_action( 'edit_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
 		$this->loader->add_action( 'delete_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
-		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20, 2 );
+		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20 );
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'purge_all' );
 
 		// expose action to allow other plugins to purge the cache.

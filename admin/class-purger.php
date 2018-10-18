@@ -340,7 +340,7 @@ abstract class Purger {
 	 *
 	 * @return bool
 	 */
-	public function _delete_cache_file_for( $url ) {
+	protected function delete_cache_file_for( $url ) {
 
 		// Verify cache path is set.
 		if ( ! defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
@@ -391,7 +391,7 @@ abstract class Purger {
 	 *
 	 * @param string $url URL to do remote request.
 	 */
-	public function _do_remote_get( $url ) {
+	protected function do_remote_get( $url ) {
 
 		$response = wp_remote_get( $url );
 
@@ -633,8 +633,8 @@ abstract class Purger {
 
 		if ( isset( $nginx_helper_admin->options['purgeable_url']['urls'] ) ) {
 
-			foreach ( $nginx_helper_admin->options['purgeable_url']['urls'] as $u ) {
-				$this->purge_url( $u, false );
+			foreach ( $nginx_helper_admin->options['purgeable_url']['urls'] as $url ) {
+				$this->purge_url( $url, false );
 			}
 
 		} else {
@@ -1079,13 +1079,14 @@ abstract class Purger {
 
 		$this->log( __( 'Term taxonomy edited or deleted', 'nginx-helper' ) );
 
-		$term = get_term( $term_id, $taxon );
+		$term           = get_term( $term_id, $taxon );
+		$current_filter = current_filter();
 
-		if ( 'edit_term' === current_filter() && ! is_wp_error( $term ) && ! empty( $term ) ) {
+		if ( 'edit_term' === $current_filter && ! is_wp_error( $term ) && ! empty( $term ) ) {
 
 			$this->log( sprintf( __( "Term taxonomy '%1\$s' edited, (tt_id '%2\$d', term_id '%3\$d', taxonomy '%4\$s')", 'nginx-helper' ), $term->name, $tt_id, $term_id, $taxon ) );
 
-		} elseif ( 'delete_term' === current_filter() ) {
+		} elseif ( 'delete_term' === $current_filter ) {
 
 			$this->log( sprintf( __( "A term taxonomy has been deleted from taxonomy '%1\$s', (tt_id '%2\$d', term_id '%3\$d')", 'nginx-helper' ), $taxon, $term_id, $tt_id ) );
 
@@ -1100,12 +1101,11 @@ abstract class Purger {
 	/**
 	 * Check ajax referrer on purge.
 	 *
-	 * @param string $action Action.
-	 * @param string $result Result.
+	 * @param string $action The Ajax nonce action.
 	 *
 	 * @return bool
 	 */
-	public function purge_on_check_ajax_referer( $action, $result ) {
+	public function purge_on_check_ajax_referer( $action ) {
 
 		switch ( $action ) {
 

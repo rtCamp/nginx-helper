@@ -46,14 +46,14 @@ class FastCGI_Purger extends Purger {
 					$_url_purge .= '?' . $parse['query'];
 				}
 
-				$this->_delete_cache_file_for( $_url_purge );
+				$this->delete_cache_file_for( $_url_purge );
 
 				if ( $feed ) {
 
 					$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
-					$this->_delete_cache_file_for( $feed_url );
-					$this->_delete_cache_file_for( $feed_url . 'atom/' );
-					$this->_delete_cache_file_for( $feed_url . 'rdf/' );
+					$this->delete_cache_file_for( $feed_url );
+					$this->delete_cache_file_for( $feed_url . 'atom/' );
+					$this->delete_cache_file_for( $feed_url . 'rdf/' );
 
 				}
 				break;
@@ -68,14 +68,14 @@ class FastCGI_Purger extends Purger {
 					$_url_purge .= '?' . $parse['query'];
 				}
 
-				$this->_do_remote_get( $_url_purge );
+				$this->do_remote_get( $_url_purge );
 
 				if ( $feed ) {
 
 					$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
-					$this->_do_remote_get( $feed_url );
-					$this->_do_remote_get( $feed_url . 'atom/' );
-					$this->_do_remote_get( $feed_url . 'rdf/' );
+					$this->do_remote_get( $feed_url );
+					$this->do_remote_get( $feed_url . 'atom/' );
+					$this->do_remote_get( $feed_url . 'rdf/' );
 
 				}
 				break;
@@ -119,7 +119,7 @@ class FastCGI_Purger extends Purger {
 
 							$purge_url = $_url_purge_base . $purge_url;
 							$this->log( '- Purging URL | ' . $purge_url );
-							$this->_delete_cache_file_for( $purge_url );
+							$this->delete_cache_file_for( $purge_url );
 
 						}
 
@@ -143,7 +143,7 @@ class FastCGI_Purger extends Purger {
 
 							$purge_url = $_url_purge_base . $purge_url;
 							$this->log( '- Purging URL | ' . $purge_url );
-							$this->_do_remote_get( $purge_url );
+							$this->do_remote_get( $purge_url );
 
 						}
 
