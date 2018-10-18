@@ -114,7 +114,12 @@ class PhpRedis_Purger extends Purger {
 		$purge_urls = isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ?
 			explode( "\r\n", $nginx_helper_admin->options['purge_url'] ) : array();
 
-		// Allow plugins/themes to modify/extend urls. Pass urls array in first parameter, second says if wildcards are allowed.
+		/**
+		 * Allow plugins/themes to modify/extend urls.
+		 *
+		 * @param array $purge_urls URLs which needs to be purged.
+		 * @param bool  $wildcard   If wildcard in url is allowed or not. default true.
+		 */
 		$purge_urls = apply_filters( 'rt_nginx_helper_purge_urls', $purge_urls, true );
 
 		if ( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {

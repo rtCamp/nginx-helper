@@ -103,7 +103,7 @@ class Nginx_Helper_Admin {
 	 *
 	 * @since    2.0.0
 	 *
-	 * @param string $hook Hook.
+	 * @param string $hook The current admin page.
 	 */
 	public function enqueue_styles( $hook ) {
 
@@ -133,7 +133,7 @@ class Nginx_Helper_Admin {
 	 *
 	 * @since    2.0.0
 	 *
-	 * @param string $hook Hook.
+	 * @param string $hook The current admin page.
 	 */
 	public function enqueue_scripts( $hook ) {
 
@@ -377,9 +377,15 @@ class Nginx_Helper_Admin {
 				foreach ( $rss_items as $item ) {
 					?>
 						<li role="listitem">
-							<a href='<?php echo esc_url( $item->get_permalink() ); ?>' title='<?php echo esc_attr_e( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ); ?>'>
-								<?php echo esc_html( $item->get_title() ); ?>
-							</a>
+							<?php
+							echo wp_kses(
+								sprintf(
+									'<a href="%1$s" title="%2$s">%3$s</a>',
+									esc_url( $item->get_permalink() ), esc_attr__( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ), esc_html( $item->get_title() )
+								),
+								array( 'strong' => array(), 'a' => array( 'href' => array(), 'title' => array() ) )
+							);
+							?>
 						</li>
 					<?php
 				}
@@ -535,7 +541,7 @@ class Nginx_Helper_Admin {
 	 * @global object $nginx_purger Nginx purger variable.
 	 *
 	 * @param string $new_status New status.
-	 * @param string $old_status Ols status.
+	 * @param string $old_status Old status.
 	 * @param object $post Post object.
 	 */
 	public function set_future_post_option_on_future_status( $new_status, $old_status, $post ) {
@@ -555,18 +561,21 @@ class Nginx_Helper_Admin {
 
 		}
 
-		if ( 'future' === $new_status ) {
+		if (
+			'future' === $new_status && $post && 'future' === $post->post_status &&
+			(
+		        ( 'post' === $post->post_type || 'page' === $post->post_type ) ||
+		        (
+		        	isset( $this->options['custom_post_types_recognized'] ) &&
+		            in_array( $post->post_type, $this->options['custom_post_types_recognized'], true )
+		        )
+			)
+		) {
 
-			if ( $post && 'future' === $post->post_status &&
-			   ( ( 'post' === $post->post_type || 'page' === $post->post_type ) ||
-			   ( isset( $this->options['custom_post_types_recognized'] ) &&
-			   in_array( $post->post_type, $this->options['custom_post_types_recognized'], true ) ) ) ) {
+			$nginx_purger->log( 'Set/update future_posts option ( post id = ' . $post->ID . ' and blog id = ' . $blog_id . ' )' );
+			$this->options['future_posts'][ $blog_id ][ $post->ID ] = strtotime( $post->post_date_gmt ) + 60;
+			update_site_option( 'rt_wp_nginx_helper_global_options', $this->options );
 
-				$nginx_purger->log( 'Set/update future_posts option ( post id = ' . $post->ID . ' and blog id = ' . $blog_id . ' )' );
-				$this->options['future_posts'][ $blog_id ][ $post->ID ] = strtotime( $post->post_date_gmt ) + 60;
-				update_site_option( 'rt_wp_nginx_helper_global_options', $this->options );
-
-			}
 		}
 
 	}
