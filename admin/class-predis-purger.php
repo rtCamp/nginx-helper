@@ -66,7 +66,7 @@ class Predis_Purger extends Purger {
 		$this->log( '* * * * *' );
 
 		// If Purge Cache link click from network admin then purge all.
-		if( is_network_admin() ) {
+		if ( is_network_admin() ) {
 
 			$this->delete_keys_by_wildcard( $prefix . '*' );
 			$this->log( '* Purged Everything! * ' );
@@ -184,7 +184,7 @@ class Predis_Purger extends Purger {
 	}
 
 	/**
-	 * Delete Keys by wildcar
+	 * Delete Keys by wildcard.
 	 * e.g. $key can be nginx-cache:httpGETexample.com*
 	 *
 	 * Lua Script block to delete multiple keys using wildcard

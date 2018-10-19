@@ -56,9 +56,26 @@ class PhpRedis_Purger extends Purger {
 	 */
 	public function purge_all() {
 
+		global $nginx_helper_admin;
+
+		$prefix = trim( $nginx_helper_admin->options['redis_prefix'] );
+
 		$this->log( '* * * * *' );
-		$this->log( '* Purged Everything!' );
-		$total_keys_purged = $this->delete_keys_by_wildcard( '*' );
+
+		// If Purge Cache link click from network admin then purge all.
+		if ( is_network_admin() ) {
+
+			$total_keys_purged = $this->delete_keys_by_wildcard( $prefix . '*' );
+			$this->log( '* Purged Everything! * ' );
+
+		} else { // Else purge only site specific cache.
+
+			$parse             = wp_parse_url( get_home_url() );
+			$parse['path']     = empty( $parse['path'] ) ? '/' : $parse['path'];
+			$total_keys_purged = $this->delete_keys_by_wildcard( $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'] . '*' );
+			$this->log( '* ' . get_home_url() . ' Purged! * ' );
+
+		}
 
 		if ( $total_keys_purged ) {
 			$this->log( "Total {$total_keys_purged} urls purged." );
@@ -177,7 +194,7 @@ class PhpRedis_Purger extends Purger {
 	}
 
 	/**
-	 * Delete Keys by wildcar
+	 * Delete Keys by wildcard.
 	 * e.g. $key can be nginx-cache:httpGETexample.com*
 	 *
 	 * Lua Script block to delete multiple keys using wildcard
