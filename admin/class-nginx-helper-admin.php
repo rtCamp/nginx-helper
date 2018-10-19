@@ -459,15 +459,12 @@ class Nginx_Helper_Admin {
 
 			global $wpdb;
 
-			$args = array(
-				'site_id'  => $wpdb->siteid,
-				'archived' => '0',
-				'mature'   => '0',
-				'spam'     => '0',
-				'deleted'  => '0',
+			$rt_all_blogs = $wpdb->get_results(
+				$wpdb->prepare(
+						'SELECT blog_id, domain, path FROM ' . $wpdb->blogs . " WHERE site_id = %d AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'",
+					$wpdb->siteid
+				)
 			);
-
-			$rt_all_blogs = get_sites( $args );
 
 			$wpdb->dmtable = $wpdb->base_prefix . 'domain_mapping';
 
