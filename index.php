@@ -1,1 +1,8 @@
-<?php // Silence is golden
+<?php
+/**
+ * Silence is golden.
+ *
+ * @package    nginx-helper
+ */
+
+// Silence.

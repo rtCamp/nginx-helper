@@ -14,12 +14,41 @@ global $nginx_helper_admin;
 
 $error_log_filesize = false;
 
-if ( isset( $_POST['smart_http_expire_save'] ) ) {
-	unset( $_POST['smart_http_expire_save'] );
-	unset( $_POST['is_submit'] );
+$args = array(
+	'enable_purge'                     => FILTER_SANITIZE_STRING,
+	'enable_stamp'                     => FILTER_SANITIZE_STRING,
+	'purge_method'                     => FILTER_SANITIZE_STRING,
+	'is_submit'                        => FILTER_SANITIZE_STRING,
+	'redis_hostname'                   => FILTER_SANITIZE_STRING,
+	'redis_port'                       => FILTER_SANITIZE_STRING,
+	'redis_prefix'                     => FILTER_SANITIZE_STRING,
+	'purge_homepage_on_edit'           => FILTER_SANITIZE_STRING,
+	'purge_homepage_on_del'            => FILTER_SANITIZE_STRING,
+	'purge_url'                        => FILTER_SANITIZE_STRING,
+	'log_level'                        => FILTER_SANITIZE_STRING,
+	'log_filesize'                     => FILTER_SANITIZE_STRING,
+	'smart_http_expire_save'           => FILTER_SANITIZE_STRING,
+	'cache_method'                     => FILTER_SANITIZE_STRING,
+	'enable_map'                       => FILTER_SANITIZE_STRING,
+	'enable_log'                       => FILTER_SANITIZE_STRING,
+	'purge_archive_on_edit'            => FILTER_SANITIZE_STRING,
+	'purge_archive_on_del'             => FILTER_SANITIZE_STRING,
+	'purge_archive_on_new_comment'     => FILTER_SANITIZE_STRING,
+	'purge_archive_on_deleted_comment' => FILTER_SANITIZE_STRING,
+	'purge_page_on_mod'                => FILTER_SANITIZE_STRING,
+	'purge_page_on_new_comment'        => FILTER_SANITIZE_STRING,
+	'purge_page_on_deleted_comment'    => FILTER_SANITIZE_STRING,
+);
+
+$all_inputs = filter_input_array(INPUT_POST, $args);
+
+if ( isset( $all_inputs['smart_http_expire_save'] ) && 'Save All Changes' === $all_inputs['smart_http_expire_save'] ) {
+
+	unset( $all_inputs['smart_http_expire_save'] );
+	unset( $all_inputs['is_submit'] );
 
 	$nginx_settings = wp_parse_args(
-		$_POST,
+		$all_inputs,
 		$nginx_helper_admin->nginx_helper_default_settings()
 	);
 
@@ -35,6 +64,7 @@ if ( isset( $_POST['smart_http_expire_save'] ) ) {
 	update_site_option( 'rt_wp_nginx_helper_options', $nginx_settings );
 
 	echo '<div class="updated"><p>' . esc_html__( 'Settings saved.', 'nginx-helper' ) . '</p></div>';
+
 }
 
 $nginx_helper_settings = $nginx_helper_admin->nginx_helper_settings();
@@ -75,7 +105,7 @@ if ( is_multisite() ) {
 	</div>
 
 	<?php if ( ! ( ! is_network_admin() && is_multisite() ) ) { ?>
-		<div class="postbox enable_purge"<?php echo ( false === $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
+		<div class="postbox enable_purge"<?php echo ( empty( $nginx_helper_settings['enable_purge'] ) ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Caching Method', 'nginx-helper' ); ?></span>
 			</h3>
@@ -84,20 +114,23 @@ if ( is_multisite() ) {
 				<table class="form-table">
 					<tr valign="top">
 						<td>
-							<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php checked( $nginx_helper_settings['cache_method'], 'enable_fastcgi' ); ?> />
+							<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_fastcgi' ); ?> />
 							<label for="cache_method_fastcgi">
 								<?php
-								printf(
-									__( 'nginx Fastcgi cache (<a target="_blank" href="%s" title="External settings for nginx">requires external settings for nginx</a>)', 'nginx-helper' ),
-									esc_url( $nginx_setting_link )
-								);
+								echo wp_kses(
+										sprintf(
+											'%1$s (<a target="_blank" href="%2$s" title="%3$s">%4$s</a>)',
+											esc_html__( 'nginx Fastcgi cache', 'nginx-helper' ), esc_url( $nginx_setting_link ), esc_attr__( 'External settings for nginx', 'nginx-helper' ), esc_html__( 'requires external settings for nginx', 'nginx-helper' )
+										),
+										array( 'strong' => array(), 'a' => array( 'href' => array(), 'title' => array() ) )
+									);
 								?>
 							</label>
 						</td>
 					</tr>
 					<tr valign="top">
 						<td>
-							<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php checked( $nginx_helper_settings['cache_method'], 'enable_redis' ); ?> />
+							<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_redis' ); ?> />
 							<label for="cache_method_redis">
 								<?php printf( esc_html__( 'Redis cache', 'nginx-helper' ) ); ?>
 							</label>
@@ -107,7 +140,7 @@ if ( is_multisite() ) {
 			</div> <!-- End of .inside -->
 		</div>
 		<div class="enable_purge">
-			<div class="postbox cache_method_fastcgi"<?php echo ( true === $nginx_helper_settings['enable_purge'] && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+			<div class="postbox cache_method_fastcgi"  <?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : 'style="display: none;"'; ?> >
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Purge Method', 'nginx-helper' ); ?></span>
 				</h3>
@@ -126,12 +159,24 @@ if ( is_multisite() ) {
 										<input type="radio" value="get_request" id="purge_method_get_request" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'get_request' ); ?>>
 										&nbsp;
 										<?php
-											_e( 'Using a GET request to <strong>PURGE/url</strong> (Default option)', 'nginx-helper' );
+											echo wp_kses(
+												sprintf(
+													'%1$s  <strong>PURGE/url</strong> %2$s',
+													esc_html__( 'Using a GET request to', 'nginx-helper' ), esc_html__( '(Default option)', 'nginx-helper' )
+												),
+												array( 'strong' => array() )
+											);
 										?>
 										<br />
 										<small>
 											<?php
-												_e( 'Uses the <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> module. ', 'nginx-helper' );
+												echo wp_kses(
+													sprintf(
+														'%1$s <strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong> %2$s.',
+														esc_html__( 'Uses the', 'nginx-helper' ), esc_html__( 'module', 'nginx-helper' )
+													),
+													array( 'strong' => array(), 'a' => array( 'href' => array() ) )
+												);
 											?>
 										</small>
 									</label>
@@ -145,7 +190,13 @@ if ( is_multisite() ) {
 										<br />
 										<small>
 											<?php
-												_e( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri"). ', 'nginx-helper' );
+												echo wp_kses(
+													sprintf(
+														'%1$s<strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. %2$s',
+														esc_html__( 'Checks for matching cache file in ', 'nginx-helper' ), esc_html__( 'Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri").', 'nginx-helper' )
+													),
+													array( 'strong' => array() )
+												);
 											?>
 										</small>
 									</label>
@@ -156,7 +207,7 @@ if ( is_multisite() ) {
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
-			<div class="postbox cache_method_redis"<?php echo ( true === $nginx_helper_settings['enable_purge'] && 'enable_redis' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+			<div class="postbox cache_method_redis"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_redis' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Redis Settings', 'nginx-helper' ); ?></span>
 				</h3>
@@ -165,26 +216,53 @@ if ( is_multisite() ) {
 						<tr>
 							<th><label for="redis_hostname"><?php esc_html_e( 'Hostname', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" />
+								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" <?php echo ( $nginx_helper_settings['redis_hostname_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_hostname_readonly'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
 							</td>
 						</tr>
 						<tr>
 							<th><label for="redis_port"><?php esc_html_e( 'Port', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" />
+								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" <?php echo ( $nginx_helper_settings['redis_port_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_port_readonly'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
 							</td>
 						</tr>
 						<tr>
 							<th><label for="redis_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" />
+								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['redis_prefix_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_prefix_readonly'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
 							</td>
 						</tr>
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
 		</div>
-		<div class="postbox enable_purge"<?php echo ( false === $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
+		<div class="postbox enable_purge"<?php echo ( empty( $nginx_helper_settings['enable_purge'] ) ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Purging Conditions', 'nginx-helper' ); ?></span>
 			</h3>
@@ -206,7 +284,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_homepage_on_edit" name="purge_homepage_on_edit" <?php checked( $nginx_helper_settings['purge_homepage_on_edit'], 1 ); ?> />
 									&nbsp;
 									<?php
-										_e( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>%5$s<strong>%6$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'post', 'nginx-helper' ), esc_html__( ' (or page/custom post) is ', 'nginx-helper' ), esc_html__( 'modified', 'nginx-helper' ), esc_html__( ' or ', 'nginx-helper' ), esc_html__( 'added', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -224,7 +308,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_homepage_on_del" name="purge_homepage_on_del" <?php checked( $nginx_helper_settings['purge_homepage_on_del'], 1 ); ?> />
 									&nbsp;
 									<?php
-										_e( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'published post', 'nginx-helper' ), esc_html__( ' (or page/custom post) is ', 'nginx-helper' ), esc_html__( 'trashed', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -252,7 +342,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_page_on_mod" name="purge_page_on_mod" <?php checked( $nginx_helper_settings['purge_page_on_mod'], 1 ); ?>>
 									&nbsp;
 									<?php
-										_e( 'when a <strong>post</strong> is <strong>published</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'post', 'nginx-helper' ), esc_html__( ' is ', 'nginx-helper' ), esc_html__( 'published', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -270,7 +366,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_page_on_new_comment" name="purge_page_on_new_comment" <?php checked( $nginx_helper_settings['purge_page_on_new_comment'], 1 ); ?>>
 									&nbsp;
 									<?php
-										_e( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'comment', 'nginx-helper' ), esc_html__( ' is ', 'nginx-helper' ), esc_html__( 'approved/published', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -288,7 +390,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_page_on_deleted_comment" name="purge_page_on_deleted_comment" <?php checked( $nginx_helper_settings['purge_page_on_deleted_comment'], 1 ); ?>>
 									&nbsp;
 									<?php
-										_e( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'comment', 'nginx-helper' ), esc_html__( ' is ', 'nginx-helper' ), esc_html__( 'unapproved/deleted', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -318,7 +426,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_archive_on_edit" name="purge_archive_on_edit" <?php checked( $nginx_helper_settings['purge_archive_on_edit'], 1 ); ?> />
 									&nbsp;
 									<?php
-										_e( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>%5$s<strong>%6$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'post', 'nginx-helper' ), esc_html__( ' (or page/custom post) is ', 'nginx-helper' ), esc_html__( 'modified', 'nginx-helper' ), esc_html__( ' or ', 'nginx-helper' ), esc_html__( 'added', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -336,7 +450,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_archive_on_del" name="purge_archive_on_del"<?php checked( $nginx_helper_settings['purge_archive_on_del'], 1 ); ?> />
 									&nbsp;
 									<?php
-										_e( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'published post', 'nginx-helper' ), esc_html__( ' (or page/custom post) is ', 'nginx-helper' ), esc_html__( 'trashed', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -355,7 +475,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_archive_on_new_comment" name="purge_archive_on_new_comment" <?php checked( $nginx_helper_settings['purge_archive_on_new_comment'], 1 ); ?> />
 									&nbsp;
 									<?php
-										_e( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'comment', 'nginx-helper' ), esc_html__( ' is ', 'nginx-helper' ), esc_html__( 'approved/published', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -373,7 +499,13 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_archive_on_deleted_comment" name="purge_archive_on_deleted_comment" <?php checked( $nginx_helper_settings['purge_archive_on_deleted_comment'], 1 ); ?> />
 									&nbsp;
 									<?php
-										_e( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' );
+										echo wp_kses(
+											sprintf(
+												'%1$s<strong>%2$s</strong>%3$s<strong>%4$s</strong>.',
+												esc_html__( 'when a ', 'nginx-helper' ), esc_html__( 'comment', 'nginx-helper' ), esc_html__( ' is ', 'nginx-helper' ), esc_html__( 'unapproved/deleted', 'nginx-helper' )
+											),
+											array( 'strong' => array(), )
+										);
 									?>
 								</label>
 								<br />
@@ -387,7 +519,7 @@ if ( is_multisite() ) {
 							<h4><?php esc_html_e( 'Custom Purge URL:', 'nginx-helper' ); ?></h4>
 						</th>
 						<td>
-							<textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo $nginx_helper_admin->options['purge_url']; ?></textarea>
+							<textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo esc_url( $nginx_helper_admin->options['purge_url'] ); ?></textarea>
 							<p class="description">
 								Add one URL per line. URL should not contain domain name.
 								<br>
@@ -427,7 +559,7 @@ if ( is_multisite() ) {
 					</tr>
 					<tr valign="top">
 						<td>
-							<input type="checkbox" value="1" id="enable_stamp" name="enable_stamp"<?php checked( $nginx_helper_settings['enable_stamp'], 1 ); ?> />
+							<input type="checkbox" value="1" id="enable_stamp" name="enable_stamp" <?php checked( $nginx_helper_settings['enable_stamp'], 1 ); ?> />
 							<label for="enable_stamp">
 								<?php esc_html_e( 'Enable Nginx Timestamp in HTML', 'nginx-helper' ); ?>
 							</label>
@@ -441,7 +573,7 @@ if ( is_multisite() ) {
 
 if ( is_network_admin() ) {
 	?>
-		<div class="postbox enable_map"<?php echo ( false === $nginx_helper_settings['enable_map'] ) ? ' style="display: none;"' : ''; ?>>
+		<div class="postbox enable_map"<?php echo ( empty( $nginx_helper_settings['enable_map'] ) ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Nginx Map', 'nginx-helper' ); ?></span>
 			</h3>
@@ -452,10 +584,13 @@ if ( is_network_admin() ) {
 					<span class="error fade" style="display: block">
 						<p>
 							<?php
-							printf(
-								__( 'Can\'t write on map file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper' ),
-								$log_path . 'map.conf'
-							);
+								echo wp_kses(
+									sprintf(
+										'%1$s<br /><br />%2$s<strong>%3$s</strong>',
+										esc_html__( 'Can\'t write on map file.', 'nginx-helper' ), esc_html__( 'Check you have write permission on ', 'nginx-helper' ), esc_url( $log_path . 'map.conf' )
+									),
+									array( 'br' => array(), 'strong' => array(), )
+								);
 							?>
 						</p>
 					</span>
@@ -466,24 +601,36 @@ if ( is_network_admin() ) {
 					<tr>
 						<th>
 						<?php
-							_e( 'Nginx Map path to include in nginx settings<br /><small>(recommended)</small>', 'nginx-helper' );
+						echo wp_kses(
+							sprintf(
+								'%1$s<br /><small>%2$s</small>',
+								esc_html__( 'Nginx Map path to include in nginx settings', 'nginx-helper' ), esc_html__( '(recommended)', 'nginx-helper' )
+							),
+							array( 'br' => array(), 'small' => array(), )
+						);
 						?>
 						</th>
 						<td>
 							<pre>
-							<?php echo $log_path . 'map.conf'; ?>
+							<?php echo esc_url( $log_path . 'map.conf' ); ?>
 							</pre>
 						</td>
 					</tr>
 					<tr>
 						<th>
 							<?php
-							_e( 'Or,<br />Text to manually copy and paste in nginx settings<br /><small>(if your network is small and new sites are not added frequently)</small>', 'nginx-helper' );
+							echo wp_kses(
+								sprintf(
+									'%1$s<br />%2$s<br /><small>%3$s</small>',
+									esc_html__( 'Or,', 'nginx-helper' ), esc_html__( 'Text to manually copy and paste in nginx settings', 'nginx-helper' ), esc_html__( '(if your network is small and new sites are not added frequently)', 'nginx-helper' )
+								),
+								array( 'br' => array(), 'small' => array(), )
+							);
 							?>
 						</th>
 						<td>
 							<pre id="map">
-							<?php echo $nginx_helper_admin->get_map(); ?>
+							<?php echo esc_html( $nginx_helper_admin->get_map() ); ?>
 							</pre>
 						</td>
 					</tr>
@@ -493,7 +640,7 @@ if ( is_network_admin() ) {
 	<?php
 }
 ?>
-	<div class="postbox enable_log"<?php echo ( false === $nginx_helper_settings['enable_log'] ) ? ' style="display: none;"' : ''; ?>>
+	<div class="postbox enable_log"<?php echo ( empty( $nginx_helper_settings['enable_log'] ) ) ? ' style="display: none;"' : ''; ?>>
 		<h3 class="hndle">
 			<span><?php esc_html_e( 'Logging Options', 'nginx-helper' ); ?></span>
 		</h3>
@@ -511,10 +658,13 @@ if ( is_network_admin() ) {
 				<span class="error fade" style="display : block">
 					<p>
 					<?php
-						printf(
-							__( 'Can\'t write on log file.<br /><br />Check you have write permission on <strong>%s</strong>', 'nginx-helper' ),
-							$log_path . 'nginx.log'
-						);
+					echo wp_kses(
+						sprintf(
+							'%1$s<br /><br />%2$s<strong>%3$s</strong>',
+							esc_html__( 'Can\'t write on log file.', 'nginx-helper' ), esc_html__( 'Check you have write permission on ', 'nginx-helper' ), esc_url( $log_path . 'nginx.log' )
+						),
+						array( 'br' => array(), 'strong' => array(), )
+					);
 					?>
 					</p>
 				</span>
@@ -532,7 +682,7 @@ if ( is_network_admin() ) {
 						</th>
 						<td>
 							<code>
-								<?php echo $log_path . 'nginx.log'; ?>
+								<?php echo esc_url( $log_path . 'nginx.log' ); ?>
 							</code>
 						</td>
 					</tr>
@@ -543,7 +693,7 @@ if ( is_network_admin() ) {
 							</label>
 						</th>
 						<td>
-							<a target="_blank" href="<?php echo $log_url . 'nginx.log'; ?>">
+							<a target="_blank" href="<?php echo esc_url( $log_url . 'nginx.log' ); ?>">
 								<?php esc_html_e( 'Log', 'nginx-helper' ); ?>
 							</a>
 						</td>
@@ -576,7 +726,7 @@ if ( is_network_admin() ) {
 							if ( $error_log_filesize ) {
 								?>
 								<p class="error fade" style="display: block;">
-								<?php echo $error_log_filesize; ?>
+								<?php echo esc_html( $error_log_filesize ); ?>
 								</p>
 								<?php
 							}
