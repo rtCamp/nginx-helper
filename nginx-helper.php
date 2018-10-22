@@ -32,15 +32,22 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Base URL of plugin
  */
-if( !defined( 'NGINX_HELPER_BASEURL' ) ) {
-    define( 'NGINX_HELPER_BASEURL', plugin_dir_url( __FILE__ ) );
+if ( ! defined( 'NGINX_HELPER_BASEURL' ) ) {
+	define( 'NGINX_HELPER_BASEURL', plugin_dir_url( __FILE__ ) );
 }
 
 /**
  * Base Name of plugin
  */
-if( !defined( 'NGINX_HELPER_BASENAME' ) ) {
-    define( 'NGINX_HELPER_BASENAME', plugin_basename( __FILE__ ) );
+if ( ! defined( 'NGINX_HELPER_BASENAME' ) ) {
+	define( 'NGINX_HELPER_BASENAME', plugin_basename( __FILE__ ) );
+}
+
+/**
+ * Base PATH of plugin
+ */
+if ( ! defined( 'NGINX_HELPER_BASEPATH' ) ) {
+	define( 'NGINX_HELPER_BASEPATH', plugin_dir_path( __FILE__ ) );
 }
 
 /**
@@ -48,7 +55,7 @@ if( !defined( 'NGINX_HELPER_BASENAME' ) ) {
  * This action is documented in includes/class-nginx-helper-activator.php
  */
 function activate_nginx_helper() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-nginx-helper-activator.php';
+	require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
 	Nginx_Helper_Activator::activate();
 }
 
@@ -57,7 +64,7 @@ function activate_nginx_helper() {
  * This action is documented in includes/class-nginx-helper-deactivator.php
  */
 function deactivate_nginx_helper() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-nginx-helper-deactivator.php';
+	require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-deactivator.php';
 	Nginx_Helper_Deactivator::deactivate();
 }
 
@@ -68,7 +75,7 @@ register_deactivation_hook( __FILE__, 'deactivate_nginx_helper' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-nginx-helper.php';
+require NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper.php';
 
 /**
  * Begins execution of the plugin.
@@ -89,7 +96,7 @@ function run_nginx_helper() {
 	// Load WP-CLI command.
 	if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
-		require_once plugin_dir_path( __FILE__ ) . 'wp-cli.php';
+		require_once NGINX_HELPER_BASEPATH . 'wp-cli.php';
 		\WP_CLI::add_command( 'nginx-helper', 'Nginx_Helper_WP_CLI_Command' );
 
 	}

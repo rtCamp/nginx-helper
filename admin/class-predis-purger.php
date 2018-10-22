@@ -33,7 +33,7 @@ class Predis_Purger extends Purger {
 		global $nginx_helper_admin;
 
 		if ( ! class_exists( 'Predis\Autoloader' ) ) {
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'predis.php';
+			require_once NGINX_HELPER_BASEPATH . 'admin/predis.php';
 		}
 
 		Predis\Autoloader::register();
