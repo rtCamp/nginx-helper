@@ -280,13 +280,22 @@ class Nginx_Helper_Admin {
 			$this->nginx_helper_default_settings()
 		);
 
-		$data['redis_hostname'] = defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $data['redis_hostname'];
-		$data['redis_port']     = defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ? RT_WP_NGINX_HELPER_REDIS_PORT : $data['redis_port'];
-		$data['redis_prefix']   = defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' ) ? RT_WP_NGINX_HELPER_REDIS_PREFIX : $data['redis_prefix'];
+		$is_redis_enabled = (
+			defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) &&
+			defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) &&
+			defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
+		);
 
-		$data['redis_hostname_readonly'] = defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ? true : false;
-		$data['redis_port_readonly']     = defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ? true : false;
-		$data['redis_prefix_readonly']   = defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' ) ? true : false;
+		if ( ! $is_redis_enabled ) {
+			return $data;
+		}
+
+		$data['redis_enabled_by_constant'] = $is_redis_enabled;
+		$data['enable_purge']              = $is_redis_enabled;
+		$data['cache_method']              = 'enable_redis';
+		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
+		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
+		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 
 		return $data;
 

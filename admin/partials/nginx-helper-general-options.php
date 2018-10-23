@@ -216,12 +216,12 @@ if ( is_multisite() ) {
 						<tr>
 							<th><label for="redis_hostname"><?php esc_html_e( 'Hostname', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" <?php echo ( $nginx_helper_settings['redis_hostname_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
-								if ( $nginx_helper_settings['redis_hostname_readonly'] ) {
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
 
 									echo '<p class="description">';
-									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
 
 								}
@@ -231,12 +231,12 @@ if ( is_multisite() ) {
 						<tr>
 							<th><label for="redis_port"><?php esc_html_e( 'Port', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" <?php echo ( $nginx_helper_settings['redis_port_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
-								if ( $nginx_helper_settings['redis_port_readonly'] ) {
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
 
 									echo '<p class="description">';
-									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
 
 								}
@@ -246,12 +246,12 @@ if ( is_multisite() ) {
 						<tr>
 							<th><label for="redis_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['redis_prefix_readonly'] ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
-								if ( $nginx_helper_settings['redis_prefix_readonly'] ) {
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
 
 									echo '<p class="description">';
-									esc_html_e( 'Overridden by global define', 'nginx-helper' );
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
 
 								}
