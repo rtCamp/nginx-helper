@@ -486,31 +486,24 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
-		$maxSizeAllowed = ( is_numeric( $nginx_helper_admin->options['log_filesize'] ) ) ? $nginx_helper_admin->options['log_filesize'] * 1048576 : 5242880;
+		$nginx_asset_path = $nginx_helper_admin->functional_asset_path() . 'nginx.log';
 
-		$fileSize = filesize( $nginx_helper_admin->functional_asset_path() . 'nginx.log' );
+		$max_size_allowed = ( is_numeric( $nginx_helper_admin->options['log_filesize'] ) ) ? $nginx_helper_admin->options['log_filesize'] * 1048576 : 5242880;
 
-		if ( $fileSize > $maxSizeAllowed ) {
+		$fileSize = filesize( $nginx_asset_path );
 
-			$offset = $fileSize - $maxSizeAllowed;
+		if ( $fileSize > $max_size_allowed ) {
 
-			if ( $file_content = file_get_contents( $nginx_helper_admin->functional_asset_path() . 'nginx.log', null, null, $offset ) ) {
+			$offset       = $fileSize - $max_size_allowed;
+			$file_content = file_get_contents( $nginx_asset_path, null, null, $offset );
+			$file_content = empty( $file_content ) ? '' : strstr( $file_content, "\n" );
 
-				if ( $file_content = strstr( $file_content, "\n" ) ) {
+			if ( $file_content && $fp = fopen( $nginx_asset_path, 'w+' ) ) {
 
-					if ( $fp = fopen( $nginx_helper_admin->functional_asset_path() . 'nginx.log', 'w+' ) ) {
-
-						fwrite( $fp, $file_content );
-						fclose( $fp );
-
-					}
-
-				}
-
+				fwrite( $fp, $file_content );
+				fclose( $fp );
 			}
-
 		}
-
 	}
 
 	/**
