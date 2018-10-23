@@ -571,7 +571,7 @@ class Nginx_Helper_Admin {
 
 			$nginx_purger->log( 'Set/update future_posts option ( post id = ' . $post->ID . ' and blog id = ' . $blog_id . ' )' );
 			$this->options['future_posts'][ $blog_id ][ $post->ID ] = strtotime( $post->post_date_gmt ) + 60;
-			update_site_option( 'rt_wp_nginx_helper_global_options', $this->options );
+			update_site_option( 'rt_wp_nginx_helper_options', $this->options );
 
 		}
 
@@ -589,28 +589,25 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
-		if ( ! $this->options['enable_purge'] ) {
+		if (
+			! $this->options['enable_purge'] ||
+			empty( $this->options['future_posts'] ) ||
+			empty( $this->options['future_posts'][ $blog_id ] ) ||
+			empty( isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) ) ||
+			wp_is_post_revision( $post_id )
+		) {
 			return;
 		}
 
-		if ( $post_id && ! wp_is_post_revision( $post_id ) ) {
+		$nginx_purger->log( 'Unset future_posts option ( post id = ' . $post_id . ' and blog id = ' . $blog_id . ' )' );
 
-			if ( isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) &&
-					count( $this->options['future_posts'][ $blog_id ][ $post_id ] ) ) {
+		unset( $this->options['future_posts'][ $blog_id ][ $post_id ] );
 
-				$nginx_purger->log( 'Unset future_posts option ( post id = ' . $post_id . ' and blog id = ' . $blog_id . ' )' );
-				unset( $this->options['future_posts'][ $blog_id ][ $post_id ] );
-				update_site_option( 'rt_wp_nginx_helper_global_options', $this->options );
-
-				if ( ! count( $this->options['future_posts'][ $blog_id ] ) ) {
-					unset( $this->options['future_posts'][ $blog_id ] );
-					update_site_option( 'rt_wp_nginx_helper_global_options', $this->options );
-				}
-
-			}
-
+		if ( ! count( $this->options['future_posts'][ $blog_id ] ) ) {
+			unset( $this->options['future_posts'][ $blog_id ] );
 		}
 
+		update_site_option( 'rt_wp_nginx_helper_options', $this->options );
 	}
 
 	/**
