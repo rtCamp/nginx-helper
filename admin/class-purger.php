@@ -213,7 +213,13 @@ abstract class Purger {
 				$this->log( "Purging custom post type '" . $_post_type . "' ( id " . $post_id . ', blog id ' . $blog_id . ' )' );
 			}
 
-			$this->purge_url( get_permalink( $post_id ) );
+ 			$url = get_permalink( $post_id );
+
+			if ( 'trash' === get_post_status( $post_id ) ) {
+				$url = str_replace( '__trashed', '', $url );
+			}
+
+			$this->purge_url( $url );
 
 		}
 
@@ -575,7 +581,7 @@ abstract class Purger {
 			$this->_purge_by_options(
 				$post->ID,
 				$blog_id,
-				false,
+				true,
 				$nginx_helper_admin->options['purge_archive_on_del'],
 				$nginx_helper_admin->options['purge_archive_on_del']
 			);
