@@ -5,8 +5,9 @@
 
 global $myredis, $rt_wp_nginx_helper, $redis_api, $lua, $rt_wp_nginx_purger;
 
-$host = $rt_wp_nginx_helper->options['redis_hostname'];
-$port = $rt_wp_nginx_helper->options['redis_port'];
+$host = defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ? RT_WP_NGINX_HELPER_REDIS_HOSTNAME : $rt_wp_nginx_helper->options['redis_hostname'];
+$port = defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ? RT_WP_NGINX_HELPER_REDIS_PORT : $rt_wp_nginx_helper->options['redis_port'];
+
 $redis_api = '';
 
 if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
@@ -14,9 +15,9 @@ if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
         $myredis = new Redis();
         $myredis->connect( $host, $port, 5 );
         $redis_api = 'php-redis';
-    } catch ( Exception $e ) { 
+    } catch ( Exception $e ) {
         if( isset($rt_wp_nginx_purger) && !empty($rt_wp_nginx_purger) ) {
-            $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); 
+            $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' );
         }
     }
 } else {
@@ -24,7 +25,7 @@ if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
         require_once 'predis.php';
     }
     Predis\Autoloader::register();
-    
+
     //redis server parameter
     $myredis = new Predis\Client( [
         'host' => $host,
@@ -34,9 +35,9 @@ if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis if installed.
     try {
         $myredis->connect();
         $redis_api = 'predis';
-    } catch ( Exception $e ) { 
+    } catch ( Exception $e ) {
         if( isset($rt_wp_nginx_purger) && !empty($rt_wp_nginx_purger) ) {
-            $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' ); 
+            $rt_wp_nginx_purger->log( $e->getMessage(), 'ERROR' );
         }
     }
 }
@@ -57,9 +58,9 @@ LUA;
  */
 
 function delete_multi_keys( $key )
-{   
+{
     global $myredis, $redis_api, $rt_wp_nginx_purger;
-    
+
     try {
         if ( !empty( $myredis ) ) {
             $matching_keys = $myredis->keys( $key );

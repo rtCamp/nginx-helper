@@ -133,9 +133,7 @@ namespace rtCamp\WP\Nginx {
             wp_enqueue_style('rt-nginx-admin-css', plugin_dir_url(__FILE__) . 'assets/style.css');
 
             /* Load Plugin Scripts */
-            $admin_js = trailingslashit( site_url() ) . '?get_feeds=1';
             wp_enqueue_script( 'nginx-js', plugin_dir_url( __FILE__ ) . 'assets/nginx.js', '', '', true );
-            wp_localize_script( 'nginx-js', 'news_url', $admin_js );
         }
     }
 }

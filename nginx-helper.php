@@ -3,12 +3,12 @@
  * Plugin Name: Nginx Helper
  * Plugin URI: https://rtcamp.com/nginx-helper/
  * Description: Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
- * Version: 1.9.11
+ * Version: 1.9.12
  * Author: rtCamp
  * Author URI: https://rtcamp.com
  * Text Domain: nginx-helper
  * Requires at least: 3.0
- * Tested up to: 4.9.5
+ * Tested up to: 4.9.8
  *
  * @package nginx-helper
  */
@@ -401,44 +401,58 @@ namespace {
 		add_filter( "plugin_action_links_" . plugin_basename( __FILE__ ), 'nginx_settings_link' );
 	}
 
-	function get_feeds( $feed_url = 'http://rtcamp.com/blog/feed/' )
-	{
-		// Get RSS Feed(s)
-		require_once( ABSPATH . WPINC . '/feed.php' );
+	/**
+	 * Get latest news
+	 *
+	 * @return void
+	 */
+	function rt_nginx_get_news() {
+
+		$is_rt_news_request = sanitize_text_field( filter_input( INPUT_GET, 'action' ) );
+
+		if ( empty( $is_rt_news_request ) || 'rt_nginx_get_news' !== $is_rt_news_request ) {
+			return;
+		}
+
+		require_once ABSPATH . WPINC . '/feed.php';
+
 		$maxitems = 0;
+
 		// Get a SimplePie feed object from the specified feed source.
-		$rss = fetch_feed( $feed_url );
-		if ( !is_wp_error( $rss ) ) { // Checks that the object is created correctly
+		$rss = fetch_feed( 'https://rtcamp.com/blog/feed/' );
+
+		// Checks that the object is created correctly.
+		if ( ! is_wp_error( $rss ) ) {
+
 			// Figure out how many total items there are, but limit it to 5.
 			$maxitems = $rss->get_item_quantity( 5 );
 
 			// Build an array of all the items, starting with element 0 (first element).
 			$rss_items = $rss->get_items( 0, $maxitems );
 		}
-		?>
-		<ul role="list"><?php
-			if ( $maxitems == 0 ) {
-				echo '<li role="listitem">' . __( 'No items', 'nginx-helper' ) . '.</li>';
+	?>
+		<ul role="list">
+			<?php
+			if ( 0 === $maxitems ) {
+				echo '<li role="listitem">' . esc_html__( 'No items', 'nginx-helper' ) . '.</li>';
 			} else {
 				// Loop through each feed item and display each item as a hyperlink.
 				foreach ( $rss_items as $item ) {
-					?>
+			?>
 					<li role="listitem">
-						<a href='<?php echo $item->get_permalink(); ?>' title='<?php echo __( 'Posted ', 'nginx-helper' ) . $item->get_date( 'j F Y | g:i a' ); ?>'><?php echo $item->get_title(); ?></a>
-					</li><?php
+						<a href='<?php echo esc_url( $item->get_permalink() ); ?>' title='<?php echo esc_attr__( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ); ?>'>
+							<?php echo esc_html( $item->get_title() ); ?>
+						</a>
+					</li>
+			<?php
 				}
 			}
 			?>
-		</ul><?php
+		</ul>
+	<?php
+		die();
 	}
 
-	function fetch_feeds()
-	{
-		if ( isset( $_GET['get_feeds'] ) && $_GET['get_feeds'] == '1' ) {
-			get_feeds();
-			die();
-		}
-	}
+	add_action( 'wp_ajax_rt_nginx_get_news', 'rt_nginx_get_news' );
 
-	add_action( 'init', 'fetch_feeds' );
 }
