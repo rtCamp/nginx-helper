@@ -51,7 +51,7 @@ namespace rtCamp\WP\Nginx {
 				case 'spam':
 				case 'unapproved':
 				case 'trash':
-					if ( $oldstatus == 'approve' ) {
+					if ( $oldstatus == 'approved' ) {
 						if ( $rt_wp_nginx_helper->options[ 'purge_page_on_deleted_comment' ] == 1 ) {
 							$this->log( "* Comment ($_comment_id) removed as ($newstatus). Post ($_post_id) purging..." );
 							$this->log( "* * * * *" );
