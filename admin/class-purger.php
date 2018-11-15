@@ -108,7 +108,7 @@ abstract class Purger {
 			case 'spam':
 			case 'unapproved':
 			case 'trash':
-				if ( 'approve' === $oldstatus && 1 === (int)$nginx_helper_admin->options['purge_page_on_deleted_comment'] ) {
+				if ( 'approved' === $oldstatus && 1 === (int)$nginx_helper_admin->options['purge_page_on_deleted_comment'] ) {
 
 					$this->log( '* Comment ( ' . $_comment_id . ' ) removed as ( ' . $newstatus . ' ). Post ( ' . $_post_id . ' ) purging...' );
 					$this->log( '* * * * *' );
