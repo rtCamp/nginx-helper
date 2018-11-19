@@ -1,9 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: udit
- * Date: 19/3/15
- * Time: 2:06 PM
+ * Contains class for WP-CLI command.
+ *
+ * @since      2.0.0
+ * @package    nginx-helper
  */
 
 /**
@@ -15,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'Nginx_Helper_WP_CLI_Command' ) ) {
 
+	/**
+	 * Class Nginx_Helper_WP_CLI_Command
+	 */
 	class Nginx_Helper_WP_CLI_Command extends WP_CLI_Command {
 
 		/**
@@ -24,12 +27,19 @@ if ( ! class_exists( 'Nginx_Helper_WP_CLI_Command' ) ) {
 		 * wp nginx-helper purge-all
 		 *
 		 * @subcommand purge-all
+		 *
+		 * @param array $args Arguments.
+		 * @param array $assoc_args Arguments in associative array.
 		 */
 		public function purge_all( $args, $assoc_args ) {
-			global $rt_wp_nginx_purger;
-			$rt_wp_nginx_purger->true_purge_all();
-			$message = __( 'Purged Everything!' );
+
+			global $nginx_purger;
+
+			$nginx_purger->purge_all();
+
+			$message = __( 'Purged Everything!', 'nginx-helper' );
 			WP_CLI::success( $message );
+
 		}
 
 	}
