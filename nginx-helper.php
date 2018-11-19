@@ -1,17 +1,5 @@
 <?php
 /**
- * The plugin bootstrap file
- *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
- *
- * @link              https://rtcamp.com/nginx-helper/
- * @since             2.0.0
- * @package           nginx-helper
- *
- * @wordpress-plugin
  * Plugin Name:       Nginx Helper
  * Plugin URI:        https://rtcamp.com/nginx-helper/
  * Description:       Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does few more things.
@@ -22,6 +10,10 @@
  * Domain Path:       /languages
  * Requires at least: 3.0
  * Tested up to: 4.9.8
+ *
+ * @link              https://rtcamp.com/nginx-helper/
+ * @since             2.0.0
+ * @package           nginx-helper
  */
 
 // If this file is called directly, abort.
