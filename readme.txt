@@ -6,7 +6,7 @@ License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
 Tested up to: 4.9.8
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -126,6 +126,9 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 2. Remaining settings
 
 == Changelog ==
+
+= 2.0.1 =
+* Fix php error with arbitrary statement in empty - Prior to PHP 5.5
 
 = 2.0.0 =
 * Fix typo causing failure to purge on trashed comment. [#159](https://github.com/rtCamp/nginx-helper/pull/159) - by [jinschoi](https://github.com/jinschoi)

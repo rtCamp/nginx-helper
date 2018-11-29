@@ -77,7 +77,7 @@ class Nginx_Helper {
 	public function __construct() {
 
 		$this->plugin_name = 'nginx-helper';
-		$this->version     = '2.0.0';
+		$this->version     = '2.0.1';
 		$this->minimum_WP  = '3.0';
 
 		if ( ! $this->required_wp_version() ) {
@@ -299,7 +299,7 @@ class Nginx_Helper {
 	 * Dispay plugin notices.
 	 */
 	public function display_notices() {
-		?>    
+		?>
 	<div id="message" class="error">
 		<p>
 			<strong>

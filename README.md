@@ -7,7 +7,7 @@
 
 **Tested up to:** 4.9.8
 
-**Stable tag:** 2.0.0
+**Stable tag:** 2.0.1
 
 **License:** GPLv2 or later (of-course)
 
@@ -139,6 +139,9 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 
 
 ## Changelog ##
+
+### 2.0.1 ###
+* Fix php error with arbitrary statement in empty - Prior to PHP 5.5
 
 ### 2.0.0 ###
 * Fix typo causing failure to purge on trashed comment. [#159](https://github.com/rtCamp/nginx-helper/pull/159) - by [jinschoi](https://github.com/jinschoi)
