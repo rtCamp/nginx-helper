@@ -1,5 +1,5 @@
 === Nginx Helper ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel
 Donate Link: http://rtcamp.com/donate/
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 License: GPLv2 or later (of-course)
@@ -128,7 +128,8 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 == Changelog ==
 
 = 2.0.1 =
-* Fix php error with arbitrary statement in empty - Prior to PHP 5.5
+* Fix settings url for multisite: use network_admin_url to get network correct settings url. [#163](https://github.com/rtCamp/nginx-helper/pull/163) - by [Joel-James](https://github.com/Joel-James)
+* Fix php error with arbitrary statement in empty - Prior to PHP 5.5. [#165](https://github.com/rtCamp/nginx-helper/pull/165) - by [PatelUtkarsh](https://github.com/PatelUtkarsh)
 
 = 2.0.0 =
 * Fix typo causing failure to purge on trashed comment. [#159](https://github.com/rtCamp/nginx-helper/pull/159) - by [jinschoi](https://github.com/jinschoi)
