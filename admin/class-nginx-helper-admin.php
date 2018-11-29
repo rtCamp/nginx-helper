@@ -316,7 +316,7 @@ class Nginx_Helper_Admin {
 			$setting_page = 'options-general.php';
 		}
 
-		$settings_link = '<a href="' . admin_url( $setting_page . '?page=nginx' ) . '">' . __( 'Settings', 'nginx-helper' ) . '</a>';
+		$settings_link = '<a href="' . network_admin_url( $setting_page . '?page=nginx' ) . '">' . __( 'Settings', 'nginx-helper' ) . '</a>';
 		array_unshift( $links, $settings_link );
 
 		return $links;
