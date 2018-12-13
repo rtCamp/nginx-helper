@@ -262,6 +262,7 @@ class Nginx_Helper_Admin {
 			'redis_port'                       => '6379',
 			'redis_prefix'                     => 'nginx-cache:',
 			'purge_url'                        => '',
+			'redis_enabled_by_constant'        => 0,
 		);
 
 	}
