@@ -611,9 +611,7 @@ if ( is_network_admin() ) {
 						?>
 						</th>
 						<td>
-							<pre>
-							<?php echo esc_url( $log_path . 'map.conf' ); ?>
-							</pre>
+							<pre><?php echo esc_url( $log_path . 'map.conf' ); ?></pre>
 						</td>
 					</tr>
 					<tr>
