@@ -655,7 +655,7 @@ class Nginx_Helper_Admin {
 	 */
 	public function purge_all() {
 
-		global $nginx_purger;
+		global $nginx_purger, $wp;
 
 		$method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
 
@@ -682,13 +682,26 @@ class Nginx_Helper_Admin {
 		}
 
 		check_admin_referer( 'nginx_helper-purge_all' );
+
+		$current_url = esc_url_raw( user_trailingslashit( home_url( $wp->request ) ) );
+
+		if ( ! is_admin() ) {
+			$action       = 'purge_single_page';
+			$redirect_url = $current_url;
+		} else {
+			$redirect_url = add_query_arg( array( 'nginx_helper_action' => 'done' ) );
+		}
+
 		switch ( $action ) {
 			case 'purge':
 				$nginx_purger->purge_all();
 				break;
+			case 'purge_single_page':
+				$nginx_purger->purge_url( $current_url );
+				break;
 		}
 
-		wp_redirect( esc_url_raw( add_query_arg( array( 'nginx_helper_action' => 'done' ) ) ) );
+		wp_redirect( esc_url_raw( $redirect_url ) );
 		exit();
 
 	}
