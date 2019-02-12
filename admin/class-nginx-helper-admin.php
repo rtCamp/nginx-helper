@@ -201,10 +201,18 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
+		if ( is_admin() ) {
+			$nginx_helper_urls = 'all';
+			$link_title        = __( 'Purge Cache', 'nginx-helper' );
+		} else {
+			$nginx_helper_urls = 'current-url';
+			$link_title        = __( 'Purge Current Page', 'nginx-helper' );
+		}
+
 		$purge_url  = add_query_arg(
 			array(
 				'nginx_helper_action' => 'purge',
-				'nginx_helper_urls'   => 'all',
+				'nginx_helper_urls'   => $nginx_helper_urls,
 			)
 		);
 
@@ -213,9 +221,9 @@ class Nginx_Helper_Admin {
 		$wp_admin_bar->add_menu(
 			array(
 				'id'    => 'nginx-helper-purge-all',
-				'title' => __( 'Purge Cache', 'nginx-helper' ),
+				'title' => $link_title,
 				'href'  => $nonced_url,
-				'meta'  => array( 'title' => __( 'Purge Cache', 'nginx-helper' ) ),
+				'meta'  => array( 'title' => array( 'title' => $link_title ) ),
 			)
 		);
 
