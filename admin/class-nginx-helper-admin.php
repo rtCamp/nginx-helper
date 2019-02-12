@@ -650,6 +650,8 @@ class Nginx_Helper_Admin {
 
 	/**
 	 * Purge all urls.
+	 * Purge current page cache when purging is requested from front
+	 * and all urls when requested from admin dashboard.
 	 *
 	 * @global object $nginx_purger
 	 */
