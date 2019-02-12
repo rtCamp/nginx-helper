@@ -688,7 +688,7 @@ class Nginx_Helper_Admin {
 		$current_url = esc_url_raw( user_trailingslashit( home_url( $wp->request ) ) );
 
 		if ( ! is_admin() ) {
-			$action       = 'purge_single_page';
+			$action       = 'purge_current_page';
 			$redirect_url = $current_url;
 		} else {
 			$redirect_url = add_query_arg( array( 'nginx_helper_action' => 'done' ) );
@@ -698,7 +698,7 @@ class Nginx_Helper_Admin {
 			case 'purge':
 				$nginx_purger->purge_all();
 				break;
-			case 'purge_single_page':
+			case 'purge_current_page':
 				$nginx_purger->purge_url( $current_url );
 				break;
 		}
