@@ -161,7 +161,22 @@ class FastCGI_Purger extends Purger {
 	 */
 	public function purge_all() {
 
-		$this->unlink_recursive( RT_WP_NGINX_HELPER_CACHE_PATH, false );
+		$parse = wp_parse_url( site_url() );
+
+		$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . '/purge/';
+		$_url_purge      = $_url_purge_base;
+
+		$this->do_remote_get( $_url_purge );
+
+		if ( $feed ) {
+
+			$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
+			$this->do_remote_get( $feed_url );
+			$this->do_remote_get( $feed_url . 'atom/' );
+			$this->do_remote_get( $feed_url . 'rdf/' );
+
+		}
+
 		$this->log( '* * * * *' );
 		$this->log( '* Purged Everything!' );
 		$this->log( '* * * * *' );
