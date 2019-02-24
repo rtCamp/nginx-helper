@@ -96,7 +96,7 @@ abstract class Purger {
 		switch ( $newstatus ) {
 
 			case 'approved':
-				if ( 1 === $nginx_helper_admin->options['purge_page_on_new_comment'] ) {
+				if ( 1 === (int)$nginx_helper_admin->options['purge_page_on_new_comment'] ) {
 
 					$this->log( '* Comment ( ' . $_comment_id . ' ) approved. Post ( ' . $_post_id . ' ) purging...' );
 					$this->log( '* * * * *' );
