@@ -223,7 +223,7 @@ class Nginx_Helper_Admin {
 				'id'    => 'nginx-helper-purge-all',
 				'title' => $link_title,
 				'href'  => $nonced_url,
-				'meta'  => array( 'title' => array( 'title' => $link_title ) ),
+				'meta'  => array( 'title' => $link_title ),
 			)
 		);
 
@@ -685,7 +685,7 @@ class Nginx_Helper_Admin {
 
 		check_admin_referer( 'nginx_helper-purge_all' );
 
-		$current_url = esc_url_raw( user_trailingslashit( home_url( $wp->request ) ) );
+		$current_url = user_trailingslashit( home_url( $wp->request ) );
 
 		if ( ! is_admin() ) {
 			$action       = 'purge_current_page';
