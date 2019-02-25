@@ -213,7 +213,29 @@ abstract class Purger {
 				$this->log( "Purging custom post type '" . $_post_type . "' ( id " . $post_id . ', blog id ' . $blog_id . ' )' );
 			}
 
- 			$url = get_permalink( $post_id );
+			$post_status = get_post_status( $post_id );
+
+			if ( 'publish' !== $post_status ) {
+
+				if ( ! function_exists( 'get_sample_permalink' ) ) {
+					require_once ABSPATH . '/wp-admin/includes/post.php';
+				}
+
+				$url = get_sample_permalink( $post_id );
+
+				if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
+					$url = str_replace( '%postname%', $url[1], $url[0] );
+				} else {
+					$url = '';
+				}
+
+			} else {
+				$url = get_permalink( $post_id );
+			}
+
+			if ( empty( $url ) && ! is_array( $url ) ) {
+				return;
+			}
 
 			if ( 'trash' === get_post_status( $post_id ) ) {
 				$url = str_replace( '__trashed', '', $url );
