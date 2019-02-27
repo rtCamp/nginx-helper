@@ -289,22 +289,19 @@ class Nginx_Helper_Admin {
 			$this->nginx_helper_default_settings()
 		);
 
-		$is_redis_enabled = (
+		$data['redis_enabled_by_constant'] = (
 			defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) &&
 			defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) &&
 			defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
 		);
 
-		if ( ! $is_redis_enabled ) {
-			return $data;
+		if ( $data['redis_enabled_by_constant'] ) {
+			$data['enable_purge']              = 1;
+			$data['cache_method']              = 'enable_redis';
+			$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
+			$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
+			$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		}
-
-		$data['redis_enabled_by_constant'] = $is_redis_enabled;
-		$data['enable_purge']              = $is_redis_enabled;
-		$data['cache_method']              = 'enable_redis';
-		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
-		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 
 		return $data;
 
