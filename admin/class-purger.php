@@ -483,6 +483,15 @@ abstract class Purger {
 
 			}
 
+			/**
+			 * Fire an action after remote purge request.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param string $url      URL to be purged.
+			 * @param array  $response Array of results including HTTP headers.
+			 */
+			do_action( 'rt_nginx_helper_after_remote_purge_url', $url, $response );
 		}
 
 	}
