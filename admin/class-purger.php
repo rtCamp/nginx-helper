@@ -417,6 +417,16 @@ abstract class Purger {
 		// Delete the cached file.
 		if ( unlink( $cached_file ) ) {
 			$this->log( '- - ' . $url . ' *** PURGED ***' );
+
+			/**
+			 * Fire an action after deleting file from cache.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param string $url         URL to be purged.
+			 * @param string $cached_file Cached file name.
+			 */
+			do_action( 'rt_nginx_helper_purged_file', $url, $cached_file );
 		} else {
 			$this->log( '- - An error occurred deleting the cache file. Check the server logs for a PHP warning.', 'ERROR' );
 		}
