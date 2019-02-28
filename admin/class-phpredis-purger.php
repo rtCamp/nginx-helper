@@ -147,24 +147,22 @@ class PhpRedis_Purger extends Purger {
 
 				if ( strpos( $purge_url, '*' ) === false ) {
 
-					$purge_url = $_url_purge_base . $purge_url;
-					$status    = $this->delete_single_key( $purge_url );
+					$status    = $this->delete_single_key( $_url_purge_base . $purge_url );
 
 					if ( $status ) {
-						$this->log( '- Purge URL | ' . $purge_url );
+						$this->log( '- Purge URL | ' . $parse['scheme'] . '://' . $parse['host'] . $purge_url );
 					} else {
-						$this->log( '- Cache Not Found | ' . $purge_url, 'ERROR' );
+						$this->log( '- Cache Not Found | ' . $parse['scheme'] . '://' . $parse['host'] . $purge_url, 'ERROR' );
 					}
 
 				} else {
 
-					$purge_url = $_url_purge_base . $purge_url;
-					$status    = $this->delete_keys_by_wildcard( $purge_url );
+					$status    = $this->delete_keys_by_wildcard( $_url_purge_base . $purge_url );
 
 					if ( $status ) {
-						$this->log( '- Purge Wild Card URL | ' . $purge_url . ' | ' . $status . ' url purged' );
+						$this->log( '- Purge Wild Card URL | ' . $parse['scheme'] . '://' . $parse['host'] . $purge_url . ' | ' . $status . ' url purged' );
 					} else {
-						$this->log( '- Cache Not Found | ' . $purge_url, 'ERROR' );
+						$this->log( '- Cache Not Found | ' . $parse['scheme'] . '://' . $parse['host'] . $purge_url, 'ERROR' );
 					}
 
 				}
