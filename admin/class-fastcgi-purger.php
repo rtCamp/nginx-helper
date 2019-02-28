@@ -166,6 +166,12 @@ class FastCGI_Purger extends Purger {
 		$this->log( '* Purged Everything!' );
 		$this->log( '* * * * *' );
 
+		/**
+		 * Fire an action after the FastCGI cache has been purged.
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'rt_nginx_helper_after_fastcgi_purge_all' );
 	}
 
 }
