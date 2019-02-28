@@ -563,7 +563,7 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
-		if ( ! $this->options['enable_purge'] ) {
+		if ( ! $this->options['enable_purge'] || $old_status === $new_status ) {
 			return;
 		}
 
