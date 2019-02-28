@@ -82,6 +82,12 @@ class Predis_Purger extends Purger {
 
 		$this->log( '* * * * *' );
 
+		/**
+		 * Fire an action after the Redis cache has been purged.
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'rt_nginx_helper_after_redis_purge_all' );
 	}
 
 	/**
