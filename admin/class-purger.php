@@ -448,6 +448,15 @@ abstract class Purger {
 		 */
 		$url = apply_filters( 'rt_nginx_helper_remote_purge_url', $url );
 
+		/**
+		 * Fire an action before purging URL.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		do_action( 'rt_nginx_helper_before_remote_purge_url', $url );
+
 		$response = wp_remote_get( $url );
 
 		if ( is_wp_error( $response ) ) {
