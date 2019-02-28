@@ -397,6 +397,15 @@ abstract class Purger {
 		// Set path to cached file.
 		$cached_file = $cache_path . substr( $hash, -1 ) . '/' . substr( $hash, -3, 2 ) . '/' . $hash;
 
+		/**
+		 * Filters the cached file name.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $cached_file Cached file name.
+		 */
+		$cached_file = apply_filters( 'rt_nginx_helper_purge_cached_file', $cached_file );
+
 		// Verify cached file exists.
 		if ( ! file_exists( $cached_file ) ) {
 
