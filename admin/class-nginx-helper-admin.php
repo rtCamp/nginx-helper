@@ -197,7 +197,7 @@ class Nginx_Helper_Admin {
 	 */
 	public function nginx_helper_toolbar_purge_link( $wp_admin_bar ) {
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
