@@ -420,6 +420,14 @@ abstract class Purger {
 	 * @param string $url URL to do remote request.
 	 */
 	protected function do_remote_get( $url ) {
+		/**
+		 * Filters the URL to be purged.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		$url = apply_filters( 'rt_nginx_helper_remote_purge_url', $url );
 
 		$response = wp_remote_get( $url );
 

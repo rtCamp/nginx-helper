@@ -103,6 +103,15 @@ class PhpRedis_Purger extends Purger {
 
 		global $nginx_helper_admin;
 
+		/**
+		 * Filters the URL to be purged.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		$url = apply_filters( 'rt_nginx_helper_purge_url', $url );
+
 		$parse = wp_parse_url( $url );
 
 		if ( ! isset( $parse['path'] ) ) {
