@@ -725,6 +725,33 @@ if ( is_multisite() ) {
 			<span><?php esc_html_e( 'Logging Options', 'nginx-helper' ); ?></span>
 		</h3>
 		<div class="inside">
+			<?php
+			if ( ! is_dir( $log_path ) ) {
+				mkdir( $log_path );
+			}
+			if ( is_writable( $log_path ) && ! file_exists( $log_path . 'nginx.log' ) ) {
+				$log = fopen( $log_path . 'nginx.log', 'w' );
+				fclose( $log );
+			}
+			if ( ! is_writable( $log_path . 'nginx.log' ) ) {
+				?>
+				<span class="error fade" style="display : block">
+					<p>
+					<?php
+					echo wp_kses(
+						sprintf(
+							'%1$s<br /><br />%2$s<strong>%3$s</strong>',
+							esc_html__( 'Can\'t write on log file.', 'nginx-helper' ), esc_html__( 'Check you have write permission on ', 'nginx-helper' ), esc_url( $log_path . 'nginx.log' )
+						),
+						array( 'br' => array(), 'strong' => array(), )
+					);
+					?>
+					</p>
+				</span>
+				<?php
+			}
+			?>
+
 			<table class="form-table rtnginx-table">
 				<tbody>
 					<tr>
