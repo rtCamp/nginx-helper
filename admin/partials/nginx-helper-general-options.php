@@ -519,7 +519,7 @@ if ( is_multisite() ) {
 							<h4><?php esc_html_e( 'Custom Purge URL:', 'nginx-helper' ); ?></h4>
 						</th>
 						<td>
-							<textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo esc_url( $nginx_helper_admin->options['purge_url'] ); ?></textarea>
+							<textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo esc_textarea( $nginx_helper_admin->options['purge_url'] ); ?></textarea>
 							<p class="description">
 								Add one URL per line. URL should not contain domain name.
 								<br>
