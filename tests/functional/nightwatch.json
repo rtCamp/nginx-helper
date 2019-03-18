@@ -3,19 +3,20 @@
   "custom_commands_path": "./custom-commands",
   "globals_path": "./res/constants.js",
 
+  "selenium": {
+    "start_process": true,
+    "server_path": "./node_modules/selenium-server/lib/runner/selenium-server-standalone-3.141.0.jar",
+    "cli_args" : {
+     "webdriver.chrome.driver" : "./node_modules/chromedriver/lib/chromedriver/chromedriver"
+   }
+ },
 
-  "webdriver": {
-    "start_process" : true,
-    "server_path": "./node_modules/chromedriver/lib/chromedriver/chromedriver",
-    "cli_args": [
-      "--verbose"
-    ],
-    "port": 9515
-  },
 
   "test_settings": {
     "default": {
       "launch_url": "http://localhost",
+      "selenium_port": 4444,
+      "selenium_host": "localhost",
       "silent": true,
       "desiredCapabilities": {
         "browserName": "chrome",
