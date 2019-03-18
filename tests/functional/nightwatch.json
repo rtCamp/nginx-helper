@@ -23,10 +23,8 @@
         "browserName": "chrome",
         "chromeOptions": {
           "args": [
-            "headless",
-            "disable-web-security",
-            "ignore-certificate-errors"
-          ]
+        "disable-gpu", "no-sandbox", "headless", "window-size=1920,1080", "verbose"
+      ]
         },
         "javascriptEnabled": true
       }
