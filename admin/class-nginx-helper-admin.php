@@ -499,7 +499,7 @@ class Nginx_Helper_Admin {
 
 				foreach ( $rt_all_blogs as $blog ) {
 
-					if ( 'yes' === SUBDOMAIN_INSTALL ) {
+					if ( true === SUBDOMAIN_INSTALL ) {
 						$rt_nginx_map_array[ $blog->domain ] = $blog->blog_id;
 					} else {
 
