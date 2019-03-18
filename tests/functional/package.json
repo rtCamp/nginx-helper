@@ -12,11 +12,11 @@
   "description": "",
   "contributors": [],
   "dependencies": {
-    "nightwatch": "~0.4.17"
+    "nightwatch": "^1.0.19"
   },
 
   "devDependencies": {
-    "selenium-server": "2.45.0",
-    "phantomjs": "1.9.17"
+    "selenium-server": "3.141.0",
+    "phantomjs-prebuilt": "2.1.16"
   }
 }
