@@ -14,9 +14,9 @@
   "dependencies": {
     "nightwatch": "^1.0.19"
   },
-
   "devDependencies": {
     "selenium-server": "3.141.0",
-    "phantomjs-prebuilt": "2.1.16"
+    "phantomjs-prebuilt": "2.1.16",
+    "chromedriver": "2.46.0"
   }
 }

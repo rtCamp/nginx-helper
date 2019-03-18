@@ -5,7 +5,10 @@
 
   "selenium": {
     "start_process": true,
-    "server_path": "./node_modules/selenium-server/lib/runner/selenium-server-standalone-2.45.0.jar"
+    "server_path": "./node_modules/selenium-server/lib/runner/selenium-server-standalone-3.141.0.jar",
+    "cli_args" : {
+     "webdriver.chrome.driver" : "./node_modules/chromedriver/lib/chromedriver/chromedriver"
+   }
   },
 
   "test_settings": {
@@ -15,7 +18,14 @@
       "selenium_host": "localhost",
       "silent": true,
       "desiredCapabilities": {
-        "browserName": "phantomjs",
+        "browserName": "chrome",
+        "chromeOptions": {
+          "args": [
+            "headless",
+            "disable-web-security",
+            "ignore-certificate-errors"
+          ]
+        },
         "javascriptEnabled": true
       }
     }

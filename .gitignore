@@ -13,3 +13,6 @@ tests/functional/node_modules/
 selenium-*.jar
 vendor
 .vscode/
+tests/functional/package-lock.json
+tests/functional/selenium-server.log
+tests/functional/tests_output/
