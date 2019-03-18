@@ -16,3 +16,4 @@ vendor
 tests/functional/package-lock.json
 tests/functional/selenium-server.log
 tests/functional/tests_output/
+tests/functional/chromedriver.log
