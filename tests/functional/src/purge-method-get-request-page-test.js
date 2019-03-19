@@ -26,14 +26,14 @@ module.exports = {
     var data = browser.globals;
     browser
       .goToAddNewPage()
-      .clearValue('#title')
-      .clearValue('textarea[id="content"]')
-      .setValue('#title', 'test-page')
-      .setValue('textarea[id="content"]', "test page created for testing")
+      .clearValue('#post-title-0')
+      .clearValue('p.wp-block-paragraph.editor-rich-text__tinymce.mce-content-body')
+      .setValue('#post-title-0', 'test-page')
+      .setValue('p.wp-block-paragraph.editor-rich-text__tinymce.mce-content-body', "test page created for testing")
       .pause(1000)
-      .click('#publish')
+      .click('button.components-button.editor-post-publish-panel__toggle.is-button is-primary')
       .pause(2000)
-      .getText("#editable-post-name", function(result) {
+      .getText("a.components-button.components-notice__action.is-link", function(result) {
         urlp = result.value;
         console.log(data.URLS.LOGIN + urlp);
         browser
