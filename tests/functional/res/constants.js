@@ -1,6 +1,6 @@
 /*
 @author : Prabuddha Chakraborty
-This is a standalone scripts for centralized management of all constants like Admin Username and Password.juhi
+This is a standalone scripts for centralized management of all constants like Admin Username and Password.
 */
 
 module.exports ={
