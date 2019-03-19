@@ -17,6 +17,7 @@ before_script:
 - sudo apt-get -qq autoremove
 - sudo apt-get update
 - lsb_release -a
+- sudo apt-get --only-upgrade install google-chrome-stable
 - sudo bash -c 'echo -e "[user]\n\tname = abc\n\temail = root@localhost.com" > /home/travis/.gitconfig'
 - sudo wget -qO ee rt.cx/ee && sudo bash ee
 - source /etc/bash_completion.d/ee_auto.rc
