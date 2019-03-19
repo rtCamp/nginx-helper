@@ -17,6 +17,7 @@
   "devDependencies": {
     "selenium-server": "3.141.0",
     "phantomjs-prebuilt": "2.1.16",
-    "chromedriver": "2.48.0"
+    "chromedriver": "2.46.0",
+    "geckodriver": "1.16.0"
   }
 }
