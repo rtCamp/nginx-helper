@@ -27,15 +27,15 @@ module.exports = {
     browser
       .goToAddNewPage()
       .clearValue('#post-title-0')
-      .clearValue('p.wp-block-paragraph.editor-rich-text__tinymce.mce-content-body')
+      .clearValue('#mce_1')
       .setValue('#post-title-0', 'test-page')
-      .setValue('p.wp-block-paragraph.editor-rich-text__tinymce.mce-content-body', "test page created for testing")
+      .setValue('#mce_1', "test page created for testing")
       .pause(1000)
-      .click('button.components-button.editor-post-publish-panel__toggle.is-button is-primary')
+      .click('button.components-button.editor-post-publish-panel__toggle.is-button.is-primary')
       .pause(2000)
       .getText("a.components-button.components-notice__action.is-link", function(result) {
         urlp = result.value;
-        console.log(data.URLS.LOGIN + urlp);
+        // console.log(data.URLS.LOGIN + urlp);
         browser
         .wplogout()
         .pause(500)
