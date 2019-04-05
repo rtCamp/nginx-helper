@@ -15,6 +15,6 @@ action "WordPress Plugin Deploy" {
   secrets = ["WORDPRESS_USERNAME", "WORDPRESS_PASSWORD"]
   env = {
     SLUG = "nginx-helper"
-    EXCLUDE_LIST = ".gitattributes .gitignore .travis.yml README.md deploy.sh"
+    EXCLUDE_LIST = ".gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh tests map.conf nginx.log"
   }
 }
