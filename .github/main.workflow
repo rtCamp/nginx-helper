@@ -11,10 +11,10 @@ action "tag" {
 
 action "WordPress Plugin Deploy" {
   needs = ["tag"]
-  uses = "rtcamp/github-actions-library/wp-plugin-deploy@master"
+  uses = "rtCamp/action-wp-org-plugin-deploy@master"
   secrets = ["WORDPRESS_USERNAME", "WORDPRESS_PASSWORD"]
   env = {
     SLUG = "nginx-helper"
-    EXCLUDE_LIST = ".gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh tests map.conf nginx.log"
+    EXCLUDE_LIST = ".gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh tests map.conf nginx.log wercker.yml"
   }
 }
