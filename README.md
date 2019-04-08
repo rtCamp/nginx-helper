@@ -1,5 +1,5 @@
 # Nginx Helper #
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith
 
 **Tags:** nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 
@@ -143,6 +143,7 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 ### 2.0.3 ###
 * Update article link for fastcgi cache purge. [#187](https://github.com/rtCamp/nginx-helper/pull/187) - by [gagan0123](https://github.com/gagan0123)
 * Fix map generation issue on `SUBDOMAIN_INSTALL`. [#189](https://github.com/rtCamp/nginx-helper/pull/189) - by [ChrisHardie](https://github.com/ChrisHardie)
+* Add GitHub Action for plugin release. [#194](https://github.com/rtCamp/nginx-helper/pull/194) - by [sudhir-yadav](https://github.com/sudhir-yadav)
 
 ### 2.0.2 ###
 * Fix undefined error when we install the plugin for the first time and if Redis is not available. [#162](https://github.com/rtCamp/nginx-helper/pull/162) - by [Joel-James](https://github.com/Joel-James)
