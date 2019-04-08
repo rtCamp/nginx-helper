@@ -1,6 +1,6 @@
 workflow "Deploy" {
+  on = "create"
   resolves = ["WordPress Plugin Deploy"]
-  on = "push"
 }
 
 # Filter for tag
@@ -15,6 +15,6 @@ action "WordPress Plugin Deploy" {
   secrets = ["WORDPRESS_USERNAME", "WORDPRESS_PASSWORD"]
   env = {
     SLUG = "nginx-helper"
-    EXCLUDE_LIST = ".gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh tests map.conf nginx.log wercker.yml"
+    EXCLUDE_LIST = ".gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh tests map.conf nginx.log wercker.yml vendor"
   }
 }
