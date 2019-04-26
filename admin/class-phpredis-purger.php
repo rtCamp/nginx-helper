@@ -106,7 +106,7 @@ class PhpRedis_Purger extends Purger {
 		/**
 		 * Filters the URL to be purged.
 		 *
-		 * @since 2.0.4
+		 * @since 2.1.0
 		 *
 		 * @param string $url URL to be purged.
 		 */
@@ -136,7 +136,7 @@ class PhpRedis_Purger extends Purger {
 		 *
 		 * Regardless of what key / suffix is being to store `$device_type` cache , it will be deleted.
 		 *
-		 * @since 2.0.4
+		 * @since 2.1.0
 		 */
 		if ( strpos( $_url_purge_base, '*' ) === false ) {
 
@@ -198,9 +198,9 @@ class PhpRedis_Purger extends Purger {
 					$status    = $this->delete_single_key( $purge_url );
 
 					if ( $status ) {
-						$this->log( '- [phpredis] Purge URL | ' . $purge_url );
+						$this->log( '- Purge URL | ' . $purge_url );
 					} else {
-						$this->log( '- [phpredis] Cache Not Found | ' . $purge_url, 'ERROR' );
+						$this->log( '- Cache Not Found | ' . $purge_url, 'ERROR' );
 					}
 
 				} else {
@@ -209,9 +209,9 @@ class PhpRedis_Purger extends Purger {
 					$status    = $this->delete_keys_by_wildcard( $purge_url );
 
 					if ( $status ) {
-						$this->log( '- [phpredis] Purge Wild Card URL | ' . $purge_url . ' | ' . $status . ' url purged' );
+						$this->log( '- Purge Wild Card URL | ' . $purge_url . ' | ' . $status . ' url purged' );
 					} else {
-						$this->log( '- [phpredis] Cache Not Found | ' . $purge_url, 'ERROR' );
+						$this->log( '- Cache Not Found | ' . $purge_url, 'ERROR' );
 					}
 
 				}

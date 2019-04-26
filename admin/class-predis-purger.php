@@ -135,16 +135,16 @@ class Predis_Purger extends Purger {
 		 *
 		 * Regardless of what key / suffix is being to store `$device_type` cache , it will be deleted.
 		 *
-		 * @since 2.0.4
+		 * @since 2.1.0
 		 */
 		if ( strpos( $_url_purge_base, '*' ) === false ) {
 
 			$status = $this->delete_single_key( $_url_purge_base );
 
 			if ( $status ) {
-				$this->log( '- [predis] Purge URL | ' . $_url_purge_base );
+				$this->log( '- Purge URL | ' . $_url_purge_base );
 			} else {
-				$this->log( '- [predis] Cache Not Found | ' . $_url_purge_base, 'ERROR' );
+				$this->log( '- Cache Not Found | ' . $_url_purge_base, 'ERROR' );
 			}
 
 		} else {
@@ -152,9 +152,9 @@ class Predis_Purger extends Purger {
 			$status = $this->delete_keys_by_wildcard( $_url_purge_base );
 
 			if ( $status ) {
-				$this->log( '- [predis] Purge Wild Card URL | ' . $_url_purge_base . ' | ' . $status . ' url purged' );
+				$this->log( '- Purge Wild Card URL | ' . $_url_purge_base . ' | ' . $status . ' url purged' );
 			} else {
-				$this->log( '- [predis] Cache Not Found | ' . $_url_purge_base, 'ERROR' );
+				$this->log( '- Cache Not Found | ' . $_url_purge_base, 'ERROR' );
 			}
 
 		}
