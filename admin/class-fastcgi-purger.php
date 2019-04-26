@@ -28,6 +28,15 @@ class FastCGI_Purger extends Purger {
 
 		global $nginx_helper_admin;
 
+		/**
+		 * Filters the URL to be purged.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		$url = apply_filters( 'rt_nginx_helper_purge_url', $url );
+
 		$this->log( '- Purging URL | ' . $url );
 
 		$parse = wp_parse_url( $url );
@@ -166,6 +175,12 @@ class FastCGI_Purger extends Purger {
 		$this->log( '* Purged Everything!' );
 		$this->log( '* * * * *' );
 
+		/**
+		 * Fire an action after the FastCGI cache has been purged.
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'rt_nginx_helper_after_fastcgi_purge_all' );
 	}
 
 }

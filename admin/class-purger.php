@@ -397,6 +397,15 @@ abstract class Purger {
 		// Set path to cached file.
 		$cached_file = $cache_path . substr( $hash, -1 ) . '/' . substr( $hash, -3, 2 ) . '/' . $hash;
 
+		/**
+		 * Filters the cached file name.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $cached_file Cached file name.
+		 */
+		$cached_file = apply_filters( 'rt_nginx_helper_purge_cached_file', $cached_file );
+
 		// Verify cached file exists.
 		if ( ! file_exists( $cached_file ) ) {
 
@@ -408,6 +417,16 @@ abstract class Purger {
 		// Delete the cached file.
 		if ( unlink( $cached_file ) ) {
 			$this->log( '- - ' . $url . ' *** PURGED ***' );
+
+			/**
+			 * Fire an action after deleting file from cache.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param string $url         URL to be purged.
+			 * @param string $cached_file Cached file name.
+			 */
+			do_action( 'rt_nginx_helper_purged_file', $url, $cached_file );
 		} else {
 			$this->log( '- - An error occurred deleting the cache file. Check the server logs for a PHP warning.', 'ERROR' );
 		}
@@ -420,6 +439,23 @@ abstract class Purger {
 	 * @param string $url URL to do remote request.
 	 */
 	protected function do_remote_get( $url ) {
+		/**
+		 * Filters the URL to be purged.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		$url = apply_filters( 'rt_nginx_helper_remote_purge_url', $url );
+
+		/**
+		 * Fire an action before purging URL.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		do_action( 'rt_nginx_helper_before_remote_purge_url', $url );
 
 		$response = wp_remote_get( $url );
 
@@ -447,6 +483,15 @@ abstract class Purger {
 
 			}
 
+			/**
+			 * Fire an action after remote purge request.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param string $url      URL to be purged.
+			 * @param array  $response Array of results including HTTP headers.
+			 */
+			do_action( 'rt_nginx_helper_after_remote_purge_url', $url, $response );
 		}
 
 	}

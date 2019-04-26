@@ -85,6 +85,12 @@ class PhpRedis_Purger extends Purger {
 
 		$this->log( '* * * * *' );
 
+		/**
+		 * Fire an action after the Redis cache has been purged.
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'rt_nginx_helper_after_redis_purge_all' );
 	}
 
 	/**
@@ -96,6 +102,15 @@ class PhpRedis_Purger extends Purger {
 	public function purge_url( $url, $feed = true ) {
 
 		global $nginx_helper_admin;
+
+		/**
+		 * Filters the URL to be purged.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		$url = apply_filters( 'rt_nginx_helper_purge_url', $url );
 
 		$parse = wp_parse_url( $url );
 
