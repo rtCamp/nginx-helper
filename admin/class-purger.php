@@ -559,7 +559,15 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
+		if ( ! $nginx_helper_admin->options['enable_log'] ) {
+			return;
+		}
+
 		$nginx_asset_path = $nginx_helper_admin->functional_asset_path() . 'nginx.log';
+
+		if ( ! file_exists($nginx_asset_path) ) {
+			return;
+		}
 
 		$max_size_allowed = ( is_numeric( $nginx_helper_admin->options['log_filesize'] ) ) ? $nginx_helper_admin->options['log_filesize'] * 1048576 : 5242880;
 
