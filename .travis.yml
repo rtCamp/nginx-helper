@@ -24,7 +24,7 @@ before_script:
 - sudo ee -v
 - sudo lsb_release  -a
 - sudo tail /var/log/ee/ee.log
-- sudo ee site create wp.localtest.me --type=wp --admin-user=ADMINUSER --admin-email=juhi.saxena@rtcamp.com --admin-pass=ADMINPASS
+- sudo ee site create wp.localtest.me --wpfc --user=ADMINUSER --email=juhi.saxena@rtcamp.com --pass=ADMINPASS
 - sudo chmod 777 -R /var/www
 - sudo nginx -t
 - sudo service nginx reload
