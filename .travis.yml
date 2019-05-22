@@ -22,6 +22,8 @@ before_script:
 - sudo wget -qO ee rt.cx/ee && sudo bash ee
 - source /etc/bash_completion.d/ee_auto.rc
 - sudo ee -v
+- sudo ee update
+- sudo ee -v
 - sudo lsb_release  -a
 - sudo tail /var/log/ee/ee.log
 - sudo ee site create wp.localtest.me --wpfc --user=ADMINUSER --email=juhi.saxena@rtcamp.com --pass=ADMINPASS
