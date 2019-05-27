@@ -427,10 +427,11 @@ class Nginx_Helper_Admin {
 
 		foreach ( headers_list() as $header ) {
 			list( $key, $value ) = explode( ':', $header, 2 );
-			if ( 'Content-Type' === $key && strpos( trim( $value ), 'text/html' ) !== 0 ) {
+			$key = strtolower( $key );
+			if ( 'content-type' === $key && strpos( trim( $value ), 'text/html' ) !== 0 ) {
 				return;
 			}
-			if ( 'Content-Type' === $key ) {
+			if ( 'content-type' === $key ) {
 				break;
 			}
 		}
