@@ -356,6 +356,15 @@ abstract class Purger {
 				}
 			}
 		}
+
+		$additional_urls = array();
+		$additional_urls = apply_filters( 'rt_nginx_helper_additional_purge_urls', $post_id, $blog_id, $_purge_page, $_purge_archive, $_purge_custom_taxa );
+		if( ! empty( $additional_urls ) ):
+			foreach( $additional_urls as $url ):
+				$this->log( 'Purging additional URLs ' );
+				$this->purge_url( $url );
+			endforeach;
+		endif;
 	}
 
 	/**
