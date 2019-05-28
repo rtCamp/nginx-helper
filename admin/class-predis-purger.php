@@ -119,6 +119,9 @@ class Predis_Purger extends Purger {
 
 		$prefix          = $nginx_helper_admin->options['redis_prefix'];
 		$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
+		if( array_key_exists( 'query', $parse ) ):
+			$_url_purge_base .=  '?' . $parse['query'];
+		endif;
 		$this->delete_single_key( $_url_purge_base );
 
 	}
