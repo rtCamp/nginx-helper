@@ -171,7 +171,7 @@ class Nginx_Helper {
 		$nginx_helper_admin = new Nginx_Helper_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		// Defines global variables.
-		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && $nginx_helper_admin->options['cache_method'] === 'enable_redis' ) {
+		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_redis' === $nginx_helper_admin->options['cache_method'] ) {
 
 			if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis extension if installed.
 
@@ -184,7 +184,6 @@ class Nginx_Helper {
 				$nginx_purger = new Predis_Purger();
 
 			}
-
 		} else {
 
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';
@@ -306,7 +305,8 @@ class Nginx_Helper {
 				<?php
 				printf(
 					/* translators: %s is Minimum WP version. */
-					esc_html__( 'Sorry, Nginx Helper requires WordPress %s or higher', 'nginx-helper' ), esc_html( $this->minimum_WP )
+					esc_html__( 'Sorry, Nginx Helper requires WordPress %s or higher', 'nginx-helper' ),
+					esc_html( $this->minimum_WP )
 				);
 				?>
 			</strong>

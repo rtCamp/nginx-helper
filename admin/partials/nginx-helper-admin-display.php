@@ -25,7 +25,7 @@ global $pagenow;
 			<div id="post-body-content">
 				<?php
 				/* Show settinhs tabs */
-				$current_tab = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
+				$current_tab         = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
 				$current_setting_tab = ( ! empty( $current_tab ) ) ? $current_tab : 'general';
 
 				echo '<h2 class="nav-tab-wrapper">';
@@ -35,9 +35,16 @@ global $pagenow;
 					echo wp_kses(
 						sprintf(
 							'<a class="nav-tab%1$s" href="?page=nginx&tab=%2$s">%3$s</a>',
-							esc_attr( $class ), esc_attr( $setting_name['menu_slug'] ), esc_html( $setting_name['menu_title'] )
+							esc_attr( $class ),
+							esc_attr( $setting_name['menu_slug'] ),
+							esc_html( $setting_name['menu_title'] )
 						),
-						array( 'a' => array( 'href' => array(), 'class' => array(), ) )
+						array(
+							'a' => array(
+								'href'  => array(),
+								'class' => array(),
+							),
+						)
 					);
 				}
 				echo '</h2>';
@@ -45,10 +52,10 @@ global $pagenow;
 				switch ( $current_setting_tab ) {
 
 					case 'general':
-						include plugin_dir_path(__FILE__ ) . 'nginx-helper-general-options.php';
+						include plugin_dir_path( __FILE__ ) . 'nginx-helper-general-options.php';
 						break;
 					case 'support':
-						include plugin_dir_path(__FILE__ ) . 'nginx-helper-support-options.php';
+						include plugin_dir_path( __FILE__ ) . 'nginx-helper-support-options.php';
 						break;
 
 				}
@@ -56,7 +63,7 @@ global $pagenow;
 			</div> <!-- End of #post-body-content -->
 			<div id="postbox-container-1" class="postbox-container">
 				<?php
-					require plugin_dir_path(__FILE__ ) . 'nginx-helper-sidebar-display.php';
+					require plugin_dir_path( __FILE__ ) . 'nginx-helper-sidebar-display.php';
 				?>
 			</div> <!-- End of #postbox-container-1 -->
 		</div> <!-- End of #post-body -->

@@ -88,7 +88,7 @@ function run_nginx_helper() {
 	// Load WP-CLI command.
 	if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
-		require_once NGINX_HELPER_BASEPATH . 'wp-cli.php';
+		require_once NGINX_HELPER_BASEPATH . 'class-nginx-helper-wp-cli-command.php';
 		\WP_CLI::add_command( 'nginx-helper', 'Nginx_Helper_WP_CLI_Command' );
 
 	}

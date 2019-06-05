@@ -51,15 +51,15 @@ abstract class Purger {
 		$oldstatus = '';
 		$approved  = $comment->comment_approved;
 
-		if ( $approved === null ) {
+		if ( null === $approved ) {
 			$newstatus = false;
-		} elseif ( $approved === '1' ) {
+		} elseif ( '1' === $approved ) {
 			$newstatus = 'approved';
-		} elseif ( $approved === '0' ) {
+		} elseif ( '0' === $approved ) {
 			$newstatus = 'unapproved';
-		} elseif ( $approved === 'spam' ) {
+		} elseif ( 'spam' === $approved ) {
 			$newstatus = 'spam';
-		} elseif ( $approved === 'trash' ) {
+		} elseif ( 'trash' === $approved ) {
 			$newstatus = 'trash';
 		} else {
 			$newstatus = false;
@@ -108,7 +108,7 @@ abstract class Purger {
 			case 'spam':
 			case 'unapproved':
 			case 'trash':
-				if ( 'approved' === $oldstatus && 1 === (int)$nginx_helper_admin->options['purge_page_on_deleted_comment'] ) {
+				if ( 'approved' === $oldstatus && 1 === (int) $nginx_helper_admin->options['purge_page_on_deleted_comment'] ) {
 
 					$this->log( '* Comment ( ' . $_comment_id . ' ) removed as ( ' . $newstatus . ' ). Post ( ' . $_post_id . ' ) purging...' );
 					$this->log( '* * * * *' );
@@ -124,9 +124,9 @@ abstract class Purger {
 	/**
 	 * Purge post cache.
 	 *
-	 * @param int $_ID Post id.
+	 * @param int $post_id Post id.
 	 */
-	public function purge_post( $_ID ) {
+	public function purge_post( $post_id ) {
 
 		global $nginx_helper_admin, $blog_id;
 
@@ -139,16 +139,16 @@ abstract class Purger {
 			case 'publish_post':
 				$this->log( '* * * * *' );
 				$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ).' );
-				$this->log( '* Post :: ' . get_the_title( $_ID ) . ' ( ' . $_ID . ' ).' );
-				$this->log( '* Post ( ' . $_ID . ' ) published or edited and its status is published' );
+				$this->log( '* Post :: ' . get_the_title( $post_id ) . ' ( ' . $post_id . ' ).' );
+				$this->log( '* Post ( ' . $post_id . ' ) published or edited and its status is published' );
 				$this->log( '* * * * *' );
 				break;
 
 			case 'publish_page':
 				$this->log( '* * * * *' );
 				$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ).' );
-				$this->log( '* Page :: ' . get_the_title( $_ID ) . ' ( ' . $_ID . ' ).' );
-				$this->log( '* Page ( ' . $_ID . ' ) published or edited and its status is published' );
+				$this->log( '* Page :: ' . get_the_title( $post_id ) . ' ( ' . $post_id . ' ).' );
+				$this->log( '* Page ( ' . $post_id . ' ) published or edited and its status is published' );
 				$this->log( '* * * * *' );
 				break;
 
@@ -157,11 +157,11 @@ abstract class Purger {
 				break;
 
 			default:
-				$_post_type = get_post_type( $_ID );
+				$_post_type = get_post_type( $post_id );
 				$this->log( '* * * * *' );
 				$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ).' );
-				$this->log( "* Custom post type '" . $_post_type . "' :: " . get_the_title( $_ID ) . ' ( ' . $_ID . ' ).' );
-				$this->log( "* CPT '" . $_post_type . "' ( " . $_ID . ' ) published or edited and its status is published' );
+				$this->log( "* Custom post type '" . $_post_type . "' :: " . get_the_title( $post_id ) . ' ( ' . $post_id . ' ).' );
+				$this->log( "* CPT '" . $_post_type . "' ( " . $post_id . ' ) published or edited and its status is published' );
 				$this->log( '* * * * *' );
 				break;
 
@@ -176,13 +176,21 @@ abstract class Purger {
 		if ( 'comment_post' === current_filter() || 'wp_set_comment_status' === current_filter() ) {
 
 			$this->_purge_by_options(
-				$_ID, $blog_id, $nginx_helper_admin->options['purge_page_on_new_comment'], $nginx_helper_admin->options['purge_archive_on_new_comment'], $nginx_helper_admin->options['purge_archive_on_new_comment']
+				$post_id,
+				$blog_id,
+				$nginx_helper_admin->options['purge_page_on_new_comment'],
+				$nginx_helper_admin->options['purge_archive_on_new_comment'],
+				$nginx_helper_admin->options['purge_archive_on_new_comment']
 			);
 
 		} else {
 
 			$this->_purge_by_options(
-				$_ID, $blog_id, $nginx_helper_admin->options['purge_page_on_mod'], $nginx_helper_admin->options['purge_archive_on_edit'], $nginx_helper_admin->options['purge_archive_on_edit']
+				$post_id,
+				$blog_id,
+				$nginx_helper_admin->options['purge_page_on_mod'],
+				$nginx_helper_admin->options['purge_archive_on_edit'],
+				$nginx_helper_admin->options['purge_archive_on_edit']
 			);
 
 		}
@@ -228,7 +236,6 @@ abstract class Purger {
 				} else {
 					$url = '';
 				}
-
 			} else {
 				$url = get_permalink( $post_id );
 			}
@@ -275,11 +282,8 @@ abstract class Purger {
 						if ( $day ) {
 							$this->purge_url( get_day_link( $year, $month, $day ) );
 						}
-
 					}
-
 				}
-
 			}
 
 			$categories = wp_get_post_categories( $post_id );
@@ -294,7 +298,6 @@ abstract class Purger {
 					$this->purge_url( get_category_link( $category_id ) );
 
 				}
-
 			}
 
 			$tags = get_the_tags( $post_id );
@@ -309,7 +312,6 @@ abstract class Purger {
 					$this->purge_url( get_tag_link( $tag->term_id ) );
 
 				}
-
 			}
 
 			$author_id = get_post( $post_id )->post_author;
@@ -320,7 +322,6 @@ abstract class Purger {
 				$this->purge_url( get_author_posts_url( $author_id ) );
 
 			}
-
 		}
 
 		if ( $_purge_custom_taxa ) {
@@ -347,9 +348,7 @@ abstract class Purger {
 							foreach ( $terms as $term ) {
 								$this->purge_url( get_term_link( $term, $taxon ) );
 							}
-
 						}
-
 					} else {
 						$this->log( "Your built-in taxonomy '" . $taxon . "' has param '_builtin' set to false.", 'WARNING' );
 					}
@@ -480,7 +479,6 @@ abstract class Purger {
 						$this->log( '- - ' . $url . ' not found ( ' . $response['response']['code'] . ' )', 'WARNING' );
 
 				}
-
 			}
 
 			/**
@@ -539,13 +537,13 @@ abstract class Purger {
 
 		if ( $log_levels[ $level ] >= $log_levels[ $nginx_helper_admin->options['log_level'] ] ) {
 
-			if ( $fp = fopen( $nginx_helper_admin->functional_asset_path() . 'nginx.log', 'a+' ) ) {
+			$fp = fopen( $nginx_helper_admin->functional_asset_path() . 'nginx.log', 'a+' );
+			if ( $fp ) {
 
 				fwrite( $fp, "\n" . gmdate( 'Y-m-d H:i:s ' ) . ' | ' . $level . ' | ' . $msg );
 				fclose( $fp );
 
 			}
-
 		}
 
 		return true;
@@ -565,21 +563,22 @@ abstract class Purger {
 
 		$nginx_asset_path = $nginx_helper_admin->functional_asset_path() . 'nginx.log';
 
-		if ( ! file_exists($nginx_asset_path) ) {
+		if ( ! file_exists( $nginx_asset_path ) ) {
 			return;
 		}
 
 		$max_size_allowed = ( is_numeric( $nginx_helper_admin->options['log_filesize'] ) ) ? $nginx_helper_admin->options['log_filesize'] * 1048576 : 5242880;
 
-		$fileSize = filesize( $nginx_asset_path );
+		$file_size = filesize( $nginx_asset_path );
 
-		if ( $fileSize > $max_size_allowed ) {
+		if ( $file_size > $max_size_allowed ) {
 
-			$offset       = $fileSize - $max_size_allowed;
+			$offset       = $file_size - $max_size_allowed;
 			$file_content = file_get_contents( $nginx_asset_path, null, null, $offset );
 			$file_content = empty( $file_content ) ? '' : strstr( $file_content, "\n" );
 
-			if ( $file_content && $fp = fopen( $nginx_asset_path, 'w+' ) ) {
+			$fp = fopen( $nginx_asset_path, 'w+' );
+			if ( $file_content && $fp ) {
 
 				fwrite( $fp, $file_content );
 				fclose( $fp );
@@ -610,9 +609,7 @@ abstract class Purger {
 					if ( $resize_image ) {
 						$this->purge_url( $resize_image[0], false );
 					}
-
 				}
-
 			}
 
 			$this->purge_url( get_attachment_link( $attachment_id ) );
@@ -710,7 +707,6 @@ abstract class Purger {
 			foreach ( $nginx_helper_admin->options['purgeable_url']['urls'] as $url ) {
 				$this->purge_url( $url, false );
 			}
-
 		} else {
 			$this->log( '- ' . __( 'No personal urls available', 'nginx-helper' ) );
 		}
@@ -736,11 +732,11 @@ abstract class Purger {
 
 			foreach ( $categories as $category_id ) {
 
+				// translators: %d: Category ID.
 				$this->log( sprintf( __( "Purging category '%d'", 'nginx-helper' ), $category_id ) );
 				$this->purge_url( get_category_link( $category_id ) );
 
 			}
-
 		}
 
 		return true;
@@ -767,7 +763,6 @@ abstract class Purger {
 				$this->purge_url( get_tag_link( $tag->term_id ) );
 
 			}
-
 		}
 
 		return true;
@@ -796,6 +791,7 @@ abstract class Purger {
 
 			foreach ( $custom_taxonomies as $taxon ) {
 
+				// translators: %s: Post taxonomy name.
 				$this->log( sprintf( '+ ' . __( "Purging custom taxonomy '%s'", 'nginx-helper' ), $taxon ) );
 
 				if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ), true ) ) {
@@ -807,14 +803,12 @@ abstract class Purger {
 						foreach ( $terms as $term ) {
 							$this->purge_url( get_term_link( $term, $taxon ) );
 						}
-
 					}
-
 				} else {
+					// translators: %s: Post taxonomy name.
 					$this->log( sprintf( '- ' . __( "Your built-in taxonomy '%s' has param '_builtin' set to false.", 'nginx-helper' ), $taxon ), 'WARNING' );
 				}
 			}
-
 		} else {
 			$this->log( '- ' . __( 'No custom taxonomies', 'nginx-helper' ) );
 		}
@@ -841,7 +835,6 @@ abstract class Purger {
 				$this->purge_url( get_category_link( $c->term_id ) );
 
 			}
-
 		} else {
 
 			$this->log( __( 'No categories archives', 'nginx-helper' ) );
@@ -870,7 +863,6 @@ abstract class Purger {
 				$this->purge_url( get_tag_link( $t->term_id ) );
 
 			}
-
 		} else {
 			$this->log( __( 'No tags archives', 'nginx-helper' ) );
 		}
@@ -899,6 +891,7 @@ abstract class Purger {
 
 			foreach ( $custom_taxonomies as $taxon ) {
 
+				// translators: %s: Taxonomy name.
 				$this->log( sprintf( '+ ' . __( "Purging custom taxonomy '%s'", 'nginx-helper' ), $taxon ) );
 
 				if ( ! in_array( $taxon, array( 'category', 'post_tag', 'link_category' ), true ) ) {
@@ -912,15 +905,12 @@ abstract class Purger {
 							$this->purge_url( get_term_link( $term, $taxon ) );
 
 						}
-
 					}
-
 				} else {
-					$this->log( sprintf( '- ' . __( "Your built-in taxonomy '%s' has param '_builtin' set to false.", 'nginx-helper' ), $taxon ), 'WARNING' );
+					// translators: %s: Taxonomy name.
+					$this->log( sprintf( '- ' . esc_html__( "Your built-in taxonomy '%s' has param '_builtin' set to false.", 'nginx-helper' ), $taxon ), 'WARNING' );
 				}
-
 			}
-
 		} else {
 			$this->log( '- ' . __( 'No custom taxonomies', 'nginx-helper' ) );
 		}
@@ -957,7 +947,7 @@ abstract class Purger {
 			'post_status'    => 'publish',
 		);
 
-		$get_posts = new WP_Query;
+		$get_posts = new WP_Query();
 		$_posts    = $get_posts->query( $args );
 
 		if ( ! empty( $_posts ) ) {
@@ -968,7 +958,6 @@ abstract class Purger {
 				$this->purge_url( get_permalink( $p->ID ) );
 
 			}
-
 		} else {
 			$this->log( '- ' . __( 'No posts', 'nginx-helper' ) );
 		}
@@ -1005,11 +994,15 @@ abstract class Purger {
 
 		$_query_daily_archives = $wpdb->prepare(
 			"SELECT YEAR(post_date) AS %s, MONTH(post_date) AS %s, DAYOFMONTH(post_date) AS %s, count(ID) as posts
-            FROM $wpdb->posts
-            WHERE post_type = %s AND post_status = %s
-            GROUP BY YEAR(post_date), MONTH(post_date), DAYOFMONTH(post_date)
-            ORDER BY post_date DESC",
-			'year', 'month', 'dayofmonth', 'post', 'publish'
+			FROM $wpdb->posts
+			WHERE post_type = %s AND post_status = %s
+			GROUP BY YEAR(post_date), MONTH(post_date), DAYOFMONTH(post_date)
+			ORDER BY post_date DESC",
+			'year',
+			'month',
+			'dayofmonth',
+			'post',
+			'publish'
 		);
 
 		$_daily_archives = $wpdb->get_results( $_query_daily_archives ); // phpcs:ignore
@@ -1020,14 +1013,16 @@ abstract class Purger {
 
 				$this->log(
 					sprintf(
-						'+ ' . __( "Purging daily archive '%1\$s/%2\$s/%3\$s'", 'nginx-helper' ), $_da->year, $_da->month, $_da->dayofmonth
+						'+ ' . __( "Purging daily archive '%1\$s/%2\$s/%3\$s'", 'nginx-helper' ),
+						$_da->year,
+						$_da->month,
+						$_da->dayofmonth
 					)
 				);
 
 				$this->purge_url( get_day_link( $_da->year, $_da->month, $_da->dayofmonth ) );
 
 			}
-
 		} else {
 			$this->log( '- ' . __( 'No daily archives', 'nginx-helper' ) );
 		}
@@ -1049,19 +1044,21 @@ abstract class Purger {
 
 			$_query_monthly_archives = $wpdb->prepare(
 				"SELECT YEAR(post_date) AS %s, MONTH(post_date) AS %s, count(ID) as posts
-	            FROM $wpdb->posts
-	            WHERE post_type = %s AND post_status = %s
-	            GROUP BY YEAR(post_date), MONTH(post_date)
-	            ORDER BY post_date DESC",
-				'year', 'month', 'post', 'publish'
+				FROM $wpdb->posts
+				WHERE post_type = %s AND post_status = %s
+				GROUP BY YEAR(post_date), MONTH(post_date)
+				ORDER BY post_date DESC",
+				'year',
+				'month',
+				'post',
+				'publish'
 			);
 
 			$_monthly_archives = $wpdb->get_results( $_query_monthly_archives ); // phpcs:ignore
 
-			wp_cache_set( 'nginx_helper_monthly_archives', $_monthly_archives, 'nginx_helper', 24*60*60 );
+			wp_cache_set( 'nginx_helper_monthly_archives', $_monthly_archives, 'nginx_helper', 24 * 60 * 60 );
 
 		}
-
 
 		if ( ! empty( $_monthly_archives ) ) {
 
@@ -1071,7 +1068,6 @@ abstract class Purger {
 				$this->purge_url( get_month_link( $_ma->year, $_ma->month ) );
 
 			}
-
 		} else {
 			$this->log( '- ' . __( 'No monthly archives', 'nginx-helper' ) );
 		}
@@ -1093,16 +1089,18 @@ abstract class Purger {
 
 			$_query_yearly_archives = $wpdb->prepare(
 				"SELECT YEAR(post_date) AS %s, count(ID) as posts
-	            FROM $wpdb->posts
-	            WHERE post_type = %s AND post_status = %s
-	            GROUP BY YEAR(post_date)
-	            ORDER BY post_date DESC",
-				'year', 'post', 'publish'
+				FROM $wpdb->posts
+				WHERE post_type = %s AND post_status = %s
+				GROUP BY YEAR(post_date)
+				ORDER BY post_date DESC",
+				'year',
+				'post',
+				'publish'
 			);
 
 			$_yearly_archives = $wpdb->get_results( $_query_yearly_archives ); // phpcs:ignore
 
-			wp_cache_set( 'nginx_helper_yearly_archives', $_yearly_archives, 'nginx_helper', 24*60*60 );
+			wp_cache_set( 'nginx_helper_yearly_archives', $_yearly_archives, 'nginx_helper', 24 * 60 * 60 );
 
 		}
 
@@ -1110,11 +1108,11 @@ abstract class Purger {
 
 			foreach ( $_yearly_archives as $_ya ) {
 
-				$this->log( sprintf( '+ ' . __( "Purging yearly archive '%s'", 'nginx-helper' ), $_ya->year ) );
+				// translators: %s: Year to purge cache.
+				$this->log( sprintf( '+ ' . esc_html__( "Purging yearly archive '%s'", 'nginx-helper' ), $_ya->year ) );
 				$this->purge_url( get_year_link( $_ya->year ) );
 
 			}
-
 		} else {
 			$this->log( '- ' . __( 'No yearly archives', 'nginx-helper' ) );
 		}
@@ -1202,38 +1200,40 @@ abstract class Purger {
 	 * Source - http://stackoverflow.com/a/1360437/156336
 	 *
 	 * @param string $dir Directory.
-	 * @param bool   $deleteRootToo Delete root or not.
+	 * @param bool   $delete_root_too Delete root or not.
+	 *
+	 * @return void
 	 */
-	public function unlink_recursive( $dir, $deleteRootToo ) {
+	public function unlink_recursive( $dir, $delete_root_too ) {
 
 		if ( ! is_dir( $dir ) ) {
 			return;
 		}
 
-		if ( ! $dh = opendir( $dir ) ) {
+		$dh = opendir( $dir );
+
+		if ( ! $dh ) {
 			return;
 		}
 
-		while ( false !== ( $obj = readdir( $dh ) ) ) {
+		$obj = readdir( $dh );
 
-			if ( $obj == '.' || $obj == '..' ) {
+		while ( false !== $obj ) {
+
+			if ( '.' === $obj || '..' === $obj ) {
 				continue;
 			}
 
 			if ( ! @unlink( $dir . '/' . $obj ) ) {
 				$this->unlink_recursive( $dir . '/' . $obj, false );
 			}
-
 		}
 
-		if ( $deleteRootToo ) {
+		if ( $delete_root_too ) {
 			rmdir( $dir );
 		}
 
 		closedir( $dh );
-
-		return;
-
 	}
 
 }

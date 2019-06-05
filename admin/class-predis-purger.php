@@ -73,7 +73,7 @@ class Predis_Purger extends Purger {
 
 		} else { // Else purge only site specific cache.
 
-			$parse = wp_parse_url( get_home_url() );
+			$parse         = wp_parse_url( get_home_url() );
 			$parse['path'] = empty( $parse['path'] ) ? '/' : $parse['path'];
 			$this->delete_keys_by_wildcard( $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'] . '*' );
 			$this->log( '* ' . get_home_url() . ' Purged! * ' );
@@ -160,7 +160,6 @@ class Predis_Purger extends Purger {
 					} else {
 						$this->log( '- Not Found | ' . $purge_url, 'ERROR' );
 					}
-
 				} else {
 
 					$purge_url = $_url_purge_base . $purge_url;
@@ -171,11 +170,8 @@ class Predis_Purger extends Purger {
 					} else {
 						$this->log( '- Not Found | ' . $purge_url, 'ERROR' );
 					}
-
 				}
-
 			}
-
 		}
 
 	}

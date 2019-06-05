@@ -51,7 +51,7 @@ class FastCGI_Purger extends Purger {
 				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . $parse['path'];
 				$_url_purge      = $_url_purge_base;
 
-				if ( isset( $parse['query'] ) && $parse['query'] !== '' ) {
+				if ( isset( $parse['query'] ) && '' !== $parse['query'] ) {
 					$_url_purge .= '?' . $parse['query'];
 				}
 
@@ -131,9 +131,7 @@ class FastCGI_Purger extends Purger {
 							$this->delete_cache_file_for( $purge_url );
 
 						}
-
 					}
-
 				}
 				break;
 
@@ -155,9 +153,7 @@ class FastCGI_Purger extends Purger {
 							$this->do_remote_get( $purge_url );
 
 						}
-
 					}
-
 				}
 				break;
 

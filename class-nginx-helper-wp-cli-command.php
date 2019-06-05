@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'Nginx_Helper_WP_CLI_Command' ) ) {
 
 	/**
-	 * Class Nginx_Helper_WP_CLI_Command
+	 * Purge site cache from Nginx.
 	 */
 	class Nginx_Helper_WP_CLI_Command extends WP_CLI_Command {
 
