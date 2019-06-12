@@ -51,7 +51,7 @@ class FastCGI_Purger extends Purger {
 				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . $parse['path'];
 				$_url_purge      = $_url_purge_base;
 
-				if ( isset( $parse['query'] ) && '' !== $parse['query'] ) {
+				if ( ! empty( $parse['query'] ) ) {
 					$_url_purge .= '?' . $parse['query'];
 				}
 

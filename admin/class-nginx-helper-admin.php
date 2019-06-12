@@ -79,8 +79,8 @@ class Nginx_Helper_Admin {
 		$this->version     = $version;
 
 		/**
-		  * Define settings tabs
-		  */
+		 * Define settings tabs
+		 */
 		$this->settings_tabs = apply_filters(
 			'rt_nginx_helper_settings_tabs',
 			array(
@@ -154,7 +154,12 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version );
+
+		$do_localize = array(
+			'purge_confirm_string' => esc_html__( 'Purging entire cache is not recommended. Would you like to continue?', 'nginx-helper' ),
+		);
+		wp_localize_script( $this->plugin_name, 'nginx_helper', $do_localize );
 
 	}
 
@@ -404,21 +409,12 @@ class Nginx_Helper_Admin {
 					?>
 						<li role="listitem">
 							<?php
-							echo wp_kses(
-								sprintf(
-									'<a href="%1$s" title="%2$s">%3$s</a>',
+								printf(
+									'<a href="%s" title="%s">%s</a>',
 									esc_url( $item->get_permalink() ),
 									esc_attr__( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ),
 									esc_html( $item->get_title() )
-								),
-								array(
-									'strong' => array(),
-									'a'      => array(
-										'href'  => array(),
-										'title' => array(),
-									),
-								)
-							);
+								);
 							?>
 						</li>
 					<?php

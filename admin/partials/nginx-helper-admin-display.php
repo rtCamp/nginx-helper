@@ -32,19 +32,11 @@ global $pagenow;
 				foreach ( $this->settings_tabs as $setting_tab => $setting_name ) {
 
 					$class = ( $setting_tab === $current_setting_tab ) ? ' nav-tab-active' : '';
-					echo wp_kses(
-						sprintf(
-							'<a class="nav-tab%1$s" href="?page=nginx&tab=%2$s">%3$s</a>',
-							esc_attr( $class ),
-							esc_attr( $setting_name['menu_slug'] ),
-							esc_html( $setting_name['menu_title'] )
-						),
-						array(
-							'a' => array(
-								'href'  => array(),
-								'class' => array(),
-							),
-						)
+					printf(
+						'<a class="%s" href="%s">%s</a>',
+						esc_attr( 'nav-tab' . $class ),
+						esc_url( '?page=nginx&tab=' . $setting_name['menu_slug'] ),
+						esc_html( $setting_name['menu_title'] )
 					);
 				}
 				echo '</h2>';

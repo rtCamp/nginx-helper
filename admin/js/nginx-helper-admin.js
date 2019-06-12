@@ -48,9 +48,9 @@
 				jQuery.get(
 					ajaxurl,
 					args,
-					function (data) {
-						news_section.find( '.inside' ).html( data );
-						console.log( data );
+					function( data ) {
+						news_section.find( '.inside' ).empty();
+						news_section.find( '.inside' ).append( data );
 					}
 				);
 
@@ -59,10 +59,10 @@
 			jQuery( "form#purgeall a" ).click(
 				function (e) {
 
-					if ( confirm( "Purging entire cache is not recommended. Would you like to continue ?" ) == true ) {
-						  // continue submitting form.
+					if ( confirm( nginx_helper.purge_confirm_string ) === true ) {
+						// Continue submitting form.
 					} else {
-						  e.preventDefault();
+						e.preventDefault();
 					}
 
 				}
@@ -83,9 +83,9 @@
 
 							jQuery( '.' + selector ).show();
 
-							if ( selector == "cache_method_redis" ) {
+							if ( selector === 'cache_method_redis' ) {
 								jQuery( '.cache_method_fastcgi' ).hide();
-							} else if ( selector == "cache_method_fastcgi" ) {
+							} else if ( selector === 'cache_method_fastcgi' ) {
 								jQuery( '.cache_method_redis' ).hide();
 							}
 

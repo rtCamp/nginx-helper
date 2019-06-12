@@ -117,21 +117,12 @@ if ( is_multisite() ) {
 							<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_fastcgi' ); ?> />
 							<label for="cache_method_fastcgi">
 								<?php
-								echo wp_kses(
-									sprintf(
-										'%1$s (<a target="_blank" href="%2$s" title="%3$s">%4$s</a>)',
-										esc_html__( 'nginx Fastcgi cache', 'nginx-helper' ),
-										esc_url( $nginx_setting_link ),
-										esc_attr__( 'External settings for nginx', 'nginx-helper' ),
-										esc_html__( 'requires external settings for nginx', 'nginx-helper' )
-									),
-									array(
-										'strong' => array(),
-										'a'      => array(
-											'href'  => array(),
-											'title' => array(),
-										),
-									)
+								printf(
+									'%s (<a target="_blank" href="%s" title="%s">%s</a>)',
+									esc_html__( 'nginx Fastcgi cache', 'nginx-helper' ),
+									esc_url( $nginx_setting_link ),
+									esc_attr__( 'External settings for nginx', 'nginx-helper' ),
+									esc_html__( 'requires external settings for nginx', 'nginx-helper' )
 								);
 								?>
 							</label>
