@@ -203,7 +203,10 @@ class Nginx_Helper {
 			$this->loader->add_filter( 'plugin_action_links_' . NGINX_HELPER_BASENAME, $nginx_helper_admin, 'nginx_helper_settings_link' );
 		}
 
-		$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'nginx_helper_toolbar_purge_link', 100 );
+		if ( ! empty( $nginx_helper_admin->options['enable_purge'] ) ) {
+			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'nginx_helper_toolbar_purge_link', 100 );
+		}
+
 		$this->loader->add_action( 'wp_ajax_rt_get_feeds', $nginx_helper_admin, 'nginx_helper_get_feeds' );
 
 		$this->loader->add_action( 'shutdown', $nginx_helper_admin, 'add_timestamps', 99999 );
