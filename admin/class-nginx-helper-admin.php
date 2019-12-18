@@ -421,7 +421,13 @@ class Nginx_Helper_Admin {
 	 */
 	public function add_timestamps() {
 
+		global $pagenow;
+
 		if ( is_admin() || (int) $this->options['enable_purge'] !== 1 || (int) $this->options['enable_stamp'] !== 1 ) {
+			return;
+		}
+
+		if ( ! empty( $pagenow ) && 'wp-login.php' === $pagenow ) {
 			return;
 		}
 
