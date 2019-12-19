@@ -594,13 +594,13 @@ abstract class Purger {
 	 */
 	public function purge_image_on_edit( $attachment_id ) {
 
-		// Do not purge if not enabled.
 		global $nginx_helper_admin;
 
+		// Do not purge if not enabled.
 		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
 			return;
 		}
-		
+
 		$this->log( 'Purging media on edit BEGIN ===' );
 
 		if ( wp_attachment_is_image( $attachment_id ) ) {
@@ -1163,7 +1163,7 @@ abstract class Purger {
 		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
 			return;
 		}
-		
+
 		$this->log( __( 'Term taxonomy edited or deleted', 'nginx-helper' ) );
 
 		$term           = get_term( $term_id, $taxon );
@@ -1199,7 +1199,7 @@ abstract class Purger {
 		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
 			return;
 		}
-		
+
 		switch ( $action ) {
 
 			case 'save-sidebar-widgets':
