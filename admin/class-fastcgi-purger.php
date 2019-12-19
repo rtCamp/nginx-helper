@@ -70,7 +70,7 @@ class FastCGI_Purger extends Purger {
 			case 'get_request':
 				// Go to default case.
 			default:
-				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . '/purge' . $parse['path'];
+				$_url_purge_base = $this->purge_base_url() . $parse['path'];
 				$_url_purge      = $_url_purge_base;
 
 				if ( isset( $parse['query'] ) && '' !== $parse['query'] ) {
@@ -100,7 +100,7 @@ class FastCGI_Purger extends Purger {
 
 		global $nginx_helper_admin;
 
-		$parse = wp_parse_url( site_url() );
+		$parse = wp_parse_url( home_url() );
 
 		$purge_urls = isset( $nginx_helper_admin->options['purge_url'] ) && ! empty( $nginx_helper_admin->options['purge_url'] ) ?
 			explode( "\r\n", $nginx_helper_admin->options['purge_url'] ) : array();
@@ -140,7 +140,7 @@ class FastCGI_Purger extends Purger {
 			case 'get_request':
 				// Go to default case.
 			default:
-				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . '/purge';
+				$_url_purge_base = $this->purge_base_url();
 
 				if ( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
 
@@ -181,6 +181,21 @@ class FastCGI_Purger extends Purger {
 		 * @since 2.1.0
 		 */
 		do_action( 'rt_nginx_helper_after_fastcgi_purge_all' );
+	}
+
+	/**
+	 * Constructs the base url to call when purging using the `get_request` method.
+	 *
+	 * @return string
+	 */
+	private function purge_base_url() {
+		$parse = wp_parse_url( home_url() );
+		$path  = trim( apply_filters( 'rt_nginx_helper_fastcgi_purge_suffix', 'purge' ), '/' );
+
+		$purge_url_base = $parse['scheme'] . '://' . $parse['host'] . '/' . $path;
+
+		// Prevent users from inserting a trailing '/' that could break the url purging
+		return rtrim( apply_filters( 'rt_nginx_helper_fastcgi_purge_url_base', $purge_url_base ), '/' );
 	}
 
 }
