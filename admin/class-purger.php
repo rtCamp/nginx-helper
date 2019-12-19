@@ -96,7 +96,7 @@ abstract class Purger {
 		switch ( $newstatus ) {
 
 			case 'approved':
-				if ( 1 === $nginx_helper_admin->options['purge_page_on_new_comment'] ) {
+				if ( 1 === (int)$nginx_helper_admin->options['purge_page_on_new_comment'] ) {
 
 					$this->log( '* Comment ( ' . $_comment_id . ' ) approved. Post ( ' . $_post_id . ' ) purging...' );
 					$this->log( '* * * * *' );
@@ -213,7 +213,29 @@ abstract class Purger {
 				$this->log( "Purging custom post type '" . $_post_type . "' ( id " . $post_id . ', blog id ' . $blog_id . ' )' );
 			}
 
- 			$url = get_permalink( $post_id );
+			$post_status = get_post_status( $post_id );
+
+			if ( 'publish' !== $post_status ) {
+
+				if ( ! function_exists( 'get_sample_permalink' ) ) {
+					require_once ABSPATH . '/wp-admin/includes/post.php';
+				}
+
+				$url = get_sample_permalink( $post_id );
+
+				if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
+					$url = str_replace( '%postname%', $url[1], $url[0] );
+				} else {
+					$url = '';
+				}
+
+			} else {
+				$url = get_permalink( $post_id );
+			}
+
+			if ( empty( $url ) && ! is_array( $url ) ) {
+				return;
+			}
 
 			if ( 'trash' === get_post_status( $post_id ) ) {
 				$url = str_replace( '__trashed', '', $url );
@@ -375,6 +397,15 @@ abstract class Purger {
 		// Set path to cached file.
 		$cached_file = $cache_path . substr( $hash, -1 ) . '/' . substr( $hash, -3, 2 ) . '/' . $hash;
 
+		/**
+		 * Filters the cached file name.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $cached_file Cached file name.
+		 */
+		$cached_file = apply_filters( 'rt_nginx_helper_purge_cached_file', $cached_file );
+
 		// Verify cached file exists.
 		if ( ! file_exists( $cached_file ) ) {
 
@@ -386,6 +417,16 @@ abstract class Purger {
 		// Delete the cached file.
 		if ( unlink( $cached_file ) ) {
 			$this->log( '- - ' . $url . ' *** PURGED ***' );
+
+			/**
+			 * Fire an action after deleting file from cache.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param string $url         URL to be purged.
+			 * @param string $cached_file Cached file name.
+			 */
+			do_action( 'rt_nginx_helper_purged_file', $url, $cached_file );
 		} else {
 			$this->log( '- - An error occurred deleting the cache file. Check the server logs for a PHP warning.', 'ERROR' );
 		}
@@ -398,6 +439,23 @@ abstract class Purger {
 	 * @param string $url URL to do remote request.
 	 */
 	protected function do_remote_get( $url ) {
+		/**
+		 * Filters the URL to be purged.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		$url = apply_filters( 'rt_nginx_helper_remote_purge_url', $url );
+
+		/**
+		 * Fire an action before purging URL.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $url URL to be purged.
+		 */
+		do_action( 'rt_nginx_helper_before_remote_purge_url', $url );
 
 		$response = wp_remote_get( $url );
 
@@ -425,6 +483,15 @@ abstract class Purger {
 
 			}
 
+			/**
+			 * Fire an action after remote purge request.
+			 *
+			 * @since 2.1.0
+			 *
+			 * @param string $url      URL to be purged.
+			 * @param array  $response Array of results including HTTP headers.
+			 */
+			do_action( 'rt_nginx_helper_after_remote_purge_url', $url, $response );
 		}
 
 	}
@@ -492,7 +559,15 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
+		if ( ! $nginx_helper_admin->options['enable_log'] ) {
+			return;
+		}
+
 		$nginx_asset_path = $nginx_helper_admin->functional_asset_path() . 'nginx.log';
+
+		if ( ! file_exists($nginx_asset_path) ) {
+			return;
+		}
 
 		$max_size_allowed = ( is_numeric( $nginx_helper_admin->options['log_filesize'] ) ) ? $nginx_helper_admin->options['log_filesize'] * 1048576 : 5242880;
 

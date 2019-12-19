@@ -77,12 +77,12 @@ $log_url               = $nginx_helper_admin->functional_asset_url();
 $nginx_setting_link = '#';
 if ( is_multisite() ) {
 	if ( SUBDOMAIN_INSTALL === false ) {
-		$nginx_setting_link = 'https://rtcamp.com/wordpress-nginx/tutorials/multisite/subdirectories/fastcgi-cache-with-purging/';
+		$nginx_setting_link = 'https://easyengine.io/wordpress-nginx/tutorials/multisite/subdirectories/fastcgi-cache-with-purging/';
 	} else {
-		$nginx_setting_link = 'https://rtcamp.com/wordpress-nginx/tutorials/multisite/subdomains/fastcgi-cache-with-purging/';
+		$nginx_setting_link = 'https://easyengine.io/wordpress-nginx/tutorials/multisite/subdomains/fastcgi-cache-with-purging/';
 	}
 } else {
-	$nginx_setting_link = 'https://rtcamp.com/wordpress-nginx/tutorials/single-site/fastcgi-cache-with-purging/';
+	$nginx_setting_link = 'https://easyengine.io/wordpress-nginx/tutorials/single-site/fastcgi-cache-with-purging/';
 }
 ?>
 
@@ -519,7 +519,7 @@ if ( is_multisite() ) {
 							<h4><?php esc_html_e( 'Custom Purge URL:', 'nginx-helper' ); ?></h4>
 						</th>
 						<td>
-							<textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo esc_url( $nginx_helper_admin->options['purge_url'] ); ?></textarea>
+							<textarea rows="5"class="rt-purge_url" id="purge_url" name="purge_url"><?php echo esc_textarea( $nginx_helper_admin->options['purge_url'] ); ?></textarea>
 							<p class="description">
 								Add one URL per line. URL should not contain domain name.
 								<br>
@@ -611,9 +611,7 @@ if ( is_network_admin() ) {
 						?>
 						</th>
 						<td>
-							<pre>
-							<?php echo esc_url( $log_path . 'map.conf' ); ?>
-							</pre>
+							<pre><?php echo esc_url( $log_path . 'map.conf' ); ?></pre>
 						</td>
 					</tr>
 					<tr>
