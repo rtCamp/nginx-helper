@@ -1,0 +1,18 @@
+name: Deploy
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: WordPress Plugin Deploy
+        uses: rtCamp/action-wordpress-org-plugin-deploy@master
+        env:
+          EXCLUDE_LIST: .gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh
+            tests map.conf nginx.log wercker.yml vendor
+          SLUG: nginx-helper
+          WORDPRESS_PASSWORD: ${{ secrets.WORDPRESS_PASSWORD }}
+          WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
