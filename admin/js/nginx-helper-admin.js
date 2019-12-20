@@ -83,7 +83,7 @@
 
 							jQuery( '.' + selector ).show();
 
-							if ( selector === 'cache_method_redis' ) {
+							if ( 'cache_method_redis' === selector ) {
 								jQuery( '.cache_method_fastcgi' ).hide();
 							} else if ( selector === 'cache_method_fastcgi' ) {
 								jQuery( '.cache_method_redis' ).hide();
