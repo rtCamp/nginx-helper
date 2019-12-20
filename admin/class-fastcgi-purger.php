@@ -184,18 +184,42 @@ class FastCGI_Purger extends Purger {
 	}
 
 	/**
-	 * Constructs the base url to call when purging using the `get_request` method.
+	 * Constructs the base url to call when purging using the "get_request" method.
+	 *
+	 * @since 2.2.0
 	 *
 	 * @return string
 	 */
 	private function purge_base_url() {
+
 		$parse = wp_parse_url( home_url() );
-		$path  = trim( apply_filters( 'rt_nginx_helper_fastcgi_purge_suffix', 'purge' ), '/' );
+
+		/**
+		 * Filter to change purge suffix for FastCGI cache.
+		 *
+		 * @param string $suffix Purge suffix. Default is purge.
+		 *
+		 * @since 2.2.0
+		 */
+		$path  = apply_filters( 'rt_nginx_helper_fastcgi_purge_suffix', 'purge' );
+
+		// Prevent users from inserting a trailing '/' that could break the url purging.
+		$path  = trim( $path, '/' );
 
 		$purge_url_base = $parse['scheme'] . '://' . $parse['host'] . '/' . $path;
 
-		// Prevent users from inserting a trailing '/' that could break the url purging
-		return rtrim( apply_filters( 'rt_nginx_helper_fastcgi_purge_url_base', $purge_url_base ), '/' );
+		/**
+		 * Filter to change purge URL base for FastCGI cache.
+		 *
+		 * @param string $purge_url_base Purge URL base.
+		 *
+		 * @since 2.2.0
+		 */
+		$purge_url_base = apply_filters( 'rt_nginx_helper_fastcgi_purge_url_base', $purge_url_base );
+
+		// Prevent users from inserting a trailing '/' that could break the url purging.
+		return untrailingslashit( $purge_url_base );
+
 	}
 
 }

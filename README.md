@@ -412,6 +412,7 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 ## Upgrade Notice ##
 
 ### 2.1.0 ###
+
 Nginx Helper 2.1.0, introduces new Hooks to extend cache purge, Adds support for wildcard cache key deletion for device type cache and bug fixes.
 
 ## Does this interest you?
