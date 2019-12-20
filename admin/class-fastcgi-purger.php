@@ -201,7 +201,7 @@ class FastCGI_Purger extends Purger {
 		 *
 		 * @since 2.2.0
 		 */
-		$path  = trim( apply_filters( 'rt_nginx_helper_fastcgi_purge_suffix', 'purge' ), '/' );
+		$path  = apply_filters( 'rt_nginx_helper_fastcgi_purge_suffix', 'purge' );
 
 		// Prevent users from inserting a trailing '/' that could break the url purging.
 		$path  = trim( $path, '/' );
@@ -218,7 +218,7 @@ class FastCGI_Purger extends Purger {
 		$purge_url_base = apply_filters( 'rt_nginx_helper_fastcgi_purge_url_base', $purge_url_base );
 
 		// Prevent users from inserting a trailing '/' that could break the url purging.
-		return rtrim( $purge_url_base, '/' );
+		return untrailingslashit( $purge_url_base );
 
 	}
 
