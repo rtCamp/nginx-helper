@@ -96,7 +96,7 @@ abstract class Purger {
 		switch ( $newstatus ) {
 
 			case 'approved':
-				if ( 1 === $nginx_helper_admin->options['purge_page_on_new_comment'] ) {
+				if ( 1 === (int)$nginx_helper_admin->options['purge_page_on_new_comment'] ) {
 
 					$this->log( '* Comment ( ' . $_comment_id . ' ) approved. Post ( ' . $_post_id . ' ) purging...' );
 					$this->log( '* * * * *' );
@@ -592,6 +592,13 @@ abstract class Purger {
 	 * @param int $attachment_id Attachment id.
 	 */
 	public function purge_image_on_edit( $attachment_id ) {
+
+		global $nginx_helper_admin;
+
+		// Do not purge if not enabled.
+		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
+			return;
+		}
 
 		$this->log( 'Purging media on edit BEGIN ===' );
 
@@ -1149,6 +1156,12 @@ abstract class Purger {
 	 */
 	public function purge_on_term_taxonomy_edited( $term_id, $tt_id, $taxon ) {
 
+		global $nginx_helper_admin;
+
+		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
+			return;
+		}
+
 		$this->log( __( 'Term taxonomy edited or deleted', 'nginx-helper' ) );
 
 		$term           = get_term( $term_id, $taxon );
@@ -1178,6 +1191,12 @@ abstract class Purger {
 	 * @return bool
 	 */
 	public function purge_on_check_ajax_referer( $action ) {
+
+		global $nginx_helper_admin;
+
+		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
+			return;
+		}
 
 		switch ( $action ) {
 

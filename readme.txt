@@ -5,8 +5,8 @@ Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, 
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
-Tested up to: 5.1
-Stable tag: 2.0.3
+Tested up to: 5.2.2
+Stable tag: 2.1.0
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -126,6 +126,20 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 2. Remaining settings
 
 == Changelog ==
+
+= 2.1.0 =
+* Add wildcard cache key deletion for device type cache purge. [#203](https://github.com/rtCamp/nginx-helper/pull/203) - by [pradeep910](https://github.com/pradeep910)
+* Add filter `rt_nginx_helper_purge_url` to filter the URL to be purged. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Add filter `rt_nginx_helper_purge_cached_file` to filter the cached file name. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Add filter `rt_nginx_helper_remote_purge_url` to filter remote URL to be purged. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Add action `rt_nginx_helper_after_fastcgi_purge_all` to fire after the FastCGI cache has been purged. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Add action `rt_nginx_helper_after_redis_purge_all` to fire after the Redis cache has been purged. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Add action `rt_nginx_helper_purged_file` to fire an action after deleting file from cache. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Add action `rt_nginx_helper_before_remote_purge_url` to fire an action before purging remote URL. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Add action `rt_nginx_helper_after_remote_purge_url` to fire an action after remote purge request. [#182](https://github.com/rtCamp/nginx-helper/pull/182) - by [todeveni](https://github.com/todeveni)
+* Fix issue with post purge on new comments. [#175](https://github.com/rtCamp/nginx-helper/pull/175) - by [jinschoi](https://github.com/jinschoi)
+* Fix Nginx Timestamp being added to invalid content type. [#200](https://github.com/rtCamp/nginx-helper/pull/200) - by [thrijith](https://github.com/thrijith)
+* Handle filesize exception while truncating nginx.log file. [#206](https://github.com/rtCamp/nginx-helper/pull/206) - by [peterjanes](https://github.com/peterjanes)
 
 = 2.0.3 =
 * Update article link for fastcgi cache purge. [#187](https://github.com/rtCamp/nginx-helper/pull/187) - by [gagan0123](https://github.com/gagan0123)
@@ -381,6 +395,5 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 == Upgrade Notice ==
 
-= 2.0.3 =
-* Update article link for fastcgi cache purge. [#187](https://github.com/rtCamp/nginx-helper/pull/187) - by [gagan0123](https://github.com/gagan0123)
-* Fix map generation issue on `SUBDOMAIN_INSTALL`. [#189](https://github.com/rtCamp/nginx-helper/pull/189) - by [ChrisHardie](https://github.com/ChrisHardie)
+= 2.1.0 =
+Nginx Helper 2.1.0, introduces new Hooks to extend cache purge, Adds support for wildcard cache key deletion for device type cache and bug fixes.
