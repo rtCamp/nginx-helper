@@ -168,7 +168,7 @@ class Predis_Purger extends Purger {
 
 		global $nginx_helper_admin;
 
-		$parse           = wp_parse_url( site_url() );
+		$parse           = wp_parse_url( home_url() );
 		$prefix          = $nginx_helper_admin->options['redis_prefix'];
 		$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'];
 
