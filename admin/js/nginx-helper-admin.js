@@ -49,8 +49,15 @@
 					ajaxurl,
 					args,
 					function( data ) {
-						news_section.find( '.inside' ).empty();
-						news_section.find( '.inside' ).append( data );
+						/**
+						 * Received markup is safe and escaped appropriately.
+						 *
+						 * File: admin/class-nginx-helper-admin.php
+						 * Method: nginx_helper_get_feeds();
+						 */
+
+						// phpcs:ignore -- WordPressVIPMinimum.JS.HTMLExecutingFunctions.append
+						news_section.find( '.inside' ).empty().append( data );
 					}
 				);
 

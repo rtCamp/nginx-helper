@@ -154,7 +154,7 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
 
 		$do_localize = array(
 			'purge_confirm_string' => esc_html__( 'Purging entire cache is not recommended. Would you like to continue?', 'nginx-helper' ),
@@ -434,7 +434,7 @@ class Nginx_Helper_Admin {
 
 		global $pagenow;
 
-		if ( is_admin() || (int) $this->options['enable_purge'] !== 1 || (int) $this->options['enable_stamp'] !== 1 ) {
+		if ( is_admin() || 1 !== (int) $this->options['enable_purge'] || 1 !== (int) $this->options['enable_stamp'] ) {
 			return;
 		}
 
