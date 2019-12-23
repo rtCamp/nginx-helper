@@ -1,4 +1,4 @@
-<?php // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+<?php
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -1256,5 +1256,3 @@ abstract class Purger {
 	}
 
 }
-
-// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore

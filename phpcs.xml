@@ -27,6 +27,7 @@
 	<!-- Include the WordPress standard. -->
 	<rule ref="WordPress">
 		<exclude name="PEAR.NamingConventions.ValidClassName.Invalid" />
+		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
 	</rule>
 	<rule ref="WordPress-VIP-Go">
 		<exclude name="WordPress.VIP.FileSystemWritesDisallow.directory_mkdir" />
