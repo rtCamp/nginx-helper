@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -96,7 +96,7 @@ abstract class Purger {
 		switch ( $newstatus ) {
 
 			case 'approved':
-				if ( 1 === (int)$nginx_helper_admin->options['purge_page_on_new_comment'] ) {
+				if ( 1 === (int) $nginx_helper_admin->options['purge_page_on_new_comment'] ) {
 
 					$this->log( '* Comment ( ' . $_comment_id . ' ) approved. Post ( ' . $_post_id . ' ) purging...' );
 					$this->log( '* * * * *' );
@@ -1243,7 +1243,7 @@ abstract class Purger {
 				continue;
 			}
 
-			if ( ! @unlink( $dir . '/' . $obj ) ) {
+			if ( ! @unlink( $dir . '/' . $obj ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 				$this->unlink_recursive( $dir . '/' . $obj, false );
 			}
 		}
@@ -1256,3 +1256,5 @@ abstract class Purger {
 	}
 
 }
+
+// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore

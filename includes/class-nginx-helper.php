@@ -61,9 +61,9 @@ class Nginx_Helper {
 	 *
 	 * @since    2.0.0
 	 * @access   public
-	 * @var      string    $minium_WP
+	 * @var      string    $minium_wp
 	 */
-	protected $minimum_WP;
+	protected $minimum_wp;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -78,7 +78,7 @@ class Nginx_Helper {
 
 		$this->plugin_name = 'nginx-helper';
 		$this->version     = '2.0.1';
-		$this->minimum_WP  = '3.0';
+		$this->minimum_wp  = '3.0';
 
 		if ( ! $this->required_wp_version() ) {
 			return;
@@ -283,7 +283,7 @@ class Nginx_Helper {
 
 		global $wp_version;
 
-		$wp_ok = version_compare( $wp_version, $this->minimum_WP, '>=' );
+		$wp_ok = version_compare( $wp_version, $this->minimum_wp, '>=' );
 
 		if ( false === $wp_ok ) {
 
@@ -309,7 +309,7 @@ class Nginx_Helper {
 				printf(
 					/* translators: %s is Minimum WP version. */
 					esc_html__( 'Sorry, Nginx Helper requires WordPress %s or higher', 'nginx-helper' ),
-					esc_html( $this->minimum_WP )
+					esc_html( $this->minimum_wp )
 				);
 				?>
 			</strong>

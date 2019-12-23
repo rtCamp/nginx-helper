@@ -146,7 +146,6 @@ class Predis_Purger extends Purger {
 			} else {
 				$this->log( '- Cache Not Found | ' . $_url_purge_base, 'ERROR' );
 			}
-
 		} else {
 
 			$status = $this->delete_keys_by_wildcard( $_url_purge_base );
@@ -156,7 +155,6 @@ class Predis_Purger extends Purger {
 			} else {
 				$this->log( '- Cache Not Found | ' . $_url_purge_base, 'ERROR' );
 			}
-
 		}
 
 	}

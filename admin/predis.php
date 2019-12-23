@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable
 
 /*
  * This file is part of the Predis package.
@@ -15200,3 +15200,4 @@ class ReplicationStrategy
 }
 
 /* --------------------------------------------------------------------------- */
+// phpcs:enable
