@@ -13,7 +13,7 @@
 	<!-- Check up to 8 files simultanously. -->
 	<arg name="parallel" value="8"/>
 
-	<!-- Only check the PHP files. JS files are checked separately with JSCS and JSHint. -->
+	<!-- Check PHP and JS files. -->
 	<arg name="extensions" value="php,js"/>
 
 	<!-- Check all files in this directory and the directories below it. -->
