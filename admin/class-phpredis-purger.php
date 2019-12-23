@@ -202,7 +202,6 @@ class PhpRedis_Purger extends Purger {
 					} else {
 						$this->log( '- Cache Not Found | ' . $purge_url, 'ERROR' );
 					}
-
 				} else {
 
 					$purge_url = $_url_purge_base . $purge_url;
@@ -213,11 +212,8 @@ class PhpRedis_Purger extends Purger {
 					} else {
 						$this->log( '- Cache Not Found | ' . $purge_url, 'ERROR' );
 					}
-
 				}
-
 			}
-
 		}
 
 	}

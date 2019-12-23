@@ -22,6 +22,7 @@
     <!-- Exclude folders. -->
     <exclude-pattern>*/languages/*</exclude-pattern>
     <exclude-pattern>*/admin/predis.php</exclude-pattern> <!-- Predis library file -->
+    <exclude-pattern>*/vendor/*</exclude-pattern> <!-- Composer vendor directory  -->
 
     <!-- Include the WordPress standard. -->
     <rule ref="WordPress-VIP-Go">

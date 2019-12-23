@@ -79,10 +79,11 @@ class Nginx_Helper_Admin {
 		$this->version     = $version;
 
 		/**
-		  * Define settings tabs
-		  */
+		 * Define settings tabs
+		 */
 		$this->settings_tabs = apply_filters(
-			'rt_nginx_helper_settings_tabs', array(
+			'rt_nginx_helper_settings_tabs',
+			array(
 				'general' => array(
 					'menu_title' => __( 'General', 'nginx-helper' ),
 					'menu_slug'  => 'general',
@@ -153,7 +154,12 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version );
+
+		$do_localize = array(
+			'purge_confirm_string' => esc_html__( 'Purging entire cache is not recommended. Would you like to continue?', 'nginx-helper' ),
+		);
+		wp_localize_script( $this->plugin_name, 'nginx_helper', $do_localize );
 
 	}
 
@@ -209,7 +215,7 @@ class Nginx_Helper_Admin {
 			$link_title        = __( 'Purge Current Page', 'nginx-helper' );
 		}
 
-		$purge_url  = add_query_arg(
+		$purge_url = add_query_arg(
 			array(
 				'nginx_helper_action' => 'purge',
 				'nginx_helper_urls'   => $nginx_helper_urls,
@@ -237,7 +243,7 @@ class Nginx_Helper_Admin {
 	 * @since    2.0.0
 	 */
 	public function nginx_helper_setting_page() {
-		include plugin_dir_path(__FILE__ ) . 'partials/nginx-helper-admin-display.php';
+		include plugin_dir_path( __FILE__ ) . 'partials/nginx-helper-admin-display.php';
 	}
 
 	/**
@@ -282,7 +288,14 @@ class Nginx_Helper_Admin {
 	 */
 	public function nginx_helper_settings() {
 
-		$options = get_site_option( 'rt_wp_nginx_helper_options', array( 'redis_hostname' => '127.0.0.1', 'redis_port' => '6379', 'redis_prefix' => 'nginx-cache:' ) );
+		$options = get_site_option(
+			'rt_wp_nginx_helper_options',
+			array(
+				'redis_hostname' => '127.0.0.1',
+				'redis_port'     => '6379',
+				'redis_prefix'   => 'nginx-cache:',
+			)
+		);
 
 		$data = wp_parse_args(
 			$options,
@@ -396,18 +409,16 @@ class Nginx_Helper_Admin {
 					?>
 						<li role="listitem">
 							<?php
-							echo wp_kses(
-								sprintf(
-									'<a href="%1$s" title="%2$s">%3$s</a>',
-									esc_url( $item->get_permalink() ), esc_attr__( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ), esc_html( $item->get_title() )
-								),
-								array( 'strong' => array(), 'a' => array( 'href' => array(), 'title' => array() ) )
-							);
+								printf(
+									'<a href="%s" title="%s">%s</a>',
+									esc_url( $item->get_permalink() ),
+									esc_attr__( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ),
+									esc_html( $item->get_title() )
+								);
 							?>
 						</li>
 					<?php
 				}
-
 			}
 			?>
 		</ul>
@@ -433,7 +444,7 @@ class Nginx_Helper_Admin {
 
 		foreach ( headers_list() as $header ) {
 			list( $key, $value ) = explode( ':', $header, 2 );
-			$key = strtolower( $key );
+			$key                 = strtolower( $key );
 			if ( 'content-type' === $key && strpos( trim( $value ), 'text/html' ) !== 0 ) {
 				return;
 			}
@@ -486,7 +497,7 @@ class Nginx_Helper_Admin {
 
 			$rt_all_blogs = $wpdb->get_results(
 				$wpdb->prepare(
-						'SELECT blog_id, domain, path FROM ' . $wpdb->blogs . " WHERE site_id = %d AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'",
+					'SELECT blog_id, domain, path FROM ' . $wpdb->blogs . " WHERE site_id = %d AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'",
 					$wpdb->siteid
 				)
 			);
@@ -513,11 +524,8 @@ class Nginx_Helper_Admin {
 						if ( 1 !== $blog->blog_id ) {
 							$rt_nginx_map_array[ $blog->path ] = $blog->blog_id;
 						}
-
 					}
-
 				}
-
 			}
 
 			if ( $rt_domain_map_sites ) {
@@ -525,7 +533,6 @@ class Nginx_Helper_Admin {
 				foreach ( $rt_domain_map_sites as $site ) {
 					$rt_nginx_map_array[ $site->domain ] = $site->blog_id;
 				}
-
 			}
 
 			foreach ( $rt_nginx_map_array as $domain => $domain_id ) {
@@ -547,11 +554,11 @@ class Nginx_Helper_Admin {
 
 			$rt_nginx_map = $this->get_map();
 
-			if ( $fp = fopen( $this->functional_asset_path() . 'map.conf', 'w+' ) ) {
+			$fp = fopen( $this->functional_asset_path() . 'map.conf', 'w+' );
+			if ( $fp ) {
 				fwrite( $fp, $rt_nginx_map );
 				fclose( $fp );
 			}
-
 		}
 
 	}
@@ -586,11 +593,11 @@ class Nginx_Helper_Admin {
 		if (
 			'future' === $new_status && $post && 'future' === $post->post_status &&
 			(
-		        ( 'post' === $post->post_type || 'page' === $post->post_type ) ||
-		        (
-		        	isset( $this->options['custom_post_types_recognized'] ) &&
-		            in_array( $post->post_type, $this->options['custom_post_types_recognized'], true )
-		        )
+				( 'post' === $post->post_type || 'page' === $post->post_type ) ||
+				(
+					isset( $this->options['custom_post_types_recognized'] ) &&
+					in_array( $post->post_type, $this->options['custom_post_types_recognized'], true )
+				)
 			)
 		) {
 
