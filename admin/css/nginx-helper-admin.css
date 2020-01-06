@@ -89,16 +89,12 @@ form#purgeall .button-primary:focus {
 	-moz-border-radius: 1000px;
 	border-radius: 1000px;
 }
-#social .inside .nginx-helper-rss:hover {
-	background-color: #FAA33D;
-}
+
 #social .inside .nginx-helper-facebook:hover {
 	background-color: #537BBD;
 }
 #social .inside .nginx-helper-twitter:hover {
 	background-color: #40BFF5;
 }
-#social .inside .nginx-helper-gplus:hover {
-	background-color: #DD4B39;
-}
+
 .rt-purge_url { width: 100%; }
