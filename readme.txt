@@ -1,12 +1,12 @@
 === Nginx Helper ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas
 Donate Link: http://rtcamp.com/donate/
 Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
-Tested up to: 5.2.2
-Stable tag: 2.1.0
+Tested up to: 5.3.2
+Stable tag: 2.2.0
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -126,6 +126,14 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 2. Remaining settings
 
 == Changelog ==
+
+= 2.2.0 =
+* Add filter `rt_nginx_helper_fastcgi_purge_suffix` to change purge suffix for FastCGI cache. [#141](https://github.com/rtCamp/nginx-helper/pull/141) - by [stayallive](https://github.com/stayallive)
+* Add filter `rt_nginx_helper_fastcgi_purge_url_base` to change purge URL base for FastCGI cache. [#141](https://github.com/rtCamp/nginx-helper/pull/141) - by [stayallive](https://github.com/stayallive)
+* Update our code to be in line with WordPress Coding standards in various places. [#209](https://github.com/rtCamp/nginx-helper/pull/209), [#225](https://github.com/rtCamp/nginx-helper/pull/225) - by [abhijitrakas](https://github.com/abhijitrakas), [chandrapatel](https://github.com/chandrapatel)
+* Check and verify purging is enabled before purging cache. [#168](https://github.com/rtCamp/nginx-helper/pull/168) - by [jaredwsmith](https://github.com/jaredwsmith)
+* Hide Purge Cache button in admin bar when purge is disabled. [#218](https://github.com/rtCamp/nginx-helper/issues/218), [#219](https://github.com/rtCamp/nginx-helper/pull/219) - by [mbautista](https://github.com/mbautista), [chandrapatel](https://github.com/mbautista)
+* Don't add Nginx Timestamp on WordPress login page. [#204](https://github.com/rtCamp/nginx-helper/issues/204), [#220](https://github.com/rtCamp/nginx-helper/pull/220) - by [peixotorms](https://github.com/peixotorms), [chandrapatel](https://github.com/chandrapatel)
 
 = 2.1.0 =
 * Add wildcard cache key deletion for device type cache purge. [#203](https://github.com/rtCamp/nginx-helper/pull/203) - by [pradeep910](https://github.com/pradeep910)
@@ -395,5 +403,5 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 == Upgrade Notice ==
 
-= 2.1.0 =
-Nginx Helper 2.1.0, introduces new Hooks to extend cache purge, Adds support for wildcard cache key deletion for device type cache and bug fixes.
+= 2.2.0 =
+Nginx Helper 2.2.0, introduces new Hooks to extend FastCGI cache purge, Adds check for verifying purge status before purging and other bug fixes.
