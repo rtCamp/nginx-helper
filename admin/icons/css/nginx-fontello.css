@@ -50,7 +50,5 @@
 	/* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
 
-.nginx-helper-rss:before { content: '\e803'; } /* '' */
 .nginx-helper-twitter:before { content: '\e802'; } /* '' */
 .nginx-helper-facebook:before { content: '\e801'; } /* '' */
-.nginx-helper-gplus:before { content: '\e800'; } /* '' */
