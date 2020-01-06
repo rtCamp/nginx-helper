@@ -24,7 +24,7 @@
 					<?php esc_html_e( 'Free Support', 'nginx-helper' ); ?>
 				</th>
 				<td>
-					<a href="https://rtcamp.com/support/forum/wordpress-nginx/" title="<?php esc_attr_e( 'Free Support Forum', 'nginx-helper' ); ?>" target="_blank">
+					<a href="https://community.easyengine.io/c/wordpress-nginx/" title="<?php esc_attr_e( 'Free Support Forum', 'nginx-helper' ); ?>" target="_blank">
 						<?php esc_html_e( 'Link to forum', 'nginx-helper' ); ?>
 					</a>
 				</td>
@@ -34,7 +34,7 @@
 					<?php esc_html_e( 'Premium Support', 'nginx-helper' ); ?>
 				</th>
 				<td>
-					<a href="https://rtcamp.com/wordpress-nginx/pricing/" title="<?php esc_attr_e( 'Premium Support Forum', 'nginx-helper' ); ?>" target="_blank">
+					<a href="https://easyengine.io/contact/" title="<?php esc_attr_e( 'Premium Support Forum', 'nginx-helper' ); ?>" target="_blank">
 						<?php esc_html_e( 'Link to forum', 'nginx-helper' ); ?>
 					</a>
 				</td>
