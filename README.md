@@ -145,7 +145,7 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 ### 2.2.0 ###
 * Add filter `rt_nginx_helper_fastcgi_purge_suffix` to change purge suffix for FastCGI cache. [#141](https://github.com/rtCamp/nginx-helper/pull/141) - by [stayallive](https://github.com/stayallive)
 * Add filter `rt_nginx_helper_fastcgi_purge_url_base` to change purge URL base for FastCGI cache. [#141](https://github.com/rtCamp/nginx-helper/pull/141) - by [stayallive](https://github.com/stayallive)
-* Update our code to be in line with WordPress Coding standards in various places. [#209](https://github.com/rtCamp/nginx-helper/pull/209) - by [abhijitrakas](https://github.com/abhijitrakas)
+* Update our code to be in line with WordPress Coding standards in various places. [#209](https://github.com/rtCamp/nginx-helper/pull/209), [#225](https://github.com/rtCamp/nginx-helper/pull/225) - by [abhijitrakas](https://github.com/abhijitrakas), [chandrapatel](https://github.com/chandrapatel)
 * Check and verify purging is enabled before purging cache. [#168](https://github.com/rtCamp/nginx-helper/pull/168) - by [jaredwsmith](https://github.com/jaredwsmith)
 * Hide Purge Cache button in admin bar when purge is disabled. [#218](https://github.com/rtCamp/nginx-helper/issues/218), [#219](https://github.com/rtCamp/nginx-helper/pull/219) - by [mbautista](https://github.com/mbautista), [chandrapatel](https://github.com/mbautista)
 * Don't add Nginx Timestamp on WordPress login page. [#204](https://github.com/rtCamp/nginx-helper/issues/204), [#220](https://github.com/rtCamp/nginx-helper/pull/220) - by [peixotorms](https://github.com/peixotorms), [chandrapatel](https://github.com/chandrapatel)
