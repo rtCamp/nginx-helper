@@ -1235,9 +1235,8 @@ abstract class Purger {
 			return;
 		}
 
-		$obj = readdir( $dh );
-
-		while ( false !== $obj ) {
+		// phpcs:ignore -- WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition -- Variable assignment required for recursion.
+		while ( false !== ( $obj = readdir( $dh ) ) ) {
 
 			if ( '.' === $obj || '..' === $obj ) {
 				continue;
