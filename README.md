@@ -9,7 +9,7 @@
 
 **Tested up to:** 5.3.2
 
-**Stable tag:** 2.2.0
+**Stable tag:** 2.2.1
 
 **License:** GPLv2 or later (of-course)
 
@@ -141,6 +141,9 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 
 
 ## Changelog ##
+
+### 2.2.1 ###
+* Fix timeout issue on FastCGI cache purge. [#229](https://github.com/rtCamp/nginx-helper/pull/229) - by [chandrapatel](https://github.com/chandrapatel), [thrijith](https://github.com/thrijith)
 
 ### 2.2.0 ###
 * Add filter `rt_nginx_helper_fastcgi_purge_suffix` to change purge suffix for FastCGI cache. [#141](https://github.com/rtCamp/nginx-helper/pull/141) - by [stayallive](https://github.com/stayallive)
@@ -419,9 +422,9 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ## Upgrade Notice ##
 
-### 2.2.0 ###
+### 2.2.1 ###
 
-Nginx Helper 2.2.0, introduces new Hooks to extend FastCGI cache purge, Adds check for verifying purge status before purging and other bug fixes.
+Nginx Helper 2.2.1, introduces new Hooks to extend FastCGI cache purge, Adds check for verifying purge status before purging and other bug fixes.
 
 ## Does this interest you?
 
