@@ -717,12 +717,16 @@ class Nginx_Helper_Admin {
 				break;
 		}
 
-		/**
-		 * Fire an action after the cache has been purged whatever caching type is used'
-		 * 
-		 * @since 2.2.2
-		 */
-		if ( 'purge' === $action ) do_action( 'rt_nginx_helper_after_purge_all' );
+		if ( 'purge' === $action ) {
+	
+		    /**
+		     * Fire an action after the entire cache has been purged whatever caching type is used.
+		     * 
+		     * @since 2.2.2
+		     */
+		    do_action( 'rt_nginx_helper_after_purge_all' );
+
+		}
 
 		wp_redirect( esc_url_raw( $redirect_url ) );
 		exit();
