@@ -38,12 +38,12 @@ $args = array(
 	'purge_page_on_mod'                => FILTER_SANITIZE_STRING,
 	'purge_page_on_new_comment'        => FILTER_SANITIZE_STRING,
 	'purge_page_on_deleted_comment'    => FILTER_SANITIZE_STRING,
+	'smart_http_expire_form_nonce'     => FILTER_SANITIZE_STRING,
 );
 
 $all_inputs = filter_input_array( INPUT_POST, $args );
 
-if ( isset( $all_inputs['smart_http_expire_save'] ) && 'Save All Changes' === $all_inputs['smart_http_expire_save'] ) {
-
+if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inputs['smart_http_expire_form_nonce'], 'smart-http-expire-form-nonce' ) ) {
 	unset( $all_inputs['smart_http_expire_save'] );
 	unset( $all_inputs['is_submit'] );
 
@@ -720,6 +720,7 @@ if ( is_multisite() ) {
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
+    <input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo wp_create_nonce('smart-http-expire-form-nonce'); ?>"/>
 	<?php
 		submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true );
 	?>
