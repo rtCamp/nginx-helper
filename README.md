@@ -1,7 +1,7 @@
 # Nginx Helper #
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase
 
 **Tags:** nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 
@@ -9,7 +9,7 @@
 
 **Tested up to:** 5.4
 
-**Stable tag:** 2.2.1
+**Stable tag:** 2.2.2
 
 **License:** GPLv2 or later (of-course)
 
@@ -141,6 +141,10 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 
 
 ## Changelog ##
+
+### 2.2.2 ###
+* Fix ssue for 'Save All Changes' if localized string value sent for button on form submit. [#236](https://github.com/rtCamp/nginx-helper/pull/236) - by [umeshnevase](https://github.com/umeshnevase)
+* Test plugin with WordPress 5.4 [#238](https://github.com/rtCamp/nginx-helper/pull/238) - by [umeshnevase](https://github.com/umeshnevase)
 
 ### 2.2.1 ###
 * Fix timeout issue on FastCGI cache purge. [#229](https://github.com/rtCamp/nginx-helper/pull/229) - by [chandrapatel](https://github.com/chandrapatel), [thrijith](https://github.com/thrijith)
@@ -422,9 +426,9 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ## Upgrade Notice ##
 
-### 2.2.1 ###
+### 2.2.2 ###
 
-Nginx Helper 2.2.1, introduces new Hooks to extend FastCGI cache purge, Adds check for verifying purge status before purging and other bug fixes.
+Nginx Helper 2.2.2, Fix issue for 'Save All Changes' localized string value sent for button on form submit.
 
 ## Does this interest you?
 
