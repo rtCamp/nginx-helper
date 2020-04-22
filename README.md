@@ -428,7 +428,7 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ### 2.2.2 ###
 
-Nginx Helper 2.2.2, Fix issue for 'Save All Changes' localized string value sent for button on form submit.
+Nginx Helper 2.2.2, Fix issue where settings not saved because the button's value localized (for any language).
 
 ## Does this interest you?
 
