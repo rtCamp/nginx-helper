@@ -143,8 +143,8 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 ## Changelog ##
 
 ### 2.2.2 ###
-* Fix ssue for 'Save All Changes' if localized string value sent for button on form submit. [#236](https://github.com/rtCamp/nginx-helper/pull/236) - by [umeshnevase](https://github.com/umeshnevase)
-* Test plugin with WordPress 5.4 [#238](https://github.com/rtCamp/nginx-helper/pull/238) - by [umeshnevase](https://github.com/umeshnevase)
+* Fix issue where settings not saved because the button's value localized (for any language). [#236](https://github.com/rtCamp/nginx-helper/pull/236) - by [umeshnevase](https://github.com/umeshnevase)
+* Test plugin with WordPress 5.4 - by [umeshnevase](https://github.com/umeshnevase)
 
 ### 2.2.1 ###
 * Fix timeout issue on FastCGI cache purge. [#229](https://github.com/rtCamp/nginx-helper/pull/229) - by [chandrapatel](https://github.com/chandrapatel), [thrijith](https://github.com/thrijith)
