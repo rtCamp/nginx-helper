@@ -2,14 +2,16 @@
 # This file is distributed under the same license as the Nginx Helper plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Nginx Helper 2.2.1\n"
+"Project-Id-Version: Nginx Helper 2.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nginx-helper\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-01-07T17:38:36+05:30\n"
+"POT-Creation-Date: 2020-04-20T18:52:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.4.0\n"
+"X-Generator: WP-CLI 2.2.0\n"
 "X-Domain: nginx-helper\n"
 
 #. Plugin Name of the plugin
@@ -34,6 +36,15 @@ msgstr ""
 
 #. Author URI of the plugin
 msgid "https://rtcamp.com"
+msgstr ""
+
+#: includes/class-nginx-helper-activator.php:49
+msgid "Sorry, you need to be an administrator to use Nginx Helper"
+msgstr ""
+
+#. translators: %s is Minimum WP version.
+#: includes/class-nginx-helper.php:311
+msgid "Sorry, Nginx Helper requires WordPress %s or higher"
 msgstr ""
 
 #: admin/class-nginx-helper-admin.php:88
@@ -68,7 +79,7 @@ msgstr ""
 msgid "Posted "
 msgstr ""
 
-#: admin/class-nginx-helper-admin.php:729
+#: admin/class-nginx-helper-admin.php:740
 msgid "Purge initiated"
 msgstr ""
 
@@ -232,6 +243,95 @@ msgstr ""
 
 #: admin/partials/nginx-helper-admin-display.php:21
 msgid "Nginx Settings"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:18
+msgid "Support Forums"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:24
+msgid "Free Support"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:27
+msgid "Free Support Forum"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:28
+#: admin/partials/nginx-helper-support-options.php:38
+msgid "Link to forum"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:34
+msgid "Premium Support"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:37
+msgid "Premium Support Forum"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:26
+msgid "Purge Entire Cache"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:31
+msgid "Need Help?"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:38
+msgid "Please use our"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:40
+msgid "free support forum"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:50
+msgid "Getting Social is Good"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:54
+msgid "Become a fan on Facebook"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:55
+msgid "Follow us on Twitter"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:61
+msgid "Useful Links"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:66
+msgid "WordPress-Nginx Solutions"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:69
+msgid "WordPress Theme Devleopment"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:72
+msgid "WordPress Plugin Development"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:75
+msgid "WordPress Consultancy"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:78
+msgid "easyengine (ee)"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:85
+msgid "Click to toggle"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:86
+msgid "Latest News"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:87
+msgid "Loading..."
 msgstr ""
 
 #: admin/partials/nginx-helper-general-options.php:56
@@ -509,108 +609,10 @@ msgstr ""
 msgid "Mb"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:724
+#: admin/partials/nginx-helper-general-options.php:725
 msgid "Save All Changes"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:26
-msgid "Purge Entire Cache"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:31
-msgid "Need Help?"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:38
-msgid "Please use our"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:40
-msgid "free support forum"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:50
-msgid "Getting Social is Good"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:54
-msgid "Become a fan on Facebook"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:55
-msgid "Follow us on Twitter"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:61
-msgid "Useful Links"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:66
-msgid "WordPress-Nginx Solutions"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:69
-msgid "WordPress Theme Devleopment"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:72
-msgid "WordPress Plugin Development"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:75
-msgid "WordPress Consultancy"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:78
-msgid "easyengine (ee)"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:85
-msgid "Click to toggle"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:86
-msgid "Latest News"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:87
-msgid "Loading..."
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:18
-msgid "Support Forums"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:24
-msgid "Free Support"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:27
-msgid "Free Support Forum"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:28
-#: admin/partials/nginx-helper-support-options.php:38
-msgid "Link to forum"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:34
-msgid "Premium Support"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:37
-msgid "Premium Support Forum"
 msgstr ""
 
 #: class-nginx-helper-wp-cli-command.php:40
 msgid "Purged Everything!"
-msgstr ""
-
-#: includes/class-nginx-helper-activator.php:49
-msgid "Sorry, you need to be an administrator to use Nginx Helper"
-msgstr ""
-
-#. translators: %s is Minimum WP version.
-#: includes/class-nginx-helper.php:311
-msgid "Sorry, Nginx Helper requires WordPress %s or higher"
 msgstr ""
