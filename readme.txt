@@ -128,8 +128,10 @@ Please post your problem in [our free support forum](http://community.rtcamp.com
 == Changelog ==
 
 = 2.2.2 =
+* Add action `rt_nginx_helper_after_purge_all` to fire after the entire cache has been purged whatever caching type is used. [#232](https://github.com/rtCamp/nginx-helper/pull/232) - by [Julien-prrs](https://github.com/Julien-prrs)
 * Fix issue where settings not saved because the button's value localized (for any language). [#236](https://github.com/rtCamp/nginx-helper/pull/236) - by [umeshnevase](https://github.com/umeshnevase)
-* Test plugin with WordPress 5.4 - by [umeshnevase](https://github.com/umeshnevase)
+* Fix issue where "Custom Purge URL" option displays previous value. [#240](https://github.com/rtCamp/nginx-helper/issues/240), [#241](https://github.com/rtCamp/nginx-helper/pull/241) - by [KirillGritcenko](https://github.com/KirillGritcenko)
+* Tested with WordPress 5.4
 
 = 2.2.1 =
 * Fix timeout issue on FastCGI cache purge. [#229](https://github.com/rtCamp/nginx-helper/pull/229) - by [chandrapatel](https://github.com/chandrapatel), [thrijith](https://github.com/thrijith)
@@ -411,4 +413,4 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 == Upgrade Notice ==
 
 = 2.2.2 =
-Nginx Helper 2.2.2, Fix issue where settings not saved because the button's value localized (for any language).
+Nginx Helper 2.2.2, Add new "rt_nginx_helper_after_purge_all" action and fixes issues where settings not saved because the button's value localized (for any language) and "Custom Purge URL" option displays previous value.
