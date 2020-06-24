@@ -92,8 +92,13 @@
 
 							if ( 'cache_method_redis' === selector ) {
 								jQuery( '.cache_method_fastcgi' ).hide();
+								jQuery( '.cache_method_memcached' ).hide();
 							} else if ( selector === 'cache_method_fastcgi' ) {
 								jQuery( '.cache_method_redis' ).hide();
+								jQuery( '.cache_method_memcached' ).hide();
+							} else if ( selector === 'cache_method_memcached' ) {
+								jQuery( '.cache_method_redis' ).hide();
+								jQuery( '.cache_method_fastcgi' ).hide();
 							}
 
 						} else {
@@ -108,6 +113,7 @@
 			/* Function call with parameter */
 			nginx_show_option( 'cache_method_fastcgi' );
 			nginx_show_option( 'cache_method_redis' );
+			nginx_show_option( 'cache_method_memcached' );
 			nginx_show_option( 'enable_map' );
 			nginx_show_option( 'enable_log' );
 			nginx_show_option( 'enable_purge' );

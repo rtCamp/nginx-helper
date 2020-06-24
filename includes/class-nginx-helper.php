@@ -184,6 +184,11 @@ class Nginx_Helper {
 				$nginx_purger = new Predis_Purger();
 
 			}
+		} else if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_memcached' === $nginx_helper_admin->options['cache_method'] ) {
+
+			require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-memcached-purger.php';
+			$nginx_purger = new Memcached_Purger();
+
 		} else {
 
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';

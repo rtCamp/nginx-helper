@@ -277,6 +277,11 @@ class Nginx_Helper_Admin {
 			'redis_prefix'                     => 'nginx-cache:',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
+			'memcached_hostname'               => '127.0.0.1',
+			'memcached_port'                   => '11211',
+			'memcached_prefix'                 => 'nginx-cache:',
+			'memcached_versioned_cache_key'    => 'nginx-cache:version',
+			'memcached_enabled_by_constant'    => 0,
 		);
 
 	}
@@ -288,18 +293,24 @@ class Nginx_Helper_Admin {
 	 */
 	public function nginx_helper_settings() {
 
+		$default_settings = $this->nginx_helper_default_settings();
+
 		$options = get_site_option(
 			'rt_wp_nginx_helper_options',
 			array(
-				'redis_hostname' => '127.0.0.1',
-				'redis_port'     => '6379',
-				'redis_prefix'   => 'nginx-cache:',
+				'redis_hostname'                => $default_settings['redis_hostname'],
+				'redis_port'                    => $default_settings['redis_port'],
+				'redis_prefix'                  => $default_settings['redis_prefix'],
+				'memcached_hostname'            => $default_settings['memcached_hostname'],
+				'memcached_port'                => $default_settings['memcached_port'],
+				'memcached_prefix'              => $default_settings['memcached_prefix'],
+				'memcached_versioned_cache_key' => $default_settings['memcached_versioned_cache_key'],
 			)
 		);
 
 		$data = wp_parse_args(
 			$options,
-			$this->nginx_helper_default_settings()
+			$default_settings
 		);
 
 		$is_redis_enabled = (
@@ -308,16 +319,31 @@ class Nginx_Helper_Admin {
 			defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
 		);
 
-		if ( ! $is_redis_enabled ) {
-			return $data;
+		if ( $is_redis_enabled ) {
+			$data['redis_enabled_by_constant'] = $is_redis_enabled;
+			$data['enable_purge']              = $is_redis_enabled;
+			$data['cache_method']              = 'enable_redis';
+			$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
+			$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
+			$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		}
 
-		$data['redis_enabled_by_constant'] = $is_redis_enabled;
-		$data['enable_purge']              = $is_redis_enabled;
-		$data['cache_method']              = 'enable_redis';
-		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
-		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$is_memcached_enabled = (
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_HOSTNAME' ) &&
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_PORT' ) &&
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_PREFIX' ) &&
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_VERSIONED_CACHE_KEY' )
+		);
+
+		if ( $is_memcached_enabled ) {
+			$data['memcached_enabled_by_constant'] = $is_memcached_enabled;
+			$data['enable_purge']                  = $is_memcached_enabled;
+			$data['cache_method']                  = 'enable_memcached';
+			$data['memcached_hostname']            = RT_WP_NGINX_HELPER_MEMCACHED_HOSTNAME;
+			$data['memcached_port']                = RT_WP_NGINX_HELPER_MEMCACHED_PORT;
+			$data['memcached_prefix']              = RT_WP_NGINX_HELPER_MEMCACHED_PREFIX;
+			$data['memcached_versioned_cache_key'] = RT_WP_NGINX_HELPER_MEMCACHED_VERSIONED_CACHE_KEY;
+		}
 
 		return $data;
 

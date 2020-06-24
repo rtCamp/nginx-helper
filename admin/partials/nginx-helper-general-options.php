@@ -22,6 +22,10 @@ $args = array(
 	'redis_hostname'                   => FILTER_SANITIZE_STRING,
 	'redis_port'                       => FILTER_SANITIZE_STRING,
 	'redis_prefix'                     => FILTER_SANITIZE_STRING,
+	'memcached_hostname'               => FILTER_SANITIZE_STRING,
+	'memcached_port'                   => FILTER_SANITIZE_STRING,
+	'memcached_prefix'                 => FILTER_SANITIZE_STRING,
+	'memcached_versioned_cache_key'    => FILTER_SANITIZE_STRING,
 	'purge_homepage_on_edit'           => FILTER_SANITIZE_STRING,
 	'purge_homepage_on_del'            => FILTER_SANITIZE_STRING,
 	'purge_url'                        => FILTER_SANITIZE_STRING,
@@ -133,6 +137,14 @@ if ( is_multisite() ) {
 							<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_redis' ); ?> />
 							<label for="cache_method_redis">
 								<?php printf( esc_html__( 'Redis cache', 'nginx-helper' ) ); ?>
+							</label>
+						</td>
+					</tr>
+					<tr valign="top">
+						<td>
+							<input type="radio" value="enable_memcached" id="cache_method_memcached" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_memcached' ); ?> />
+							<label for="cache_method_memcached">
+								<?php printf( esc_html__( 'Memcached cache', 'nginx-helper' ) ); ?>
 							</label>
 						</td>
 					</tr>
@@ -260,6 +272,86 @@ if ( is_multisite() ) {
 
 								}
 								?>
+							</td>
+						</tr>
+					</table>
+				</div> <!-- End of .inside -->
+			</div>
+			<div class="postbox cache_method_memcached"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_memcached' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+				<h3 class="hndle">
+					<span><?php esc_html_e( 'Memcached Settings', 'nginx-helper' ); ?></span>
+				</h3>
+				<div class="inside">
+					<table class="form-table rtnginx-table">
+						<tr>
+							<th><label for="memcached_hostname"><?php esc_html_e( 'Hostname', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_hostname" class="medium-text" type="text" name="memcached_hostname" value="<?php echo esc_attr( $nginx_helper_settings['memcached_hostname'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="memcached_port"><?php esc_html_e( 'Port', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_port" class="medium-text" type="text" name="memcached_port" value="<?php echo esc_attr( $nginx_helper_settings['memcached_port'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="memcached_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_prefix" class="medium-text" type="text" name="memcached_prefix" value="<?php echo esc_attr( $nginx_helper_settings['memcached_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="memcached_versioned_cache_key"><?php esc_html_e( 'Versioned cache key', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_versioned_cache_key" class="medium-text" type="text" name="memcached_versioned_cache_key" value="<?php echo esc_attr( $nginx_helper_settings['memcached_versioned_cache_key'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+								<p class="description">
+								<?php
+								esc_html_e( 'Required in order to work with mcrouter setups. Leave empty to disable.', 'nginx-helper' );
+								echo '<br>';
+								esc_html_e( "This method offers fast and reliable cache invalidation.", 'nginx-helper' );
+								echo '<br>';
+								esc_html_e( "Beware that when purging all the cache, it will happen for all sites which share the same Memcached instance, if they use the same version key. So in that case, pick a unique key per site.", 'nginx-helper' );
+								echo '<br>';
+								esc_html_e( "Also wildcard ('*') invalidation is not available with this setting. Don't use this setting or use Redis if you need this feature.", 'nginx-helper' );
+								?>
+								</p>
 							</td>
 						</tr>
 					</table>
@@ -720,7 +812,7 @@ if ( is_multisite() ) {
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
-    <input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo wp_create_nonce('smart-http-expire-form-nonce'); ?>"/>
+	<input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo wp_create_nonce('smart-http-expire-form-nonce'); ?>"/>
 	<?php
 		submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true );
 	?>
