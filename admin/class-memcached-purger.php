@@ -39,7 +39,7 @@ class Memcached_Purger extends Purger {
 		try {
 
 			$this->memcached_object = new Memcached();
-			$this->memcached_object->addServer(
+			$this->connect(
 				$nginx_helper_admin->options['memcached_hostname'],
 				$nginx_helper_admin->options['memcached_port']
 			);
@@ -49,6 +49,18 @@ class Memcached_Purger extends Purger {
 		}
 
 	}
+
+    public function connect($host , $port){
+        // https://www.php.net/manual/en/memcached.addserver.php#110003
+        $servers = $this->memcached_object->getServerList();
+        if(is_array($servers)) {
+            foreach ($servers as $server) {
+                if($server['host'] == $host and $server['port'] == $port)
+                return true;
+            }
+        }
+        return $this->memcached_object->addServer($host , $port);
+    }
 
 	/**
 	 * Purge all cache.
