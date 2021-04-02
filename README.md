@@ -7,7 +7,7 @@
 
 **Requires at least:** 3.0
 
-**Tested up to:** 5.4
+**Tested up to:** 5.7
 
 **Stable tag:** 2.2.2
 
@@ -125,7 +125,7 @@ Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod
 
 ### Still need help! ###
 
-Please post your problem in [our free support forum](http://community.rtcamp.com/c/wordpress-nginx).
+Please post your problem in [our free support forum](https://github.com/rtCamp/nginx-helper/issues).
 
 ## Screenshots ##
 
