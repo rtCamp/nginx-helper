@@ -1,13 +1,13 @@
 # Nginx Helper #
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishu.agola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase
 
 **Tags:** nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 
 **Requires at least:** 3.0
 
-**Tested up to:** 5.4
+**Tested up to:** 5.7
 
 **Stable tag:** 2.2.2
 
@@ -15,7 +15,7 @@
 
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
-**Donate Link:** http://rtcamp.com/donate/
+**Donate Link:** http://rt.cx/eedonate
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -53,7 +53,7 @@ For proper configuration, check out our **tutorial list** in the [Description ta
 
 ## Frequently Asked Questions ##
 
-**Important** - Please refer to [https://easyengine.io/nginx-helper/faq](https://easyengine.io/nginx-helper/faq) for up-to-date FAQs.
+**Important** - Please refer to [https://github.com/rtcamp/nginx-helper#frequently-asked-questions](https://github.com/rtcamp/nginx-helper#frequently-asked-questions) for up-to-date FAQs.
 
 ### FAQ - Installation/Comptability ###
 
@@ -125,7 +125,7 @@ Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod
 
 ### Still need help! ###
 
-Please post your problem in [our free support forum](http://community.rtcamp.com/c/wordpress-nginx).
+Please post your problem in [our free support forum](https://github.com/rtCamp/nginx-helper/issues).
 
 ## Screenshots ##
 
