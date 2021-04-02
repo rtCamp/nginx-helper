@@ -15,7 +15,7 @@
 
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
-**Donate Link:** http://rtcamp.com/donate/
+**Donate Link:** http://rt.cx/eedonate
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -53,7 +53,7 @@ For proper configuration, check out our **tutorial list** in the [Description ta
 
 ## Frequently Asked Questions ##
 
-**Important** - Please refer to [https://easyengine.io/nginx-helper/faq](https://easyengine.io/nginx-helper/faq) for up-to-date FAQs.
+**Important** - Please refer to [https://github.com/rtcamp/nginx-helper#frequently-asked-questions](https://github.com/rtcamp/nginx-helper#frequently-asked-questions) for up-to-date FAQs.
 
 ### FAQ - Installation/Comptability ###
 
