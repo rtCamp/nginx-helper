@@ -254,29 +254,33 @@ class Nginx_Helper_Admin {
 	 */
 	public function nginx_helper_default_settings() {
 
+		$default_config = function( $variable, $def ) {
+			return defined($variable) ? constant($variable) : $def;
+		};
+
 		return array(
-			'enable_purge'                     => 0,
-			'cache_method'                     => 'enable_fastcgi',
-			'purge_method'                     => 'get_request',
-			'enable_map'                       => 0,
-			'enable_log'                       => 0,
-			'log_level'                        => 'INFO',
-			'log_filesize'                     => '5',
-			'enable_stamp'                     => 0,
-			'purge_homepage_on_edit'           => 1,
-			'purge_homepage_on_del'            => 1,
-			'purge_archive_on_edit'            => 1,
-			'purge_archive_on_del'             => 1,
-			'purge_archive_on_new_comment'     => 0,
-			'purge_archive_on_deleted_comment' => 0,
-			'purge_page_on_mod'                => 1,
-			'purge_page_on_new_comment'        => 1,
-			'purge_page_on_deleted_comment'    => 1,
-			'redis_hostname'                   => '127.0.0.1',
-			'redis_port'                       => '6379',
-			'redis_prefix'                     => 'nginx-cache:',
-			'purge_url'                        => '',
-			'redis_enabled_by_constant'        => 0,
+			'enable_purge'                     => $default_config('RT_WP_NGINX_HELPER_DEFAULT_ENABLE_PURGE', 0),
+			'cache_method'                     => $default_config('RT_WP_NGINX_HELPER_DEFAULT_CACHE_METHOD', 'enable_fastcgi'),
+			'purge_method'                     => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_METHOD', 'get_request'),
+			'enable_map'                       => $default_config('RT_WP_NGINX_HELPER_DEFAULT_ENABLE_MAP', 0),
+			'enable_log'                       => $default_config('RT_WP_NGINX_HELPER_DEFAULT_ENABLE_LOG', 0),
+			'log_level'                        => $default_config('RT_WP_NGINX_HELPER_DEFAULT_LOG_LEVEL', 'INFO'),
+			'log_filesize'                     => $default_config('RT_WP_NGINX_HELPER_DEFAULT_LOG_FILESIZE', '5'),
+			'enable_stamp'                     => $default_config('RT_WP_NGINX_HELPER_DEFAULT_ENABLE_STAMP', 0),
+			'purge_homepage_on_edit'           => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_HOMEPAGE_ON_EDIT', 1),
+			'purge_homepage_on_del'            => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_HOMEPAGE_ON_DEL', 1),
+			'purge_archive_on_edit'            => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_ARCHIVE_ON_EDIT', 1),
+			'purge_archive_on_del'             => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_ARCHIVE_ON_DEL', 1),
+			'purge_archive_on_new_comment'     => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_ARCHIVE_ON_NEW_COMMENT', 0),
+			'purge_archive_on_deleted_comment' => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_ARCHIVE_ON_DELETED_COMMENT', 0),
+			'purge_page_on_mod'                => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_PAGE_ON_MOD', 1),
+			'purge_page_on_new_comment'        => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_PAGE_ON_NEW_COMMENT', 1),
+			'purge_page_on_deleted_comment'    => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_PAGE_ON_DELETED_COMMENT', 1),
+			'redis_hostname'                   => $default_config('RT_WP_NGINX_HELPER_DEFAULT_REDIS_HOSTNAME', '127.0.0.1'),
+			'redis_port'                       => $default_config('RT_WP_NGINX_HELPER_DEFAULT_REDIS_PORT', '6379'),
+			'redis_prefix'                     => $default_config('RT_WP_NGINX_HELPER_DEFAULT_REDIS_PREFIX', 'nginx-cache:'),
+			'purge_url'                        => $default_config('RT_WP_NGINX_HELPER_DEFAULT_PURGE_URL', ''),
+			'redis_enabled_by_constant'        => $default_config('RT_WP_NGINX_HELPER_DEFAULT_REDIS_ENABLED_BY_CONSTANT', 0),
 		);
 
 	}
@@ -718,10 +722,10 @@ class Nginx_Helper_Admin {
 		}
 
 		if ( 'purge' === $action ) {
-	
+
 		    /**
 		     * Fire an action after the entire cache has been purged whatever caching type is used.
-		     * 
+		     *
 		     * @since 2.2.2
 		     */
 		    do_action( 'rt_nginx_helper_after_purge_all' );
