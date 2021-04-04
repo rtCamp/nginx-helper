@@ -629,7 +629,7 @@ if ( is_multisite() ) {
 			if ( ! is_dir( $log_path ) ) {
 				mkdir( $log_path );
 			}
-			if ( ! file_exists( $log_path . 'nginx.log' ) ) {
+			if ( is_writable( $log_path ) && ! file_exists( $log_path . 'nginx.log' ) ) {
 				$log = fopen( $log_path . 'nginx.log', 'w' );
 				fclose( $log );
 			}
