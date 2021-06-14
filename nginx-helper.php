@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Nginx Helper
+ * Plugin Name:       Page Cache
  * Plugin URI:        https://rtcamp.com/nginx-helper/
  * Description:       Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does few more things.
  * Version:           2.2.2
@@ -13,7 +13,7 @@
  *
  * @link              https://rtcamp.com/nginx-helper/
  * @since             2.0.0
- * @package           nginx-helper
+ * @package           page-cache
  */
 
 // If this file is called directly, abort.
