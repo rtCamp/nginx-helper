@@ -12,8 +12,6 @@
 
 global $nginx_helper_admin;
 
-$error_log_filesize = false;
-
 $args = array(
 	'enable_purge'                     => FILTER_SANITIZE_STRING,
 	'enable_stamp'                     => FILTER_SANITIZE_STRING,
@@ -22,11 +20,15 @@ $args = array(
 	'redis_hostname'                   => FILTER_SANITIZE_STRING,
 	'redis_port'                       => FILTER_SANITIZE_STRING,
 	'redis_prefix'                     => FILTER_SANITIZE_STRING,
+	'memcached_hostname'               => FILTER_SANITIZE_STRING,
+	'memcached_port'                   => FILTER_SANITIZE_STRING,
+	'memcached_prefix'                 => FILTER_SANITIZE_STRING,
+	'memcached_versioned_cache_key'    => FILTER_SANITIZE_STRING,
+	'memcached_query_string_version_key_prefix'    => FILTER_SANITIZE_STRING,
 	'purge_homepage_on_edit'           => FILTER_SANITIZE_STRING,
 	'purge_homepage_on_del'            => FILTER_SANITIZE_STRING,
 	'purge_url'                        => FILTER_SANITIZE_STRING,
 	'log_level'                        => FILTER_SANITIZE_STRING,
-	'log_filesize'                     => FILTER_SANITIZE_STRING,
 	'smart_http_expire_save'           => FILTER_SANITIZE_STRING,
 	'cache_method'                     => FILTER_SANITIZE_STRING,
 	'enable_map'                       => FILTER_SANITIZE_STRING,
@@ -52,11 +54,6 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 		$nginx_helper_admin->nginx_helper_default_settings()
 	);
 
-	if ( ( ! is_numeric( $nginx_settings['log_filesize'] ) ) || ( empty( $nginx_settings['log_filesize'] ) ) ) {
-		$error_log_filesize = __( 'Log file size must be a number.', 'nginx-helper' );
-		unset( $nginx_settings['log_filesize'] );
-	}
-
 	if ( $nginx_settings['enable_map'] ) {
 		$nginx_helper_admin->update_map();
 	}
@@ -68,8 +65,8 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 }
 
 $nginx_helper_settings = $nginx_helper_admin->nginx_helper_settings();
-$log_path              = $nginx_helper_admin->functional_asset_path();
-$log_url               = $nginx_helper_admin->functional_asset_url();
+$asset_path            = $nginx_helper_admin->functional_asset_path();
+$log_path              = $nginx_helper_admin->functional_log_path();
 
 /**
  * Get setting url for single multiple with subdomain OR multiple with subdirectory site.
@@ -105,7 +102,7 @@ if ( is_multisite() ) {
 	</div>
 
 	<?php if ( ! ( ! is_network_admin() && is_multisite() ) ) { ?>
-		<div class="postbox enable_purge"<?php echo ( empty( $nginx_helper_settings['enable_purge'] ) ) ? ' style="display: none;"' : ''; ?>>
+		<div class="postbox enable_purge <?php echo ( $nginx_helper_settings['hide_cache_method'] ) ? 'hidden' : ''; ?>"<?php echo ( empty( $nginx_helper_settings['enable_purge'] ) || $nginx_helper_settings['hide_cache_method'] ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Caching Method', 'nginx-helper' ); ?></span>
 			</h3>
@@ -136,10 +133,18 @@ if ( is_multisite() ) {
 							</label>
 						</td>
 					</tr>
+					<tr valign="top">
+						<td>
+							<input type="radio" value="enable_memcached" id="cache_method_memcached" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_memcached' ); ?> />
+							<label for="cache_method_memcached">
+								<?php printf( esc_html__( 'Memcached cache', 'nginx-helper' ) ); ?>
+							</label>
+						</td>
+					</tr>
 				</table>
 			</div> <!-- End of .inside -->
 		</div>
-		<div class="enable_purge">
+		<div class="enable_purge <?php echo ( $nginx_helper_settings['hide_cache_method'] ) ? 'hidden' : ''; ?>"<?php echo ( empty( $nginx_helper_settings['enable_purge'] ) || $nginx_helper_settings['hide_cache_method'] ) ? ' style="display: none;"' : ''; ?>>
 			<div class="postbox cache_method_fastcgi"  <?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : 'style="display: none;"'; ?> >
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Purge Method', 'nginx-helper' ); ?></span>
@@ -253,6 +258,101 @@ if ( is_multisite() ) {
 								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+					</table>
+				</div> <!-- End of .inside -->
+			</div>
+			<div class="postbox cache_method_memcached"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_memcached' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+				<h3 class="hndle">
+					<span><?php esc_html_e( 'Memcached Settings', 'nginx-helper' ); ?></span>
+				</h3>
+				<div class="inside">
+					<table class="form-table rtnginx-table">
+						<tr>
+							<th><label for="memcached_hostname"><?php esc_html_e( 'Hostname', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_hostname" class="medium-text" type="text" name="memcached_hostname" value="<?php echo esc_attr( $nginx_helper_settings['memcached_hostname'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="memcached_port"><?php esc_html_e( 'Port', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_port" class="medium-text" type="text" name="memcached_port" value="<?php echo esc_attr( $nginx_helper_settings['memcached_port'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="memcached_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_prefix" class="medium-text" type="text" name="memcached_prefix" value="<?php echo esc_attr( $nginx_helper_settings['memcached_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="memcached_versioned_cache_key"><?php esc_html_e( 'Versioned cache key', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_versioned_cache_key" class="medium-text" type="text" name="memcached_versioned_cache_key" value="<?php echo esc_attr( $nginx_helper_settings['memcached_versioned_cache_key'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+								<p class="description">
+								<?php
+								esc_html_e( 'Required in order to work with mcrouter setups. Leave empty to disable.', 'nginx-helper' );
+								echo '<br>';
+								esc_html_e( "This method offers fast and reliable cache invalidation.", 'nginx-helper' );
+								echo '<br>';
+								esc_html_e( "Beware that when purging all the cache, it will happen for all sites which share the same Memcached instance, if they use the same version key. So in that case, pick a unique key per site.", 'nginx-helper' );
+								echo '<br>';
+								esc_html_e( "Also wildcard ('*') invalidation is not available with this setting. Don't use this setting or use Redis if you need this feature.", 'nginx-helper' );
+								?>
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="memcached_query_string_version_key_prefix"><?php esc_html_e( 'Query String Version Prefix', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="memcached_query_string_version_key_prefix" class="medium-text" type="text" name="memcached_query_string_version_key_prefix" value="<?php echo esc_attr( $nginx_helper_settings['memcached_query_string_version_key_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['memcached_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['memcached_enabled_by_constant'] ) {
 
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
@@ -514,7 +614,7 @@ if ( is_multisite() ) {
 				</table>
 			</div> <!-- End of .inside -->
 		</div>
-		<div class="postbox">
+		<div class="postbox debug-options">
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'Debug Options', 'nginx-helper' ); ?></span>
 			</h3>
@@ -561,7 +661,7 @@ if ( is_multisite() ) {
 			</h3>
 			<div class="inside">
 			<?php
-			if ( ! is_writable( $log_path . 'map.conf' ) ) {
+			if ( ! is_writable( $asset_path . 'map.conf' ) ) {
 				?>
 					<span class="error fade" style="display: block">
 						<p>
@@ -572,7 +672,7 @@ if ( is_multisite() ) {
 									sprintf(
 										// translators: %s file url.
 										__( 'Check you have write permission on <strong>%s</strong>', 'nginx-helper' ),
-										esc_url( $log_path . 'map.conf' )
+										esc_url( $asset_path . 'map.conf' )
 									),
 									array( 'strong' => array() )
 								);
@@ -594,7 +694,7 @@ if ( is_multisite() ) {
 						?>
 						</th>
 						<td>
-							<pre><?php echo esc_url( $log_path . 'map.conf' ); ?></pre>
+							<pre><?php echo esc_url( $asset_path . 'map.conf' ); ?></pre>
 						</td>
 					</tr>
 					<tr>
@@ -625,36 +725,6 @@ if ( is_multisite() ) {
 			<span><?php esc_html_e( 'Logging Options', 'nginx-helper' ); ?></span>
 		</h3>
 		<div class="inside">
-			<?php
-			if ( ! is_dir( $log_path ) ) {
-				mkdir( $log_path );
-			}
-			if ( ! file_exists( $log_path . 'nginx.log' ) ) {
-				$log = fopen( $log_path . 'nginx.log', 'w' );
-				fclose( $log );
-			}
-			if ( ! is_writable( $log_path . 'nginx.log' ) ) {
-				?>
-				<span class="error fade" style="display : block">
-					<p>
-					<?php
-					esc_html_e( 'Can\'t write on log file.', 'nginx-helper' );
-					echo '<br /><br />';
-					echo wp_kses(
-						sprintf(
-							// translators: %s file url.
-							__( 'Check you have write permission on <strong>%s</strong>', 'nginx-helper' ),
-							esc_url( $log_path . 'nginx.log' )
-						),
-						array( 'strong' => array() )
-					);
-					?>
-					</p>
-				</span>
-				<?php
-			}
-			?>
-
 			<table class="form-table rtnginx-table">
 				<tbody>
 					<tr>
@@ -665,20 +735,8 @@ if ( is_multisite() ) {
 						</th>
 						<td>
 							<code>
-								<?php echo esc_url( $log_path . 'nginx.log' ); ?>
+								<?php echo esc_url( $log_path, array_merge( wp_allowed_protocols(), array( 'php' ) ) ); ?>
 							</code>
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<label for="rt_wp_nginx_helper_logs_link">
-								<?php esc_html_e( 'View Log', 'nginx-helper' ); ?>
-							</label>
-						</th>
-						<td>
-							<a target="_blank" href="<?php echo esc_url( $log_url . 'nginx.log' ); ?>">
-								<?php esc_html_e( 'Log', 'nginx-helper' ); ?>
-							</a>
 						</td>
 					</tr>
 					<tr>
@@ -696,31 +754,11 @@ if ( is_multisite() ) {
 							</select>
 						</td>
 					</tr>
-					<tr>
-						<th>
-							<label for="log_filesize">
-								<?php esc_html_e( 'Max log file size', 'nginx-helper' ); ?>
-							</label>
-						</th>
-						<td>
-							<input id="log_filesize" class="small-text" type="text" name="log_filesize" value="<?php echo esc_attr( $nginx_helper_settings['log_filesize'] ); ?>" />
-							<?php
-								esc_html_e( 'Mb', 'nginx-helper' );
-							if ( $error_log_filesize ) {
-								?>
-								<p class="error fade" style="display: block;">
-								<?php echo esc_html( $error_log_filesize ); ?>
-								</p>
-								<?php
-							}
-							?>
-						</td>
-					</tr>
 				</tbody>
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
-    <input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo wp_create_nonce('smart-http-expire-form-nonce'); ?>"/>
+	<input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo wp_create_nonce('smart-http-expire-form-nonce'); ?>"/>
 	<?php
 		submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true );
 	?>

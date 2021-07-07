@@ -78,23 +78,6 @@ class Nginx_Helper_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 
-		/**
-		 * Define settings tabs
-		 */
-		$this->settings_tabs = apply_filters(
-			'rt_nginx_helper_settings_tabs',
-			array(
-				'general' => array(
-					'menu_title' => __( 'General', 'nginx-helper' ),
-					'menu_slug'  => 'general',
-				),
-				'support' => array(
-					'menu_title' => __( 'Support', 'nginx-helper' ),
-					'menu_slug'  => 'support',
-				),
-			)
-		);
-
 		$this->options = $this->nginx_helper_settings();
 
 	}
@@ -174,8 +157,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'settings.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
+				__( 'Server Cache', 'nginx-helper' ),
+				__( 'Server Cache', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
@@ -185,8 +168,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'options-general.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
+				__( 'Server Cache', 'nginx-helper' ),
+				__( 'Server Cache', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
@@ -255,28 +238,34 @@ class Nginx_Helper_Admin {
 	public function nginx_helper_default_settings() {
 
 		return array(
-			'enable_purge'                     => 0,
-			'cache_method'                     => 'enable_fastcgi',
-			'purge_method'                     => 'get_request',
-			'enable_map'                       => 0,
-			'enable_log'                       => 0,
-			'log_level'                        => 'INFO',
-			'log_filesize'                     => '5',
-			'enable_stamp'                     => 0,
-			'purge_homepage_on_edit'           => 1,
-			'purge_homepage_on_del'            => 1,
-			'purge_archive_on_edit'            => 1,
-			'purge_archive_on_del'             => 1,
-			'purge_archive_on_new_comment'     => 0,
-			'purge_archive_on_deleted_comment' => 0,
-			'purge_page_on_mod'                => 1,
-			'purge_page_on_new_comment'        => 1,
-			'purge_page_on_deleted_comment'    => 1,
-			'redis_hostname'                   => '127.0.0.1',
-			'redis_port'                       => '6379',
-			'redis_prefix'                     => 'nginx-cache:',
-			'purge_url'                        => '',
-			'redis_enabled_by_constant'        => 0,
+			'enable_purge'                                      => 1,
+			'cache_method'                                      => 'enable_fastcgi',
+			'hide_cache_method'                                 => 0,
+			'purge_method'                                      => 'get_request',
+			'enable_map'                                        => 0,
+			'enable_log'                                        => 0,
+			'log_level'                                         => 'INFO',
+			'enable_stamp'                                      => 0,
+			'purge_homepage_on_edit'                            => 1,
+			'purge_homepage_on_del'                             => 1,
+			'purge_archive_on_edit'                             => 1,
+			'purge_archive_on_del'                              => 1,
+			'purge_archive_on_new_comment'                      => 0,
+			'purge_archive_on_deleted_comment'                  => 0,
+			'purge_page_on_mod'                                 => 1,
+			'purge_page_on_new_comment'                         => 1,
+			'purge_page_on_deleted_comment'                     => 1,
+			'redis_hostname'                                    => '127.0.0.1',
+			'redis_port'                                        => '6379',
+			'redis_prefix'                                      => 'nginx-cache:',
+			'purge_url'                                         => '',
+			'redis_enabled_by_constant'                         => 0,
+			'memcached_hostname'                                => '127.0.0.1',
+			'memcached_port'                                    => '11211',
+			'memcached_prefix'                                  => 'nginx-cache:',
+			'memcached_versioned_cache_key'                     => 'nginx-cache:version',
+			'memcached_query_string_version_key_prefix'         => 'nginx-cache:query_string_version:',
+			'memcached_enabled_by_constant'                     => 0,
 		);
 
 	}
@@ -288,18 +277,25 @@ class Nginx_Helper_Admin {
 	 */
 	public function nginx_helper_settings() {
 
+		$default_settings = $this->nginx_helper_default_settings();
+
 		$options = get_site_option(
 			'rt_wp_nginx_helper_options',
 			array(
-				'redis_hostname' => '127.0.0.1',
-				'redis_port'     => '6379',
-				'redis_prefix'   => 'nginx-cache:',
+				'redis_hostname'                            => $default_settings['redis_hostname'],
+				'redis_port'                                => $default_settings['redis_port'],
+				'redis_prefix'                              => $default_settings['redis_prefix'],
+				'memcached_hostname'                        => $default_settings['memcached_hostname'],
+				'memcached_port'                            => $default_settings['memcached_port'],
+				'memcached_prefix'                          => $default_settings['memcached_prefix'],
+				'memcached_versioned_cache_key'             => $default_settings['memcached_versioned_cache_key'],
+				'memcached_query_string_version_key_prefix' => $default_settings['memcached_query_string_version_key_prefix'],
 			)
 		);
 
 		$data = wp_parse_args(
 			$options,
-			$this->nginx_helper_default_settings()
+			$default_settings
 		);
 
 		$is_redis_enabled = (
@@ -308,16 +304,36 @@ class Nginx_Helper_Admin {
 			defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
 		);
 
-		if ( ! $is_redis_enabled ) {
-			return $data;
+		if ( $is_redis_enabled ) {
+			$data['redis_enabled_by_constant'] = $is_redis_enabled;
+			$data['cache_method']              = 'enable_redis';
+			$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
+			$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
+			$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		}
 
-		$data['redis_enabled_by_constant'] = $is_redis_enabled;
-		$data['enable_purge']              = $is_redis_enabled;
-		$data['cache_method']              = 'enable_redis';
-		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
-		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$is_memcached_enabled = (
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_HOSTNAME' ) &&
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_PORT' ) &&
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_PREFIX' ) &&
+			defined( 'RT_WP_NGINX_HELPER_MEMCACHED_VERSIONED_CACHE_KEY' )
+		);
+
+		if ( $is_memcached_enabled ) {
+			$data['memcached_enabled_by_constant'] = $is_memcached_enabled;
+			$data['cache_method']                  = 'enable_memcached';
+			$data['memcached_hostname']            = RT_WP_NGINX_HELPER_MEMCACHED_HOSTNAME;
+			$data['memcached_port']                = RT_WP_NGINX_HELPER_MEMCACHED_PORT;
+			$data['memcached_prefix']              = RT_WP_NGINX_HELPER_MEMCACHED_PREFIX;
+			$data['memcached_versioned_cache_key'] = RT_WP_NGINX_HELPER_MEMCACHED_VERSIONED_CACHE_KEY;
+			if ( defined( 'RT_WP_NGINX_HELPER_MEMCACHED_QUERY_STRING_VERSION_KEY_PREFIX' ) ) {
+				$data['memcached_query_string_version_key_prefix'] = RT_WP_NGINX_HELPER_MEMCACHED_QUERY_STRING_VERSION_KEY_PREFIX;
+			}
+		}
+
+		if( $is_redis_enabled || $is_memcached_enabled ) {
+			$data['hide_cache_method'] = 1;
+		}
 
 		return $data;
 
@@ -356,6 +372,21 @@ class Nginx_Helper_Admin {
 		$log_path = WP_CONTENT_DIR . '/uploads/nginx-helper/';
 
 		return apply_filters( 'nginx_asset_path', $log_path );
+
+	}
+
+	/**
+	 * Retrieve the log path.
+	 *
+	 * @since     2.0.0
+	 * @return    string    asset path of the plugin.
+	 */
+	public function functional_log_path() {
+
+		// write to Docker's stderr
+		$log_path = 'php://stderr';
+
+		return apply_filters( 'nginx_log_path', $log_path );
 
 	}
 
@@ -719,12 +750,12 @@ class Nginx_Helper_Admin {
 
 		if ( 'purge' === $action ) {
 	
-		    /**
-		     * Fire an action after the entire cache has been purged whatever caching type is used.
-		     * 
-		     * @since 2.2.2
-		     */
-		    do_action( 'rt_nginx_helper_after_purge_all' );
+			/**
+			 * Fire an action after the entire cache has been purged whatever caching type is used.
+			 *
+			 * @since 2.2.2
+			 */
+			do_action( 'rt_nginx_helper_after_purge_all' );
 
 		}
 

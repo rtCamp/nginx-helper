@@ -106,6 +106,22 @@ define('RT_WP_NGINX_HELPER_REDIS_PORT', '6000');
 define('RT_WP_NGINX_HELPER_REDIS_PREFIX', 'page-cache:');
 ```
 
+= FAQ - Nginx Memcached Cache =
+
+**Q. Can I override the memcached hostname, port, prefix and versioned cache key?**
+
+Yes, you can force override the memcached hostname, port or prefix by defining constant in wp-config.php. For example:
+
+```
+define('RT_WP_NGINX_HELPER_MEMCACHED_HOSTNAME', '10.0.0.1');
+
+define('RT_WP_NGINX_HELPER_MEMCACHED_PORT', '6000');
+
+define('RT_WP_NGINX_HELPER_MEMCACHED_PREFIX', 'page-cache:');
+
+define('RT_WP_NGINX_HELPER_MEMCACHED_VERSIONED_CACHE_KEY', 'page-cache:version');
+```
+
 = FAQ - Nginx Map =
 
 **Q. My multisite already uses `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**

@@ -537,7 +537,7 @@ abstract class Purger {
 
 		if ( $log_levels[ $level ] >= $log_levels[ $nginx_helper_admin->options['log_level'] ] ) {
 
-			$fp = fopen( $nginx_helper_admin->functional_asset_path() . 'nginx.log', 'a+' );
+			$fp = fopen( $nginx_helper_admin->functional_log_path(), 'a+' );
 			if ( $fp ) {
 
 				fwrite( $fp, "\n" . gmdate( 'Y-m-d H:i:s ' ) . ' | ' . $level . ' | ' . $msg );
@@ -548,42 +548,6 @@ abstract class Purger {
 
 		return true;
 
-	}
-
-	/**
-	 * Check and truncate log file.
-	 */
-	public function check_and_truncate_log_file() {
-
-		global $nginx_helper_admin;
-
-		if ( ! $nginx_helper_admin->options['enable_log'] ) {
-			return;
-		}
-
-		$nginx_asset_path = $nginx_helper_admin->functional_asset_path() . 'nginx.log';
-
-		if ( ! file_exists( $nginx_asset_path ) ) {
-			return;
-		}
-
-		$max_size_allowed = ( is_numeric( $nginx_helper_admin->options['log_filesize'] ) ) ? $nginx_helper_admin->options['log_filesize'] * 1048576 : 5242880;
-
-		$file_size = filesize( $nginx_asset_path );
-
-		if ( $file_size > $max_size_allowed ) {
-
-			$offset       = $file_size - $max_size_allowed;
-			$file_content = file_get_contents( $nginx_asset_path, null, null, $offset );
-			$file_content = empty( $file_content ) ? '' : strstr( $file_content, "\n" );
-
-			$fp = fopen( $nginx_asset_path, 'w+' );
-			if ( $file_content && $fp ) {
-
-				fwrite( $fp, $file_content );
-				fclose( $fp );
-			}
-		}
 	}
 
 	/**

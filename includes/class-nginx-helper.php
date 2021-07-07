@@ -184,6 +184,11 @@ class Nginx_Helper {
 				$nginx_purger = new Predis_Purger();
 
 			}
+		} else if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_memcached' === $nginx_helper_admin->options['cache_method'] ) {
+
+			require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-memcached-purger.php';
+			$nginx_purger = new Memcached_Purger();
+
 		} else {
 
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';
@@ -216,7 +221,6 @@ class Nginx_Helper {
 		$this->loader->add_action( 'transition_comment_status', $nginx_purger, 'purge_post_on_comment_change', 200, 3 );
 		$this->loader->add_action( 'transition_post_status', $nginx_helper_admin, 'set_future_post_option_on_future_status', 20, 3 );
 		$this->loader->add_action( 'delete_post', $nginx_helper_admin, 'unset_future_post_option_on_delete', 20, 1 );
-		$this->loader->add_action( 'rt_wp_nginx_helper_check_log_file_size_daily', $nginx_purger, 'check_and_truncate_log_file', 100, 1 );
 		$this->loader->add_action( 'edit_attachment', $nginx_purger, 'purge_image_on_edit', 100, 1 );
 		$this->loader->add_action( 'wpmu_new_blog', $nginx_helper_admin, 'update_new_blog_options', 10, 1 );
 		$this->loader->add_action( 'transition_post_status', $nginx_purger, 'purge_on_post_moved_to_trash', 20, 3 );
