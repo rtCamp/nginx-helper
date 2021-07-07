@@ -37,32 +37,6 @@
 	$(
 		function () {
 
-			var news_section = jQuery( '#latest_news' );
-
-			if ( news_section.length > 0 ) {
-
-				var args = {
-					'action': 'rt_get_feeds'
-				};
-
-				jQuery.get(
-					ajaxurl,
-					args,
-					function( data ) {
-						/**
-						 * Received markup is safe and escaped appropriately.
-						 *
-						 * File: admin/class-nginx-helper-admin.php
-						 * Method: nginx_helper_get_feeds();
-						 */
-
-						// phpcs:ignore -- WordPressVIPMinimum.JS.HTMLExecutingFunctions.append
-						news_section.find( '.inside' ).empty().append( data );
-					}
-				);
-
-			}
-
 			jQuery( "form#purgeall a" ).click(
 				function (e) {
 
@@ -88,12 +62,17 @@
 
 						if ( jQuery( this ).is( ':checked' ) ) {
 
-							jQuery( '.' + selector ).show();
+							jQuery('.' + selector).not(".hidden").show();
 
 							if ( 'cache_method_redis' === selector ) {
 								jQuery( '.cache_method_fastcgi' ).hide();
+								jQuery( '.cache_method_memcached' ).hide();
 							} else if ( selector === 'cache_method_fastcgi' ) {
 								jQuery( '.cache_method_redis' ).hide();
+								jQuery( '.cache_method_memcached' ).hide();
+							} else if ( selector === 'cache_method_memcached' ) {
+								jQuery( '.cache_method_redis' ).hide();
+								jQuery( '.cache_method_fastcgi' ).hide();
 							}
 
 						} else {
@@ -108,6 +87,7 @@
 			/* Function call with parameter */
 			nginx_show_option( 'cache_method_fastcgi' );
 			nginx_show_option( 'cache_method_redis' );
+			nginx_show_option( 'cache_method_memcached' );
 			nginx_show_option( 'enable_map' );
 			nginx_show_option( 'enable_log' );
 			nginx_show_option( 'enable_purge' );
