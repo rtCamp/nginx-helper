@@ -166,12 +166,12 @@ class FastCGI_Purger extends Purger {
 	 */
 	public function purge_all() {
 		// New Method
-        $_url_purge_base = "http://localhost/purge-all";
-        $_url_purge      = $_url_purge_base;
 
-
-
+        $_url_purge      = "http://localhost/purge-all";
         $this->do_remote_get( $_url_purge );
+
+		    $_url_purge_pagespeed = "http://localhost/pagespeed_admin/cache?purge=*";
+        $this->do_remote_get(  $_url_purge_pagespeed );
 
 
 		// Old Method
