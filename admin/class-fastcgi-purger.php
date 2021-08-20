@@ -165,18 +165,22 @@ class FastCGI_Purger extends Purger {
 	 * Purge everything.
 	 */
 	public function purge_all() {
-		// New Method
+		// OP cache
+    	opcache_reset();
 
+		// New Method fcgi
         $_url_purge      = "http://localhost/purge-all";
         $this->do_remote_get( $_url_purge );
 
-		    $_url_purge_pagespeed = "http://localhost/pagespeed_admin/cache?purge=*";
+
+		// Pagespeed
+		$_url_purge_pagespeed = "http://localhost/pagespeed_admin/cache?purge=*";
         $this->do_remote_get(  $_url_purge_pagespeed );
 
 
 		// Old Method
 		// $this->unlink_recursive( RT_WP_NGINX_HELPER_CACHE_PATH, false );
-		
+
 		// Logs
 		$this->log( '* * * * *' );
 		$this->log( '* Purged Everything!' );
