@@ -33,12 +33,11 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 	<div class="inside">
 		<p>
 			<?php
-			echo wp_kses(
-				sprintf(
-					'%1$s <a href=\'%2$s\'>%3$s</a>.',
-					esc_html__( 'Please use our', 'nginx-helper' ), esc_url( 'http://rtcamp.com/support/forum/wordpress-nginx/' ), esc_html__( 'free support forum', 'nginx-helper' )
-				),
-				array( 'a' => array( 'href' => array() ) )
+			printf(
+				'%s <a href=\'%s\'>%s</a>.',
+				esc_html__( 'Please use our', 'nginx-helper' ),
+				esc_url( 'http://rtcamp.com/support/forum/wordpress-nginx/' ),
+				esc_html__( 'free support forum', 'nginx-helper' )
 			);
 			?>
 		</p>
@@ -54,8 +53,6 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 	<div style="text-align:center;" class="inside">
 		<a class="nginx-helper-facebook" title="<?php esc_attr_e( 'Become a fan on Facebook', 'nginx-helper' ); ?>" target="_blank" href="http://www.facebook.com/rtCamp.solutions/"></a>
 		<a class="nginx-helper-twitter" title="<?php esc_attr_e( 'Follow us on Twitter', 'nginx-helper' ); ?>" target="_blank" href="https://twitter.com/rtcamp/"></a>
-		<a class="nginx-helper-gplus" title="<?php esc_attr_e( 'Add to Circle', 'nginx-helper' ); ?>" target="_blank" href="https://plus.google.com/110214156830549460974/posts"></a>
-		<a class="nginx-helper-rss" title="<?php esc_attr_e( 'Subscribe to our feeds', 'nginx-helper' ); ?>" target="_blank" href="http://feeds.feedburner.com/rtcamp/"></a>
 	</div>
 </div>
 

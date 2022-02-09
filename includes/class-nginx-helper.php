@@ -61,9 +61,9 @@ class Nginx_Helper {
 	 *
 	 * @since    2.0.0
 	 * @access   public
-	 * @var      string    $minium_WP
+	 * @var      string    $minium_wp
 	 */
-	protected $minimum_WP;
+	protected $minimum_wp;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -77,8 +77,8 @@ class Nginx_Helper {
 	public function __construct() {
 
 		$this->plugin_name = 'nginx-helper';
-		$this->version     = '2.0.1';
-		$this->minimum_WP  = '3.0';
+		$this->version     = '2.2.2';
+		$this->minimum_wp  = '3.0';
 
 		if ( ! $this->required_wp_version() ) {
 			return;
@@ -171,7 +171,7 @@ class Nginx_Helper {
 		$nginx_helper_admin = new Nginx_Helper_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		// Defines global variables.
-		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && $nginx_helper_admin->options['cache_method'] === 'enable_redis' ) {
+		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_redis' === $nginx_helper_admin->options['cache_method'] ) {
 
 			if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis extension if installed.
 
@@ -184,7 +184,6 @@ class Nginx_Helper {
 				$nginx_purger = new Predis_Purger();
 
 			}
-
 		} else {
 
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';
@@ -203,7 +202,10 @@ class Nginx_Helper {
 			$this->loader->add_filter( 'plugin_action_links_' . NGINX_HELPER_BASENAME, $nginx_helper_admin, 'nginx_helper_settings_link' );
 		}
 
-		$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'nginx_helper_toolbar_purge_link', 100 );
+		if ( ! empty( $nginx_helper_admin->options['enable_purge'] ) ) {
+			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'nginx_helper_toolbar_purge_link', 100 );
+		}
+
 		$this->loader->add_action( 'wp_ajax_rt_get_feeds', $nginx_helper_admin, 'nginx_helper_get_feeds' );
 
 		$this->loader->add_action( 'shutdown', $nginx_helper_admin, 'add_timestamps', 99999 );
@@ -281,7 +283,7 @@ class Nginx_Helper {
 
 		global $wp_version;
 
-		$wp_ok = version_compare( $wp_version, $this->minimum_WP, '>=' );
+		$wp_ok = version_compare( $wp_version, $this->minimum_wp, '>=' );
 
 		if ( false === $wp_ok ) {
 
@@ -306,7 +308,8 @@ class Nginx_Helper {
 				<?php
 				printf(
 					/* translators: %s is Minimum WP version. */
-					esc_html__( 'Sorry, Nginx Helper requires WordPress %s or higher', 'nginx-helper' ), esc_html( $this->minimum_WP )
+					esc_html__( 'Sorry, Nginx Helper requires WordPress %s or higher', 'nginx-helper' ),
+					esc_html( $this->minimum_wp )
 				);
 				?>
 			</strong>

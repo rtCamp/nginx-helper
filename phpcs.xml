@@ -1,60 +1,66 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Coding Standards">
 
-    <!-- Set a description for this ruleset. -->
-    <description>A custom set of code standard rules to check for Nginx helper plugin.</description>
+	<!-- Set a description for this ruleset. -->
+	<description>A custom set of code standard rules to check for Nginx helper plugin.</description>
 
-    <!-- Pass some flags to PHPCS:
+	<!-- Pass some flags to PHPCS:
          p flag: Show progress of the run.
          s flag: Show sniff codes in all reports.
     -->
-    <arg value="psvn"/>
+	<arg value="psvn"/>
 
-    <!-- Check up to 8 files simultanously. -->
-    <arg name="parallel" value="8"/>
+	<!-- Check up to 8 files simultanously. -->
+	<arg name="parallel" value="8"/>
 
-    <!-- Only check the PHP files. JS files are checked separately with JSCS and JSHint. -->
-    <arg name="extensions" value="php"/>
+	<!-- Check PHP and JS files. -->
+	<arg name="extensions" value="php,js"/>
 
-    <!-- Check all files in this directory and the directories below it. -->
-    <file>.</file>
+	<!-- Check all files in this directory and the directories below it. -->
+	<file>.</file>
 
-    <!-- Exclude folders. -->
-    <exclude-pattern>*/languages/*</exclude-pattern>
-    <exclude-pattern>*/admin/predis.php</exclude-pattern> <!-- Predis library file -->
+	<!-- Exclude folders. -->
+	<exclude-pattern>*/languages/*</exclude-pattern>
+	<exclude-pattern>*/admin/predis.php</exclude-pattern>	<!-- Predis library file -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>	<!-- Composer vendor directory  -->
 
-    <!-- Include the WordPress standard. -->
-    <rule ref="WordPress-VIP-Go">
-        <exclude name="WordPress.VIP.FileSystemWritesDisallow.directory_mkdir" />
-        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
-        <exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_is_writable" />
-        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose" />
-        <exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_fwrite" />
-        <exclude name="WordPress.VIP.FileSystemWritesDisallow.directory_rmdir" />
-        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
-        <exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_unlink" />
-    </rule>
-    <rule ref="WordPress-Docs"/>
+	<!-- Include the WordPress standard. -->
+	<rule ref="WordPress">
+		<exclude name="PEAR.NamingConventions.ValidClassName.Invalid" />
+		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
+	</rule>
+	<rule ref="WordPress-VIP-Go">
+		<exclude name="WordPress.VIP.FileSystemWritesDisallow.directory_mkdir" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen" />
+		<exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_is_writable" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose" />
+		<exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_fwrite" />
+		<exclude name="WordPress.VIP.FileSystemWritesDisallow.directory_rmdir" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite" />
+		<exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_unlink" />
+		<exclude name="WordPressVIPMinimum.Functions.RestrictedFunctions.directory_mkdir" />
+		<exclude name="WordPressVIPMinimum.Functions.RestrictedFunctions.directory_rmdir" />
+	</rule>
 
-    <!-- Verify that the text_domain is set to the desired text-domain.
+	<!-- Verify that the text_domain is set to the desired text-domain.
 		 Multiple valid text domains can be provided as a comma-delimited list. -->
-    <rule ref="WordPress.WP.I18n">
-        <properties>
-            <property name="text_domain" type="array" value="nginx-helper" />
-        </properties>
-    </rule>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="nginx-helper" />
+		</properties>
+	</rule>
 
-    <!-- Verify that no WP functions are used which are deprecated or have been removed.
+	<!-- Verify that no WP functions are used which are deprecated or have been removed.
 		 The minimum version set here should be in line with the minimum WP version
 		 as set in the "Requires at least" tag in the readme.txt file. -->
-    <rule ref="WordPress.WP.DeprecatedFunctions">
-        <properties>
-            <property name="minimum_supported_version" value="3.0" />
-        </properties>
-    </rule>
+	<rule ref="WordPress.WP.DeprecatedFunctions">
+		<properties>
+			<property name="minimum_supported_version" value="3.0" />
+		</properties>
+	</rule>
 
-    <!-- Include sniffs for PHP cross-version compatibility. -->
-    <rule ref="PHPCompatibility"/>
-    <config name="testVersion" value="5.3-99.0"/>
+	<!-- Include sniffs for PHP cross-version compatibility. -->
+	<rule ref="PHPCompatibility"/>
+	<config name="testVersion" value="5.3-99.0"/>
 
 </ruleset>
