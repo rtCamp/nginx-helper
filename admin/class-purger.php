@@ -405,8 +405,9 @@ abstract class Purger {
 		 * @since 2.1.0
 		 *
 		 * @param string $cached_file Cached file name.
+		 * @param string $url         URL to be purged.
 		 */
-		$cached_file = apply_filters( 'rt_nginx_helper_purge_cached_file', $cached_file );
+		$cached_file = apply_filters( 'rt_nginx_helper_purge_cached_file', $cached_file, $url );
 
 		// Verify cached file exists.
 		if ( ! file_exists( $cached_file ) ) {
