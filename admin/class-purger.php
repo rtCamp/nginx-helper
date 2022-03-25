@@ -263,9 +263,9 @@ abstract class Purger {
 
 			}
 
-            $post_types = get_post_types(array('public' => true));
+            $post_types = get_post_types( array('public' => true) );
 
-			if ( isset($post_types[$_post_type]) || in_array($_post_type, $post_types) ) {
+			if ( in_array($_post_type, $post_types, true) ) {
 
 				$this->log( 'Purging date' );
 
