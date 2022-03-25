@@ -232,7 +232,7 @@ abstract class Purger {
 				$url = get_sample_permalink( $post_id );
 
 				if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
-					$url = str_replace( '%postname%', $url[1], $url[0] );
+					$url = str_replace( ['%postname%', '%pagename%'], $url[1], $url[0] );
 				} else {
 					$url = '';
 				}
