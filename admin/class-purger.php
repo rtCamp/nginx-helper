@@ -263,7 +263,7 @@ abstract class Purger {
 
 			}
 
-            $post_types = get_post_types( array('public' => true) );
+            		$post_types = get_post_types( array('public' => true) );
 
 			if ( in_array($_post_type, $post_types, true) ) {
 
