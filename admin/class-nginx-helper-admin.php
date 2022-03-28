@@ -608,6 +608,12 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
+		$exclude_post_types = array( 'nav_menu_item' );
+
+		if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
+			return;
+		}
+
 		if ( ! $this->options['enable_purge'] ) {
 			return;
 		}
