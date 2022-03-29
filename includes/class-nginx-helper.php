@@ -223,6 +223,7 @@ class Nginx_Helper {
 		$this->loader->add_action( 'edit_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
 		$this->loader->add_action( 'delete_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
 		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20 );
+		$this->loader->add_action( 'wp_update_nav_menu', $nginx_purger, 'purge_on_nav_menu_update', 20 );
 		$this->loader->add_action( 'admin_bar_init', $nginx_helper_admin, 'purge_all' );
 
 		// expose action to allow other plugins to purge the cache.

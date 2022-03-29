@@ -1218,6 +1218,32 @@ abstract class Purger {
 	}
 
 	/**
+	 * Purge All on Nav Menu Update.
+	 * Only if the menu is associated with any display location.
+	 *
+	 * @param int $menu_id Menu ID
+	 *
+	 * @return void
+	 */
+	public function purge_on_nav_menu_update( $menu_id ) {
+
+		global $nginx_helper_admin;
+
+		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
+			return;
+		}
+
+		$this->log( sprintf( __( 'Menu updated. Menu ID: %s', 'nginx-helper' ), $menu_id ) );
+
+		$menu_locations = get_nav_menu_locations();
+
+		if ( in_array( $menu_id, $menu_locations, true ) ) {
+
+			$this->purge_all();
+		}
+	}
+
+	/**
 	 * Unlink file recursively.
 	 * Source - http://stackoverflow.com/a/1360437/156336
 	 *
