@@ -1161,6 +1161,10 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
+		if ( $taxon === 'nav_menu' ) {
+			return;
+		}
+
 		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
 			return;
 		}
