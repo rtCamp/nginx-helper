@@ -77,14 +77,20 @@ class FastCGI_Purger extends Purger {
 					$_url_purge .= '?' . $parse['query'];
 				}
 
-				$this->do_remote_get( $_url_purge );
+				$args = array(
+					'headers' => array(
+						'Host' => $parse['host']
+					)
+					);
+
+				$this->do_remote_get( $_url_purge, $args);
 
 				if ( $feed ) {
 
 					$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
-					$this->do_remote_get( $feed_url );
-					$this->do_remote_get( $feed_url . 'atom/' );
-					$this->do_remote_get( $feed_url . 'rdf/' );
+					$this->do_remote_get( $feed_url, $args );
+					$this->do_remote_get( $feed_url . 'atom/', $args );
+					$this->do_remote_get( $feed_url . 'rdf/', $args );
 
 				}
 				break;
