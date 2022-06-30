@@ -442,7 +442,7 @@ abstract class Purger {
 	 *
 	 * @param string $url URL to do remote request.
 	 */
-	protected function do_remote_get( $url ) {
+	protected function do_remote_get( $url, $args ) {
 		/**
 		 * Filters the URL to be purged.
 		 *
@@ -461,7 +461,7 @@ abstract class Purger {
 		 */
 		do_action( 'rt_nginx_helper_before_remote_purge_url', $url );
 
-		$response = wp_remote_get( $url );
+		$response = wp_remote_get( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 
