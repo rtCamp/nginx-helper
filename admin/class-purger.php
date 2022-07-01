@@ -121,6 +121,15 @@ abstract class Purger {
 
 	}
 
+	// public function purge_post_on_update( $post_ID, $post_after, $post_before ) {
+	// 	$this->purge_post( $post_ID );
+	// }
+
+	public function purge_elementor( $document ) {
+		$this->log( 'elementor');
+		$this->purge_post( $document->get_main_id());
+	}
+
 	/**
 	 * Purge post cache.
 	 *
