@@ -70,7 +70,7 @@ class FastCGI_Purger extends Purger {
 			case 'get_request':
 				// Go to default case.
 			default:
-				$_url_purge_base = "http://localhost/" . $parse['path'];
+				$_url_purge_base = "http://localhost" . $parse['path'];
 				$_url_purge      = $_url_purge_base;
 
 				if ( isset( $parse['query'] ) && '' !== $parse['query'] ) {
