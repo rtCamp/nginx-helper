@@ -70,7 +70,7 @@ class FastCGI_Purger extends Purger {
 			case 'get_request':
 				// Go to default case.
 			default:
-				$_url_purge_base = $this->purge_base_url() . $parse['path'];
+				$_url_purge_base = "http://localhost/" . $parse['path'];
 				$_url_purge      = $_url_purge_base;
 
 				if ( isset( $parse['query'] ) && '' !== $parse['query'] ) {
@@ -79,9 +79,13 @@ class FastCGI_Purger extends Purger {
 
 				$args = array(
 					'headers' => array(
-						'Host' => $parse['host']
+						'Host' => $parse['host'],
+						'X-Purge-Cache' => 'true'
+					),
+					'cookies' => array(
+						'trial_bypass' => 'true'
 					)
-					);
+				);
 
 				$this->do_remote_get( $_url_purge, $args);
 
