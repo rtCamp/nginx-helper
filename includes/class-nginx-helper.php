@@ -229,7 +229,9 @@ class Nginx_Helper {
 		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20 );
 		$this->loader->add_action( 'admin_bar_init', $nginx_helper_admin, 'purge_all' );
 		// $this->loader->add_action( 'post_updated', $nginx_purger, 'purge_post_on_update', 20 );
+
 		$this->loader->add_action( 'elementor/document/after_save', $nginx_purger, 'purge_elementor' );
+		$this->loader->add_action( 'elementor/document/before_save', $nginx_purger, 'init_elementor', 10, 2 );
 
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );

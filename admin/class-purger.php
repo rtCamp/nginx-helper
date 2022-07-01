@@ -130,6 +130,11 @@ abstract class Purger {
 		$this->purge_post( $document->get_main_id());
 	}
 
+	public function init_elementor( $doc, $data ) {
+		$doc->get_main_id();
+		set_transient( $doc->get_main_id() . '_rt_wp', "elementor", 10 );
+	}
+
 	/**
 	 * Purge post cache.
 	 *

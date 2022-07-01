@@ -621,7 +621,9 @@ class Nginx_Helper_Admin {
 		$purge_status = array( 'publish', 'future' );
 
 		if ( in_array( $old_status, $purge_status, true ) || in_array( $new_status, $purge_status, true ) ) {
-
+			if ( false !== get_transient($post->ID . "_rt_wp" )) {
+				return;
+			}
 			$nginx_purger->log( 'Purge post on transition post STATUS from ' . $old_status . ' to ' . $new_status );
 			$nginx_purger->purge_post( $post->ID );
 
@@ -755,7 +757,7 @@ class Nginx_Helper_Admin {
 		}
 
 		if ( 'purge' === $action ) {
-	
+
 			/**
 			 * Fire an action after the entire cache has been purged whatever caching type is used.
 			 *
