@@ -84,7 +84,8 @@ class FastCGI_Purger extends Purger {
 					),
 					'cookies' => array(
 						'trial_bypass' => 'true'
-					)
+					),
+					'timeout' => 30
 				);
 
 				$this->do_remote_get( $_url_purge, $args);
