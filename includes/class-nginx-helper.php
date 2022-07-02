@@ -228,7 +228,8 @@ class Nginx_Helper {
 		$this->loader->add_action( 'delete_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
 		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20 );
 		$this->loader->add_action( 'admin_bar_init', $nginx_helper_admin, 'purge_all' );
-		// $this->loader->add_action( 'post_updated', $nginx_purger, 'purge_post_on_update', 20 );
+		// $this->loader->add_action( 'post_updated', $nginx_purger, 'purge_post_on_update', 20, 3 );
+		$this->loader->add_action( 'updated_post_meta', $nginx_purger, 'updated_meta', 20, 4 );
 
 		$this->loader->add_action( 'elementor/document/after_save', $nginx_purger, 'purge_elementor' );
 		$this->loader->add_action( 'elementor/document/before_save', $nginx_purger, 'init_elementor', 10, 2 );

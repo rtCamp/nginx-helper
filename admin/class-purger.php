@@ -121,9 +121,14 @@ abstract class Purger {
 
 	}
 
-	// public function purge_post_on_update( $post_ID, $post_after, $post_before ) {
-	// 	$this->purge_post( $post_ID );
-	// }
+	public function purge_post_on_update( $post_ID, $post_after, $post_before ) {
+		$this->purge_post( $post_ID );
+	}
+
+	public function updated_meta( int $meta_id, int $object_id, string $meta_key, $_meta_value ) {
+		$this->log( 'updated meta' );
+		$this->purge_post( $object_id );
+	}
 
 	public function purge_elementor( $document ) {
 		$this->log( 'elementor');
@@ -456,7 +461,7 @@ abstract class Purger {
 	 *
 	 * @param string $url URL to do remote request.
 	 */
-	protected function do_remote_get( $url, $args ) {
+	protected function do_remote_get( string $url, array $args = array() ) {
 		/**
 		 * Filters the URL to be purged.
 		 *
