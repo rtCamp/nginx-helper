@@ -271,7 +271,7 @@ abstract class Purger {
 
 		}
 
-		if ( $_purge_archive ) {
+		if ( $_purge_archive && NGINX_ARCHIVE_PURGE ) {
 
 			$_post_type_archive_link = get_post_type_archive_link( $_post_type );
 
@@ -345,7 +345,7 @@ abstract class Purger {
 			}
 		}
 
-		if ( $_purge_custom_taxa ) {
+		if ( $_purge_custom_taxa && NGINX_ARCHIVE_PURGE ) {
 
 			$custom_taxonomies = get_taxonomies(
 				array(
