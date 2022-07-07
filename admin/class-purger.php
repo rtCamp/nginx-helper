@@ -136,8 +136,9 @@ abstract class Purger {
 	}
 
 	public function init_elementor( $doc, $data ) {
-		$doc->get_main_id();
-		set_transient( $doc->get_main_id() . '_rt_wp', "elementor", 10 );
+		$post_id = $doc->get_main_id();
+		$this->log('init_elementor');
+		set_transient( $post_id . '_rt_wp', "elementor", 10 );
 	}
 
 	public function purge_wp_after_insert_post( int $post_id, $post, bool $update, $post_before ) {
