@@ -242,6 +242,10 @@ abstract class Purger {
 
 		$_post_type = get_post_type( $post_id );
 
+		if ( $_post_type == 'revision' ) {
+			return;
+		}
+
 		if ( $_purge_page ) {
 
 			if ( 'post' === $_post_type || 'page' === $_post_type ) {
