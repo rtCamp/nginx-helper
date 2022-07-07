@@ -142,6 +142,10 @@ abstract class Purger {
 	}
 
 	public function purge_wp_after_insert_post( int $post_id, $post, bool $update, $post_before ) {
+		// Don't update with elementor
+		if ( false !== get_transient($post_id . "_rt_wp" )) {
+			return;
+		}
 		$this->log('after_insert');
 		$this->purge_post( $post_id );
 	}
