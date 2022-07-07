@@ -57,7 +57,7 @@ class FastCGI_Purger extends Purger {
 
 				$this->delete_cache_file_for( $_url_purge );
 
-				if ( $feed ) {
+				if ( $feed && NGINX_FEED_PURGE ) {
 
 					$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
 					$this->delete_cache_file_for( $feed_url );
@@ -90,7 +90,7 @@ class FastCGI_Purger extends Purger {
 
 				$this->do_remote_get( $_url_purge, $args);
 
-				if ( $feed ) {
+				if ( $feed && NGINX_FEED_PURGE) {
 
 					$feed_url = rtrim( $_url_purge_base, '/' ) . '/feed/';
 					$this->do_remote_get( $feed_url, $args );

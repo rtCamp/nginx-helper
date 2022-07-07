@@ -43,6 +43,28 @@ if ( ! defined( 'NGINX_HELPER_BASEPATH' ) ) {
 }
 
 /**
+ * FEED purge status
+ */
+if ( ! defined( 'NGINX_HOME_PURGE' ) ) {
+	define( 'NGINX_HOME_PURGE', false );
+}
+
+/**
+ * FEED purge status
+ */
+if ( ! defined( 'NGINX_FEED_PURGE' ) ) {
+	define( 'NGINX_FEED_PURGE', false );
+}
+
+/**
+ * ARCHIVE purge status
+ */
+if ( ! defined( 'NGINX_ARCHIVE_PURGE' ) ) {
+	define( 'NGINX_ARCHIVE_PURGE', false );
+}
+
+
+/**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-nginx-helper-activator.php
  */
