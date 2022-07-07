@@ -140,6 +140,16 @@ abstract class Purger {
 		set_transient( $doc->get_main_id() . '_rt_wp', "elementor", 10 );
 	}
 
+	public function purge_wp_after_insert_post( int $post_id, $post, bool $update, $post_before ) {
+		$this->log('after_insert');
+		$this->purge_post( $post_id );
+	}
+
+	public function purge_clean_post_cache( int $post_id, $post ) {
+		$this->log( 'clean_post_cache');
+		$this->purge_post( $post_id );
+	}
+
 	/**
 	 * Purge post cache.
 	 *
