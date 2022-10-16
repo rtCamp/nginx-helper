@@ -503,7 +503,6 @@ abstract class Purger
 
 
 		$headers = $args['headers'];
-		error_log("headers=" . var_dump($headers));
 		$headers = array(
 			"X-Purge-Cache:true",
 			"Host:".wp_parse_url(home_url())['host'],
