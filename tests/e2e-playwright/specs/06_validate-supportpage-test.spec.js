@@ -9,10 +9,9 @@
  
      await page.hover('role=link[name="Settings"i]');
  
-     await page.click('role=link[name="Nginx Helper"i]');
-     await page.screenshot({path: "uploads/img3.png"});
+     await page.click('role=link[name="Nginx Helper"i]');;
     
-     await page.waitForTimeout(1000);
+     await page.waitForTimeout(2000);
  
      expect(page.locator(".rt_option_title")).toHaveText("Nginx Settings");
 
