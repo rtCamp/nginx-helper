@@ -9,12 +9,11 @@ on:
     branches: 
       - develop
       - master
-      - automation
+  
   pull_request:
     branches: 
       - develop
       - master
-      - automation
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -49,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: report
-          path: ./tests/e2e-playwright/uploads
+          path: ./tests/e2e-playwright/config
 
       - name: Cleanup
         if: ${{ always() }}
