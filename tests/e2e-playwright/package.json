@@ -1,0 +1,52 @@
+{
+	"name": "wp-e2e-playwright",
+	"version": "0.0.0",
+	"private": true,
+	"description": "End-To-End (E2E) test utils for WordPress.",
+	"author": "Juhi Saxena",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"e2e",
+		"utils",
+		"playwright"
+	],
+	"homepage": "",
+	"repository": {
+		"type": "git",
+		"url": ""
+	},
+	"engines": {
+		"node": ">=12"
+	},
+	"dependencies": {
+		"@wordpress/api-fetch": "6.10.0",
+		"@wordpress/keycodes": "3.13.0",
+		"@wordpress/scripts": "23.5.0",
+		"@wordpress/url": "3.14.0",
+		"form-data": "^4.0.0",
+		"lodash": "^4.17.21"
+	},
+	"devDependencies": {
+		"@playwright/test": "1.22.2",
+		"@types/lodash": "^4.14.182",
+		"@wordpress/e2e-test-utils-playwright": "file:e2e-test-utils-playwright",
+		"eslint-plugin-playwright": "0.8.0",
+		"filenamify": "4.2.0",
+		"worker-farm": "1.7.0",
+		"typescript": "4.4.2"
+	},
+	"peerDependencies": {
+		"@playwright/test": ">=1"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build:packages": "npm run build:package-types && node ./bin/packages/build.js",
+		"build:package-types": "node ./bin/packages/validate-typescript-version.js && tsc --build",
+		"build": "npm run build:packages && wp-scripts build",
+		"dev": "npm run build:packages && concurrently \"wp-scripts start\" \"npm run dev:packages\"",
+		"test-e2e:playwright": "playwright test --config playwright.config.ts"
+	}
+}
