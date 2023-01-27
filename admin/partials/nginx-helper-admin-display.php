@@ -24,8 +24,11 @@ global $pagenow;
 		<div id="post-body" class="metabox-holder columns-2">
 			<div id="post-body-content">
 				<?php
-				/* Show settinhs tabs */
-				$current_tab         = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
+				/* Show settings tabs */
+				$current_tab = 'general';
+				if ( isset( $_GET['tab'] ) ) { // phpcs:ignore -- Nonce verification is not used here.
+					$current_tab = wp_strip_all_tags( $_GET['tab'] ); // phpcs:ignore -- Nonce verification is not used here.
+				}
 				$current_setting_tab = ( ! empty( $current_tab ) ) ? $current_tab : 'general';
 
 				echo '<h2 class="nav-tab-wrapper">';
