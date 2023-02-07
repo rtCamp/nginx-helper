@@ -272,6 +272,7 @@ class Nginx_Helper_Admin {
 			'purge_page_on_mod'                => 1,
 			'purge_page_on_new_comment'        => 1,
 			'purge_page_on_deleted_comment'    => 1,
+			'purge_feeds'                      => 1,
 			'redis_hostname'                   => '127.0.0.1',
 			'redis_port'                       => '6379',
 			'redis_prefix'                     => 'nginx-cache:',
