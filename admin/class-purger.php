@@ -232,7 +232,7 @@ abstract class Purger {
 				$url = get_sample_permalink( $post_id );
 
 				if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
-					$url = str_replace( '%postname%', $url[1], $url[0] );
+					$url = str_replace( array('%postname%', '%pagename%'), $url[1], $url[0] );
 				} else {
 					$url = '';
 				}
@@ -263,7 +263,9 @@ abstract class Purger {
 
 			}
 
-			if ( 'post' === $_post_type ) {
+			$post_types = get_post_types( array( 'public' => true ) );
+
+			if ( in_array( $_post_type, $post_types, true ) ) {
 
 				$this->log( 'Purging date' );
 
@@ -401,10 +403,12 @@ abstract class Purger {
 		 * Filters the cached file name.
 		 *
 		 * @since 2.1.0
+		 * @since 2.2.3 Purge URL argument `$url` were added.
 		 *
 		 * @param string $cached_file Cached file name.
+		 * @param string $url         URL to be purged.
 		 */
-		$cached_file = apply_filters( 'rt_nginx_helper_purge_cached_file', $cached_file );
+		$cached_file = apply_filters( 'rt_nginx_helper_purge_cached_file', $cached_file, $url );
 
 		// Verify cached file exists.
 		if ( ! file_exists( $cached_file ) ) {
