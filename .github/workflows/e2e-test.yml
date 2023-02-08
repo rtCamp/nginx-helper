@@ -6,12 +6,12 @@ name: CI for Login with nginx helper test
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: 
+    branches:
       - develop
       - master
 
   pull_request:
-    branches: 
+    branches:
       - develop
       - master
 
@@ -23,6 +23,13 @@ jobs:
     # The type of runner that the job will run on
     name: Run nginx helper plugin test Cases
     runs-on: ubuntu-latest
+    env:
+      TESRESULT_TOKEN: ${{ secrets.TESRESULT_TOKEN }}
+      TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+      COMMIT_SHA: ${{ github.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      working-directory: ./tests/e2e-playwright
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -49,6 +56,11 @@ jobs:
         with:
           name: report
           path: ./tests/e2e-playwright/config
+
+      - name: run PR status
+        if: ${{ always() }}
+        run: node ./tests/e2e-playwright/bin/pr-status.js
+        working-directory: ${{env.working_directory}}
 
       - name: Cleanup
         if: ${{ always() }}
