@@ -1,6 +1,6 @@
 # e2e test for nginx helper plugin
 
-name: CI for Login with nginx helper test
+name: End-to-End Tests
 
 # Controls when the workflow will run
 on:
@@ -21,7 +21,7 @@ on:
 jobs:
   Run-wpe2e-TestCase:
     # The type of runner that the job will run on
-    name: Run nginx helper plugin test Cases
+    name: Playwright Tests
     runs-on: ubuntu-latest
     env: 
       TESRESULT_TOKEN: ${{ secrets.TESRESULT_TOKEN }}
