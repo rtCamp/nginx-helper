@@ -720,7 +720,7 @@ if ( is_multisite() ) {
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
-    <input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo wp_create_nonce('smart-http-expire-form-nonce'); ?>"/>
+	<input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo esc_attr( wp_create_nonce( 'smart-http-expire-form-nonce' ) ); ?>"/>
 	<?php
 		submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true );
 	?>
