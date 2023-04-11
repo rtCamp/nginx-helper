@@ -23,7 +23,8 @@
 	<exclude-pattern>*/languages/*</exclude-pattern>
 	<exclude-pattern>*/admin/predis.php</exclude-pattern>	<!-- Predis library file -->
 	<exclude-pattern>*/vendor/*</exclude-pattern>	<!-- Composer vendor directory  -->
-
+    <exclude-pattern>*/build/*</exclude-pattern>
+    <exclude-pattern>*/tests/e2e-playwright/*</exclude-pattern>
 	<!-- Include the WordPress standard. -->
 	<rule ref="WordPress">
 		<exclude name="PEAR.NamingConventions.ValidClassName.Invalid" />

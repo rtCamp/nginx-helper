@@ -725,12 +725,12 @@ class Nginx_Helper_Admin {
 
 		if ( 'purge' === $action ) {
 	
-		    /**
-		     * Fire an action after the entire cache has been purged whatever caching type is used.
-		     * 
-		     * @since 2.2.2
-		     */
-		    do_action( 'rt_nginx_helper_after_purge_all' );
+			/**
+			 * Fire an action after the entire cache has been purged whatever caching type is used.
+			 * 
+			 * @since 2.2.2
+			 */
+			do_action( 'rt_nginx_helper_after_purge_all' );
 
 		}
 
