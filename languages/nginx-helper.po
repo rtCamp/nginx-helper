@@ -1,17 +1,17 @@
-# Copyright (C) 2020 rtCamp
+# Copyright (C) 2023 rtCamp
 # This file is distributed under the same license as the Nginx Helper plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Nginx Helper 2.2.2\n"
+"Project-Id-Version: Nginx Helper 2.2.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nginx-helper\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-04-20T18:52:09+00:00\n"
+"POT-Creation-Date: 2023-05-10T09:58:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.2.0\n"
+"X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: nginx-helper\n"
 
 #. Plugin Name of the plugin
@@ -36,15 +36,6 @@ msgstr ""
 
 #. Author URI of the plugin
 msgid "https://rtcamp.com"
-msgstr ""
-
-#: includes/class-nginx-helper-activator.php:49
-msgid "Sorry, you need to be an administrator to use Nginx Helper"
-msgstr ""
-
-#. translators: %s is Minimum WP version.
-#: includes/class-nginx-helper.php:311
-msgid "Sorry, Nginx Helper requires WordPress %s or higher"
 msgstr ""
 
 #: admin/class-nginx-helper-admin.php:88
@@ -84,259 +75,170 @@ msgstr ""
 msgid "Posted "
 msgstr ""
 
-#: admin/class-nginx-helper-admin.php:740
+#: admin/class-nginx-helper-admin.php:746
 msgid "Purge initiated"
 msgstr ""
 
-#: admin/class-purger.php:686
+#: admin/class-purger.php:691
 msgid "Purging homepage (WPML) "
 msgstr ""
 
-#: admin/class-purger.php:691
+#: admin/class-purger.php:696
 msgid "Purging homepage "
 msgstr ""
 
-#: admin/class-purger.php:710
+#: admin/class-purger.php:715
 msgid "Purging personal urls"
 msgstr ""
 
-#: admin/class-purger.php:718
+#: admin/class-purger.php:723
 msgid "No personal urls available"
 msgstr ""
 
-#: admin/class-purger.php:734
+#: admin/class-purger.php:739
 msgid "Purging category archives"
 msgstr ""
 
 #. translators: %d: Category ID.
-#: admin/class-purger.php:743
+#: admin/class-purger.php:748
 msgid "Purging category '%d'"
 msgstr ""
 
-#: admin/class-purger.php:761
+#: admin/class-purger.php:766
 msgid "Purging tags archives"
 msgstr ""
 
-#: admin/class-purger.php:769
-#: admin/class-purger.php:869
+#: admin/class-purger.php:774
+#: admin/class-purger.php:874
 msgid "Purging tag '%1$s' ( id %2$d )"
 msgstr ""
 
-#: admin/class-purger.php:788
+#: admin/class-purger.php:793
 msgid "Purging post custom taxonomies related"
 msgstr ""
 
 #. translators: %s: Post taxonomy name.
 #. translators: %s: Taxonomy name.
-#: admin/class-purger.php:802
-#: admin/class-purger.php:902
+#: admin/class-purger.php:807
+#: admin/class-purger.php:907
 msgid "Purging custom taxonomy '%s'"
 msgstr ""
 
 #. translators: %s: Post taxonomy name.
 #. translators: %s: Taxonomy name.
-#: admin/class-purger.php:816
-#: admin/class-purger.php:918
+#: admin/class-purger.php:821
+#: admin/class-purger.php:923
 msgid "Your built-in taxonomy '%s' has param '_builtin' set to false."
 msgstr ""
 
-#: admin/class-purger.php:820
-#: admin/class-purger.php:922
+#: admin/class-purger.php:825
+#: admin/class-purger.php:927
 msgid "No custom taxonomies"
 msgstr ""
 
-#: admin/class-purger.php:833
+#: admin/class-purger.php:838
 msgid "Purging all categories"
 msgstr ""
 
-#: admin/class-purger.php:841
+#: admin/class-purger.php:846
 msgid "Purging category '%1$s' ( id %2$d )"
 msgstr ""
 
-#: admin/class-purger.php:847
+#: admin/class-purger.php:852
 msgid "No categories archives"
 msgstr ""
 
-#: admin/class-purger.php:861
+#: admin/class-purger.php:866
 msgid "Purging all tags"
 msgstr ""
 
-#: admin/class-purger.php:874
+#: admin/class-purger.php:879
 msgid "No tags archives"
 msgstr ""
 
-#: admin/class-purger.php:888
+#: admin/class-purger.php:893
 msgid "Purging all custom taxonomies"
 msgstr ""
 
-#: admin/class-purger.php:949
+#: admin/class-purger.php:954
 msgid "Purging all posts, pages and custom post types."
 msgstr ""
 
-#: admin/class-purger.php:964
+#: admin/class-purger.php:969
 msgid "Purging post id '%1$d' ( post type '%2$s' )"
 msgstr ""
 
-#: admin/class-purger.php:969
+#: admin/class-purger.php:974
 msgid "No posts"
 msgstr ""
 
-#: admin/class-purger.php:983
+#: admin/class-purger.php:988
 msgid "Purging all date-based archives."
 msgstr ""
 
-#: admin/class-purger.php:1000
+#: admin/class-purger.php:1005
 msgid "Purging all daily archives."
 msgstr ""
 
-#: admin/class-purger.php:1023
+#: admin/class-purger.php:1028
 msgid "Purging daily archive '%1$s/%2$s/%3$s'"
 msgstr ""
 
-#: admin/class-purger.php:1034
+#: admin/class-purger.php:1039
 msgid "No daily archives"
 msgstr ""
 
-#: admin/class-purger.php:1046
+#: admin/class-purger.php:1051
 msgid "Purging all monthly archives."
 msgstr ""
 
-#: admin/class-purger.php:1074
+#: admin/class-purger.php:1079
 msgid "Purging monthly archive '%1$s/%2$s'"
 msgstr ""
 
-#: admin/class-purger.php:1079
+#: admin/class-purger.php:1084
 msgid "No monthly archives"
 msgstr ""
 
-#: admin/class-purger.php:1091
+#: admin/class-purger.php:1096
 msgid "Purging all yearly archives."
 msgstr ""
 
 #. translators: %s: Year to purge cache.
-#: admin/class-purger.php:1119
+#: admin/class-purger.php:1124
 msgid "Purging yearly archive '%s'"
 msgstr ""
 
-#: admin/class-purger.php:1124
+#: admin/class-purger.php:1129
 msgid "No yearly archives"
 msgstr ""
 
-#: admin/class-purger.php:1136
+#: admin/class-purger.php:1141
 msgid "Let's purge everything!"
 msgstr ""
 
-#: admin/class-purger.php:1142
+#: admin/class-purger.php:1147
 msgid "Everything purged!"
 msgstr ""
 
-#: admin/class-purger.php:1165
+#: admin/class-purger.php:1170
 msgid "Term taxonomy edited or deleted"
 msgstr ""
 
-#: admin/class-purger.php:1172
+#: admin/class-purger.php:1177
 msgid "Term taxonomy '%1$s' edited, (tt_id '%2$d', term_id '%3$d', taxonomy '%4$s')"
 msgstr ""
 
-#: admin/class-purger.php:1176
+#: admin/class-purger.php:1181
 msgid "A term taxonomy has been deleted from taxonomy '%1$s', (tt_id '%2$d', term_id '%3$d')"
 msgstr ""
 
-#: admin/class-purger.php:1204
+#: admin/class-purger.php:1209
 msgid "Widget saved, moved or removed in a sidebar"
 msgstr ""
 
 #: admin/partials/nginx-helper-admin-display.php:21
 msgid "Nginx Settings"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:18
-msgid "Support Forums"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:24
-msgid "Free Support"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:27
-msgid "Free Support Forum"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:28
-#: admin/partials/nginx-helper-support-options.php:38
-msgid "Link to forum"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:34
-msgid "Premium Support"
-msgstr ""
-
-#: admin/partials/nginx-helper-support-options.php:37
-msgid "Premium Support Forum"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:26
-msgid "Purge Entire Cache"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:31
-msgid "Need Help?"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:38
-msgid "Please use our"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:40
-msgid "free support forum"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:50
-msgid "Getting Social is Good"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:54
-msgid "Become a fan on Facebook"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:55
-msgid "Follow us on Twitter"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:61
-msgid "Useful Links"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:66
-msgid "WordPress-Nginx Solutions"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:69
-msgid "WordPress Theme Devleopment"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:72
-msgid "WordPress Plugin Development"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:75
-msgid "WordPress Consultancy"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:78
-msgid "easyengine (ee)"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:85
-msgid "Click to toggle"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:86
-msgid "Latest News"
-msgstr ""
-
-#: admin/partials/nginx-helper-sidebar-display.php:87
-msgid "Loading..."
 msgstr ""
 
 #: admin/partials/nginx-helper-general-options.php:56
@@ -618,6 +520,104 @@ msgstr ""
 msgid "Save All Changes"
 msgstr ""
 
+#: admin/partials/nginx-helper-sidebar-display.php:26
+msgid "Purge Entire Cache"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:31
+msgid "Need Help?"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:38
+msgid "Please use our"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:40
+msgid "free support forum"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:50
+msgid "Getting Social is Good"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:54
+msgid "Become a fan on Facebook"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:55
+msgid "Follow us on Twitter"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:61
+msgid "Useful Links"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:66
+msgid "WordPress-Nginx Solutions"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:69
+msgid "WordPress Theme Devleopment"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:72
+msgid "WordPress Plugin Development"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:75
+msgid "WordPress Consultancy"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:78
+msgid "easyengine (ee)"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:85
+msgid "Click to toggle"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:86
+msgid "Latest News"
+msgstr ""
+
+#: admin/partials/nginx-helper-sidebar-display.php:87
+msgid "Loading..."
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:18
+msgid "Support Forums"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:24
+msgid "Free Support"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:27
+msgid "Free Support Forum"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:28
+#: admin/partials/nginx-helper-support-options.php:38
+msgid "Link to forum"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:34
+msgid "Premium Support"
+msgstr ""
+
+#: admin/partials/nginx-helper-support-options.php:37
+msgid "Premium Support Forum"
+msgstr ""
+
 #: class-nginx-helper-wp-cli-command.php:40
 msgid "Purged Everything!"
+msgstr ""
+
+#: includes/class-nginx-helper-activator.php:49
+msgid "Sorry, you need to be an administrator to use Nginx Helper"
+msgstr ""
+
+#. translators: %s is Minimum WP version.
+#: includes/class-nginx-helper.php:311
+msgid "Sorry, Nginx Helper requires WordPress %s or higher"
 msgstr ""

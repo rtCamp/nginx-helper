@@ -1,15 +1,15 @@
 # Nginx Helper #
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishu.agola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup
 
 **Tags:** nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
 
 **Requires at least:** 3.0
 
-**Tested up to:** 5.7
+**Tested up to:** 6.1
 
-**Stable tag:** 2.2.2
+**Stable tag:** 2.2.3
 
 **License:** GPLv2 or later (of-course)
 
@@ -138,6 +138,16 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 ![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
 
 ## Changelog ##
+
+### 2.2.3 ###
+
+* Add the URL being purged as parameter in `rt_nginx_helper_purge_cached_file` hook. [#271](https://github.com/rtCamp/nginx-helper/pull/271) - by [Arafat Islam](https://github.com/arafatkn)
+* Fix performance issue when saving nav menus. [#112](https://github.com/rtCamp/nginx-helper/issues/112), [#272](https://github.com/rtCamp/nginx-helper/pull/272/) - by [Arafat Islam](https://github.com/arafatkn)
+* Fix purging date archives for custom post types. [#40](https://github.com/rtCamp/nginx-helper/issues/40), [#268](https://github.com/rtCamp/nginx-helper/pull/268) - by [Arafat Islam](https://github.com/arafatkn)
+* Fix pages and CPT URLs not being purged on moving to trash. [#191](https://github.com/rtCamp/nginx-helper/issues/191), [#267](https://github.com/rtCamp/nginx-helper/pull/267) - by [Arafat Islam](https://github.com/arafatkn)
+* Fix notice - Undefined index: path [#190](https://github.com/rtCamp/nginx-helper/issues/190), [#251](https://github.com/rtCamp/nginx-helper/issues/251), [#262](https://github.com/rtCamp/nginx-helper/pull/262) - by [George Lagonikas](https://github.com/glagonikas)
+* PHP 8.1 compatibility [#291](https://github.com/rtCamp/nginx-helper/issues/291), [#302](https://github.com/rtCamp/nginx-helper/pull/302) - by [Siddharth Tikekar](https://github.com/SID177)
+* Tested with WordPress 6.1 [#285](https://github.com/rtCamp/nginx-helper/pull/285)
 
 ### 2.2.2 ###
 
@@ -483,9 +493,9 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ## Upgrade Notice ##
 
-### 2.2.2 ###
+### 2.2.3 ###
 
-Nginx Helper 2.2.2, Add new "rt_nginx_helper_after_purge_all" action and fixes issues where settings not saved because the button's value localized (for any language) and "Custom Purge URL" option displays previous value.
+Nginx Helper 2.2.3, Fix performance issue when saving nav menus, purging date archives for CPTs, purge page and post URLs when the post is trashed and passes the URL being purged in "rt_nginx_helper_purge_cached_file" hook as parameter.
 
 ## Does this interest you? ##
 
