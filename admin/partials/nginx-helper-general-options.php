@@ -13,37 +13,39 @@
 global $nginx_helper_admin;
 
 $args = array(
-	'enable_purge'                     => FILTER_SANITIZE_STRING,
-	'enable_stamp'                     => FILTER_SANITIZE_STRING,
-	'purge_method'                     => FILTER_SANITIZE_STRING,
-	'is_submit'                        => FILTER_SANITIZE_STRING,
-	'redis_hostname'                   => FILTER_SANITIZE_STRING,
-	'redis_port'                       => FILTER_SANITIZE_STRING,
-	'redis_prefix'                     => FILTER_SANITIZE_STRING,
-	'memcached_hostname'               => FILTER_SANITIZE_STRING,
-	'memcached_port'                   => FILTER_SANITIZE_STRING,
-	'memcached_prefix'                 => FILTER_SANITIZE_STRING,
-	'memcached_versioned_cache_key'    => FILTER_SANITIZE_STRING,
-	'memcached_query_string_version_key_prefix'    => FILTER_SANITIZE_STRING,
-	'purge_homepage_on_edit'           => FILTER_SANITIZE_STRING,
-	'purge_homepage_on_del'            => FILTER_SANITIZE_STRING,
-	'purge_url'                        => FILTER_SANITIZE_STRING,
-	'log_level'                        => FILTER_SANITIZE_STRING,
-	'smart_http_expire_save'           => FILTER_SANITIZE_STRING,
-	'cache_method'                     => FILTER_SANITIZE_STRING,
-	'enable_map'                       => FILTER_SANITIZE_STRING,
-	'enable_log'                       => FILTER_SANITIZE_STRING,
-	'purge_archive_on_edit'            => FILTER_SANITIZE_STRING,
-	'purge_archive_on_del'             => FILTER_SANITIZE_STRING,
-	'purge_archive_on_new_comment'     => FILTER_SANITIZE_STRING,
-	'purge_archive_on_deleted_comment' => FILTER_SANITIZE_STRING,
-	'purge_page_on_mod'                => FILTER_SANITIZE_STRING,
-	'purge_page_on_new_comment'        => FILTER_SANITIZE_STRING,
-	'purge_page_on_deleted_comment'    => FILTER_SANITIZE_STRING,
-	'smart_http_expire_form_nonce'     => FILTER_SANITIZE_STRING,
+	'enable_purge',
+	'enable_stamp',
+	'purge_method',
+	'is_submit',
+	'redis_hostname',
+	'redis_port',
+	'redis_prefix',
+	'purge_homepage_on_edit',
+	'purge_homepage_on_del',
+	'purge_url',
+	'log_level',
+	'log_filesize',
+	'smart_http_expire_save',
+	'cache_method',
+	'enable_map',
+	'enable_log',
+	'purge_archive_on_edit',
+	'purge_archive_on_del',
+	'purge_archive_on_new_comment',
+	'purge_archive_on_deleted_comment',
+	'purge_page_on_mod',
+	'purge_page_on_new_comment',
+	'purge_page_on_deleted_comment',
+	'smart_http_expire_form_nonce',
 );
 
-$all_inputs = filter_input_array( INPUT_POST, $args );
+$all_inputs = array();
+
+foreach ( $args as $val ) {
+	if ( isset( $_POST[ $val ] ) ) {
+		$all_inputs[ $val ] = wp_strip_all_tags( $_POST[ $val ] );
+	}
+}
 
 if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inputs['smart_http_expire_form_nonce'], 'smart-http-expire-form-nonce' ) ) {
 	unset( $all_inputs['smart_http_expire_save'] );
@@ -785,7 +787,7 @@ if ( is_multisite() ) {
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
-	<input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo wp_create_nonce('smart-http-expire-form-nonce'); ?>"/>
+	<input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo esc_attr( wp_create_nonce( 'smart-http-expire-form-nonce' ) ); ?>" />
 	<?php
 		submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true );
 	?>

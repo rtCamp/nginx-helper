@@ -712,12 +712,20 @@ class Nginx_Helper_Admin {
 
 		global $nginx_purger, $wp;
 
-		$method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
+		$method = null;
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) ) {
+			$method = wp_strip_all_tags( $_SERVER['REQUEST_METHOD'] );
+		}
 
+		$action = '';
 		if ( 'POST' === $method ) {
-			$action = filter_input( INPUT_POST, 'nginx_helper_action', FILTER_SANITIZE_STRING );
+			if ( isset( $_POST['nginx_helper_action'] ) ) {
+				$action = wp_strip_all_tags( $_POST['nginx_helper_action'] );
+			}
 		} else {
-			$action = filter_input( INPUT_GET, 'nginx_helper_action', FILTER_SANITIZE_STRING );
+			if ( isset( $_GET['nginx_helper_action'] ) ) {
+				$action = wp_strip_all_tags( $_GET['nginx_helper_action'] );
+			}
 		}
 
 		if ( empty( $action ) ) {

@@ -1,0 +1,1 @@
+{"version":3,"file":"preferences.js","sourceRoot":"","sources":["../../src/request-utils/preferences.ts"],"names":[],"mappings":";;;AAKA;;;;GAIG;AACI,KAAK,UAAU,gBAAgB;IACrC,MAAM,IAAI,CAAC,IAAI,CAAE;QAChB,IAAI,EAAE,iBAAiB;QACvB,MAAM,EAAE,KAAK;QACb,IAAI,EAAE;YACL,IAAI,EAAE;gBACL,qBAAqB,EAAE,EAAE;aACzB;SACD;KACD,CAAE,CAAC;AACL,CAAC;AAVD,4CAUC"}
