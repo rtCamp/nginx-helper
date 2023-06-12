@@ -740,6 +740,16 @@ class Nginx_Helper_Admin {
 			 */
 			do_action( 'rt_nginx_helper_after_purge_all' );
 
+		} else {
+			if ( 'purge_current_page' === $action ) {
+
+			/**
+			 * Fire an action after the current page has been purged whatever caching type is used.
+			 * 
+			 * @since 2.2.4
+			 */
+			do_action( 'rt_nginx_helper_after_purge_url' );
+			}
 		}
 
 		wp_redirect( esc_url_raw( $redirect_url ) );
