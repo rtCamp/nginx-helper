@@ -101,6 +101,12 @@ class FastCGI_Purger extends Purger {
 				break;
 
 		}
+		/**
+		 * Fire an action after the FastCGI cache has been purged.
+		 *
+		 * @since 2.1.0
+		 */
+		do_action('rt_nginx_helper_fastcgi_purge_url', $url);
 
 	}
 
