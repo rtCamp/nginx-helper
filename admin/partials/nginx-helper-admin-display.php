@@ -25,7 +25,7 @@ global $pagenow;
 			<div id="post-body-content">
 				<?php
 				/* Show settinhs tabs */
-				$current_tab         = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
+				$current_tab         = ( isset( $_GET['tab'] ) ? wp_strip_all_tags( $_GET['tab'] ) : '' );
 				$current_setting_tab = ( ! empty( $current_tab ) ) ? $current_tab : 'general';
 
 				echo '<h2 class="nav-tab-wrapper">';
