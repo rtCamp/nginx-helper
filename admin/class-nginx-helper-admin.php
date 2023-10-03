@@ -353,7 +353,7 @@ class Nginx_Helper_Admin {
 	 */
 	public function functional_asset_path() {
 
-		$log_path = WP_CONTENT_DIR . '/uploads/nginx-helper/';
+		$log_path = ABSPATH . 'nginx-helper/';
 
 		return apply_filters( 'nginx_asset_path', $log_path );
 
@@ -367,7 +367,9 @@ class Nginx_Helper_Admin {
 	 */
 	public function functional_asset_url() {
 
-		$log_url = WP_CONTENT_URL . '/uploads/nginx-helper/';
+		$site_url = get_site_url();
+
+		$log_url = $site_url . '/nginx-helper/';
 
 		return apply_filters( 'nginx_asset_url', $log_url );
 
@@ -732,10 +734,10 @@ class Nginx_Helper_Admin {
 		}
 
 		if ( 'purge' === $action ) {
-	
+
 			/**
 			 * Fire an action after the entire cache has been purged whatever caching type is used.
-			 * 
+			 *
 			 * @since 2.2.2
 			 */
 			do_action( 'rt_nginx_helper_after_purge_all' );
