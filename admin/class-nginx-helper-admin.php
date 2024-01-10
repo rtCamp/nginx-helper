@@ -353,7 +353,7 @@ class Nginx_Helper_Admin {
 	 */
 	public function functional_asset_path() {
 
-		$log_path = ABSPATH . 'nginx-helper/';
+		$log_path = WP_CONTENT_DIR . '/uploads/nginx-helper/';
 
 		return apply_filters( 'nginx_asset_path', $log_path );
 
@@ -367,9 +367,7 @@ class Nginx_Helper_Admin {
 	 */
 	public function functional_asset_url() {
 
-		$site_url = get_site_url();
-
-		$log_url = $site_url . '/nginx-helper/';
+		$log_url = WP_CONTENT_URL . '/uploads/nginx-helper/';
 
 		return apply_filters( 'nginx_asset_url', $log_url );
 
