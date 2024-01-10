@@ -136,7 +136,7 @@ const test = base.extend<
 			} );
 
 			await Promise.all( [
-				requestUtils.activateTheme( 'twentytwentyfour' ),
+				requestUtils.activateTheme( 'twentytwentyone' ),
 				requestUtils.deleteAllPosts(),
 				requestUtils.deleteAllBlocks(),
 				requestUtils.resetPreferences(),
