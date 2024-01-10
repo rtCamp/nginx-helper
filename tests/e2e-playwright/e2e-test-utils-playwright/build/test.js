@@ -105,7 +105,7 @@ const test = test_1.test.extend({
                 storageStatePath: STORAGE_STATE_PATH,
             });
             await Promise.all([
-                requestUtils.activateTheme('twentytwentyone'),
+                requestUtils.activateTheme('twentytwentyfour'),
                 requestUtils.deleteAllPosts(),
                 requestUtils.deleteAllBlocks(),
                 requestUtils.resetPreferences(),
