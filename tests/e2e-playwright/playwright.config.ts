@@ -5,18 +5,18 @@
  import { fileURLToPath } from 'url';
  import { devices } from '@playwright/test';
  import type { PlaywrightTestConfig } from '@playwright/test';
- 
+
  const STORAGE_STATE_PATH =
      process.env.STORAGE_STATE_PATH ||
      path.join( process.cwd(), 'artifacts/storage-states/admin.json' );
- 
+
  const config: PlaywrightTestConfig = {
     reporter: [
         ["html", { open: "never" }],
         ["junit", { outputFile: "playwright-report/results.xml" }],
         [
           "playwright-tesults-reporter",
-          { "tesults-target": process.env.TESRESULT_TOKEN },
+          // { "tesults-target": process.env.TESRESULT_TOKEN },
         ],
       ],
      forbidOnly: !! process.env.CI,
@@ -62,5 +62,5 @@
          },
      ],
  };
- 
+
  export default config;
