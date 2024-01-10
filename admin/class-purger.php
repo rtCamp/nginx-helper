@@ -542,7 +542,7 @@ abstract class Purger {
 
 		if ( $log_levels[ $level ] >= $log_levels[ $nginx_helper_admin->options['log_level'] ] ) {
 
-			$fp = fopen( $nginx_helper_admin->functional_asset_path() . 'nginx.log', 'a+' );
+			$fp = fopen( $nginx_helper_admin->get_log_file_full_path(), 'a+' );
 			if ( $fp ) {
 
 				fwrite( $fp, "\n" . gmdate( 'Y-m-d H:i:s ' ) . ' | ' . $level . ' | ' . $msg );
@@ -566,7 +566,7 @@ abstract class Purger {
 			return;
 		}
 
-		$nginx_asset_path = $nginx_helper_admin->functional_asset_path() . 'nginx.log';
+		$nginx_asset_path = $nginx_helper_admin->get_log_file_full_path();
 
 		if ( ! file_exists( $nginx_asset_path ) ) {
 			return;

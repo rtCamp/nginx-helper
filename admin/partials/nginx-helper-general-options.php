@@ -67,15 +67,18 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 		$nginx_helper_admin->update_map();
 	}
 
+	$nginx_settings['log_file_path'] = $nginx_helper_admin->get_log_file_name();
+
 	update_site_option( 'rt_wp_nginx_helper_options', $nginx_settings );
 
 	echo '<div class="updated"><p>' . esc_html__( 'Settings saved.', 'nginx-helper' ) . '</p></div>';
 
 }
 
-$nginx_helper_settings = $nginx_helper_admin->nginx_helper_settings();
-$log_path              = $nginx_helper_admin->functional_asset_path();
-$log_url               = $nginx_helper_admin->functional_asset_url();
+$nginx_helper_settings   = $nginx_helper_admin->nginx_helper_settings();
+$log_path                = $nginx_helper_admin->functional_asset_path();
+$log_path_with_file_name = $nginx_helper_admin->get_log_file_full_path();
+$log_url                 = $nginx_helper_admin->functional_asset_url();
 
 /**
  * Get setting url for single multiple with subdomain OR multiple with subdirectory site.
@@ -635,11 +638,11 @@ if ( is_multisite() ) {
 			if ( ! is_dir( $log_path ) ) {
 				mkdir( $log_path );
 			}
-			if ( is_writable( $log_path ) && ! file_exists( $log_path . 'nginx.log' ) ) {
-				$log = fopen( $log_path . 'nginx.log', 'w' );
+			if ( is_writable( $log_path ) && ! file_exists( $log_path_with_file_name ) ) {
+				$log = fopen( $log_path_with_file_name, 'w' );
 				fclose( $log );
 			}
-			if ( ! is_writable( $log_path . 'nginx.log' ) ) {
+			if ( ! is_writable( $log_path_with_file_name ) ) {
 				?>
 				<span class="error fade" style="display : block">
 					<p>
@@ -650,7 +653,7 @@ if ( is_multisite() ) {
 						sprintf(
 							// translators: %s file url.
 							__( 'Check you have write permission on <strong>%s</strong>', 'nginx-helper' ),
-							esc_url( $log_path . 'nginx.log' )
+							esc_url( $log_path_with_file_name )
 						),
 						array( 'strong' => array() )
 					);
@@ -671,7 +674,7 @@ if ( is_multisite() ) {
 						</th>
 						<td>
 							<code>
-								<?php echo esc_url( $log_path . 'nginx.log' ); ?>
+								<?php echo esc_url( $log_path_with_file_name ); ?>
 							</code>
 						</td>
 					</tr>
@@ -682,7 +685,7 @@ if ( is_multisite() ) {
 							</label>
 						</th>
 						<td>
-							<a target="_blank" href="<?php echo esc_url( $log_url . 'nginx.log' ); ?>">
+							<a target="_blank" href="<?php echo esc_url( $log_url . $nginx_helper_admin->get_log_file_name() ); ?>">
 								<?php esc_html_e( 'Log', 'nginx-helper' ); ?>
 							</a>
 						</td>

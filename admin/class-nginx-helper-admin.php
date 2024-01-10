@@ -261,6 +261,7 @@ class Nginx_Helper_Admin {
 			'enable_map'                       => 0,
 			'enable_log'                       => 0,
 			'log_level'                        => 'INFO',
+			'log_file_path'                    => '',
 			'log_filesize'                     => '5',
 			'enable_stamp'                     => 0,
 			'purge_homepage_on_edit'           => 1,
@@ -371,6 +372,45 @@ class Nginx_Helper_Admin {
 
 		return apply_filters( 'nginx_asset_url', $log_url );
 
+	}
+
+	/**
+	 * Retrieve log file's name.
+	 *
+	 * @since     2.0.0
+	 * @return    string    log file name of the plugin.
+	 */
+	public function get_log_file_name() {
+
+		$options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+
+		if ( ! empty( $options ) && ! empty( $options['log_file_path'] ) ) {
+
+			return $options['log_file_path'];
+		}
+
+		// Generate random log file name.
+		$file_name = wp_generate_password( 10, false );
+
+		// Append extension.
+		$file_name = $file_name . '.log';
+
+		$options['log_file_path'] = $file_name;
+
+		update_site_option( 'rt_wp_nginx_helper_options', $options );
+
+		return $file_name;
+	}
+
+	/**
+	 * Get log file's full path.
+	 *
+	 * @since     2.0.0
+	 * @return    string    file path.
+	 */
+	public function get_log_file_full_path() {
+
+		return $this->functional_asset_path() . $this->get_log_file_name();
 	}
 
 	/**
@@ -732,7 +772,6 @@ class Nginx_Helper_Admin {
 		}
 
 		if ( 'purge' === $action ) {
-
 			/**
 			 * Fire an action after the entire cache has been purged whatever caching type is used.
 			 *
