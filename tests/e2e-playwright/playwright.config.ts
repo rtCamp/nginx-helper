@@ -16,7 +16,7 @@ const config: PlaywrightTestConfig = {
         ["junit", { outputFile: "playwright-report/results.xml" }],
         [
           "playwright-tesults-reporter",
-          // { "tesults-target": process.env.TESRESULT_TOKEN },
+          { "tesults-target": process.env.TESRESULT_TOKEN },
         ],
     ],
     forbidOnly: !! process.env.CI,
