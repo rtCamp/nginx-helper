@@ -393,7 +393,7 @@ class Nginx_Helper_Admin {
 		$file_name = wp_generate_password( 10, false );
 
 		// Append extension.
-		$file_name = $file_name . '.log';
+		$file_name = $file_name . '-nginx.log';
 
 		$options['log_file_path'] = $file_name;
 
