@@ -26,7 +26,7 @@ function start_services() {
 # Create, setup and populate learn.rtcamp.com base site with data
 function create_and_configure_site () {
 
-    ee site create $SITE_NAME --wp --php74 
+    ee site create $SITE_NAME --wp --php74
     cd $SITE_ROOT/wp-content/plugins/
     rm -rf nginx-helper
     ls
@@ -62,7 +62,7 @@ function install_playwright(){
 # Run test for new deployed site
 function run_playwright_tests () {
     cd $GITHUB_WORKSPACE/tests/e2e-playwright
-    npm run test-e2e:playwright -- specs/
+    npm run test-e2e:playwright
 }
 
 function maybe_install_node_dep() {
