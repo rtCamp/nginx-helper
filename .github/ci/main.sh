@@ -26,7 +26,7 @@ function start_services() {
 # Create, setup and populate learn.rtcamp.com base site with data
 function create_and_configure_site () {
 
-    ee site create $SITE_NAME --wp --php74 
+    ee site create $SITE_NAME --wp --php74
     cd $SITE_ROOT/wp-content/plugins/
     rm -rf nginx-helper
     ls
@@ -36,7 +36,6 @@ function create_and_configure_site () {
     ls
     wp plugin activate nginx-helper --allow-root
     wp user create automation automation@example.com --role=administrator --user_pass=automation --allow-root
-    wp theme activate twentytwentyone --allow-root
 }
 
 
