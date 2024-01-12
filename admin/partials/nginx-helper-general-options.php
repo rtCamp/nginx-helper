@@ -562,10 +562,9 @@ if ( is_multisite() ) {
 							<?php
 							if ( ! $is_checkbox_enabled ) {
 								printf(
-									'<pre>(%1$s <b>define( \'ENABLE_NGINX_HELPER_LOGS\', true )</b> %2$s <b>%3$s</b>)</pre>',
-									esc_html__( 'To enable the above checkbox, it needs to be defined the' ),
-									esc_html__( ' constant in the' ),
-									esc_html__( 'wp-config.php' )
+									'<pre>(%1$s <b>define( \'ENABLE_NGINX_HELPER_LOGS\', true )</b> %2$s <b>wp-config.php</b>)</pre>',
+									esc_html__( 'To activate the logging feature, you must define the constant', 'nginx-helper' ),
+									esc_html__( 'in your', 'nginx-helper' )
 								);
 							}
 							?>
