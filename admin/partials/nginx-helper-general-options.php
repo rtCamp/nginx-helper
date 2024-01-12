@@ -540,17 +540,14 @@ if ( is_multisite() ) {
 					<tr valign="top">
 						<td>
 							<?php
-							$checkbox_status     = $nginx_helper_admin->is_nginx_log_enabled();
 							$is_checkbox_enabled = false;
-
 							if ( 1 === (int) $nginx_helper_settings['enable_log'] ) {
 								$is_checkbox_enabled = true;
-								$checkbox_status     = true;
 							}
 							?>
 							<input
 								type="checkbox" value="1" id="enable_log" name="enable_log"
-								<?php checked( $checkbox_status, true ); ?>
+								<?php checked( $nginx_helper_admin->is_nginx_log_enabled(), true ); ?>
 								<?php echo esc_attr( $is_checkbox_enabled ? '' : ' disabled ' ); ?>
 							/>
 							<label for="enable_log">
