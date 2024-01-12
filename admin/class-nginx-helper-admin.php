@@ -353,9 +353,9 @@ class Nginx_Helper_Admin {
 	 */
 	public function is_nginx_log_enabled() {
 
-		$enable_log = $this->options['enable_log'];
+		$options = get_site_option( 'rt_wp_nginx_helper_options', array() );
 
-		if ( ! empty( $enable_log ) && 1 === (int) $enable_log ) {
+		if ( ! empty( $options['enable_log'] ) && 1 === (int) $options['enable_log'] ) {
 			return true;
 		}
 

@@ -529,7 +529,7 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
-		if ( ! $nginx_helper_admin->options['enable_log'] ) {
+		if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
 			return;
 		}
 
@@ -562,7 +562,7 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
-		if ( ! $nginx_helper_admin->options['enable_log'] ) {
+		if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
 			return;
 		}
 
