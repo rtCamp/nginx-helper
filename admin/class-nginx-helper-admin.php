@@ -359,7 +359,7 @@ class Nginx_Helper_Admin {
 			return true;
 		}
 
-		if ( defined( 'ENABLE_NGINX_HELPER_LOGS' ) && true === ENABLE_NGINX_HELPER_LOGS ) {
+		if ( defined( 'NGINX_HELPER_LOG' ) && true === NGINX_HELPER_LOG ) {
 			return true;
 		}
 
