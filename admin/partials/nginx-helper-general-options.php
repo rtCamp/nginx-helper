@@ -539,10 +539,35 @@ if ( is_multisite() ) {
 				<?php } ?>
 					<tr valign="top">
 						<td>
-							<input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked( $nginx_helper_settings['enable_log'], 1 ); ?> />
+							<?php
+							$is_checkbox_enabled = false;
+
+							if ( 1 === (int) $nginx_helper_settings['enable_log'] ) {
+
+								$is_checkbox_enabled = true;
+
+							} elseif ( defined( 'ENABLE_NGINX_HELPER_LOGS' ) && true === ENABLE_NGINX_HELPER_LOGS ) {
+
+								$is_checkbox_enabled = true;
+							}
+							?>
+							<input
+								type="checkbox" value="1" id="enable_log" name="enable_log"
+								<?php checked( $nginx_helper_settings['enable_log'], 1 ); ?>
+								<?php echo esc_attr( $is_checkbox_enabled ? '' : ' disabled ' ); ?>
+							/>
 							<label for="enable_log">
 								<?php esc_html_e( 'Enable Logging', 'nginx-helper' ); ?>
 							</label>
+							<?php
+							if ( ! $is_checkbox_enabled ) {
+								printf(
+									'<pre>(%1$s <b>define( \'ENABLE_NGINX_HELPER_LOGS\', true );</b> %2$s)</pre>',
+									esc_html__( 'To enable the above checkbox, it needs to be defined the' ),
+									esc_html__( 'in the wp-config.php' )
+								);
+							}
+							?>
 						</td>
 					</tr>
 					<tr valign="top">
