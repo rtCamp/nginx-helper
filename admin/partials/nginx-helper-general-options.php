@@ -556,7 +556,7 @@ if ( is_multisite() ) {
 							<?php
 							if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
 								printf(
-									'<pre>[<b>NOTE:</b> %1$s<br /><b>define( \'NGINX_HELPER_LOG\', true )</b> %2$s <b>wp-config.php</b>]</pre>',
+									'<pre>[<b>NOTE:</b> %1$s<br /><b> define( \'NGINX_HELPER_LOG\', true )</b> %2$s <b>wp-config.php</b>]</pre>',
 									esc_html__( 'To activate the logging feature, you must define the constant', 'nginx-helper' ),
 									esc_html__( 'in your', 'nginx-helper' )
 								);
