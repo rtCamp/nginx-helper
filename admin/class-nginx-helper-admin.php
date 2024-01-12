@@ -346,6 +346,27 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
+	 * Check if the nginx log is enabled.
+	 *
+	 * @since 2.2.4
+	 * @return    boolean
+	 */
+	public function is_nginx_log_enabled() {
+
+		$enable_log = $this->options['enable_log'];
+
+		if ( ! empty( $enable_log ) && 1 === (int) $enable_log ) {
+			return true;
+		}
+
+		if ( defined( 'ENABLE_NGINX_HELPER_LOGS' ) && true === ENABLE_NGINX_HELPER_LOGS ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Retrieve the asset path.
 	 *
 	 * @since     2.0.0

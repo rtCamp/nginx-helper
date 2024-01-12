@@ -540,29 +540,26 @@ if ( is_multisite() ) {
 					<tr valign="top">
 						<td>
 							<?php
+							$checkbox_status     = $nginx_helper_admin->is_nginx_log_enabled();
 							$is_checkbox_enabled = false;
 
 							if ( 1 === (int) $nginx_helper_settings['enable_log'] ) {
-
 								$is_checkbox_enabled = true;
-
-							} elseif ( defined( 'ENABLE_NGINX_HELPER_LOGS' ) && true === ENABLE_NGINX_HELPER_LOGS ) {
-
-								$is_checkbox_enabled = true;
+								$checkbox_status     = true;
 							}
 							?>
 							<input
 								type="checkbox" value="1" id="enable_log" name="enable_log"
-								<?php checked( $nginx_helper_settings['enable_log'], 1 ); ?>
+								<?php checked( $checkbox_status, true ); ?>
 								<?php echo esc_attr( $is_checkbox_enabled ? '' : ' disabled ' ); ?>
 							/>
 							<label for="enable_log">
 								<?php esc_html_e( 'Enable Logging', 'nginx-helper' ); ?>
 							</label>
 							<?php
-							if ( ! $is_checkbox_enabled ) {
+							if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
 								printf(
-									'<pre>(%1$s <b>define( \'ENABLE_NGINX_HELPER_LOGS\', true )</b> %2$s <b>wp-config.php</b>)</pre>',
+									'<pre>[<b>NOTE:</b> %1$s<br /><b>define( \'ENABLE_NGINX_HELPER_LOGS\', true )</b> %2$s <b>wp-config.php</b>]</pre>',
 									esc_html__( 'To activate the logging feature, you must define the constant', 'nginx-helper' ),
 									esc_html__( 'in your', 'nginx-helper' )
 								);
