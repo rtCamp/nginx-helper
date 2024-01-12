@@ -564,7 +564,7 @@ if ( is_multisite() ) {
 								printf(
 									'<pre>(%1$s <b>define( \'ENABLE_NGINX_HELPER_LOGS\', true )</b> %2$s <b>%3$s</b>)</pre>',
 									esc_html__( 'To enable the above checkbox, it needs to be defined the' ),
-									esc_html__( 'in the' ),
+									esc_html__( ' constant in the' ),
 									esc_html__( 'wp-config.php' )
 								);
 							}
