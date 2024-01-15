@@ -552,17 +552,17 @@ if ( is_multisite() ) {
 							/>
 							<label for="enable_log">
 								<?php esc_html_e( 'Enable Logging', 'nginx-helper' ); ?>
+								<?php
+								if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
+									printf(
+										'<p class="enable-logging-message">(<b>NOTE:</b> %1$s <b>NGINX_HELPER_LOG</b> constant %2$s <b>true</b> %3$s <b>wp-config.php</b>)</p>',
+										esc_html__( 'To activate the logging feature, you must define', 'nginx-helper' ),
+										esc_html__( 'as', 'nginx-helper' ),
+										esc_html__( 'in your', 'nginx-helper' )
+									);
+								}
+								?>
 							</label>
-							<?php
-							if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
-								printf(
-									'<p style="font-size: 13px;">(<b>NOTE:</b> %1$s <b>NGINX_HELPER_LOG</b> constant %2$s <b>true</b> %3$s <b>wp-config.php</b>)</p>',
-									esc_html__( 'To activate the logging feature, you must define', 'nginx-helper' ),
-									esc_html__( 'as', 'nginx-helper' ),
-									esc_html__( 'in your', 'nginx-helper' )
-								);
-							}
-							?>
 						</td>
 					</tr>
 					<tr valign="top">

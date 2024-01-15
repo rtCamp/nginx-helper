@@ -24,7 +24,7 @@ test.describe("Enable the debug option", () => {
         "#post_form > div:nth-child(5) > div > table > tbody > tr:nth-child(1) > td > pre"
       )
     ).toHaveText(
-      "[NOTE: To activate the logging feature, you must define the constantdefine( 'NGINX_HELPER_LOG', true ) in your wp-config.php]"
+      "[NOTE: To activate the logging feature, you must define the constant define( 'NGINX_HELPER_LOG', true ) in your wp-config.php]"
     );
   });
 
