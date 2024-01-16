@@ -20,11 +20,9 @@ test.describe("Enable the debug option", () => {
     await expect(page.locator("input#enable_log")).toBeDisabled();
 
     expect(
-      page.locator(
-        "#post_form > div:nth-child(5) > div > table > tbody > tr:nth-child(1) > td > pre"
-      )
+      page.locator(".enable-logging-message")
     ).toHaveText(
-      "[NOTE: To activate the logging feature, you must define the constant define( 'NGINX_HELPER_LOG', true ) in your wp-config.php]"
+      "(NOTE: To enable the logging feature, you must define NGINX_HELPER_LOG constant as true in your wp-config.php)"
     );
   });
 
