@@ -553,26 +553,31 @@ if ( is_multisite() ) {
 							<label for="enable_log">
 								<?php esc_html_e( 'Enable Logging', 'nginx-helper' ); ?>
 								<?php
-								$setting_message_detail = [
-									'status' => __( 'disable', 'nginx-helper' ),
-									'value' => 'false',
-								];
-								if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
+								if ( ! $is_checkbox_enabled ) {
+
 									$setting_message_detail = [
-										'status' => __( 'enable', 'nginx-helper' ),
-										'value' => 'true',
+										'status' => __( 'disable', 'nginx-helper' ),
+										'value'  => 'false',
 									];
+
+									if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
+										$setting_message_detail = [
+											'status' => __( 'enable', 'nginx-helper' ),
+											'value'  => 'true',
+										];
+									}
+
+									printf(
+										'<p class="enable-logging-message">(<b>%1$s:</b> %2$s %3$s %4$s <b>NGINX_HELPER_LOG</b> constant %5$s <b>%6$s</b> %7$s <b>wp-config.php</b>)</p>',
+										esc_html__( 'NOTE', 'nginx-helper' ),
+										esc_html__( 'To', 'nginx-helper' ),
+										esc_html( $setting_message_detail['status'] ),
+										esc_html__( 'the logging feature, you must define', 'nginx-helper' ),
+										esc_html__( 'as', 'nginx-helper' ),
+										esc_html( $setting_message_detail['value'] ),
+										esc_html__( 'in your', 'nginx-helper' )
+									);
 								}
-								printf(
-									'<p class="enable-logging-message">(<b>%1$s:</b> %2$s %3$s %4$s <b>NGINX_HELPER_LOG</b> constant %5$s <b>%6$s</b> %7$s <b>wp-config.php</b>)</p>',
-									esc_html__( 'NOTE', 'nginx-helper' ),
-									esc_html__( 'To', 'nginx-helper' ),
-									esc_html( $setting_message_detail['status'] ),
-									esc_html__( 'the logging feature, you must define', 'nginx-helper' ),
-									esc_html__( 'as', 'nginx-helper' ),
-									esc_html( $setting_message_detail['value'] ),
-									esc_html__( 'in your', 'nginx-helper' )
-								);
 								?>
 							</label>
 						</td>
