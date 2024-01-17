@@ -127,6 +127,10 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 
 == Changelog ==
 
+= 2.2.4 =
+* Introduces the capability to specify the `NGINX_HELPER_LOG` constant, allowing users to activate the logging feature. [#318](https://github.com/rtCamp/nginx-helper/pull/318) - by [Vishal Kakadiya](https://github.com/vishalkakadiya)
+* Existing users employing the nginx-helper plugin with logging enabled will experience no disruptions. However, if logging is disabled, users must define the `NGINX_HELPER_LOG` constant to re-enable the logging feature.
+
 = 2.2.3 =
 * Add the URL being purged as parameter in `rt_nginx_helper_purge_cached_file` hook. [#271](https://github.com/rtCamp/nginx-helper/pull/271) - by [Arafat Islam](https://github.com/arafatkn)
 * Fix performance issue when saving nav menus. [#112](https://github.com/rtCamp/nginx-helper/issues/112), [#272](https://github.com/rtCamp/nginx-helper/pull/272/) - by [Arafat Islam](https://github.com/arafatkn)

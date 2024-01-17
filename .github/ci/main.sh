@@ -54,7 +54,7 @@ function build_package(){
 }
 
 function install_playwright(){
-     cd $GITHUB_WORKSPACE/tests/e2e-playwright
+    cd $GITHUB_WORKSPACE/tests/e2e-playwright
     npx playwright install
 }
 
