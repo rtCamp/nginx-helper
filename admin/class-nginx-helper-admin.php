@@ -53,7 +53,7 @@ class Nginx_Helper_Admin {
 	 *
 	 * @since    2.0.0
 	 * @access   public
-	 * @var      string    $options    Purge options.
+	 * @var      string[]    $options    Purge options.
 	 */
 	public $options;
 
@@ -343,6 +343,27 @@ class Nginx_Helper_Admin {
 
 		return $links;
 
+	}
+
+	/**
+	 * Check if the nginx log is enabled.
+	 *
+	 * @since 2.2.4
+	 * @return    boolean
+	 */
+	public function is_nginx_log_enabled() {
+
+		$options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+
+		if ( ! empty( $options['enable_log'] ) && 1 === (int) $options['enable_log'] ) {
+			return true;
+		}
+
+		if ( defined( 'NGINX_HELPER_LOG' ) && true === NGINX_HELPER_LOG ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -732,10 +753,10 @@ class Nginx_Helper_Admin {
 		}
 
 		if ( 'purge' === $action ) {
-	
+
 			/**
 			 * Fire an action after the entire cache has been purged whatever caching type is used.
-			 * 
+			 *
 			 * @since 2.2.2
 			 */
 			do_action( 'rt_nginx_helper_after_purge_all' );

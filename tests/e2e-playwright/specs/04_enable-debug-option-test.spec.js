@@ -16,18 +16,13 @@ test.describe("Enable the debug option", () => {
 
     expect(page.locator(".rt_option_title")).toHaveText("Nginx Settings");
 
-    if (await page.locator("#enable_log").uncheck) {
-      await page.click("#enable_log");
-    }
-    if (await page.locator("#enable_stamp").uncheck) {
-      await page.click("#enable_stamp");
-    }
+    // Assert that the checkbox is disabled
+    await expect(page.locator("input#enable_log")).toBeDisabled();
 
-    await page.click("#smart_http_expire_save");
-
-    await page.waitForTimeout(1000);
-    expect(page.locator("div[class='updated'] p")).toHaveText(
-      "Settings saved."
+    expect(
+      page.locator(".enable-logging-message")
+    ).toHaveText(
+      "(NOTE: To enable the logging feature, you must define NGINX_HELPER_LOG constant as true in your wp-config.php)"
     );
   });
 
