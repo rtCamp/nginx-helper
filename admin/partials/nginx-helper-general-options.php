@@ -539,9 +539,46 @@ if ( is_multisite() ) {
 				<?php } ?>
 					<tr valign="top">
 						<td>
-							<input type="checkbox" value="1" id="enable_log" name="enable_log"<?php checked( $nginx_helper_settings['enable_log'], 1 ); ?> />
+							<?php
+							$is_checkbox_enabled = false;
+							if ( 1 === (int) $nginx_helper_settings['enable_log'] ) {
+								$is_checkbox_enabled = true;
+							}
+							?>
+							<input
+								type="checkbox" value="1" id="enable_log" name="enable_log"
+								<?php checked( $nginx_helper_admin->is_nginx_log_enabled(), true ); ?>
+								<?php echo esc_attr( $is_checkbox_enabled ? '' : ' disabled ' ); ?>
+							/>
 							<label for="enable_log">
 								<?php esc_html_e( 'Enable Logging', 'nginx-helper' ); ?>
+								<?php
+								if ( ! $is_checkbox_enabled ) {
+
+									$setting_message_detail = [
+										'status' => __( 'disable', 'nginx-helper' ),
+										'value'  => 'false',
+									];
+
+									if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
+										$setting_message_detail = [
+											'status' => __( 'enable', 'nginx-helper' ),
+											'value'  => 'true',
+										];
+									}
+
+									printf(
+										'<p class="enable-logging-message">(<b>%1$s:</b> %2$s %3$s %4$s <b>NGINX_HELPER_LOG</b> constant %5$s <b>%6$s</b> %7$s <b>wp-config.php</b>)</p>',
+										esc_html__( 'NOTE', 'nginx-helper' ),
+										esc_html__( 'To', 'nginx-helper' ),
+										esc_html( $setting_message_detail['status'] ),
+										esc_html__( 'the logging feature, you must define', 'nginx-helper' ),
+										esc_html__( 'as', 'nginx-helper' ),
+										esc_html( $setting_message_detail['value'] ),
+										esc_html__( 'in your', 'nginx-helper' )
+									);
+								}
+								?>
 							</label>
 						</td>
 					</tr>
@@ -626,7 +663,7 @@ if ( is_multisite() ) {
 		<?php
 	}
 	?>
-	<div class="postbox enable_log"<?php echo ( empty( $nginx_helper_settings['enable_log'] ) ) ? ' style="display: none;"' : ''; ?>>
+	<div class="postbox enable_log"<?php echo ( ! $nginx_helper_admin->is_nginx_log_enabled() ) ? ' style="display: none;"' : ''; ?>>
 		<h3 class="hndle">
 			<span><?php esc_html_e( 'Logging Options', 'nginx-helper' ); ?></span>
 		</h3>
