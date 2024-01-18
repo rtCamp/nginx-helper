@@ -567,15 +567,8 @@ if ( is_multisite() ) {
 										];
 									}
 
-									printf(
-										'<p class="enable-logging-message">(<b>%1$s:</b> %2$s %3$s %4$s <b>NGINX_HELPER_LOG</b> constant %5$s <b>%6$s</b> %7$s <b>wp-config.php</b>)</p>',
-										esc_html__( 'NOTE', 'nginx-helper' ),
-										esc_html__( 'To', 'nginx-helper' ),
-										esc_html( $setting_message_detail['status'] ),
-										esc_html__( 'the logging feature, you must define', 'nginx-helper' ),
-										esc_html__( 'as', 'nginx-helper' ),
-										esc_html( $setting_message_detail['value'] ),
-										esc_html__( 'in your', 'nginx-helper' )
+									printf(esc_html__(
+										'%1$s(%2$sNOTE:%3$s To %4$s the logging feature, you must define %2$sNGINX_HELPER_LOG%3$s constant as %2$s%5$s%3$s in your %2$swp-config.php%3$s)%6$s', 'nginx-helper'),'<p class="enable-logging-message">','<b>','</b>',$setting_message_detail['status'],$setting_message_detail['value'],'</p>'
 									);
 								}
 								?>
