@@ -5,8 +5,8 @@ Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, 
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
-Tested up to: 6.1
-Stable tag: 2.2.3
+Tested up to: 6.4.2
+Stable tag: 2.2.4
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
