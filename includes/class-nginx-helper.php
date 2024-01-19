@@ -209,6 +209,7 @@ class Nginx_Helper {
 		$this->loader->add_action( 'wp_ajax_rt_get_feeds', $nginx_helper_admin, 'nginx_helper_get_feeds' );
 
 		$this->loader->add_action( 'shutdown', $nginx_helper_admin, 'add_timestamps', 99999 );
+		$this->loader->add_action( 'shutdown', $nginx_helper_admin, 'preload_urls', 999999 );
 		$this->loader->add_action( 'add_init', $nginx_helper_admin, 'update_map' );
 
 		// Add actions to purge.
@@ -227,6 +228,9 @@ class Nginx_Helper {
 
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );
+
+		// Add URLs to preload
+		$this->loader->add_action( 'transition_post_status', $nginx_helper_admin, 'preload_new_published_post', 20, 3 );
 	}
 
 	/**
