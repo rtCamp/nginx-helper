@@ -461,7 +461,11 @@ abstract class Purger {
 		 */
 		do_action( 'rt_nginx_helper_before_remote_purge_url', $url );
 
-		$response = wp_remote_get( $url );
+		$request_args = array(
+			'blocking' => false,
+			'sslverify' => false
+		);
+		$response = wp_remote_get( $url, $request_args );
 
 		if ( is_wp_error( $response ) ) {
 
