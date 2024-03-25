@@ -178,19 +178,19 @@ if ( is_multisite() ) {
 										<br />
 										<small>
 											<?php
-                                                echo wp_kses(
-                                                    sprintf(
-                                                    // translators: %s Nginx cache purge module link.
-                                                        __( 'Uses the %s module.', 'nginx-helper' ),
-                                                        '<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong>'
-                                                    ),
-                                                    array(
-                                                        'strong' => array(),
-                                                        'a'      => array(
-                                                            'href' => array(),
-                                                        ),
-                                                    )
-                                                );
+											echo wp_kses(
+													sprintf(
+													// translators: %s Nginx cache purge module link.
+														__( 'Uses the %s module.', 'nginx-helper' ),
+														'<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong>'
+													),
+													array(
+														'strong' => array(),
+														'a'      => array(
+															'href' => array(),
+														),
+													)
+												);
 											?>
 										</small>
 									</label>
