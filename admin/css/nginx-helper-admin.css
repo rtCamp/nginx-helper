@@ -98,3 +98,8 @@ form#purgeall .button-primary:focus {
 }
 
 .rt-purge_url { width: 100%; }
+
+.enable-logging-message {
+	font-size: 13px;
+	margin-left: 23px;
+}

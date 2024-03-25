@@ -53,7 +53,7 @@ class Nginx_Helper_Admin {
 	 *
 	 * @since    2.0.0
 	 * @access   public
-	 * @var      string    $options    Purge options.
+	 * @var      string[]    $options    Purge options.
 	 */
 	public $options;
 
@@ -344,6 +344,27 @@ class Nginx_Helper_Admin {
 
 		return $links;
 
+	}
+
+	/**
+	 * Check if the nginx log is enabled.
+	 *
+	 * @since 2.2.4
+	 * @return    boolean
+	 */
+	public function is_nginx_log_enabled() {
+
+		$options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+
+		if ( ! empty( $options['enable_log'] ) && 1 === (int) $options['enable_log'] ) {
+			return true;
+		}
+
+		if ( defined( 'NGINX_HELPER_LOG' ) && true === NGINX_HELPER_LOG ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -680,12 +701,20 @@ class Nginx_Helper_Admin {
 
 		global $nginx_purger, $wp;
 
-		$method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
+		$method = null;
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) ) {
+			$method = wp_strip_all_tags( $_SERVER['REQUEST_METHOD'] );
+		}
 
+		$action = '';
 		if ( 'POST' === $method ) {
-			$action = filter_input( INPUT_POST, 'nginx_helper_action', FILTER_SANITIZE_STRING );
+			if ( isset( $_POST['nginx_helper_action'] ) ) {
+				$action = wp_strip_all_tags( $_POST['nginx_helper_action'] );
+			}
 		} else {
-			$action = filter_input( INPUT_GET, 'nginx_helper_action', FILTER_SANITIZE_STRING );
+			if ( isset( $_GET['nginx_helper_action'] ) ) {
+				$action = wp_strip_all_tags( $_GET['nginx_helper_action'] );
+			}
 		}
 
 		if ( empty( $action ) ) {
@@ -725,13 +754,13 @@ class Nginx_Helper_Admin {
 		}
 
 		if ( 'purge' === $action ) {
-	
-		    /**
-		     * Fire an action after the entire cache has been purged whatever caching type is used.
-		     * 
-		     * @since 2.2.2
-		     */
-		    do_action( 'rt_nginx_helper_after_purge_all' );
+
+			/**
+			 * Fire an action after the entire cache has been purged whatever caching type is used.
+			 *
+			 * @since 2.2.2
+			 */
+			do_action( 'rt_nginx_helper_after_purge_all' );
 
 		}
 
