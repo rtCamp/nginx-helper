@@ -166,31 +166,31 @@ if ( is_multisite() ) {
 										<input type="radio" value="get_request" id="purge_method_get_request" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'get_request' ); ?>>
 										&nbsp;
 										<?php
-										echo wp_kses(
-											sprintf(
-												'%1$s <strong>PURGE/url</strong> %2$s',
-												esc_html__( 'Using a GET request to', 'nginx-helper' ),
-												esc_html__( '(Default option)', 'nginx-helper' )
-											),
-											array( 'strong' => array() )
-										);
+                                            echo wp_kses(
+                                                sprintf(
+                                                    '%1$s <strong>PURGE/url</strong> %2$s',
+                                                    esc_html__( 'Using a GET request to', 'nginx-helper' ),
+                                                    esc_html__( '(Default option)', 'nginx-helper' )
+                                                ),
+                                                array( 'strong' => array() )
+                                            );
 										?>
 										<br />
 										<small>
 											<?php
-											echo wp_kses(
-												sprintf(
-												// translators: %s Nginx cache purge module link.
-													__( 'Uses the %s module.', 'nginx-helper' ),
-													'<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong>'
-												),
-												array(
-													'strong' => array(),
-													'a'      => array(
-														'href' => array(),
-													),
-												)
-											);
+                                                echo wp_kses(
+                                                    sprintf(
+                                                    // translators: %s Nginx cache purge module link.
+                                                        __( 'Uses the %s module.', 'nginx-helper' ),
+                                                        '<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong>'
+                                                    ),
+                                                    array(
+                                                        'strong' => array(),
+                                                        'a'      => array(
+                                                            'href' => array(),
+                                                        ),
+                                                    )
+                                                );
 											?>
 										</small>
 									</label>
@@ -199,15 +199,15 @@ if ( is_multisite() ) {
 										<input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'unlink_files' ); ?>>
 										&nbsp;
 										<?php
-										esc_html_e( 'Delete local server cache files', 'nginx-helper' );
+										    esc_html_e( 'Delete local server cache files', 'nginx-helper' );
 										?>
 										<br />
 										<small>
 											<?php
-											echo wp_kses(
-												__( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri").', 'nginx-helper' ),
-												array( 'strong' => array() )
-											);
+                                                echo wp_kses(
+                                                    __( 'Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key "$scheme$request_method$host$request_uri").', 'nginx-helper' ),
+                                                    array( 'strong' => array() )
+                                                );
 											?>
 										</small>
 									</label>
@@ -287,7 +287,7 @@ if ( is_multisite() ) {
 									<span>
 										&nbsp;
 										<?php
-										esc_html_e( 'when a post/page/custom post is modified or added.', 'nginx-helper' );
+										    esc_html_e( 'when a post/page/custom post is modified or added.', 'nginx-helper' );
 										?>
 									</span>
 								</legend>
@@ -295,10 +295,10 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_homepage_on_edit" name="purge_homepage_on_edit" <?php checked( $nginx_helper_settings['purge_homepage_on_edit'], 1 ); ?> />
 									&nbsp;
 									<?php
-									echo wp_kses(
-										__( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' ),
-										array( 'strong' => array() )
-									);
+                                        echo wp_kses(
+                                            __( 'when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>.', 'nginx-helper' ),
+                                            array( 'strong' => array() )
+                                        );
 									?>
 								</label>
 								<br />
@@ -308,7 +308,7 @@ if ( is_multisite() ) {
 									<span>
 										&nbsp;
 										<?php
-										esc_html_e( 'when an existing post/page/custom post is modified.', 'nginx-helper' );
+										    esc_html_e( 'when an existing post/page/custom post is modified.', 'nginx-helper' );
 										?>
 									</span>
 								</legend>
@@ -316,10 +316,10 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_homepage_on_del" name="purge_homepage_on_del" <?php checked( $nginx_helper_settings['purge_homepage_on_del'], 1 ); ?> />
 									&nbsp;
 									<?php
-									echo wp_kses(
-										__( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>', 'nginx-helper' ),
-										array( 'strong' => array() )
-									);
+                                        echo wp_kses(
+                                            __( 'when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>', 'nginx-helper' ),
+                                            array( 'strong' => array() )
+                                        );
 									?>
 								</label>
 								<br />
@@ -339,7 +339,7 @@ if ( is_multisite() ) {
 								<legend class="screen-reader-text">
 									<span>&nbsp;
 										<?php
-										esc_html_e( 'when a post/page/custom post is published.', 'nginx-helper' );
+										    esc_html_e( 'when a post/page/custom post is published.', 'nginx-helper' );
 										?>
 									</span>
 								</legend>
@@ -347,10 +347,10 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_page_on_mod" name="purge_page_on_mod" <?php checked( $nginx_helper_settings['purge_page_on_mod'], 1 ); ?>>
 									&nbsp;
 									<?php
-									echo wp_kses(
-										__( 'when a <strong>post</strong> is <strong>published</strong>.', 'nginx-helper' ),
-										array( 'strong' => array() )
-									);
+                                        echo wp_kses(
+                                            __( 'when a <strong>post</strong> is <strong>published</strong>.', 'nginx-helper' ),
+                                            array( 'strong' => array() )
+                                        );
 									?>
 								</label>
 								<br />
@@ -360,7 +360,7 @@ if ( is_multisite() ) {
 									<span>
 										&nbsp;
 										<?php
-										esc_html_e( 'when a comment is approved/published.', 'nginx-helper' );
+										    esc_html_e( 'when a comment is approved/published.', 'nginx-helper' );
 										?>
 									</span>
 								</legend>
@@ -368,10 +368,10 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_page_on_new_comment" name="purge_page_on_new_comment" <?php checked( $nginx_helper_settings['purge_page_on_new_comment'], 1 ); ?>>
 									&nbsp;
 									<?php
-									echo wp_kses(
-										__( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' ),
-										array( 'strong' => array() )
-									);
+                                        echo wp_kses(
+                                            __( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' ),
+                                            array( 'strong' => array() )
+                                        );
 									?>
 								</label>
 								<br />
@@ -381,7 +381,7 @@ if ( is_multisite() ) {
 									<span>
 										&nbsp;
 										<?php
-										esc_html_e( 'when a comment is unapproved/deleted.', 'nginx-helper' );
+										    esc_html_e( 'when a comment is unapproved/deleted.', 'nginx-helper' );
 										?>
 									</span>
 								</legend>
@@ -389,10 +389,10 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_page_on_deleted_comment" name="purge_page_on_deleted_comment" <?php checked( $nginx_helper_settings['purge_page_on_deleted_comment'], 1 ); ?>>
 									&nbsp;
 									<?php
-									echo wp_kses(
-										__( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' ),
-										array( 'strong' => array() )
-									);
+                                        echo wp_kses(
+                                            __( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' ),
+                                            array( 'strong' => array() )
+                                        );
 									?>
 								</label>
 								<br />
@@ -510,7 +510,7 @@ if ( is_multisite() ) {
 									<span>
 										&nbsp;
 										<?php
-										esc_html_e( 'purge feeds', 'nginx-helper' );
+										    esc_html_e( 'purge feeds', 'nginx-helper' );
 										?>
 									</span>
                                 </legend>
@@ -518,10 +518,10 @@ if ( is_multisite() ) {
                                     <input type="checkbox" value="1" id="purge_feeds" name="purge_feeds" <?php checked( $nginx_helper_settings['purge_feeds'], 1 ); ?> />
                                     &nbsp;
 									<?php
-									echo wp_kses(
-										__( 'purge <strong>feeds</strong> along with <strong>posts</strong> & <strong>pages</strong>.', 'nginx-helper' ),
-										array( 'strong' => array() )
-									);
+                                        echo wp_kses(
+                                            __( 'purge <strong>feeds</strong> along with <strong>posts</strong> & <strong>pages</strong>.', 'nginx-helper' ),
+                                            array( 'strong' => array() )
+                                        );
 									?>
                                 </label>
                                 <br />
