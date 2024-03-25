@@ -166,14 +166,14 @@ if ( is_multisite() ) {
 										<input type="radio" value="get_request" id="purge_method_get_request" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'get_request' ); ?>>
 										&nbsp;
 										<?php
-                                            echo wp_kses(
-                                                sprintf(
-                                                    '%1$s <strong>PURGE/url</strong> %2$s',
-                                                    esc_html__( 'Using a GET request to', 'nginx-helper' ),
-                                                    esc_html__( '(Default option)', 'nginx-helper' )
-                                                ),
-                                                array( 'strong' => array() )
-                                            );
+											echo wp_kses(
+												sprintf(
+													'%1$s <strong>PURGE/url</strong> %2$s',
+													esc_html__( 'Using a GET request to', 'nginx-helper' ),
+													esc_html__( '(Default option)', 'nginx-helper' )
+												),
+												array( 'strong' => array() )
+											);
 										?>
 										<br />
 										<small>
