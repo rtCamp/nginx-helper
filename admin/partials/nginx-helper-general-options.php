@@ -178,9 +178,9 @@ if ( is_multisite() ) {
 										<br />
 										<small>
 											<?php
-											echo wp_kses(
+												echo wp_kses(
 													sprintf(
-													// translators: %s Nginx cache purge module link.
+														// translators: %s Nginx cache purge module link.
 														__( 'Uses the %s module.', 'nginx-helper' ),
 														'<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong>'
 													),
@@ -368,7 +368,7 @@ if ( is_multisite() ) {
 									<input type="checkbox" value="1" id="purge_page_on_new_comment" name="purge_page_on_new_comment" <?php checked( $nginx_helper_settings['purge_page_on_new_comment'], 1 ); ?>>
 									&nbsp;
 									<?php
-									 	echo wp_kses(
+										echo wp_kses(
 											__( 'when a <strong>comment</strong> is <strong>approved/published</strong>.', 'nginx-helper' ),
 											array( 'strong' => array() )
 										);
@@ -646,7 +646,7 @@ if ( is_multisite() ) {
 								echo '<br /><br />';
 								echo wp_kses(
 									sprintf(
-									// translators: %s file url.
+										// translators: %s file url.
 										__( 'Check you have write permission on <strong>%s</strong>', 'nginx-helper' ),
 										esc_url( $log_path . 'map.conf' )
 									),
@@ -656,7 +656,7 @@ if ( is_multisite() ) {
 						</p>
 					</span>
 				<?php
-            }
+			}
 			?>
 				<table class="form-table rtnginx-table">
 					<tr>
@@ -782,14 +782,14 @@ if ( is_multisite() ) {
 							<input id="log_filesize" class="small-text" type="text" name="log_filesize" value="<?php echo esc_attr( $nginx_helper_settings['log_filesize'] ); ?>" />
 							<?php
 								esc_html_e( 'Mb', 'nginx-helper' );
-								if ( $error_log_filesize ) {
-							?>
+							if ( $error_log_filesize ) {
+								?>
 								<p class="error fade" style="display: block;">
-									<?php echo esc_html( $error_log_filesize ); ?>
+								<?php echo esc_html( $error_log_filesize ); ?>
 								</p>
 								<?php
 							}
-						?>
+							?>
 						</td>
 					</tr>
 				</tbody>
