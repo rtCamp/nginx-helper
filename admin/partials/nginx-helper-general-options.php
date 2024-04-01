@@ -59,6 +59,18 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 		$nginx_helper_admin->nginx_helper_default_settings()
 	);
 
+    $site_options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+
+    // Uncheck checkbox fields whose default value is `1` but user has unchecked.
+    foreach ( $nginx_helper_admin->nginx_helper_default_settings() as $default_setting_field => $default_setting_value ) {
+
+        if ( 1 === $default_setting_value && isset( $site_options[ $default_setting_field ] ) && empty( $all_inputs[ $default_setting_field ] ) ) {
+
+	        $nginx_settings[ $default_setting_field ] = 0;
+
+        }
+    }
+
 	if ( ( ! is_numeric( $nginx_settings['log_filesize'] ) ) || ( empty( $nginx_settings['log_filesize'] ) ) ) {
 		$error_log_filesize = __( 'Log file size must be a number.', 'nginx-helper' );
 		unset( $nginx_settings['log_filesize'] );
