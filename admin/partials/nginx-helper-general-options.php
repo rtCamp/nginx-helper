@@ -38,6 +38,7 @@ $args = array(
 	'purge_page_on_mod',
 	'purge_page_on_new_comment',
 	'purge_page_on_deleted_comment',
+	'purge_feeds',
 	'smart_http_expire_form_nonce',
 );
 
@@ -57,6 +58,18 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 		$all_inputs,
 		$nginx_helper_admin->nginx_helper_default_settings()
 	);
+
+    $site_options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+
+    // Uncheck checkbox fields whose default value is `1` but user has unchecked.
+    foreach ( $nginx_helper_admin->nginx_helper_default_settings() as $default_setting_field => $default_setting_value ) {
+
+        if ( 1 === $default_setting_value && isset( $site_options[ $default_setting_field ] ) && empty( $all_inputs[ $default_setting_field ] ) ) {
+
+	        $nginx_settings[ $default_setting_field ] = 0;
+
+        }
+    }
 
 	if ( ( ! is_numeric( $nginx_settings['log_filesize'] ) ) || ( empty( $nginx_settings['log_filesize'] ) ) ) {
 		$error_log_filesize = __( 'Log file size must be a number.', 'nginx-helper' );
@@ -487,6 +500,38 @@ if ( is_multisite() ) {
 									<?php
 										echo wp_kses(
 											__( 'when a <strong>comment</strong> is <strong>unapproved/deleted</strong>.', 'nginx-helper' ),
+											array( 'strong' => array() )
+										);
+									?>
+								</label>
+								<br />
+							</fieldset>
+						</td>
+					</tr>
+				</table>
+				<table class="form-table rtnginx-table">
+					<tr valign="top">
+						<th scope="row">
+							<h4>
+								<?php esc_html_e( 'Purge Feeds:', 'nginx-helper' ); ?>
+							</h4>
+						</th>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text">
+									<span>
+										&nbsp;
+										<?php
+											esc_html_e( 'purge feeds', 'nginx-helper' );
+										?>
+									</span>
+								</legend>
+								<label for="purge_feeds">
+									<input type="checkbox" value="1" id="purge_feeds" name="purge_feeds" <?php checked( $nginx_helper_settings['purge_feeds'], 1 ); ?> />
+									&nbsp;
+									<?php
+										echo wp_kses(
+											__( 'purge <strong>feeds</strong> along with <strong>posts</strong> & <strong>pages</strong>.', 'nginx-helper' ),
 											array( 'strong' => array() )
 										);
 									?>
