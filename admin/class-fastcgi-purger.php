@@ -132,6 +132,7 @@ class FastCGI_Purger extends Purger {
 
 						}
 					}
+					do_action( 'rt_nginx_helper_after_unlink_purge_urls' );
 				}
 				break;
 
@@ -154,6 +155,7 @@ class FastCGI_Purger extends Purger {
 
 						}
 					}
+					do_action( 'rt_nginx_helper_after_get_purge_urls' );
 				}
 				break;
 
