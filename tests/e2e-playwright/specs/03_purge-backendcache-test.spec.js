@@ -9,7 +9,7 @@
 
      await page.waitForTimeout(1000);
  
-     await page.click('role=link[name="Purge Cache"i]');
+     await page.click("a[title='Purge Cache']");
 
      await page.waitForTimeout(2000);
 

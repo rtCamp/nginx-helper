@@ -2,16 +2,16 @@
 # This file is distributed under the same license as the Nginx Helper plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Nginx Helper 2.2.4\n"
+"Project-Id-Version: Nginx Helper 2.2.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nginx-helper\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-01-17T06:18:22+00:00\n"
+"POT-Creation-Date: 2024-04-15T10:26:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: nginx-helper\n"
 
 #. Plugin Name of the plugin
@@ -58,19 +58,19 @@ msgstr ""
 msgid "Purge Current Page"
 msgstr ""
 
-#: admin/class-nginx-helper-admin.php:341
+#: admin/class-nginx-helper-admin.php:342
 msgid "Settings"
 msgstr ""
 
-#: admin/class-nginx-helper-admin.php:425
+#: admin/class-nginx-helper-admin.php:426
 msgid "No items"
 msgstr ""
 
-#: admin/class-nginx-helper-admin.php:436
+#: admin/class-nginx-helper-admin.php:437
 msgid "Posted "
 msgstr ""
 
-#: admin/class-nginx-helper-admin.php:775
+#: admin/class-nginx-helper-admin.php:776
 msgid "Purge initiated"
 msgstr ""
 
@@ -236,310 +236,322 @@ msgstr ""
 msgid "Nginx Settings"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:62
+#: admin/partials/nginx-helper-general-options.php:82
 msgid "Log file size must be a number."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:72
+#: admin/partials/nginx-helper-general-options.php:92
 msgid "Settings saved."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:99
+#: admin/partials/nginx-helper-general-options.php:119
 msgid "Purging Options"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:106
+#: admin/partials/nginx-helper-general-options.php:126
 msgid "Enable Purge"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:116
+#: admin/partials/nginx-helper-general-options.php:136
 msgid "Caching Method"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:128
+#: admin/partials/nginx-helper-general-options.php:148
 msgid "nginx Fastcgi cache"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:130
+#: admin/partials/nginx-helper-general-options.php:150
 msgid "External settings for nginx"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:131
+#: admin/partials/nginx-helper-general-options.php:151
 msgid "requires external settings for nginx"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:141
+#: admin/partials/nginx-helper-general-options.php:161
 msgid "Redis cache"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:151
+#: admin/partials/nginx-helper-general-options.php:171
 msgid "Purge Method"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:161
-#: admin/partials/nginx-helper-general-options.php:341
+#: admin/partials/nginx-helper-general-options.php:181
+#: admin/partials/nginx-helper-general-options.php:361
 msgid "when a post/page/custom post is published."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:171
+#: admin/partials/nginx-helper-general-options.php:191
 msgid "Using a GET request to"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:172
+#: admin/partials/nginx-helper-general-options.php:192
 msgid "(Default option)"
 msgstr ""
 
 #. translators: %s Nginx cache purge module link.
-#: admin/partials/nginx-helper-general-options.php:183
+#: admin/partials/nginx-helper-general-options.php:203
 msgid "Uses the %s module."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:201
+#: admin/partials/nginx-helper-general-options.php:221
 msgid "Delete local server cache files"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:207
+#: admin/partials/nginx-helper-general-options.php:227
 msgid "Checks for matching cache file in <strong>RT_WP_NGINX_HELPER_CACHE_PATH</strong>. Does not require any other modules. Requires that the cache be stored on the same server as WordPress. You must also be using the default nginx cache options (levels=1:2) and (fastcgi_cache_key \"$scheme$request_method$host$request_uri\")."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:222
+#: admin/partials/nginx-helper-general-options.php:242
 msgid "Redis Settings"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:227
+#: admin/partials/nginx-helper-general-options.php:247
 msgid "Hostname"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:234
-#: admin/partials/nginx-helper-general-options.php:249
-#: admin/partials/nginx-helper-general-options.php:264
+#: admin/partials/nginx-helper-general-options.php:254
+#: admin/partials/nginx-helper-general-options.php:269
+#: admin/partials/nginx-helper-general-options.php:284
 msgid "Overridden by constant variables."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:242
+#: admin/partials/nginx-helper-general-options.php:262
 msgid "Port"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:257
+#: admin/partials/nginx-helper-general-options.php:277
 msgid "Prefix"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:277
+#: admin/partials/nginx-helper-general-options.php:297
 msgid "Purging Conditions"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:282
+#: admin/partials/nginx-helper-general-options.php:302
 msgid "Purge Homepage:"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:289
+#: admin/partials/nginx-helper-general-options.php:309
 msgid "when a post/page/custom post is modified or added."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:298
-#: admin/partials/nginx-helper-general-options.php:425
+#: admin/partials/nginx-helper-general-options.php:318
+#: admin/partials/nginx-helper-general-options.php:445
 msgid "when a <strong>post</strong> (or page/custom post) is <strong>modified</strong> or <strong>added</strong>."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:310
+#: admin/partials/nginx-helper-general-options.php:330
 msgid "when an existing post/page/custom post is modified."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:319
+#: admin/partials/nginx-helper-general-options.php:339
 msgid "when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:333
+#: admin/partials/nginx-helper-general-options.php:353
 msgid "Purge Post/Page/Custom Post Type:"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:350
+#: admin/partials/nginx-helper-general-options.php:370
 msgid "when a <strong>post</strong> is <strong>published</strong>."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:362
-#: admin/partials/nginx-helper-general-options.php:459
+#: admin/partials/nginx-helper-general-options.php:382
+#: admin/partials/nginx-helper-general-options.php:479
 msgid "when a comment is approved/published."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:371
-#: admin/partials/nginx-helper-general-options.php:468
+#: admin/partials/nginx-helper-general-options.php:391
+#: admin/partials/nginx-helper-general-options.php:488
 msgid "when a <strong>comment</strong> is <strong>approved/published</strong>."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:383
-#: admin/partials/nginx-helper-general-options.php:480
+#: admin/partials/nginx-helper-general-options.php:403
+#: admin/partials/nginx-helper-general-options.php:500
 msgid "when a comment is unapproved/deleted."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:392
-#: admin/partials/nginx-helper-general-options.php:489
+#: admin/partials/nginx-helper-general-options.php:412
+#: admin/partials/nginx-helper-general-options.php:509
 msgid "when a <strong>comment</strong> is <strong>unapproved/deleted</strong>."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:406
+#: admin/partials/nginx-helper-general-options.php:426
 msgid "Purge Archives:"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:408
+#: admin/partials/nginx-helper-general-options.php:428
 msgid "(date, category, tag, author, custom taxonomies)"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:416
+#: admin/partials/nginx-helper-general-options.php:436
 msgid "when an post/page/custom post is modified or added"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:437
+#: admin/partials/nginx-helper-general-options.php:457
 msgid "when an existing post/page/custom post is trashed."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:446
+#: admin/partials/nginx-helper-general-options.php:466
 msgid "when a <strong>published post</strong> (or page/custom post) is <strong>trashed</strong>."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:502
-msgid "Custom Purge URL:"
+#: admin/partials/nginx-helper-general-options.php:523
+msgid "Purge Feeds:"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:508
-msgid "Add one URL per line. URL should not contain domain name."
+#: admin/partials/nginx-helper-general-options.php:532
+msgid "purge feeds"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:511
-msgid "Eg: To purge http://example.com/sample-page/ add <strong>/sample-page/</strong> in above textarea."
-msgstr ""
-
-#: admin/partials/nginx-helper-general-options.php:515
-msgid "'*' will only work with redis cache server."
-msgstr ""
-
-#: admin/partials/nginx-helper-general-options.php:525
-msgid "Debug Options"
-msgstr ""
-
-#: admin/partials/nginx-helper-general-options.php:535
-msgid "Enable Nginx Map."
+#: admin/partials/nginx-helper-general-options.php:541
+msgid "purge <strong>feeds</strong> along with <strong>posts</strong> & <strong>pages</strong>."
 msgstr ""
 
 #: admin/partials/nginx-helper-general-options.php:554
+msgid "Custom Purge URL:"
+msgstr ""
+
+#: admin/partials/nginx-helper-general-options.php:560
+msgid "Add one URL per line. URL should not contain domain name."
+msgstr ""
+
+#: admin/partials/nginx-helper-general-options.php:563
+msgid "Eg: To purge http://example.com/sample-page/ add <strong>/sample-page/</strong> in above textarea."
+msgstr ""
+
+#: admin/partials/nginx-helper-general-options.php:567
+msgid "'*' will only work with redis cache server."
+msgstr ""
+
+#: admin/partials/nginx-helper-general-options.php:577
+msgid "Debug Options"
+msgstr ""
+
+#: admin/partials/nginx-helper-general-options.php:587
+msgid "Enable Nginx Map."
+msgstr ""
+
+#: admin/partials/nginx-helper-general-options.php:606
 msgid "Enable Logging"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:559
+#: admin/partials/nginx-helper-general-options.php:611
 msgid "disable"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:565
+#: admin/partials/nginx-helper-general-options.php:617
 msgid "enable"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:572
+#: admin/partials/nginx-helper-general-options.php:624
 msgid "NOTE"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:573
+#: admin/partials/nginx-helper-general-options.php:625
 msgid "To"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:575
+#: admin/partials/nginx-helper-general-options.php:627
 msgid "the logging feature, you must define"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:576
+#: admin/partials/nginx-helper-general-options.php:628
 msgid "as"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:578
+#: admin/partials/nginx-helper-general-options.php:630
 msgid "in your"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:589
+#: admin/partials/nginx-helper-general-options.php:641
 msgid "Enable Nginx Timestamp in HTML"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:603
+#: admin/partials/nginx-helper-general-options.php:655
 msgid "Nginx Map"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:612
+#: admin/partials/nginx-helper-general-options.php:664
 msgid "Can't write on map file."
 msgstr ""
 
 #. translators: %s file url.
-#: admin/partials/nginx-helper-general-options.php:617
-#: admin/partials/nginx-helper-general-options.php:689
+#: admin/partials/nginx-helper-general-options.php:669
+#: admin/partials/nginx-helper-general-options.php:741
 msgid "Check you have write permission on <strong>%s</strong>"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:634
+#: admin/partials/nginx-helper-general-options.php:686
 msgid "Nginx Map path to include in nginx settings"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:635
+#: admin/partials/nginx-helper-general-options.php:687
 msgid "(recommended)"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:648
+#: admin/partials/nginx-helper-general-options.php:700
 msgid "Or,"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:649
+#: admin/partials/nginx-helper-general-options.php:701
 msgid "Text to manually copy and paste in nginx settings"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:650
+#: admin/partials/nginx-helper-general-options.php:702
 msgid "(if your network is small and new sites are not added frequently)"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:668
+#: admin/partials/nginx-helper-general-options.php:720
 msgid "Logging Options"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:684
+#: admin/partials/nginx-helper-general-options.php:736
 msgid "Can't write on log file."
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:706
+#: admin/partials/nginx-helper-general-options.php:758
 msgid "Logs path"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:718
+#: admin/partials/nginx-helper-general-options.php:770
 msgid "View Log"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:723
+#: admin/partials/nginx-helper-general-options.php:775
 msgid "Log"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:730
+#: admin/partials/nginx-helper-general-options.php:782
 msgid "Log level"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:735
+#: admin/partials/nginx-helper-general-options.php:787
 msgid "None"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:736
+#: admin/partials/nginx-helper-general-options.php:788
 msgid "Info"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:737
+#: admin/partials/nginx-helper-general-options.php:789
 msgid "Warning"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:738
+#: admin/partials/nginx-helper-general-options.php:790
 msgid "Error"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:745
+#: admin/partials/nginx-helper-general-options.php:797
 msgid "Max log file size"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:751
+#: admin/partials/nginx-helper-general-options.php:803
 msgid "Mb"
 msgstr ""
 
-#: admin/partials/nginx-helper-general-options.php:768
+#: admin/partials/nginx-helper-general-options.php:820
 msgid "Save All Changes"
 msgstr ""
 
