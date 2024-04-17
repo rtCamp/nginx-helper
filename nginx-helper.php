@@ -9,7 +9,7 @@
  * Text Domain:       nginx-helper
  * Domain Path:       /languages
  * Requires at least: 3.0
- * Tested up to:      6.5.2
+ * Tested up to:      6.5
  *
  * @link              https://rtcamp.com/nginx-helper/
  * @since             2.0.0
