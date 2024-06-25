@@ -599,7 +599,7 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
-		$exclude_post_types = array( 'nav_menu_item' );
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item' ) );
 
 		if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
 			return;

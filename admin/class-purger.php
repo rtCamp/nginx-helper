@@ -87,6 +87,12 @@ abstract class Purger {
 		$_post_id    = $comment->comment_post_ID;
 		$_comment_id = $comment->comment_ID;
 
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_comment_change_exclude_post_types', array() );
+
+                if ( in_array( get_post_type( $_post_id ), $exclude_post_types, true ) ) {
+                        return;
+                }
+
 		$this->log( '* * * * *' );
 		$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ). ' );
 		$this->log( '* Post :: ' . get_the_title( $_post_id ) . ' ( ' . $_post_id . ' ) ' );
