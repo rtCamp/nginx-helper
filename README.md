@@ -61,16 +61,66 @@ For proper configuration, check out our **tutorial list** in the [Description ta
 
 No. You need to make some changes at the Nginx end. Please check our [tutorial list](https://easyengine.io/wordpress-nginx/tutorials/).
 
+**Q. Can I set the cache type using wp-config.php constants**
+
+Nginx Helper only helps purge the cache, but it needs to know what type of Nginx page caching you are using.
+
+You can set these in the nginx-helper admin settings, or control them using constants defined in the `wp-config.php` file:
+
+```php
+# Tell the plugin you are using fastcgi caching
+
+define( ' RT_WP_NGINX_HELPER_CACHE_METHOD', 'enable_fastcgi' );
+
+# Tell the plugin you are using redis caching
+
+define( ' RT_WP_NGINX_HELPER_CACHE_METHOD', 'enable_redis' );
+```
+
 ### FAQ - Nginx Fastcgi Cache Purge ###
 
 **Q. There's a 'purge all' button? Does it purge the whole site?**
 
-Yes, it does. It physically empties the cache directory. It is set by default to `/var/run/nginx-cache/`.
+Well that depends on your server configuration. 
 
-If your cache directory is different, you can override this in your wp-config.php by adding
-`define('RT_WP_NGINX_HELPER_CACHE_PATH','/var/run/nginx-cache/');`
+There are three options
+
+1. Purge by GET request - using the FRiCKLE ngx_cache_purge module
+2. Purge by GET request - using the Torden ngx_cache_purge module
+3. Delete local server cache files
+
+If your Nginx server has a the same webserver system user (likely www-data) as your sites directory/files owner then option 3 will purge all by physically emptying the cache directory. It is set by default to `/var/run/nginx-cache/`.
+If your server has multiple sites, then this would be a security risk however, so it is likely the Nginx User and Site system user will differ... and purge all will not work.
+
+If your cache directory is different, you can override this in your wp-config.php by adding:
+
+```php
+define( 'RT_WP_NGINX_HELPER_CACHE_PATH', '/path/to/your/nginx-cache/' );
+```
 
 Replace the path with your own.
+
+If your Nginx server is compiled with the FRiCKLE ngx_cache_purge module, then Purge All is not available
+
+If your Nginx server is compiled with the Torden ngx_cache_purge module, then Purge All will work.
+
+**Q. Can I set the fastcgi purge type using constants**
+
+You can set the purge type from the nginx-helper wp-admin settings page, or use a constants defined in the `wp-config.php:
+
+```php
+# Delete local server cache files with unlink_files
+
+define( 'RT_WP_NGINX_HELPER_PURGE_METHOD', 'unlink_files' );
+
+# Delete cache using GET requests when Nginx is compiled with FRiCKLE ngx_cache_purge module
+
+define( 'RT_WP_NGINX_HELPER_PURGE_METHOD', 'get_request' );
+
+# Delete cache using GET requests when Nginx is compiled with Tordent ngx_cache_purge module
+
+define( 'RT_WP_NGINX_HELPER_PURGE_METHOD', 'get_request_torden' );
+```
 
 **Q. Does it work for custom posts and taxonomies?**
 
@@ -101,16 +151,40 @@ To purge a page immediately, follow these instructions:
 
 ### FAQ - Nginx Redis Cache ###
 
-**Q. Can I override the redis hostname, port and prefix?**
+**Q. What connection settings does Nginx Helper suppor for purging the cache?**
 
-Yes, you can force override the redis hostname, port or prefix by defining constant in wp-config.php. For example:
+The plugin supports:
+* Hostname + Port (will be ignored if Unix socket is set)
+* Unix sockets (will override Hostname + Port)
+* Redis Prefix 
+* Redis Databases
+* Redis ACLs (username and password)
+
+You can set these parameters via the Nginx Helper wp-admin settings
+
+**Q. Can I set the Redis Connection parameters using constants**
+
+Yes you can, setting them via constant will override these settings in the wp-admin
 
 ```php
-define( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME', '10.0.0.1' );
+# If using hostname and port both must be set - either in config or via wp-admin
 
-define( 'RT_WP_NGINX_HELPER_REDIS_PORT', '6000' );
+define( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME', '127.0.0.1' );
+define( 'RT_WP_NGINX_HELPER_REDIS_PORT', '6379' );
 
-define( 'RT_WP_NGINX_HELPER_REDIS_PREFIX', 'page-cache:' );
+# If Unix Socket is set then hostname and port will be ignored.
+
+define( 'RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET', '/run/redis/redis.sock' );
+
+# Prefix and database allow for some degree of cache isolation for performance
+
+define( 'RT_WP_NGINX_HELPER_REDIS_PREFIX', 'nginx-cache:' );
+define( 'RT_WP_NGINX_HELPER_REDIS_DATABASE', '0' );
+
+# Username and password require Redis ACLs but allow for secure cache isolation
+
+define( 'RT_WP_NGINX_HELPER_REDIS_USERNAME', 'user' );
+define( 'RT_WP_NGINX_HELPER_REDIS_PASSWORD', 'password' );
 ```
 
 ### FAQ - Nginx Map ###
