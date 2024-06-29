@@ -213,6 +213,14 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 
 ## Changelog ##
 
+### 2.2.6 ###
+
+* Added Fastcgi purge all capability using GET requests IF Torden ngx_cache_purge module is available - by [Geoffrey McRae - gnif](https://github.com/gnif) and [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Redis Unix Socket connections - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Redis DB selection - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Redis ACL - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Management of all FastCGI and Redis Connection Parameters by wp-config.php constants - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+
 ### 2.2.5 ###
 
 * Add the capability to enable/disable purging of feeds. [#281](https://github.com/rtCamp/nginx-helper/issues/281) - by [Amaan Khan](https://github.com/pathan-amaankhan)
