@@ -144,7 +144,7 @@ if ( 'enable_fastcgi' === $cache_method ) {
 }
 
 if ( 'enable_redis' === $cache_method ) {
-    $redis_hostname_set_by_constant    = $nginx_helper_settings['redis_hostname_set_by_constant'];
+	$redis_hostname_set_by_constant    = $nginx_helper_settings['redis_hostname_set_by_constant'];
 	$redis_port_set_by_constant        = $nginx_helper_settings['redis_port_set_by_constant'];
 	$redis_unix_socket_set_by_constant = $nginx_helper_settings['redis_unix_socket_set_by_constant'];
 	$redis_prefix_set_by_constant      = $nginx_helper_settings['redis_prefix_set_by_constant'];
@@ -195,14 +195,13 @@ if ( is_multisite() ) {
 				<?php
 				if ( $cache_method_set_by_constant  )  {
 					echo '<p class="description" style="margin-left:1em;">';
-                    echo '<strong>';
-                    esc_html_e(
-                        sprintf(
-                            __("Set by wp-config.php constant: define( 'RT_WP_NGINX_HELPER_CACHE_METHOD',  '%s' );", 'nginx-helper'),
-                            $cache_method
-                        )
-                    );
-                    echo '</strong>';
+					esc_html_e(
+					    sprintf(
+					        __("Set by wp-config.php constant: define( 'RT_WP_NGINX_HELPER_CACHE_METHOD',  '%s' );", 'nginx-helper'),
+					        $cache_method
+					    )
+					);
+					echo '</strong>';
 					echo '</p>';
 				}
 				?>
