@@ -215,11 +215,11 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 
 ### 2.2.6 ###
 
-* Added Fastcgi purge all capability using GET requests IF Torden ngx_cache_purge module is available - by [Geoffrey McRae - gnif](https://github.com/gnif) and [GridPane - Jeff Cleverley](https://github.com/gridpane)
-* Added Redis Unix Socket connections - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
-* Added Redis DB selection - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
-* Added Redis ACL - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
-* Added Management of all FastCGI and Redis Connection Parameters by wp-config.php constants - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Fastcgi purge all capability using GET requests IF Torden ngx_cache_purge module is available. [#323](https://github.com/rtCamp/nginx-helper/issues/323) - by [Geoffrey McRae - gnif](https://github.com/gnif) and [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Redis Unix Socket connections. [325](https://github.com/rtCamp/nginx-helper/issues/325) - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Redis DB selection. [343](https://github.com/rtCamp/nginx-helper/issues/343) - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Redis ACL. [343](https://github.com/rtCamp/nginx-helper/issues/343) - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
+* Added Management of all FastCGI and Redis Connection Parameters by wp-config.php constants. [343](https://github.com/rtCamp/nginx-helper/issues/343) - by [GridPane - Jeff Cleverley](https://github.com/gridpane)
 
 ### 2.2.5 ###
 
