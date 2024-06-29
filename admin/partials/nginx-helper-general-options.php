@@ -121,7 +121,6 @@ $redis_password_set_by_constant           = false;
 
 if ( 'enable_fastcgi' === $cache_method ) {
 	$purge_method                         = $nginx_helper_settings['purge_method'];
-	$cache_method_set_by_constant         = $nginx_helper_settings['cache_method_set_by_constant'];
 	$purge_method_set_by_constant         = $nginx_helper_settings['purge_method_set_by_constant'];
 
 	if (version_compare($php_version, '5.5', '<') && $purge_method === 'get_request_torden' ) {
