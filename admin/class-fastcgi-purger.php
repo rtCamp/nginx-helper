@@ -69,6 +69,10 @@ class FastCGI_Purger extends Purger {
 
 			case 'get_request':
 				// Go to default case.
+
+			case 'get_request_torden':
+				// Go to default case.
+
 			default:
 				$_url_purge_base = $this->purge_base_url() . $parse['path'];
 				$_url_purge      = $_url_purge_base;
@@ -137,6 +141,10 @@ class FastCGI_Purger extends Purger {
 
 			case 'get_request':
 				// Go to default case.
+
+			case 'get_request_torden':
+				// Go to default case.
+
 			default:
 				$_url_purge_base = $this->purge_base_url();
 
@@ -166,9 +174,58 @@ class FastCGI_Purger extends Purger {
 	 */
 	public function purge_all() {
 
-		$this->unlink_recursive( RT_WP_NGINX_HELPER_CACHE_PATH, false );
+		global $nginx_helper_admin;
+
+		$purge_method = $nginx_helper_admin->options['purge_method'];
+
+		switch ( $purge_method ) {
+
+			case 'get_request_torden':
+				$site = get_site_url();
+				/** @noinspection PhpLanguageLevelInspection */
+				// Torden GET is guarded to detect 5.5+ in admin page and inform of incompatibility
+				$find    = [ 'http://', 'https://' ];
+				$replace = '';
+				$host    = str_replace( $find, $replace, $site);
+
+				if ( is_ssl() ) {
+					$purgeurl = $site . '/purgeall' ;
+					$curl = curl_init( $purgeurl );
+					curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PURGE" );
+					curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+					curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+					/** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
+					// Torden GET is guarded to detect 5.5+ in admin page and inform of incompatibility
+					curl_setopt($curl, CURLOPT_RESOLVE, array($host . ":443:127.0.0.1" ));
+
+				} else {
+
+					$curl = curl_init( "http://127.0.0.1/purgeall" );
+					curl_setopt($curl, CURLOPT_HTTPHEADER, array('Host:' . $host ));
+					curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PURGE" );
+					curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+
+				}
+
+				$response = curl_exec($curl);
+				if ($response === false)
+					$this->log( curl_errno($curl) .': '. curl_error($curl) );
+				curl_close($curl);
+				break;
+
+			case 'get_request':
+				// Go to default case.
+
+			default:
+				$this->unlink_recursive( RT_WP_NGINX_HELPER_CACHE_PATH, false );
+				break;
+		}
+
+		$log_purge_method = '* Using: ' . $purge_method;
+
 		$this->log( '* * * * *' );
 		$this->log( '* Purged Everything!' );
+		$this->log( $log_purge_method );
 		$this->log( '* * * * *' );
 
 		/**

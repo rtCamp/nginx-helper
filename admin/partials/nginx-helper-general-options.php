@@ -22,6 +22,10 @@ $args = array(
 	'redis_hostname',
 	'redis_port',
 	'redis_prefix',
+	'redis_unix_socket',
+	'redis_username',
+	'redis_password',
+	'redis_database',
 	'purge_homepage_on_edit',
 	'purge_homepage_on_del',
 	'purge_url',
@@ -93,9 +97,61 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 
 }
 
-$nginx_helper_settings = $nginx_helper_admin->nginx_helper_settings();
-$log_path              = $nginx_helper_admin->functional_asset_path();
-$log_url               = $nginx_helper_admin->functional_asset_url();
+$php_version                              = phpversion();
+$nginx_helper_settings                    = $nginx_helper_admin->nginx_helper_settings();
+$log_path                                 = $nginx_helper_admin->functional_asset_path();
+$log_url                                  = $nginx_helper_admin->functional_asset_url();
+$cache_method                             = $nginx_helper_settings['cache_method'];
+
+$purge_method_constant_warning            = false;
+$get_purge_method_radio_disabled          = false;
+$torden_get_purge_method_radio_disabled   = false;
+$unlink_files_purge_method_radio_disabled = false;
+$purge_method_php_version_unsupported     = false;
+$redis_hostname_set_by_constant           = false;
+$redis_unix_socket_set_by_constant        = false;
+$redis_port_set_by_constant               = false;
+$redis_prefix_set_by_constant             = false;
+$redis_database_set_by_constant           = false;
+$redis_username_set_by_constant           = false;
+$redis_password_set_by_constant           = false;
+
+// For testing
+//$php_version                              = 5.4;
+
+if ( 'enable_fastcgi' === $cache_method ) {
+	$purge_method                         = $nginx_helper_settings['purge_method'];
+	$cache_method_set_by_constant         = $nginx_helper_settings['cache_method_set_by_constant'];
+	$purge_method_set_by_constant         = $nginx_helper_settings['purge_method_set_by_constant'];
+
+	if (version_compare($php_version, '5.5', '<') && $purge_method === 'get_request_torden' ) {
+		$purge_method_php_version_unsupported = true;
+	}
+
+	if ( ! $purge_method_set_by_constant ) {
+		if ( $purge_method_php_version_unsupported ) {
+			$torden_get_purge_method_radio_disabled = true;
+			$purge_method = 'get_request';
+		}
+	} else {
+		$get_purge_method_radio_disabled = true;
+		$torden_get_purge_method_radio_disabled  = true;
+		$unlink_files_purge_method_radio_disabled = true;
+		if ( $purge_method_php_version_unsupported ) {
+			$purge_method_constant_warning = true;
+		}
+	}
+}
+
+if ( 'enable_redis' === $cache_method ) {
+    $redis_hostname_set_by_constant    = $nginx_helper_settings['redis_hostname_set_by_constant'];
+	$redis_port_set_by_constant        = $nginx_helper_settings['redis_port_set_by_constant'];
+	$redis_unix_socket_set_by_constant = $nginx_helper_settings['redis_unix_socket_set_by_constant'];
+	$redis_prefix_set_by_constant      = $nginx_helper_settings['redis_prefix_set_by_constant'];
+	$redis_database_set_by_constant    = $nginx_helper_settings['redis_database_set_by_constant'];
+	$redis_username_set_by_constant    = $nginx_helper_settings['redis_username_set_by_constant'];
+	$redis_password_set_by_constant    = $nginx_helper_settings['redis_password_set_by_constant'];
+}
 
 /**
  * Get setting url for single multiple with subdomain OR multiple with subdirectory site.
@@ -136,16 +192,30 @@ if ( is_multisite() ) {
 				<span><?php esc_html_e( 'Caching Method', 'nginx-helper' ); ?></span>
 			</h3>
 			<div class="inside">
+				<?php
+				if ( $cache_method_set_by_constant  )  {
+					echo '<p class="description" style="margin-left:1em;">';
+                    echo '<strong>';
+                    esc_html_e(
+                        sprintf(
+                            __("Set by wp-config.php constant: define( 'RT_WP_NGINX_HELPER_CACHE_METHOD',  '%s' );", 'nginx-helper'),
+                            $cache_method
+                        )
+                    );
+                    echo '</strong>';
+					echo '</p>';
+				}
+				?>
 				<input type="hidden" name="is_submit" value="1" />
 				<table class="form-table">
 					<tr valign="top">
 						<td>
-							<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_fastcgi' ); ?> />
+							<input type="radio" value="enable_fastcgi" id="cache_method_fastcgi" name="cache_method" <?php echo checked( $cache_method, 'enable_fastcgi' ); disabled( $cache_method_set_by_constant ); ?> />
 							<label for="cache_method_fastcgi">
 								<?php
 								printf(
 									'%s (<a target="_blank" href="%s" title="%s">%s</a>)',
-									esc_html__( 'nginx Fastcgi cache', 'nginx-helper' ),
+									esc_html__( 'Nginx Fastcgi cache', 'nginx-helper' ),
 									esc_url( $nginx_setting_link ),
 									esc_attr__( 'External settings for nginx', 'nginx-helper' ),
 									esc_html__( 'requires external settings for nginx', 'nginx-helper' )
@@ -156,7 +226,7 @@ if ( is_multisite() ) {
 					</tr>
 					<tr valign="top">
 						<td>
-							<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php echo checked( $nginx_helper_settings['cache_method'], 'enable_redis' ); ?> />
+							<input type="radio" value="enable_redis" id="cache_method_redis" name="cache_method" <?php echo checked( $cache_method, 'enable_redis' ); disabled( $cache_method_set_by_constant ); ?> />
 							<label for="cache_method_redis">
 								<?php printf( esc_html__( 'Redis cache', 'nginx-helper' ) ); ?>
 							</label>
@@ -166,11 +236,30 @@ if ( is_multisite() ) {
 			</div> <!-- End of .inside -->
 		</div>
 		<div class="enable_purge">
-			<div class="postbox cache_method_fastcgi"  <?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_fastcgi' === $nginx_helper_settings['cache_method'] ) ? '' : 'style="display: none;"'; ?> >
+			<div class="postbox cache_method_fastcgi"  <?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_fastcgi' === $cache_method ) ? '' : 'style="display: none;"'; ?> >
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Purge Method', 'nginx-helper' ); ?></span>
 				</h3>
 				<div class="inside">
+					<?php
+					if ( $purge_method_set_by_constant )  {
+						echo '<p class="description" style="margin-left:1em;"><strong>';
+						esc_html_e(
+							sprintf(
+								__("Set by wp-config.php constant: define( 'RT_WP_NGINX_HELPER_PURGE_METHOD',  '%s' );", 'nginx-helper'),
+								$purge_method
+							)
+						);
+						if ( $purge_method_constant_warning ) {
+							echo '</br></br>';
+							echo wp_kses(
+								__( 'WARNING!! The running version of PHP does not support this method!!!', 'nginx-helper' ),
+								array( 'strong' => array() )
+							);
+						}
+						echo '</strong></p>';
+					}
+					?>
 					<table class="form-table rtnginx-table">
 						<tr valign="top">
 							<td>
@@ -182,14 +271,14 @@ if ( is_multisite() ) {
 										</span>
 									</legend>
 									<label for="purge_method_get_request">
-										<input type="radio" value="get_request" id="purge_method_get_request" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'get_request' ); ?>>
+										<input type="radio" value="get_request" id="purge_method_get_request" name="purge_method" <?php checked( $purge_method, 'get_request' ); disabled( $get_purge_method_radio_disabled ); ?> />
 										&nbsp;
 										<?php
 											echo wp_kses(
 												sprintf(
 													'%1$s <strong>PURGE/url</strong> %2$s',
 													esc_html__( 'Using a GET request to', 'nginx-helper' ),
-													esc_html__( '(Default option)', 'nginx-helper' )
+													esc_html__( '(Default option) - Does not support `purge_all` method', 'nginx-helper' )
 												),
 												array( 'strong' => array() )
 											);
@@ -200,8 +289,8 @@ if ( is_multisite() ) {
 												echo wp_kses(
 													sprintf(
 														// translators: %s Nginx cache purge module link.
-														__( 'Uses the %s module.', 'nginx-helper' ),
-														'<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong>'
+														__( 'Nginx is compiled with the %s module.', 'nginx-helper' ),
+														'<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge (FRiCKLE)</a></strong>'
 													),
 													array(
 														'strong' => array(),
@@ -214,8 +303,50 @@ if ( is_multisite() ) {
 										</small>
 									</label>
 									<br />
+									<label for="purge_method_get_request_torden">
+										<input type="radio" value="get_request_torden" id="purge_method_get_request_torden" name="purge_method" <?php checked( $purge_method, 'get_request_torden' ); disabled( $torden_get_purge_method_radio_disabled  ); ?> />
+										&nbsp;
+										<?php
+											echo wp_kses(
+												sprintf(
+													'%1$s <strong>PURGE/url</strong> %2$s',
+													esc_html__( 'Using a GET request to', 'nginx-helper' ),
+													esc_html__( '(Supports torden\'s `purge_all` method -> Purge Entire Cache)', 'nginx-helper' )
+												),
+												array( 'strong' => array() )
+											);
+										?>
+										<br />
+										<small>
+											<?php
+												echo wp_kses(
+													sprintf(
+														// translators: %s Nginx cache purge module link.
+														__( 'Nginx is compiled with the %s module.', 'nginx-helper' ),
+														'<strong><a href="https://github.com/torden/ngx_cache_purge">ngx_cache_purge (torden)</a></strong>'
+													),
+													array(
+														'strong' => array(),
+														'a'      => array(
+															'href' => array(),
+														),
+													)
+												);
+												echo '<br />';
+												esc_html_e( 'Torden Nginx Cache Purge Requires PHP 5.5+ for curl_setopt CURLOPT_RESOLVE option', 'nginx-helper' );
+												echo '<br />';
+												esc_html_e(
+												    sprintf(
+												        __('Current PHP Version: %s', 'nginx-helper'),
+												        $php_version
+												) );
+ 												echo '<br />';
+											?>
+										</small>
+									</label>
+									<br />
 									<label for="purge_method_unlink_files">
-										<input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'unlink_files' ); ?>>
+										<input type="radio" value="unlink_files" id="purge_method_unlink_files" name="purge_method" <?php checked( $purge_method, 'unlink_files' ); disabled( $unlink_files_purge_method_radio_disabled  ); ?> />
 										&nbsp;
 										<?php
 											esc_html_e( 'Delete local server cache files', 'nginx-helper' );
@@ -237,21 +368,85 @@ if ( is_multisite() ) {
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
-			<div class="postbox cache_method_redis"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_redis' === $nginx_helper_settings['cache_method'] ) ? '' : ' style="display: none;"'; ?>>
+			<div class="postbox cache_method_redis"<?php echo ( ! empty( $nginx_helper_settings['enable_purge'] ) && 'enable_redis' === $cache_method ) ? '' : ' style="display: none;"'; ?>>
 				<h3 class="hndle">
 					<span><?php esc_html_e( 'Redis Settings', 'nginx-helper' ); ?></span>
 				</h3>
 				<div class="inside">
 					<table class="form-table rtnginx-table">
 						<tr>
-							<th><label for="redis_hostname"><?php esc_html_e( 'Hostname', 'nginx-helper' ); ?></label></th>
+							<th style="vertical-align:top;"><label for="redis_hostname"><?php esc_html_e( 'Hostname', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_hostname" class="medium-text" type="text" name="redis_hostname" value="<?php echo esc_attr( $nginx_helper_settings['redis_hostname'] ); ?>" <?php echo ( $redis_hostname_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
-								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+								if ( $redis_hostname_set_by_constant ) {
 
 									echo '<p class="description">';
-									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									esc_html_e( 'Set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_HOSTNAME', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								if ( $redis_unix_socket_set_by_constant ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Ignored! - UNIX socket is set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET', 'nginx-helper' );
+									echo '</p>';
+
+								} else {
+
+									if  ( $nginx_helper_settings['redis_unix_socket'] ) {
+
+										echo '<p class="description">';
+										esc_html_e( 'Ignored! - UNIX socket is set!', 'nginx-helper' );
+										echo '</p>';
+
+									}
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th style="vertical-align:top;"><label for="redis_port"><?php esc_html_e( 'Port', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" <?php echo ( $redis_port_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $redis_port_set_by_constant ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_PORT', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								if ( $redis_unix_socket_set_by_constant ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Ignored! - UNIX socket is set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET', 'nginx-helper' );
+									echo '</p>';
+
+								} else {
+
+									if  ( $nginx_helper_settings['redis_unix_socket'] ) {
+
+									    echo '<p class="description">';
+									    esc_html_e( 'Ignored! - UNIX socket is set!', 'nginx-helper' );
+									    echo '</p>';
+
+									}
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th style="vertical-align:top;"><label for="redis_unix_socket"><?php esc_html_e( 'Unix Socket', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="redis_unix_socket" class="medium-text" type="text" name="redis_unix_socket" value="<?php echo esc_attr( $nginx_helper_settings['redis_unix_socket'] ); ?>" <?php echo ( $redis_unix_socket_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
+                                <?php
+								if ( $redis_unix_socket_set_by_constant ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET', 'nginx-helper' );
 									echo '</p>';
 
 								}
@@ -259,14 +454,14 @@ if ( is_multisite() ) {
 							</td>
 						</tr>
 						<tr>
-							<th><label for="redis_port"><?php esc_html_e( 'Port', 'nginx-helper' ); ?></label></th>
+							<th style="vertical-align:top;"><label for="redis_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_port" class="medium-text" type="text" name="redis_port" value="<?php echo esc_attr( $nginx_helper_settings['redis_port'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" <?php echo ( $redis_prefix_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
-								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+								if ( $redis_prefix_set_by_constant ) {
 
 									echo '<p class="description">';
-									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									esc_html_e( 'Set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_PREFIX', 'nginx-helper' );
 									echo '</p>';
 
 								}
@@ -274,14 +469,50 @@ if ( is_multisite() ) {
 							</td>
 						</tr>
 						<tr>
-							<th><label for="redis_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
+                            <th style="vertical-align:top;"><label for="redis_database"><?php esc_html_e( 'Redis Database', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_prefix" class="medium-text" type="text" name="redis_prefix" value="<?php echo esc_attr( $nginx_helper_settings['redis_prefix'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_database" class="medium-text" type="text" name="redis_database" value="<?php echo esc_attr( $nginx_helper_settings['redis_database'] ); ?>" <?php echo ( $redis_database_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
-								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+								if ( $redis_database_set_by_constant ) {
 
 									echo '<p class="description">';
-									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									esc_html_e( 'Set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_DATABASE', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th style="vertical-align:top;"><label for="redis_username"><?php esc_html_e( 'Username', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="redis_username" class="medium-text" type="text" name="redis_username" value="<?php echo esc_attr( $nginx_helper_settings['redis_username'] ); ?>" <?php echo ( $redis_username_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								echo '<p class="description">';
+								esc_html_e( 'Optional - only required if you have implmented Redis ACLs ', 'nginx-helper' );
+								echo '</p>';
+								if ( $redis_username_set_by_constant ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_USERNAME', 'nginx-helper' );
+									echo '</p>';
+
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th style="vertical-align:top;"><label for="redis_password"><?php esc_html_e( 'Password', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="redis_password" class="medium-text" type="text" name="redis_password" value="<?php echo esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $redis_password_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								echo '<p class="description">';
+								esc_html_e( 'Optional - only required if you have implmented Redis ACLs ', 'nginx-helper' );
+								echo '</p>';
+								if ( $redis_password_set_by_constant ) {
+
+									echo '<p class="description">';
+									esc_html_e( 'Set by wp-config.php constant: RT_WP_NGINX_HELPER_REDIS_PASSWORD', 'nginx-helper' );
 									echo '</p>';
 
 								}
