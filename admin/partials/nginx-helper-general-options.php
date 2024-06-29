@@ -102,7 +102,7 @@ $nginx_helper_settings                    = $nginx_helper_admin->nginx_helper_se
 $log_path                                 = $nginx_helper_admin->functional_asset_path();
 $log_url                                  = $nginx_helper_admin->functional_asset_url();
 $cache_method                             = $nginx_helper_settings['cache_method'];
-
+$cache_method_set_by_constant             = $nginx_helper_settings['cache_method_set_by_constant'];
 $purge_method_constant_warning            = false;
 $get_purge_method_radio_disabled          = false;
 $torden_get_purge_method_radio_disabled   = false;
