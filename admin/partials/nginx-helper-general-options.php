@@ -502,7 +502,7 @@ if ( is_multisite() ) {
 						<tr>
 							<th style="vertical-align:top;"><label for="redis_password"><?php esc_html_e( 'Password', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_password" class="medium-text" type="text" name="redis_password" value="<?php echo esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $redis_password_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_password" class="medium-text" type="password" name="redis_password" value="<?php echo esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $redis_password_set_by_constant ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								echo '<p class="description">';
 								esc_html_e( 'Optional - only required if you have implmented Redis ACLs ', 'nginx-helper' );
