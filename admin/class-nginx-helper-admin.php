@@ -326,6 +326,7 @@ class Nginx_Helper_Admin {
 			$data['cache_method_set_by_constant'] = 1;
 
 			if ( 'enable_fastcgi' === RT_WP_NGINX_HELPER_CACHE_METHOD ) {
+				$data['enable_purge']              = 1;
  			    return $data;
 			}
 		}
