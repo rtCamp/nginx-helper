@@ -197,14 +197,11 @@ class FastCGI_Purger extends Purger {
 					/** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
 					// Torden GET is guarded to detect 5.5+ in admin page and inform of incompatibility
 					curl_setopt($curl, CURLOPT_RESOLVE, array($host . ":443:127.0.0.1" ));
-
 				} else {
-
 					$curl = curl_init( "http://127.0.0.1/purgeall" );
 					curl_setopt($curl, CURLOPT_HTTPHEADER, array('Host:' . $host ));
 					curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PURGE" );
 					curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-
 				}
 
 				$response = curl_exec($curl);
