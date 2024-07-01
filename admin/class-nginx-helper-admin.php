@@ -353,13 +353,13 @@ class Nginx_Helper_Admin {
 		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ) {
 			$redis_hostname                         = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
 			$data['redis_hostname']                 = $redis_hostname;
-            $data['redis_hostname_set_by_constant'] = 1;
+			$data['redis_hostname_set_by_constant'] = 1;
 		}
 
 		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET' ) ) {
 			$redis_unix_socket                         = RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET;
 			$data['redis_unix_socket']                 = $redis_unix_socket;
-            $data['redis_unix_socket_set_by_constant'] = 1;
+			$data['redis_unix_socket_set_by_constant'] = 1;
 		}
 
 		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_DATABASE' ) ) {
