@@ -678,6 +678,7 @@ class Nginx_Helper_Admin {
 			    $nginx_purger->log('* * * * *');
 			    $nginx_purger->log('* Post Type update - ' . $post_type . ' - purge trigger excluded...');
 			    $nginx_purger->log('* Filter:  -> rt_nginx_helper_exclude_post_types');
+			    $nginx_purger->log('* * * * *');
 		    }
 			return;
 		}
