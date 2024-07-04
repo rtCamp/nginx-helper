@@ -86,6 +86,16 @@ abstract class Purger {
 
 		$_post_id    = $comment->comment_post_ID;
 		$_comment_id = $comment->comment_ID;
+		$_post_type  = get_post_type( $_post_id );
+
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_comment_change_exclude_post_types', array() );
+
+		if ( in_array( $_post_type, $exclude_post_types, true ) ) {
+			if ( ! 'nav_menu_item' === $_post_type ) {
+				$this->log('Post Type ' . $_post_type . ' comment update excluded from triggering purge due to filter  -> rt_nginx_helper_comment_change_exclude_post_types' );
+			}
+			return;
+		}
 
 		$this->log( '* * * * *' );
 		$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ). ' );

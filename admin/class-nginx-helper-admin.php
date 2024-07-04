@@ -669,9 +669,14 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
-		$exclude_post_types = array( 'nav_menu_item' );
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item' ) );
 
-		if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
+        $post_type = $post->post_type;
+
+		if ( in_array( $post_type, $exclude_post_types, true ) ) {
+            if (! 'nav_menu_item' === $post_type ) {
+	            $nginx_purger->log('Post Type ' . $post_type . ' update excluded from triggering purge due to filter  -> rt_nginx_helper_exclude_post_types' );
+            }
 			return;
 		}
 
@@ -691,10 +696,10 @@ class Nginx_Helper_Admin {
 		if (
 			'future' === $new_status && $post && 'future' === $post->post_status &&
 			(
-				( 'post' === $post->post_type || 'page' === $post->post_type ) ||
+				( 'post' === $post_type || 'page' === $post_type ) ||
 				(
 					isset( $this->options['custom_post_types_recognized'] ) &&
-					in_array( $post->post_type, $this->options['custom_post_types_recognized'], true )
+					in_array( $post_type, $this->options['custom_post_types_recognized'], true )
 				)
 			)
 		) {
