@@ -671,14 +671,14 @@ class Nginx_Helper_Admin {
 
 		$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item' ) );
 
-        $post_type = $post->post_type;
+		$post_type = $post->post_type;
 
 		if ( in_array( $post_type, $exclude_post_types, true ) ) {
-            if ( 'nav_menu_item' !== $post_type ) {
-	            $nginx_purger->log( '* * * * *' );
-	            $nginx_purger->log('* Post Type update - ' . $post_type . ' - purge trigger excluded...');
-	            $nginx_purger->log('* Filter:  -> rt_nginx_helper_exclude_post_types');
-	            $nginx_purger->log( '* * * * *' );
+		    if ( 'nav_menu_item' !== $post_type ) {
+		        $nginx_purger->log( '* * * * *' );
+		        $nginx_purger->log('* Post Type update - ' . $post_type . ' - purge trigger excluded...');
+		        $nginx_purger->log('* Filter:  -> rt_nginx_helper_exclude_post_types');
+		        $nginx_purger->log( '* * * * *' );
             }
 			return;
 		}
