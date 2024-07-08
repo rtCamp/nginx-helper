@@ -173,6 +173,8 @@ class Nginx_Helper {
 		// Defines global variables.
 		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_redis' === $nginx_helper_admin->options['cache_method'] ) {
 
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-redis-purge-traits.php';
+
 			if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis extension if installed.
 
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-phpredis-purger.php';
