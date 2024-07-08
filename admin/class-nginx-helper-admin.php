@@ -291,6 +291,7 @@ class Nginx_Helper_Admin {
 			'redis_database_set_by_constant'        => 0,
 			'redis_username_set_by_constant'        => 0,
 			'redis_password_socket_set_by_constant' => 0,
+			'homepage_purge_post_type_exceptions'   => array(),
 		);
 
 	}
@@ -316,14 +317,18 @@ class Nginx_Helper_Admin {
 			$this->nginx_helper_default_settings()
 		);
 
+		if ( defined( 'RT_WP_NGINX_HELPER_HOMEPAGE_PURGE_EXCEPTIONS' ) ) {
+			$data['homepage_purge_post_type_exceptions'] = RT_WP_NGINX_HELPER_HOMEPAGE_PURGE_EXCEPTIONS;
+        }
+
 		if ( defined( 'RT_WP_NGINX_HELPER_PURGE_METHOD' ) ) {
-			$data['purge_method']                 = RT_WP_NGINX_HELPER_PURGE_METHOD;
-			$data['purge_method_set_by_constant'] = 1;
+			$data['purge_method']                        = RT_WP_NGINX_HELPER_PURGE_METHOD;
+			$data['purge_method_set_by_constant']        = 1;
 		}
 
 		if ( defined( 'RT_WP_NGINX_HELPER_CACHE_METHOD' ) ) {
-			$data['cache_method']                 = RT_WP_NGINX_HELPER_CACHE_METHOD;
-			$data['cache_method_set_by_constant'] = 1;
+			$data['cache_method']                       = RT_WP_NGINX_HELPER_CACHE_METHOD;
+			$data['cache_method_set_by_constant']       = 1;
 
 			if ( 'enable_fastcgi' === RT_WP_NGINX_HELPER_CACHE_METHOD ) {
 				$data['enable_purge']              = 1;
