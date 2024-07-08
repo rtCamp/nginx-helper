@@ -173,19 +173,14 @@ class Nginx_Helper {
 		// Defines global variables.
 		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_redis' === $nginx_helper_admin->options['cache_method'] ) {
 
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-redis-purge-traits.php';
-
 			if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis extension if installed.
-
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-phpredis-purger.php';
-				$nginx_purger = new PhpRedis_Purger();
-
+                $php_redis_connector = 'phpredis';
 			} else {
-
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-predis-purger.php';
-				$nginx_purger = new Predis_Purger();
-
+				$php_redis_connector = 'predis';
 			}
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-redis-purger.php';
+			$nginx_purger = new Redis_Purger( $php_redis_connector );
+
 		} else {
 
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';

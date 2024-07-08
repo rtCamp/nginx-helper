@@ -1,6 +1,129 @@
 <?php
+/**
+ * The admin-specific functionality of the plugin.
+ *
+ * @link       https://rtcamp.com/nginx-helper/
+ * @since      2.0.0
+ *
+ * @package    nginx-helper
+ * @subpackage nginx-helper/admin
+ */
 
-trait Redis_Purge_Traits {
+/**
+ * Description of Redis_Purger
+ *
+ * @package    nginx-helper
+ * @subpackage nginx-helper/admin
+ * @author     rtCamp
+ */
+class Redis_Purger extends Purger {
+
+	/**
+	 * PHP Redis api object.
+	 *
+	 * @since    2.0.0
+	 * @access   public
+	 * @var      string    $redis_object    PHP Redis api object.
+	 */
+	public $redis_object;
+
+	public $php_redis_connector;
+
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @since    2.0.0
+	 */
+	public function __construct( $php_redis_connector ) {
+
+		global $nginx_helper_admin;
+
+		$this->php_redis_connector = $php_redis_connector;
+
+		if ( 'phpredis' === $this->php_redis_connector ) {
+
+			try {
+
+				$this->redis_object = new Redis();
+
+				/*Composer sets default to version that doesn't allow modern php*/
+				$redis_connection_others_array = array();
+
+				$path = $nginx_helper_admin->options['redis_unix_socket'];
+
+				if ($path) {
+					$host = $path;
+					$port = 0;
+				} else {
+					$host = $nginx_helper_admin->options['redis_hostname'];
+					$port = $nginx_helper_admin->options['redis_port'];
+				}
+
+				$username = $nginx_helper_admin->options['redis_username'];
+				$password = $nginx_helper_admin->options['redis_password'];
+
+				if ($username && $password) {
+					$redis_connection_others_array['auth'] = [$username, $password];
+				}
+
+				$this->redis_object->connect(
+					$host,
+					$port,
+					5,
+					'',
+					100,
+					1.5,
+					$redis_connection_others_array
+				);
+
+				$redis_database = $nginx_helper_admin->options['redis_database'];
+
+				$this->redis_object->select($redis_database);
+
+			} catch (Exception $e) {
+				$this->log($e->getMessage(), 'ERROR');
+			}
+
+		} else {
+
+			if ( ! class_exists( 'Predis\Autoloader' ) ) {
+				require_once NGINX_HELPER_BASEPATH . 'admin/predis.php';
+			}
+
+			Predis\Autoloader::register();
+
+			/*Composer sets default to version that doesn't allow modern php*/
+			$predis_connection_array = array();
+
+			$path                                =  $nginx_helper_admin->options['redis_unix_socket'];
+			$username                            =  $nginx_helper_admin->options['redis_username'];
+			$password                            =  $nginx_helper_admin->options['redis_password'];
+			$predis_connection_array['database'] = $nginx_helper_admin->options['redis_database'];
+
+			if ( $path ) {
+				$predis_connection_array['path'] = $path;
+			} else {
+				$predis_connection_array['host'] = $nginx_helper_admin->options['redis_hostname'];;
+				$predis_connection_array['port'] = $nginx_helper_admin->options['redis_port'];
+			}
+
+			if ( $username && $password ) {
+				$predis_connection_array['username'] = $username;
+				$predis_connection_array['password'] = $password;
+			}
+
+			// redis server parameter.
+			$this->redis_object = new Predis\Client( $predis_connection_array );
+
+			try {
+				$this->redis_object->connect();
+			} catch ( Exception $e ) {
+				$this->log( $e->getMessage(), 'ERROR' );
+			}
+
+		}
+
+	}
 
 	/**
 	 * Purge all cache.
@@ -178,7 +301,7 @@ trait Redis_Purge_Traits {
 	public function delete_single_key( $key ) {
 
 		try {
-			if ( class_exists( 'Redis' ) ) {
+			if ( 'phpredis' === $this->php_redis_connector ) {
 				return $this->redis_object->del($key);
 			} else {
 				return $this->redis_object->executeRaw( array( 'DEL', $key ) );
@@ -224,4 +347,4 @@ LUA;
 
 	}
 
-} 
+}
