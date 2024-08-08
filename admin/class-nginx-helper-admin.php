@@ -96,11 +96,6 @@ class Nginx_Helper_Admin {
 		);
 
 		$this->options = $this->nginx_helper_settings();
-        
-        if( $this->is_import_request() ) {
-            $this->options['enable_purge'] = false;
-        }
-
 	}
 
 	/**
@@ -706,7 +701,7 @@ class Nginx_Helper_Admin {
 		if( $this->is_import_request() ) {
 			return;
 		}
-
+  
 		global $nginx_purger, $wp;
 
 		$method = null;
@@ -790,9 +785,10 @@ class Nginx_Helper_Admin {
 	 * @return bool
 	 */
 	public function is_import_request() {
-		$import_query_var = get_query_var( 'import' );
+		$import_query_var = sanitize_text_field( $_GET['import'] ?? '' );
 		$has_import_started = did_action( 'import_start' );
-		return (defined( 'WP_IMPORTING' ) && true === WP_IMPORTING) || 0 === $has_import_started || ! empty( $import_query_var );
+
+		return (defined( 'WP_IMPORTING' ) && true === WP_IMPORTING) || 0 !== $has_import_started || ! empty( $import_query_var );
 	}
 
 }
