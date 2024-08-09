@@ -698,10 +698,10 @@ class Nginx_Helper_Admin {
 	 */
 	public function purge_all() {
 		
-		if( $this->is_import_request() ) {
+		if ( $this->is_import_request() ) {
 			return;
 		}
-  
+		
 		global $nginx_purger, $wp;
 
 		$method = null;
@@ -782,13 +782,16 @@ class Nginx_Helper_Admin {
 	/**
 	 * Determines if the current request is for importing Posts/ WordPress content.
 	 *
-	 * @return bool
+	 * @return bool True if the request is for importing, false otherwise.
 	 */
 	public function is_import_request() {
-		$import_query_var = sanitize_text_field( $_GET['import'] ?? '' );
+		$import_query_var   = sanitize_text_field( wp_unslash($_GET['import'] ?? '') ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is already in the admin dashboard.
 		$has_import_started = did_action( 'import_start' );
-
-		return (defined( 'WP_IMPORTING' ) && true === WP_IMPORTING) || 0 !== $has_import_started || ! empty( $import_query_var );
+		
+		return ( defined( 'WP_IMPORTING' ) && true === WP_IMPORTING )
+			|| 0 !== $has_import_started
+			|| ! empty( $import_query_var );
 	}
-
+	
+	
 }
