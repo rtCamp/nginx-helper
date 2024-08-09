@@ -604,7 +604,7 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
-		if ( ! $this->options['enable_purge'] ) {
+		if ( ! $this->options['enable_purge'] || $this->is_import_request() ) {
 			return;
 		}
 
