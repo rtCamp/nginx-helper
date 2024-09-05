@@ -22,6 +22,7 @@ $args = array(
 	'redis_hostname',
 	'redis_port',
 	'redis_prefix',
+    'redis_database',
 	'purge_homepage_on_edit',
 	'purge_homepage_on_del',
 	'purge_url',
@@ -288,6 +289,21 @@ if ( is_multisite() ) {
 								?>
 							</td>
 						</tr>
+                        <tr>
+                            <th><label for="redis_database"><?php esc_html_e( 'Database', 'nginx-helper' ); ?></label></th>
+                            <td>
+                                <input id="redis_database" class="medium-text" type="text" name="redis_database" value="<?php echo esc_attr( $nginx_helper_settings['redis_database'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+									
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+									
+								}
+								?>
+                            </td>
+                        </tr>
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
