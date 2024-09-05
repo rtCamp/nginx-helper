@@ -37,12 +37,17 @@ class Predis_Purger extends Purger {
 		}
 
 		Predis\Autoloader::register();
+		
+		$username = $nginx_helper_admin->options['redis_username'];
+		$password = $nginx_helper_admin->options['redis_password'];
 
 		// redis server parameter.
 		$this->redis_object = new Predis\Client(
 			array(
 				'host' => $nginx_helper_admin->options['redis_hostname'],
 				'port' => $nginx_helper_admin->options['redis_port'],
+				'username' => $username,
+				'password' => $password,
 			)
 		);
 		

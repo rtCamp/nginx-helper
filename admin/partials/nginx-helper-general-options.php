@@ -23,6 +23,8 @@ $args = array(
 	'redis_port',
 	'redis_prefix',
     'redis_database',
+    'redis_username',
+    'redis_password',
 	'purge_homepage_on_edit',
 	'purge_homepage_on_del',
 	'purge_url',
@@ -293,6 +295,38 @@ if ( is_multisite() ) {
                             <th><label for="redis_database"><?php esc_html_e( 'Database', 'nginx-helper' ); ?></label></th>
                             <td>
                                 <input id="redis_database" class="medium-text" type="text" name="redis_database" value="<?php echo esc_attr( $nginx_helper_settings['redis_database'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+									
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+									
+								}
+								?>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th><label for="redis_username"><?php esc_html_e( 'Username:', 'nginx-helper' ); ?></label></th>
+                            <td>
+                                <input id="redis_username" class="medium-text" type="text" name="redis_username" value="<?php echo esc_attr( $nginx_helper_settings['redis_username'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<?php
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+									
+									echo '<p class="description">';
+									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
+									echo '</p>';
+									
+								}
+								?>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th><label for="redis_password"><?php esc_html_e( 'Password:', 'nginx-helper' ); ?></label></th>
+                            <td>
+                                <input id="redis_password" class="medium-text" type="text" name="redis_password" value="<?php echo esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
 									
