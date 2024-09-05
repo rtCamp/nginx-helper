@@ -44,6 +44,10 @@ class PhpRedis_Purger extends Purger {
 				$nginx_helper_admin->options['redis_port'],
 				5
 			);
+			
+			if( $nginx_helper_admin->options['redis_database'] !== 0 ) {
+				$this->redis_object->select($nginx_helper_admin->options['redis_database']);
+			}
 
 		} catch ( Exception $e ) {
 			$this->log( $e->getMessage(), 'ERROR' );
