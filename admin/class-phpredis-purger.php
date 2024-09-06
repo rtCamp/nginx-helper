@@ -39,11 +39,32 @@ class PhpRedis_Purger extends Purger {
 		try {
 
 			$this->redis_object = new Redis();
+			
+			$redis_acl = array();
+			
+			$username = $nginx_helper_admin->options['redis_username'];
+			$password = $nginx_helper_admin->options['redis_password'];
+			
+			if( $username && $password ) {
+				$redis_acl['auth'] = array( $username, $password );
+			}
+			
+			$hostname = empty( $nginx_helper_admin->options['redis_unix_socket'] ) ? $nginx_helper_admin->options['redis_hostname'] : $nginx_helper_admin->options['redis_unix_socket'];
+			$port     = empty( $nginx_helper_admin->options['redis_unix_socket'] ) ? $nginx_helper_admin->options['redis_port'] : 0;
+			
 			$this->redis_object->connect(
-				$nginx_helper_admin->options['redis_hostname'],
-				$nginx_helper_admin->options['redis_port'],
-				5
+				$hostname,
+				$port,
+				5,
+				null,
+				0,
+				0,
+				$redis_acl
 			);
+			
+			if( $nginx_helper_admin->options['redis_database'] !== 0 ) {
+				$this->redis_object->select($nginx_helper_admin->options['redis_database']);
+			}
 
 		} catch ( Exception $e ) {
 			$this->log( $e->getMessage(), 'ERROR' );
