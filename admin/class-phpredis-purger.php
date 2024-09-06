@@ -49,9 +49,12 @@ class PhpRedis_Purger extends Purger {
 				$redis_acl['auth'] = array( $username, $password );
 			}
 			
+			$hostname = empty( $nginx_helper_admin->options['redis_unix_socket'] ) ? $nginx_helper_admin->options['redis_hostname'] : $nginx_helper_admin->options['redis_unix_socket'];
+			$port     = empty( $nginx_helper_admin->options['redis_unix_socket'] ) ? $nginx_helper_admin->options['redis_port'] : 0;
+			
 			$this->redis_object->connect(
-				$nginx_helper_admin->options['redis_hostname'],
-				$nginx_helper_admin->options['redis_port'],
+				$hostname,
+				$port,
 				5,
 				null,
 				0,
