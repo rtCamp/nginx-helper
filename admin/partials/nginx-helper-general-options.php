@@ -40,7 +40,7 @@ $args = array(
 	'purge_page_on_deleted_comment',
 	'purge_feeds',
 	'smart_http_expire_form_nonce',
-    'purge_amp_urls',
+	'purge_amp_urls',
 );
 
 $all_inputs = array();

@@ -278,7 +278,7 @@ class Nginx_Helper_Admin {
 			'redis_prefix'                     => 'nginx-cache:',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
-            'purge_amp_urls'                   => 1,
+			'purge_amp_urls'                   => 1,
 		);
 
 	}
