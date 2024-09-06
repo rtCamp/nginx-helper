@@ -90,7 +90,28 @@ class FastCGI_Purger extends Purger {
 				break;
 
 		}
+		
+		if( ( is_page() || is_single() ) && $nginx_helper_admin->options['purge_amp_urls'] ) {
+			$this->purge_amp_version( $url );
+		}
 
+	}
+	
+	/**
+	 * Purge AMP version of a URL.
+	 *
+	 * @param string $url_base The base URL to purge.
+	 */
+	private function purge_amp_version( $url_base ) {
+		$amp_url = $url_base . '/amp/';
+		
+		$this->log('- Purging AMP URL | ' . $amp_url);
+		
+		if ($this->nginx_helper_admin->options['purge_method'] === 'unlink_files') {
+			$this->delete_cache_file_for($amp_url);
+		} else {
+			$this->do_remote_get($this->purge_base_url() . '/amp/');
+		}
 	}
 
 	/**
