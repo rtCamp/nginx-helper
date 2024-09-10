@@ -55,6 +55,12 @@ class Nginx_Helper_Activator {
 
 		$role->add_cap( 'Nginx Helper | Config' );
 		$role->add_cap( 'Nginx Helper | Purge cache' );
+		
+		$editor_role = get_role( 'editor' );
+		
+		if( ! empty( $editor_role ) ) {
+			$editor_role->add_cap( 'Nginx Helper | Purge cache' );
+		}
 
 		wp_schedule_event( time(), 'daily', 'rt_wp_nginx_helper_check_log_file_size_daily' );
 
