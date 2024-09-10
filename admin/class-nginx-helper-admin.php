@@ -722,7 +722,7 @@ class Nginx_Helper_Admin {
 			return;
 		}
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
 			wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
 		}
 		
