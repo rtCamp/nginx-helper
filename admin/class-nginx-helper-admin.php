@@ -281,6 +281,28 @@ class Nginx_Helper_Admin {
 		);
 
 	}
+    
+    public function store_default_options() {
+        $options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+        $default_settings = $this->nginx_helper_default_settings();
+        
+        $removable_default_settings = array(
+            'redis_port',
+            'redis_prefix',
+            'redis_hostname',
+            'redis_database',
+            'redis_unix_socket'
+        );
+        
+        // Remove all the keys that are not to be stored by default.
+        foreach ( $removable_default_settings as $removable_key ) {
+            unset( $default_settings[ $removable_key ] );
+        }
+        
+        $diffed_options = wp_parse_args( $default_settings, $options );
+        
+        add_site_option( 'rt_wp_nginx_helper_options', $diffed_options );
+    }
 
 	/**
 	 * Get settings.
