@@ -96,6 +96,12 @@ class Nginx_Helper_Admin {
 		);
 
 		$this->options = $this->nginx_helper_settings();
+        
+        $is_cache_preloaded = get_option( 'is_cache_preloaded' );
+        $preload_cache_enabled = get_option( 'preload_cache' );
+        if ( $preload_cache_enabled && false === $is_cache_preloaded ) {
+            $this->preload_cache_from_sitemap();
+		}
 
 	}
 
@@ -278,6 +284,8 @@ class Nginx_Helper_Admin {
 			'redis_prefix'                     => 'nginx-cache:',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
+            'preload_cache'                    => 0,
+            'is_cache_preloaded'               => 0
 		);
 
 	}
@@ -774,6 +782,75 @@ class Nginx_Helper_Admin {
 	 */
 	public function display_notices() {
 		echo '<div class="updated"><p>' . esc_html__( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
+	}
+	
+	/**
+	 * This function preloads the cache from sitemap url.
+	 *
+	 * @return void
+	 */
+	public function preload_cache_from_sitemap() {
+		global $nginx_purger;
+		$sitemap_url = get_sitemap_url( 'index' );
+		
+		if ( false === $sitemap_url || empty( $sitemap_url ) ) {
+			return;
+		}
+		
+		$sitemap_page = get_page_by_path( $sitemap_url );
+		
+		if ( ! $sitemap_page instanceof WP_Post ) {
+			return;
+		}
+		
+		$sitemap_content = $sitemap_page->post_content;
+		$urls            = $this->extract_sitemap_urls( $sitemap_content );
+		
+		if ( $urls instanceof WP_Error ) {
+			$nginx_purger->log( ' Error while extracting URL\'s from the sitemap while preloading cache. Error - ', $urls->get_error_message() );
+			return;
+		}
+		
+		$args = array(
+			'timeout'   => 0.01,
+			'blocking'  => false,
+			'sslverify' => false,
+		);
+		
+		foreach ( $urls as $url ) {
+			wp_remote_get( esc_url_raw( $url ), $args );
+		}
+        
+        add_option( 'is_cache_preloaded', true );
+	}
+	
+	/**
+	 * Parse sitemap content and extract all URLs.
+	 *
+	 * @param string $sitemap_content The XML content of the sitemap.
+	 * @return array|WP_Error An array of URLs or WP_Error on failure.
+	 */
+	private function extract_sitemap_urls( $sitemap_content ) {
+		libxml_use_internal_errors( true );
+		$xml = simplexml_load_string( $sitemap_content );
+		
+		if ( false === $xml ) {
+			return new WP_Error( 'sitemap_parse_error', esc_html__( 'Failed to parse the sitemap XML', 'nginx-helper' ) );
+		}
+		
+		$urls = array();
+		
+		if ( 'sitemapindex' === $xml->getName() ) {
+			foreach ( $xml->sitemap as $sitemap ) {
+				$urls[] = (string) $sitemap->loc;
+			}
+		} else {
+			foreach ( $xml->url as $url ) {
+				$urls[] = (string) $url->loc;
+			}
+		}
+		
+		return $urls;
 	}
 
 }
