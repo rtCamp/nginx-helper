@@ -811,7 +811,7 @@ class Nginx_Helper_Admin {
         }
         
 		$args = array(
-			'timeout'   => 0.01,
+			'timeout'   => 1,
 			'blocking'  => false,
 			'sslverify' => false,
 		);
