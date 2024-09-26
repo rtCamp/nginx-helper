@@ -96,19 +96,6 @@ class Nginx_Helper_Admin {
 		);
 
 		$this->options = $this->nginx_helper_settings();
-		
-       add_action( 'init', function() {
-		   $is_cache_preloaded = $this->options['is_cache_preloaded'];
-		   $preload_cache_enabled = $this->options['preload_cache'];
-		   
-		   if ( $preload_cache_enabled && false === boolval( $is_cache_preloaded ) ) {
-               $this->options['is_cache_preloaded'] = true;
-
-              update_site_option( 'rt_wp_nginx_helper_options',  $this->options );
-			   $this->preload_cache_from_sitemap();
-			   
-		   }
-       } );
 
 	}
 
@@ -792,11 +779,28 @@ class Nginx_Helper_Admin {
 	}
 	
 	/**
+	 * Preloads the cache for the website.
+	 *
+	 * @return void
+	 */
+	public function preload_cache() {
+		$is_cache_preloaded    = $this->options['is_cache_preloaded'];
+		$preload_cache_enabled = $this->options['preload_cache'];
+		
+		if ( $preload_cache_enabled && false === boolval( $is_cache_preloaded ) ) {
+			$this->options['is_cache_preloaded'] = true;
+			
+			update_site_option( 'rt_wp_nginx_helper_options', $this->options );
+			$this->preload_cache_from_sitemap();
+		}
+	}
+	
+	/**
 	 * This function preloads the cache from sitemap url.
 	 *
 	 * @return void
 	 */
-	public function preload_cache_from_sitemap() {
+	private function preload_cache_from_sitemap() {
 		
         $sitemap_urls = $this->get_index_sitemap_urls();
         $all_urls     = array();
