@@ -96,12 +96,19 @@ class Nginx_Helper_Admin {
 		);
 
 		$this->options = $this->nginx_helper_settings();
-        
-        $is_cache_preloaded = get_option( 'is_cache_preloaded' );
-        $preload_cache_enabled = get_option( 'preload_cache' );
-        if ( $preload_cache_enabled && false === $is_cache_preloaded ) {
-            $this->preload_cache_from_sitemap();
-		}
+		
+       add_action( 'init', function() {
+		   $is_cache_preloaded = $this->options['is_cache_preloaded'];
+		   $preload_cache_enabled = $this->options['preload_cache'];
+		   
+		   if ( $preload_cache_enabled && false === boolval( $is_cache_preloaded ) ) {
+               $this->options['is_cache_preloaded'] = true;
+
+              update_site_option( 'rt_wp_nginx_helper_options',  $this->options );
+			   $this->preload_cache_from_sitemap();
+			   
+		   }
+       } );
 
 	}
 
@@ -790,47 +797,58 @@ class Nginx_Helper_Admin {
 	 * @return void
 	 */
 	public function preload_cache_from_sitemap() {
-		global $nginx_purger;
-		$sitemap_url = get_sitemap_url( 'index' );
 		
-		if ( false === $sitemap_url || empty( $sitemap_url ) ) {
-			return;
-		}
-		
-		$sitemap_page = get_page_by_path( $sitemap_url );
-		
-		if ( ! $sitemap_page instanceof WP_Post ) {
-			return;
-		}
-		
-		$sitemap_content = $sitemap_page->post_content;
-		$urls            = $this->extract_sitemap_urls( $sitemap_content );
-		
-		if ( $urls instanceof WP_Error ) {
-			$nginx_purger->log( ' Error while extracting URL\'s from the sitemap while preloading cache. Error - ', $urls->get_error_message() );
-			return;
-		}
-		
+        $sitemap_urls = $this->get_index_sitemap_urls();
+        $all_urls     = array();
+        
+		foreach ( $sitemap_urls as $sitemap_url ) {
+			$urls = $this->extract_sitemap_urls( $sitemap_url );
+            $all_urls = array_merge( $all_urls, $urls );
+        }
+        
 		$args = array(
 			'timeout'   => 0.01,
 			'blocking'  => false,
 			'sslverify' => false,
 		);
 		
-		foreach ( $urls as $url ) {
+		foreach ( $all_urls as $url ) {
 			wp_remote_get( esc_url_raw( $url ), $args );
 		}
-        
-        add_option( 'is_cache_preloaded', true );
+  
+	}
+	
+	/**
+	 * Fetches all the sitemap urls for the site.
+	 *
+	 * @return array
+	 */
+	private function get_index_sitemap_urls() {
+		$sitemaps = wp_sitemaps_get_server()->index->get_sitemap_list();
+		$urls     = array();
+		foreach ( $sitemaps as $sitemap ) {
+			$urls[] = $sitemap['loc'];
+		}
+		return $urls;
 	}
 	
 	/**
 	 * Parse sitemap content and extract all URLs.
 	 *
-	 * @param string $sitemap_content The XML content of the sitemap.
+	 * @param string $sitemap_url The URL of the sitemap.
 	 * @return array|WP_Error An array of URLs or WP_Error on failure.
 	 */
-	private function extract_sitemap_urls( $sitemap_content ) {
+	private function extract_sitemap_urls( $sitemap_url ) {
+		$response = wp_remote_get( $sitemap_url );
+		
+		$urls = array();
+		
+		if ( is_wp_error( $response ) ) {
+			return $urls;
+		}
+		
+		$sitemap_content = wp_remote_retrieve_body( $response );
+		
 		libxml_use_internal_errors( true );
 		$xml = simplexml_load_string( $sitemap_content );
 		
@@ -840,14 +858,12 @@ class Nginx_Helper_Admin {
 		
 		$urls = array();
 		
-		if ( 'sitemapindex' === $xml->getName() ) {
-			foreach ( $xml->sitemap as $sitemap ) {
-				$urls[] = (string) $sitemap->loc;
-			}
-		} else {
-			foreach ( $xml->url as $url ) {
-				$urls[] = (string) $url->loc;
-			}
+		if ( $xml === false ) {
+			return $urls;
+		}
+		
+		foreach ( $xml->url as $url ) {
+			$urls[] = (string) $url->loc;
 		}
 		
 		return $urls;
