@@ -299,7 +299,7 @@ class Nginx_Helper_Admin {
             unset( $default_settings[ $removable_key ] );
         }
         
-        $diffed_options = wp_parse_args( $default_settings, $options );
+        $diffed_options = wp_parse_args( $options, $default_settings );
         
         add_site_option( 'rt_wp_nginx_helper_options', $diffed_options );
     }
