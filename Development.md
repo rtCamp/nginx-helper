@@ -1,4 +1,5 @@
 # Development
+[ For internal contributors only ]
 
 ## Getting Started
 
@@ -35,7 +36,7 @@ To verify if a page is cached:
 
 ### Raising a Pull Request (PR)
 
-1. Create a new branch for your changes.
+1. Create a new branch from `master` for your changes.
 2. Make your changes and commit them to your branch.
 3. Raise a PR targeting the `develop` branch.
 4. Assign the PR to a reviewer.
