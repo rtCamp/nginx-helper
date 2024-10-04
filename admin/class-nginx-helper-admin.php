@@ -770,7 +770,77 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
-	 * Dispay plugin notices.
+	 * Cache new post upon getting published.
+	 *
+	 * @since 2.2.3
+	 *
+	 * @param string  $new_status New post status.
+	 * @param string  $old_status Old post status.
+	 * @param WP_Post $post Post object.
+	 *
+	 * @return void
+	 */
+	public function preload_new_published_post( $new_status, $old_status, $post ) {
+
+		if ( ! $this->options['enable_purge'] ) {
+			return;
+		}
+
+		if ( 'publish' === $new_status && 'publish' !== $old_status ) {
+
+			$post_url = get_permalink( $post );
+
+			add_filter( 'rt_nginx_helper_preload_urls', function ( $urls ) use ( $post_url ) {
+				$urls[] = $post_url;
+				return $urls;
+			} );
+		}
+
+	}
+
+	/**
+	 * Preload cache of URLs.
+	 *
+	 * @since 2.2.3
+	 *
+	 * @return void
+	 */
+	public function preload_urls() {
+
+		global $nginx_purger;
+
+		if ( ! $this->options['enable_purge'] ) {
+			return;
+		}
+
+		/**
+		 * Filters the preload urls.
+		 *
+		 * @since 2.2.3
+		 *
+		 * @param array $urls URLs, which will be preloaded.
+		 */
+		$urls = apply_filters( "rt_nginx_helper_preload_urls", array() );
+
+		if ( ! is_array( $urls ) || count( $urls ) === 0 ) {
+			return;
+		}
+
+		$nginx_purger->log( "Preloading cache | BEGIN" );
+
+		foreach ( $urls as $url ) {
+
+			$nginx_purger->log( "- Preloading {$url}" );
+
+			wp_remote_get( $url );
+		}
+
+		$nginx_purger->log( "Preloaded cache | END ^^^" );
+
+	}
+
+	/**
+	 * Display plugin notices.
 	 */
 	public function display_notices() {
 		echo '<div class="updated"><p>' . esc_html__( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
