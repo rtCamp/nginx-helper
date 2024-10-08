@@ -255,29 +255,43 @@ class Nginx_Helper_Admin {
 	public function nginx_helper_default_settings() {
 
 		return array(
-			'enable_purge'                     => 0,
-			'cache_method'                     => 'enable_fastcgi',
-			'purge_method'                     => 'get_request',
-			'enable_map'                       => 0,
-			'enable_log'                       => 0,
-			'log_level'                        => 'INFO',
-			'log_filesize'                     => '5',
-			'enable_stamp'                     => 0,
-			'purge_homepage_on_edit'           => 1,
-			'purge_homepage_on_del'            => 1,
-			'purge_archive_on_edit'            => 1,
-			'purge_archive_on_del'             => 1,
-			'purge_archive_on_new_comment'     => 0,
-			'purge_archive_on_deleted_comment' => 0,
-			'purge_page_on_mod'                => 1,
-			'purge_page_on_new_comment'        => 1,
-			'purge_page_on_deleted_comment'    => 1,
-			'purge_feeds'                      => 1,
-			'redis_hostname'                   => '127.0.0.1',
-			'redis_port'                       => '6379',
-			'redis_prefix'                     => 'nginx-cache:',
-			'purge_url'                        => '',
-			'redis_enabled_by_constant'        => 0,
+			'enable_purge'                          => 0,
+			'cache_method'                          => 'enable_fastcgi',
+			'purge_method'                          => 'get_request',
+			'enable_map'                            => 0,
+			'enable_log'                            => 0,
+			'log_level'                             => 'INFO',
+			'log_filesize'                          => '5',
+			'enable_stamp'                          => 0,
+			'purge_homepage_on_edit'                => 1,
+			'purge_homepage_on_del'                 => 1,
+			'purge_archive_on_edit'                 => 1,
+			'purge_archive_on_del'                  => 1,
+			'purge_archive_on_new_comment'          => 0,
+			'purge_archive_on_deleted_comment'      => 0,
+			'purge_page_on_mod'                     => 1,
+			'purge_page_on_new_comment'             => 1,
+			'purge_page_on_deleted_comment'         => 1,
+			'purge_feeds'                           => 1,
+			'redis_hostname'                        => '127.0.0.1',
+			'redis_port'                            => '6379',
+			'redis_prefix'                          => 'nginx-cache:',
+			'redis_unix_socket'                     => '',
+			'redis_username'                        => '',
+			'redis_password'                        => '',
+			'redis_database'                        => 0,
+			'purge_url'                             => '',
+			'auth_enabled_by_constant'              => 0,
+			'cache_method_set_by_constant'          => 0,
+			'purge_method_set_by_constant'          => 0,
+			'redis_hostname_set_by_constant'        => 0,
+			'redis_port_set_by_constant'            => 0,
+			'redis_unix_socket_set_by_constant'     => 0,
+			'redis_prefix_set_by_constant'          => 0,
+			'redis_database_set_by_constant'        => 0,
+			'redis_username_set_by_constant'        => 0,
+			'redis_password_socket_set_by_constant' => 0,
+			'homepage_purge_post_type_exceptions'   => array(),
 		);
 
 	}
@@ -303,22 +317,83 @@ class Nginx_Helper_Admin {
 			$this->nginx_helper_default_settings()
 		);
 
-		$is_redis_enabled = (
-			defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) &&
-			defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) &&
-			defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
-		);
+		if ( defined( 'RT_WP_NGINX_HELPER_HOMEPAGE_PURGE_EXCEPTIONS' ) ) {
+			$data['homepage_purge_post_type_exceptions'] = RT_WP_NGINX_HELPER_HOMEPAGE_PURGE_EXCEPTIONS;
+        }
 
-		if ( ! $is_redis_enabled ) {
-			return $data;
+		if ( defined( 'RT_WP_NGINX_HELPER_PURGE_METHOD' ) ) {
+			$data['purge_method']                        = RT_WP_NGINX_HELPER_PURGE_METHOD;
+			$data['purge_method_set_by_constant']        = 1;
 		}
 
-		$data['redis_enabled_by_constant'] = $is_redis_enabled;
-		$data['enable_purge']              = $is_redis_enabled;
-		$data['cache_method']              = 'enable_redis';
-		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
-		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		if ( defined( 'RT_WP_NGINX_HELPER_CACHE_METHOD' ) ) {
+			$data['cache_method']                       = RT_WP_NGINX_HELPER_CACHE_METHOD;
+			$data['cache_method_set_by_constant']       = 1;
+
+			if ( 'enable_fastcgi' === RT_WP_NGINX_HELPER_CACHE_METHOD ) {
+				$data['enable_purge']              = 1;
+ 			    return $data;
+			}
+		}
+
+		$redis_tcp_connection_enabled_by_constants = false;
+		$redis_unix_socket_enabled_by_constants    = false;
+		$redis_prefix                              = false;
+		$redis_hostname                            = false;
+		$redis_port                                = false;
+		$redis_unix_socket                         = false;
+
+		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' ) ) {
+			$redis_prefix                         = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+			$data['redis_prefix']                 = $redis_prefix;
+			$data['redis_prefix_set_by_constant'] = 1;
+		}
+
+		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) ) {
+			$redis_port                         = RT_WP_NGINX_HELPER_REDIS_PORT;
+			$data['redis_port']                 = $redis_port;
+			$data['redis_port_set_by_constant'] = 1;
+		}
+
+		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) ) {
+			$redis_hostname                         = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
+			$data['redis_hostname']                 = $redis_hostname;
+			$data['redis_hostname_set_by_constant'] = 1;
+		}
+
+		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET' ) ) {
+			$redis_unix_socket                         = RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET;
+			$data['redis_unix_socket']                 = $redis_unix_socket;
+			$data['redis_unix_socket_set_by_constant'] = 1;
+		}
+
+		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_DATABASE' ) ) {
+			$data['redis_database']           = RT_WP_NGINX_HELPER_REDIS_DATABASE;
+			$data['redis_database_set_by_constant'] = 1;
+		}
+
+		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_USERNAME' ) ) {
+			$data['redis_username']           = RT_WP_NGINX_HELPER_REDIS_USERNAME;
+			$data['redis_username_set_by_constant'] = 1;
+		}
+
+		if ( defined( 'RT_WP_NGINX_HELPER_REDIS_PASSWORD' ) ) {
+			$data['redis_password']           = RT_WP_NGINX_HELPER_REDIS_PASSWORD;
+			$data['redis_password_set_by_constant'] = 1;
+		}
+
+		if ( $redis_prefix && $redis_hostname && $redis_port ) {
+			$redis_tcp_connection_enabled_by_constants = true;
+		}
+
+		if ( $redis_prefix && $redis_unix_socket ) {
+			$redis_unix_socket_enabled_by_constants = true;
+		}
+
+		if ( $redis_tcp_connection_enabled_by_constants || $redis_unix_socket_enabled_by_constants ) {
+			$data['enable_purge']              = 1;
+			$data['cache_method']              = 'enable_redis';
+		}
 
 		return $data;
 
@@ -599,9 +674,17 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
-		$exclude_post_types = array( 'nav_menu_item' );
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item' ) );
 
-		if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
+		$post_type = $post->post_type;
+
+		if ( in_array( $post_type, $exclude_post_types, true ) ) {
+		    if ( 'nav_menu_item' !== $post_type ) {
+			    $nginx_purger->log('* * * * *');
+			    $nginx_purger->log('* Post Type update - ' . $post_type . ' - purge trigger excluded...');
+			    $nginx_purger->log('* Filter:  -> rt_nginx_helper_exclude_post_types');
+			    $nginx_purger->log('* * * * *');
+		    }
 			return;
 		}
 
@@ -621,10 +704,10 @@ class Nginx_Helper_Admin {
 		if (
 			'future' === $new_status && $post && 'future' === $post->post_status &&
 			(
-				( 'post' === $post->post_type || 'page' === $post->post_type ) ||
+				( 'post' === $post_type || 'page' === $post_type ) ||
 				(
 					isset( $this->options['custom_post_types_recognized'] ) &&
-					in_array( $post->post_type, $this->options['custom_post_types_recognized'], true )
+					in_array( $post_type, $this->options['custom_post_types_recognized'], true )
 				)
 			)
 		) {

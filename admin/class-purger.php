@@ -86,6 +86,19 @@ abstract class Purger {
 
 		$_post_id    = $comment->comment_post_ID;
 		$_comment_id = $comment->comment_ID;
+		$_post_type  = get_post_type( $_post_id );
+
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_comment_change_exclude_post_types', array() );
+
+		if ( in_array( $_post_type, $exclude_post_types, true ) ) {
+			if ( 'nav_menu_item' !== $_post_type ) {
+				$this->log( '* * * * *' );
+				$this->log('* Post Type comment update - ' . $_post_type . ' - purge trigger excluded...');
+				$this->log('* Filter: rt_nginx_helper_comment_change_exclude_post_types');
+				$this->log( '* * * * *' );
+			}
+			return;
+		}
 
 		$this->log( '* * * * *' );
 		$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ). ' );
@@ -134,6 +147,8 @@ abstract class Purger {
 			return;
 		}
 
+		$_post_type = get_post_type( $post_id );
+
 		switch ( current_filter() ) {
 
 			case 'publish_post':
@@ -157,7 +172,6 @@ abstract class Purger {
 				break;
 
 			default:
-				$_post_type = get_post_type( $post_id );
 				$this->log( '* * * * *' );
 				$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ).' );
 				$this->log( "* Custom post type '" . $_post_type . "' :: " . get_the_title( $post_id ) . ' ( ' . $post_id . ' ).' );
@@ -169,8 +183,22 @@ abstract class Purger {
 
 		$this->log( 'Function purge_post BEGIN ===' );
 
+		# Here we need something more granular
+		# to allow a post type to trigger its purge
+		# but skip the homepage purge
+		# can use array, if found, skip purge homepage
+		# [ 'post_type1', 'post_type1' ]
+		# we can also do exceptions by post/page slug too
+
 		if ( 1 === (int) $nginx_helper_admin->options['purge_homepage_on_edit'] ) {
-			$this->_purge_homepage();
+			if ( ! in_array( $_post_type,  $nginx_helper_admin->options['homepage_purge_post_type_exceptions'], true ) ) {
+				$this->_purge_homepage();
+			} else {
+				$this->log('* * * * *');
+				$this->log('* Post Type update - ' . $_post_type . ' - homepage purge trigger excluded...');
+				$this->log('* ' . $_post_type . ' in constant array: RT_WP_NGINX_HELPER_HOMEPAGE_PURGE_EXCEPTIONS');
+				$this->log('* * * * *');
+			}
 		}
 
 		if ( 'comment_post' === current_filter() || 'wp_set_comment_status' === current_filter() ) {
