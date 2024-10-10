@@ -341,7 +341,7 @@ class Nginx_Helper_Admin {
 		$data['cache_method']              = 'enable_redis';
 		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
 		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']               = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		
 		return $data;
 		
