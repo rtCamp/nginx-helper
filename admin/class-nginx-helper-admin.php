@@ -278,6 +278,8 @@ class Nginx_Helper_Admin {
 			'redis_prefix'                     => 'nginx-cache:',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
+            'preload_cache'                    => 0,
+            'is_cache_preloaded'               => 0
 		);
 
 	}
@@ -774,6 +776,101 @@ class Nginx_Helper_Admin {
 	 */
 	public function display_notices() {
 		echo '<div class="updated"><p>' . esc_html__( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
+	}
+	
+	/**
+	 * Preloads the cache for the website.
+	 *
+	 * @return void
+	 */
+	public function preload_cache() {
+		$is_cache_preloaded    = $this->options['is_cache_preloaded'];
+		$preload_cache_enabled = $this->options['preload_cache'];
+		
+		if ( $preload_cache_enabled && false === boolval( $is_cache_preloaded ) ) {
+			$this->options['is_cache_preloaded'] = true;
+			
+			update_site_option( 'rt_wp_nginx_helper_options', $this->options );
+			$this->preload_cache_from_sitemap();
+		}
+	}
+	
+	/**
+	 * This function preloads the cache from sitemap url.
+	 *
+	 * @return void
+	 */
+	private function preload_cache_from_sitemap() {
+		
+        $sitemap_urls = $this->get_index_sitemap_urls();
+        $all_urls     = array();
+        
+		foreach ( $sitemap_urls as $sitemap_url ) {
+			$urls = $this->extract_sitemap_urls( $sitemap_url );
+            $all_urls = array_merge( $all_urls, $urls );
+        }
+        
+		$args = array(
+			'timeout'   => 1,
+			'blocking'  => false,
+			'sslverify' => false,
+		);
+		
+		foreach ( $all_urls as $url ) {
+			wp_remote_get( esc_url_raw( $url ), $args );
+		}
+  
+	}
+	
+	/**
+	 * Fetches all the sitemap urls for the site.
+	 *
+	 * @return array
+	 */
+	private function get_index_sitemap_urls() {
+		$sitemaps = wp_sitemaps_get_server()->index->get_sitemap_list();
+		$urls     = array();
+		foreach ( $sitemaps as $sitemap ) {
+			$urls[] = $sitemap['loc'];
+		}
+		return $urls;
+	}
+	
+	/**
+	 * Parse sitemap content and extract all URLs.
+	 *
+	 * @param string $sitemap_url The URL of the sitemap.
+	 * @return array|WP_Error An array of URLs or WP_Error on failure.
+	 */
+	private function extract_sitemap_urls( $sitemap_url ) {
+		$response = wp_remote_get( $sitemap_url );
+		
+		$urls = array();
+		
+		if ( is_wp_error( $response ) ) {
+			return $urls;
+		}
+		
+		$sitemap_content = wp_remote_retrieve_body( $response );
+		
+		libxml_use_internal_errors( true );
+		$xml = simplexml_load_string( $sitemap_content );
+		
+		if ( false === $xml ) {
+			return new WP_Error( 'sitemap_parse_error', esc_html__( 'Failed to parse the sitemap XML', 'nginx-helper' ) );
+		}
+		
+		$urls = array();
+		
+		if ( $xml === false ) {
+			return $urls;
+		}
+		
+		foreach ( $xml->url as $url ) {
+			$urls[] = (string) $url->loc;
+		}
+		
+		return $urls;
 	}
 
 }
