@@ -22,12 +22,12 @@ $args = array(
 	'redis_hostname',
 	'redis_port',
 	'redis_prefix',
-    'redis_database',
-    'redis_username',
-    'redis_password',
-    'redis_unix_socket',
-    'redis_socket_enabled_by_constant',
-    'redis_acl_enabled_by_constant',
+	'redis_database',
+	'redis_username',
+	'redis_password',
+	'redis_unix_socket',
+	'redis_socket_enabled_by_constant',
+	'redis_acl_enabled_by_constant',
 	'purge_homepage_on_edit',
 	'purge_homepage_on_del',
 	'purge_url',
@@ -295,10 +295,10 @@ if ( is_multisite() ) {
 								?>
 							</td>
 						</tr>
-                        <tr>
-                            <th><label for="redis_unix_socket"><?php esc_html_e( 'Socket Path', 'nginx-helper' ); ?></label></th>
-                            <td>
-                                <input id="redis_unix_socket" class="medium-text" type="text" name="redis_unix_socket" value="<?php echo esc_attr( $nginx_helper_settings['redis_unix_socket'] ); ?>" <?php echo ( $nginx_helper_settings['redis_socket_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+						<tr>
+							<th><label for="redis_unix_socket"><?php esc_html_e( 'Socket Path', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="redis_unix_socket" class="medium-text" type="text" name="redis_unix_socket" value="<?php echo esc_attr( $nginx_helper_settings['redis_unix_socket'] ); ?>" <?php echo ( $nginx_helper_settings['redis_socket_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_socket_enabled_by_constant'] ) {
 									
@@ -308,8 +308,8 @@ if ( is_multisite() ) {
 									
 								}
 								?>
-                            </td>
-                        </tr>
+							</td>
+						</tr>
 						<tr>
 							<th><label for="redis_prefix"><?php esc_html_e( 'Prefix', 'nginx-helper' ); ?></label></th>
 							<td>
@@ -325,10 +325,10 @@ if ( is_multisite() ) {
 								?>
 							</td>
 						</tr>
-                        <tr>
-                            <th><label for="redis_database"><?php esc_html_e( 'Database', 'nginx-helper' ); ?></label></th>
-                            <td>
-                                <input id="redis_database" class="medium-text" type="text" name="redis_database" value="<?php echo esc_attr( $nginx_helper_settings['redis_database'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+						<tr>
+							<th><label for="redis_database"><?php esc_html_e( 'Database', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="redis_database" class="medium-text" type="text" name="redis_database" value="<?php echo esc_attr( $nginx_helper_settings['redis_database'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
 									
@@ -338,13 +338,13 @@ if ( is_multisite() ) {
 									
 								}
 								?>
-                            </td>
-                        </tr>
+							</td>
+						</tr>
 
-                        <tr>
-                            <th><label for="redis_username"><?php esc_html_e( 'Username', 'nginx-helper' ); ?></label></th>
-                            <td>
-                                <input id="redis_username" class="medium-text" type="text" name="redis_username" value="<?php echo esc_attr( $nginx_helper_settings['redis_username'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+						<tr>
+							<th><label for="redis_username"><?php esc_html_e( 'Username', 'nginx-helper' ); ?></label></th>
+							<td>
+								<input id="redis_username" class="medium-text" type="text" name="redis_username" value="<?php echo esc_attr( $nginx_helper_settings['redis_username'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
 									
@@ -354,24 +354,26 @@ if ( is_multisite() ) {
 									
 								}
 								?>
-                            </td>
-                        </tr>
+							</td>
+						</tr>
 
-                        <tr>
-                            <th><label for="redis_password"><?php esc_html_e( 'Password', 'nginx-helper' ); ?></label></th>
-                            <td>
-                                <input id="redis_password" class="medium-text" type="text" name="redis_password" value="<?php echo esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+						<tr>
+							<th><label for="redis_password"><?php esc_html_e( 'Password', 'nginx-helper' ); ?></label></th>
+							<td>
+								<div class="password-wrapper">
+									<input id="redis_password" class="medium-text password-input" type="password" name="redis_password" value="<?php echo esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+									<button type="button" class="password-show-hide-btn"><span class="dashicons dashicons-hidden password-input-icon"></span></button>
+								</div>
 								<?php
 								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
-									
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
 									
 								}
 								?>
-                            </td>
-                        </tr>
+							</td>
+						</tr>
 					</table>
 				</div> <!-- End of .inside -->
 			</div>
