@@ -275,15 +275,15 @@ class Nginx_Helper_Admin {
 			'purge_feeds'                      => 1,
 			'redis_hostname'                   => '127.0.0.1',
 			'redis_port'                       => '6379',
-			'redis_prefix'                     => 'nginx-cache:',
-            'redis_unix_socket'                => '',
-            'redis_database'                   => 0,
-            'redis_username'                   => '',
-            'redis_password'                   => '',
+			'redis_prefix'                      => 'nginx-cache:',
+			'redis_unix_socket'                => '',
+			'redis_database'                   => 0,
+			'redis_username'                   => '',
+			'redis_password'                   => '',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
-            'redis_socket_enabled_by_constant' => 0,
-            'redis_acl_enabled_by_constant'    => 0,
+			'redis_socket_enabled_by_constant' => 0,
+			'redis_acl_enabled_by_constant'    => 0,
 		);
 
 	}
@@ -331,8 +331,8 @@ class Nginx_Helper_Admin {
 		$data['cache_method']                     = 'enable_redis';
 		$data['redis_hostname']                   = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
 		$data['redis_port']                       = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']                     = RT_WP_NGINX_HELPER_REDIS_PREFIX;
-        $data['redis_database']                   = defined('RT_WP_NGINX_HELPER_REDIS_DATABASE') ? RT_WP_NGINX_HELPER_REDIS_DATABASE : 0;
+		$data['redis_prefix']                      = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$data['redis_database']                   = defined('RT_WP_NGINX_HELPER_REDIS_DATABASE') ? RT_WP_NGINX_HELPER_REDIS_DATABASE : 0;
 
 		return $data;
 
