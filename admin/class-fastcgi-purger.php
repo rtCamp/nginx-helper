@@ -103,14 +103,14 @@ class FastCGI_Purger extends Purger {
 	 * @param string $url_base The base URL to purge.
 	 */
 	private function purge_amp_version( $url_base ) {
-		$amp_url = $url_base . '/amp/';
+		$amp_url = sprintf( '%s/amp/', rtrim( $url_base, '/' ) );
 		
 		$this->log('- Purging AMP URL | ' . $amp_url);
 		
-		if ($this->nginx_helper_admin->options['purge_method'] === 'unlink_files') {
-			$this->delete_cache_file_for($amp_url);
+		if ( 'unlink_files' === $this->nginx_helper_admin->options['purge_method'] ) {
+			$this->delete_cache_file_for( $amp_url );
 		} else {
-			$this->do_remote_get($this->purge_base_url() . '/amp/');
+			$this->do_remote_get( $amp_url );
 		}
 	}
 
