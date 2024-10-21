@@ -227,6 +227,9 @@ class Nginx_Helper {
 
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );
+		
+		// add action to preload the cache
+		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'preload_cache' );
 	}
 
 	/**
