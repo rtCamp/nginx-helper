@@ -421,7 +421,7 @@ class Nginx_Helper_Admin {
 			
 		}
 		?>
-        <ul role="list">
+		<ul role="list">
 			<?php
 			if ( 0 === $maxitems ) {
 				echo '<li role="listitem">' . esc_html_e( 'No items', 'nginx-helper' ) . '.</li>';
@@ -430,7 +430,7 @@ class Nginx_Helper_Admin {
 				// Loop through each feed item and display each item as a hyperlink.
 				foreach ( $rss_items as $item ) {
 					?>
-                    <li role="listitem">
+					<li role="listitem">
 						<?php
 						printf(
 							'<a href="%s" title="%s">%s</a>',
@@ -439,12 +439,12 @@ class Nginx_Helper_Admin {
 							esc_html( $item->get_title() )
 						);
 						?>
-                    </li>
+					</li>
 					<?php
 				}
 			}
 			?>
-        </ul>
+		</ul>
 		<?php
 		die();
 		
@@ -809,7 +809,7 @@ class Nginx_Helper_Admin {
 		$all_urls     = array();
 		
 		foreach ( $sitemap_urls as $sitemap_url ) {
-			$urls = $this->extract_sitemap_urls( $sitemap_url );
+			$urls     = $this->extract_sitemap_urls( $sitemap_url );
 			$all_urls = array_merge( $all_urls, $urls );
 		}
 		
@@ -865,7 +865,7 @@ class Nginx_Helper_Admin {
 		
 		$urls = array();
 		
-		if ( $xml === false ) {
+		if ( false === $xml ) {
 			return $urls;
 		}
 		
@@ -875,12 +875,12 @@ class Nginx_Helper_Admin {
 		
 		return $urls;
 	}
-    
-    /**
-    * Determines if the current request is for importing Posts/ WordPress content.
-    *
-    * @return bool True if the request is for importing, false otherwise.
-    */
+	
+	/**
+	* Determines if the current request is for importing Posts/ WordPress content.
+	*
+	* @return bool True if the request is for importing, false otherwise.
+	*/
 	public function is_import_request() {
 		$import_query_var   = sanitize_text_field( wp_unslash( $_GET['import'] ?? '' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is already in the admin dashboard.
 		$has_import_started = did_action( 'import_start' );
