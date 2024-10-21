@@ -260,7 +260,7 @@ class Nginx_Helper_Admin {
 			'enable_map'                       => 0,
 			'enable_log'                       => 0,
 			'log_level'                        => 'INFO',
-			'log_filesize'                      => '5',
+			'log_filesize'                     => '5',
 			'enable_stamp'                     => 0,
 			'purge_homepage_on_edit'           => 1,
 			'purge_homepage_on_del'            => 1,
@@ -274,7 +274,7 @@ class Nginx_Helper_Admin {
 			'purge_feeds'                      => 1,
 			'redis_hostname'                   => '127.0.0.1',
 			'redis_port'                       => '6379',
-			'redis_prefix'                      => 'nginx-cache:',
+			'redis_prefix'                     => 'nginx-cache:',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
 			'preload_cache'                    => 0,
@@ -295,7 +295,7 @@ class Nginx_Helper_Admin {
 			array(
 				'redis_hostname' => '127.0.0.1',
 				'redis_port'     => '6379',
-				'redis_prefix'    => 'nginx-cache:',
+				'redis_prefix'   => 'nginx-cache:',
 			)
 		);
 		
@@ -319,7 +319,7 @@ class Nginx_Helper_Admin {
 		$data['cache_method']              = 'enable_redis';
 		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
 		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']               = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		
 		return $data;
 		
