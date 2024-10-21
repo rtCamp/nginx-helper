@@ -40,7 +40,7 @@ $args = array(
 	'purge_page_on_deleted_comment',
 	'purge_feeds',
 	'smart_http_expire_form_nonce',
-    'preload_cache',
+	'preload_cache',
 );
 
 $all_inputs = array();
@@ -127,12 +127,12 @@ if ( is_multisite() ) {
 						<label for="enable_purge"><?php esc_html_e( 'Enable Purge', 'nginx-helper' ); ?></label>
 					</td>
 				</tr>
-                <tr valign="top">
-                    <td>
-                        <input type="checkbox" value="1" id="preload_cache" name="preload_cache" <?php checked( $nginx_helper_settings['preload_cache'], 1 ); ?> />
-                        <label for="preload_cache"><?php esc_html_e( 'Preload Cache', 'nginx-helper' ); ?></label>
-                    </td>
-                </tr>
+				<tr valign="top">
+					<td>
+						<input type="checkbox" value="1" id="preload_cache" name="preload_cache" <?php checked( $nginx_helper_settings['preload_cache'], 1 ); ?> />
+						<label for="preload_cache"><?php esc_html_e( 'Preload Cache', 'nginx-helper' ); ?></label>
+					</td>
+				</tr>
 			</table>
 		</div> <!-- End of .inside -->
 	</div>

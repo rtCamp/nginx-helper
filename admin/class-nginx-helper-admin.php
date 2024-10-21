@@ -319,7 +319,7 @@ class Nginx_Helper_Admin {
 		$data['cache_method']              = 'enable_redis';
 		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
 		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$data['redis_prefix']               = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		
 		return $data;
 		
@@ -421,7 +421,7 @@ class Nginx_Helper_Admin {
 			
 		}
 		?>
-        <ul role="list">
+		<ul role="list">
 			<?php
 			if ( 0 === $maxitems ) {
 				echo '<li role="listitem">' . esc_html_e( 'No items', 'nginx-helper' ) . '.</li>';
@@ -430,7 +430,7 @@ class Nginx_Helper_Admin {
 				// Loop through each feed item and display each item as a hyperlink.
 				foreach ( $rss_items as $item ) {
 					?>
-                    <li role="listitem">
+					<li role="listitem">
 						<?php
 						printf(
 							'<a href="%s" title="%s">%s</a>',
@@ -439,12 +439,12 @@ class Nginx_Helper_Admin {
 							esc_html( $item->get_title() )
 						);
 						?>
-                    </li>
+					</li>
 					<?php
 				}
 			}
 			?>
-        </ul>
+		</ul>
 		<?php
 		die();
 		
@@ -875,12 +875,12 @@ class Nginx_Helper_Admin {
 		
 		return $urls;
 	}
-    
-    /**
-    * Determines if the current request is for importing Posts/ WordPress content.
-    *
-    * @return bool True if the request is for importing, false otherwise.
-    */
+	
+	/**
+	* Determines if the current request is for importing Posts/ WordPress content.
+	*
+	* @return bool True if the request is for importing, false otherwise.
+	*/
 	public function is_import_request() {
 		$import_query_var   = sanitize_text_field( wp_unslash( $_GET['import'] ?? '' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is already in the admin dashboard.
 		$has_import_started = did_action( 'import_start' );
