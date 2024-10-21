@@ -260,7 +260,7 @@ class Nginx_Helper_Admin {
 			'enable_map'                       => 0,
 			'enable_log'                       => 0,
 			'log_level'                        => 'INFO',
-			'log_filesize'                     => '5',
+			'log_filesize'                      => '5',
 			'enable_stamp'                     => 0,
 			'purge_homepage_on_edit'           => 1,
 			'purge_homepage_on_del'            => 1,
@@ -274,7 +274,7 @@ class Nginx_Helper_Admin {
 			'purge_feeds'                      => 1,
 			'redis_hostname'                   => '127.0.0.1',
 			'redis_port'                       => '6379',
-			'redis_prefix'                     => 'nginx-cache:',
+			'redis_prefix'                      => 'nginx-cache:',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
 			'preload_cache'                    => 0,
@@ -295,7 +295,7 @@ class Nginx_Helper_Admin {
 			array(
 				'redis_hostname' => '127.0.0.1',
 				'redis_port'     => '6379',
-				'redis_prefix'   => 'nginx-cache:',
+				'redis_prefix'    => 'nginx-cache:',
 			)
 		);
 		
@@ -809,7 +809,7 @@ class Nginx_Helper_Admin {
 		$all_urls     = array();
 		
 		foreach ( $sitemap_urls as $sitemap_url ) {
-			$urls = $this->extract_sitemap_urls( $sitemap_url );
+			$urls     = $this->extract_sitemap_urls( $sitemap_url );
 			$all_urls = array_merge( $all_urls, $urls );
 		}
 		
@@ -865,7 +865,7 @@ class Nginx_Helper_Admin {
 		
 		$urls = array();
 		
-		if ( $xml === false ) {
+		if ( false === $xml ) {
 			return $urls;
 		}
 		
