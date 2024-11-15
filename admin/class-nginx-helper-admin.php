@@ -83,9 +83,10 @@ class Nginx_Helper_Admin {
 	
 	/**
 	 * Initialize the settings tab.
-     * Required since i18n is used in the settings tab which can be invoked only after init hook since WordPress 6.7
+	 * Required since i18n is used in the settings tab which can be invoked only after init hook since WordPress 6.7
 	 */
 	public function initialize_setting_tab() {
+		
 		/**
 		 * Define settings tabs
 		 */
