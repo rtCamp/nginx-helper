@@ -104,7 +104,7 @@ class Nginx_Helper_Admin {
 			)
 		);
 	}
-	
+
 	
 	/**
 	 * Register the stylesheets for the admin area.
