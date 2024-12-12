@@ -560,21 +560,21 @@ if ( is_multisite() ) {
 					<tr valign="top">
 						<th scope="row">
 							<h4>
-								<?php esc_html_e( 'Purge AMP URL:', 'nginx-helper' ); ?>
+				<?php esc_html_e( 'Purge AMP URL:', 'nginx-helper' ); ?>
 							</h4>
-                        </th>
-                        <td>
-                            <fieldset>
-                                <legend class="screen-reader-text">
+						</th>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text">
 									<span>
 										&nbsp;
 										<?php
 										esc_html_e( 'purge amp urls', 'nginx-helper' );
 										?>
 									</span>
-                                </legend>
-                                <label for="purge_amp_urls">
-                                    <input type="checkbox" value="1" id="purge_amp_urls" name="purge_amp_urls" <?php checked( $nginx_helper_settings['purge_amp_urls'], 1 ); ?> />
+								</legend>
+								<label for="purge_amp_urls">
+									<input type="checkbox" value="1" id="purge_amp_urls" name="purge_amp_urls" <?php checked( $nginx_helper_settings['purge_amp_urls'], 1 ); ?> />
 									&nbsp;
 									<?php
 									echo wp_kses(
@@ -582,12 +582,12 @@ if ( is_multisite() ) {
 										array( 'strong' => array() )
 									);
 									?>
-                                </label>
-                                <br />
-                            </fieldset>
-                        </td>
-                    </tr>
-                </table>
+								</label>
+								<br />
+							</fieldset>
+						</td>
+					</tr>
+				</table>
 				<table class="form-table rtnginx-table">
 					<tr valign="top">
 						<th scope="row">
