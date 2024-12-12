@@ -549,12 +549,12 @@ if ( is_multisite() ) {
 						</td>
 					</tr>
 				</table>
-                <table class="form-table rtnginx-table">
-                    <tr valign="top">
-                        <th scope="row">
-                            <h4>
+				<table class="form-table rtnginx-table">
+					<tr valign="top">
+						<th scope="row">
+							<h4>
 								<?php esc_html_e( 'Purge AMP URL:', 'nginx-helper' ); ?>
-                            </h4>
+							</h4>
                         </th>
                         <td>
                             <fieldset>
