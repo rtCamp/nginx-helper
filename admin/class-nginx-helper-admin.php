@@ -331,7 +331,7 @@ class Nginx_Helper_Admin {
 				'redis_hostname' => '127.0.0.1',
 				'redis_port'     => '6379',
 				'redis_prefix'   => 'nginx-cache:',
-                'redis_database' => 0,
+				'redis_database' => 0,
 			)
 		);
 		
