@@ -75,6 +75,19 @@
 				}
 			);
 
+			jQuery('.password-show-hide-btn').on('click', function() {
+				var passwordInput = $(this).siblings('.password-input');
+				var icon = $(this).find('.password-input-icon');
+	
+				if (passwordInput.attr('type') === 'password') {
+					passwordInput.attr('type', 'text');
+					icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+				} else {
+					passwordInput.attr('type', 'password');
+					icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+				}
+			});
+
 			/**
 			 * Show OR Hide options on option checkbox
 			 *
