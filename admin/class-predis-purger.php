@@ -57,15 +57,16 @@ class Predis_Purger extends Purger {
 		
 		// redis server parameter.
 		$this->redis_object = new Predis\Client( $predis_args );
-		
-		if( $nginx_helper_admin->options['redis_database'] !== 0 ) {
-			$this->redis_object->select($nginx_helper_admin->options['redis_database']);
-		}
 
 		try {
 			$this->redis_object->connect();
 		} catch ( Exception $e ) {
 			$this->log( $e->getMessage(), 'ERROR' );
+			return;
+		}
+		
+		if( $nginx_helper_admin->options['redis_database'] !== 0 ) {
+			$this->redis_object->select($nginx_helper_admin->options['redis_database']);
 		}
 
 	}
