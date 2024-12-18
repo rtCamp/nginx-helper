@@ -169,7 +169,7 @@ class Nginx_Helper {
 		global $nginx_helper_admin, $nginx_purger;
 
 		$nginx_helper_admin = new Nginx_Helper_Admin( $this->get_plugin_name(), $this->get_version() );
-
+		$this->loader->add_action( 'init', $nginx_helper_admin, 'initialize_setting_tab' );
 		// Defines global variables.
 		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_redis' === $nginx_helper_admin->options['cache_method'] ) {
 

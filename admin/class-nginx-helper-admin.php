@@ -78,6 +78,15 @@ class Nginx_Helper_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		
+		$this->options = $this->nginx_helper_settings();
+	}
+	
+	/**
+	 * Initialize the settings tab.
+	 * Required since i18n is used in the settings tab which can be invoked only after init hook since WordPress 6.7
+	 */
+	public function initialize_setting_tab() {
+		
 		/**
 		 * Define settings tabs
 		 */
@@ -94,8 +103,6 @@ class Nginx_Helper_Admin {
 				),
 			)
 		);
-		
-		$this->options = $this->nginx_helper_settings();
 	}
 	
 	/**
@@ -274,16 +281,44 @@ class Nginx_Helper_Admin {
 			'purge_feeds'                      => 1,
 			'redis_hostname'                   => '127.0.0.1',
 			'redis_port'                       => '6379',
-			'redis_prefix'                     => 'nginx-cache:',
+			'redis_prefix'                      => 'nginx-cache:',
+			'redis_unix_socket'                => '',
+			'redis_database'                   => 0,
+			'redis_username'                   => '',
+			'redis_password'                   => '',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
 			'purge_amp_urls'                   => 1,
+			'redis_socket_enabled_by_constant' => 0,
+			'redis_acl_enabled_by_constant'    => 0,
 			'preload_cache'                    => 0,
 			'is_cache_preloaded'               => 0
 		);
 		
 	}
-	
+    
+    public function store_default_options() {
+        $options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+        $default_settings = $this->nginx_helper_default_settings();
+        
+        $removable_default_settings = array(
+            'redis_port',
+            'redis_prefix',
+            'redis_hostname',
+            'redis_database',
+            'redis_unix_socket'
+        );
+        
+        // Remove all the keys that are not to be stored by default.
+        foreach ( $removable_default_settings as $removable_key ) {
+            unset( $default_settings[ $removable_key ] );
+        }
+        
+        $diffed_options = wp_parse_args( $options, $default_settings );
+        
+        add_site_option( 'rt_wp_nginx_helper_options', $diffed_options );
+    }
+
 	/**
 	 * Get settings.
 	 *
@@ -297,6 +332,7 @@ class Nginx_Helper_Admin {
 				'redis_hostname' => '127.0.0.1',
 				'redis_port'     => '6379',
 				'redis_prefix'   => 'nginx-cache:',
+				'redis_database' => 0,
 			)
 		);
 		
@@ -311,17 +347,24 @@ class Nginx_Helper_Admin {
 			defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
 		);
 		
+		$data['redis_acl_enabled_by_constant']    = defined('RT_WP_NGINX_HELPER_REDIS_USERNAME') && defined('RT_WP_NGINX_HELPER_REDIS_PASSWORD');
+		$data['redis_socket_enabled_by_constant'] = defined('RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET');
+		$data['redis_unix_socket']                = $data['redis_socket_enabled_by_constant'] ? RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET : $data['redis_unix_socket'];
+		$data['redis_username']                   = $data['redis_acl_enabled_by_constant'] ? RT_WP_NGINX_HELPER_REDIS_USERNAME : $data['redis_username'];
+		$data['redis_password']                   = $data['redis_acl_enabled_by_constant'] ? RT_WP_NGINX_HELPER_REDIS_PASSWORD : $data['redis_password'];
+
 		if ( ! $is_redis_enabled ) {
 			return $data;
 		}
-		
-		$data['redis_enabled_by_constant'] = $is_redis_enabled;
-		$data['enable_purge']              = $is_redis_enabled;
-		$data['cache_method']              = 'enable_redis';
-		$data['redis_hostname']            = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
-		$data['redis_port']                = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']              = RT_WP_NGINX_HELPER_REDIS_PREFIX;
-		
+
+		$data['redis_enabled_by_constant']        = $is_redis_enabled;
+		$data['enable_purge']                     = $is_redis_enabled;
+		$data['cache_method']                     = 'enable_redis';
+		$data['redis_hostname']                   = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
+		$data['redis_port']                       = RT_WP_NGINX_HELPER_REDIS_PORT;
+		$data['redis_prefix']                      = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$data['redis_database']                   = defined('RT_WP_NGINX_HELPER_REDIS_DATABASE') ? RT_WP_NGINX_HELPER_REDIS_DATABASE : 0;
+
 		return $data;
 		
 	}
