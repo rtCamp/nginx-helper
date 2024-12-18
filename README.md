@@ -139,6 +139,15 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 
 ## Changelog ##
 
+### 2.3.0 ###
+
+* Disable the purge functionality when importing data. [#52](https://github.com/rtCamp/nginx-helper/pull/52) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Added option to preload cache for all Post and Pages. [#47](https://github.com/rtCamp/nginx-helper/pull/47) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Added the capability to purge Amp URL's. [#135](https://github.com/rtCamp/nginx-helper/pull/135) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Add support for adding Username, Password support for Redis. It also includes the support for Unix Socket Path for Redis along with Database selection. [#343](https://github.com/rtCamp/nginx-helper/pull/343),[#350](https://github.com/rtCamp/nginx-helper/pull/350) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Add capability to allow modifying options using WP-CLI. [#307](https://github.com/rtCamp/nginx-helper/pull/307) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Fix the plugin crash issue due to internationalization after upgrading to WordPress Version 6.7. [#364](https://github.com/rtCamp/nginx-helper/pull/364) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+
 ### 2.2.5 ###
 
 * Add the capability to enable/disable purging of feeds. [#281](https://github.com/rtCamp/nginx-helper/issues/281) - by [Amaan Khan](https://github.com/pathan-amaankhan)
