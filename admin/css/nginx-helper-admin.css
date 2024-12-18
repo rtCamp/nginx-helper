@@ -4,7 +4,7 @@
  */
 
 .clearfix {
-	*zoom: 1;
+	zoom: 1;
 }
 .clearfix:before,
 .clearfix:after {
@@ -102,4 +102,19 @@ form#purgeall .button-primary:focus {
 .enable-logging-message {
 	font-size: 13px;
 	margin-left: 23px;
+}
+
+.password-input {
+	padding-right: 40px;
+}
+
+.password-show-hide-btn {
+	background-color: transparent;
+	border: 0;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.password-wrapper {
+	display: flex;
 }
