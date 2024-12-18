@@ -288,6 +288,7 @@ class Nginx_Helper_Admin {
 			'redis_password'                   => '',
 			'purge_url'                        => '',
 			'redis_enabled_by_constant'        => 0,
+			'purge_amp_urls'                   => 1,
 			'redis_socket_enabled_by_constant' => 0,
 			'redis_acl_enabled_by_constant'    => 0,
 			'preload_cache'                    => 0,
