@@ -303,7 +303,7 @@ Added custom purge URL option.
 * Added composer.json support
 * Fixed cache purging link in admin bar.
 * Updated the initial settings to include the 'purge_method' [#99](https://github.com/rtCamp/nginx-helper/pull/99) - by
-  [gagan0123](https://github.com/gagan0123)
+[gagan0123](https://github.com/gagan0123)
 
 ### 1.9.2 ###
 
