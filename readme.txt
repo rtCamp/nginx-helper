@@ -106,6 +106,18 @@ define('RT_WP_NGINX_HELPER_REDIS_PORT', '6000');
 define('RT_WP_NGINX_HELPER_REDIS_PREFIX', 'page-cache:');
 ```
 
+**Q. Can I override the redis socket path, username, password?**
+
+Yes, you can force override the redis socket path, username, password by defining constant in wp-config.php. For example:
+
+```php
+define( 'RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET', '/var/run/redis/redis.sock' );
+
+define( 'RT_WP_NGINX_HELPER_REDIS_USERNAME', 'admin' );
+
+define( 'RT_WP_NGINX_HELPER_REDIS_PASSWORD', 'admin' );
+```
+
 = FAQ - Nginx Map =
 
 **Q. My multisite already uses `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**
@@ -116,6 +128,14 @@ Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask Word
 
 Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
 
+
+= FAQ - WP-CLI =
+
+**Q. How can I update the options using WP-CLI?**
+
+```shell
+wp option patch update rt_wp_nginx_helper_options <option_name> <option_value>
+```
 
 = Still need help! =
 
