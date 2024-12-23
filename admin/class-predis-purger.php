@@ -60,14 +60,16 @@ class Predis_Purger extends Purger {
 
 		try {
 			$this->redis_object->connect();
+			
+			if( $nginx_helper_admin->options['redis_database'] !== 0 ) {
+				$this->redis_object->select($nginx_helper_admin->options['redis_database']);
+			}
 		} catch ( Exception $e ) {
 			$this->log( $e->getMessage(), 'ERROR' );
 			return;
 		}
 		
-		if( $nginx_helper_admin->options['redis_database'] !== 0 ) {
-			$this->redis_object->select($nginx_helper_admin->options['redis_database']);
-		}
+		
 
 	}
 
