@@ -43,7 +43,7 @@ class Predis_Purger extends Purger {
 		$username = $nginx_helper_admin->options['redis_username'];
 		$password = $nginx_helper_admin->options['redis_password'];
 		
-		if( empty( $nginx_helper_admin->options['redis_unix_socket'] ) ) {
+		if( !empty( $nginx_helper_admin->options['redis_unix_socket'] ) ) {
 			$predis_args['path'] = $nginx_helper_admin->options['redis_unix_socket'];
 		} else {
 			$predis_args['host'] = $nginx_helper_admin->options['redis_hostname'];;
