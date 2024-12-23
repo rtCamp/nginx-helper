@@ -69,7 +69,6 @@ class Predis_Purger extends Purger {
 			return;
 		}
 		
-		
 
 	}
 
