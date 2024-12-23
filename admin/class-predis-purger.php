@@ -43,7 +43,7 @@ class Predis_Purger extends Purger {
 		$username = $nginx_helper_admin->options['redis_username'];
 		$password = $nginx_helper_admin->options['redis_password'];
 		
-		if( !empty( $nginx_helper_admin->options['redis_unix_socket'] ) ) {
+		if( ! empty( $nginx_helper_admin->options['redis_unix_socket'] ) ) {
 			$predis_args['path'] = $nginx_helper_admin->options['redis_unix_socket'];
 		} else {
 			$predis_args['host'] = $nginx_helper_admin->options['redis_hostname'];;
@@ -61,8 +61,8 @@ class Predis_Purger extends Purger {
 		try {
 			$this->redis_object->connect();
 			
-			if( $nginx_helper_admin->options['redis_database'] !== 0 ) {
-				$this->redis_object->select($nginx_helper_admin->options['redis_database']);
+			if( 0 !== $nginx_helper_admin->options['redis_database'] ) {
+				$this->redis_object->select( $nginx_helper_admin->options['redis_database'] );
 			}
 		} catch ( Exception $e ) {
 			$this->log( $e->getMessage(), 'ERROR' );
