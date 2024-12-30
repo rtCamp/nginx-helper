@@ -15,5 +15,5 @@ jobs:
           EXCLUDE_LIST: .gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh
             tests map.conf nginx.log wercker.yml vendor
           SLUG: nginx-helper
-          WORDPRESS_PASSWORD: ${{ secrets.WORDPRESS_PASSWORD }}
-          WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
