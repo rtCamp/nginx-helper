@@ -9,7 +9,7 @@
 
 **Tested up to:** 6.7
 
-**Stable tag:** 2.3.0
+**Stable tag:** 2.3.1
 
 **License:** GPLv2 or later (of-course)
 
@@ -160,6 +160,10 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 ![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
 
 ## Changelog ##
+
+### 2.3.1 ###
+
+* Update the contributors list and tags for the plugin. [#378](https://github.com/rtCamp/nginx-helper/issues/378) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
 
 ### 2.3.0 ###
 

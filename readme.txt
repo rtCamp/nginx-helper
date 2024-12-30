@@ -6,7 +6,7 @@ License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
 Tested up to: 6.7
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -146,6 +146,11 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 2. Remaining settings
 
 == Changelog ==
+
+= 2.3.1 =
+
+* Update the contributors list and tags for the plugin. [#378](https://github.com/rtCamp/nginx-helper/issues/378) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+
 
 = 2.3.0 =
 
