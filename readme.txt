@@ -147,6 +147,11 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 
 == Changelog ==
 
+= 2.3.1 =
+
+* Update the contributors list and tags for the plugin. [#378](https://github.com/rtCamp/nginx-helper/issues/378) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+
+
 = 2.3.0 =
 
 * Disable the purge functionality when importing data. [#52](https://github.com/rtCamp/nginx-helper/pull/52) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
