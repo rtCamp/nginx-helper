@@ -9,6 +9,7 @@ on:
     branches:
       - develop
       - master
+      - update/update-artifact-version
 
   pull_request:
     branches:
@@ -52,7 +53,7 @@ jobs:
 
       - name: Archive HTML Report on failure
         if: failure()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: report
           path: ./tests/e2e-playwright/config
