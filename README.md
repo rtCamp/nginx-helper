@@ -9,7 +9,7 @@
 
 **Tested up to:** 6.7
 
-**Stable tag:** 2.3.2
+**Stable tag:** 2.3.3
 
 **License:** GPLv2 or later (of-course)
 
@@ -160,6 +160,10 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 ![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
 
 ## Changelog ##
+
+### 2.3.3 ###
+
+* Fix AMP Purge for method unlink. [#396](https://github.com/rtCamp/nginx-helper/issues/343) - by [Stefan Fisk](https://github.com/stefanfisk)
 
 ### 2.3.2 ###
 

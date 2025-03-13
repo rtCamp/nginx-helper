@@ -7,7 +7,7 @@ License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
 Tested up to: 6.7
-Stable tag: 2.3.2
+Stable tag: 2.3.3
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -147,6 +147,11 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 2. Remaining settings
 
 == Changelog ==
+
+= 2.3.3 =
+
+* Fix AMP Purge for method unlink. [#396](https://github.com/rtCamp/nginx-helper/issues/343) - by [Stefan Fisk](https://github.com/stefanfisk)
+
 
 = 2.3.2 =
 
