@@ -77,7 +77,7 @@ class Nginx_Helper {
 	public function __construct() {
 
 		$this->plugin_name = 'nginx-helper';
-		$this->version     = '2.3.2';
+		$this->version     = '2.3.3';
 		$this->minimum_wp  = '3.0';
 
 		if ( ! $this->required_wp_version() ) {
