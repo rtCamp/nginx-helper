@@ -185,21 +185,31 @@ class FastCGI_Purger extends Purger {
 	}
 
 	/**
-	 * Purge everything.
+	 * Schedule Purge everything.
 	 */
-	public function purge_all() {
+	public function purge_all()
+	{
 
-		$this->unlink_recursive( RT_WP_NGINX_HELPER_CACHE_PATH, false );
-		$this->log( '* * * * *' );
-		$this->log( '* Purged Everything!' );
-		$this->log( '* * * * *' );
+		// Schedule the action if it's not already scheduled
+		// This to avoid overhead of buffering when there are too many directories
+		if (!wp_next_scheduled("nginx_helper_unlink_recursive")) {
+			wp_schedule_single_event(
+				time(),
+				"nginx_helper_unlink_recursive",
+				[RT_WP_NGINX_HELPER_CACHE_PATH, false]
+			);
+		}
+
+		$this->log('* * * * *');
+		$this->log('* Purged Everything has been scheduled');
+		$this->log('* * * * *');
 
 		/**
 		 * Fire an action after the FastCGI cache has been purged.
 		 *
 		 * @since 2.1.0
 		 */
-		do_action( 'rt_nginx_helper_after_fastcgi_purge_all' );
+		do_action('rt_nginx_helper_after_fastcgi_purge_all');
 	}
 
 	/**
