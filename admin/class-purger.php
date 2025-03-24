@@ -703,29 +703,6 @@ abstract class Purger {
 
 	}
 
-	/**
-	 * Purge personal urls.
-	 *
-	 * @return bool
-	 */
-	private function _purge_personal_urls() {
-
-		global $nginx_helper_admin;
-
-		$this->log( __( 'Purging personal urls', 'nginx-helper' ) );
-
-		if ( isset( $nginx_helper_admin->options['purgeable_url']['urls'] ) ) {
-
-			foreach ( $nginx_helper_admin->options['purgeable_url']['urls'] as $url ) {
-				$this->purge_url( $url, false );
-			}
-		} else {
-			$this->log( '- ' . __( 'No personal urls available', 'nginx-helper' ) );
-		}
-
-		return true;
-
-	}
 
 	/**
 	 * Purge post categories.
@@ -1140,7 +1117,6 @@ abstract class Purger {
 
 		$this->log( __( "Let's purge everything!", 'nginx-helper' ) );
 		$this->_purge_homepage();
-		$this->_purge_personal_urls();
 		$this->_purge_all_posts();
 		$this->_purge_all_taxonomies();
 		$this->_purge_all_date_archives();
