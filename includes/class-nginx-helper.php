@@ -85,7 +85,8 @@ class Nginx_Helper {
 		}
 
 		if ( ! defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
-			define( 'RT_WP_NGINX_HELPER_CACHE_PATH', '/var/run/nginx-cache' );
+			$cache_path = apply_filters( 'rt_wp_nginx_helper_cache_path', '/var/run/nginx-cache' );
+			define( 'RT_WP_NGINX_HELPER_CACHE_PATH', $cache_path  );
 		}
 
 		$this->load_dependencies();
