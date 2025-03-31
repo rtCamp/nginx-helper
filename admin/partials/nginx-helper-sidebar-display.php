@@ -63,7 +63,7 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 	<div class="inside">
 		<ul role="list">
 			<li role="listitem">
-				<a href="https://rtcamp.com/wordpress-nginx/" title="<?php esc_attr_e( 'WordPress-Nginx Solutions', 'nginx-helper' ); ?>"><?php esc_html_e( 'WordPress-Nginx Solutions', 'nginx-helper' ); ?></a>
+				<a href="https://rtcamp.com/solutions/" title="<?php esc_attr_e( 'WordPress-Nginx Solutions', 'nginx-helper' ); ?>"><?php esc_html_e( 'WordPress-Nginx Solutions', 'nginx-helper' ); ?></a>
 			</li>
 			<li role="listitem">
 				<a href="https://rtcamp.com/services/wordPress-themes-design-development/" title="<?php esc_attr_e( 'WordPress Theme Devleopment', 'nginx-helper' ); ?>"><?php esc_html_e( 'WordPress Theme Devleopment', 'nginx-helper' ); ?></a>
