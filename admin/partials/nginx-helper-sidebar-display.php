@@ -63,19 +63,16 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 	<div class="inside">
 		<ul role="list">
 			<li role="listitem">
-				<a href="https://rtcamp.com/wordpress-nginx/" title="<?php esc_attr_e( 'WordPress-Nginx Solutions', 'nginx-helper' ); ?>"><?php esc_html_e( 'WordPress-Nginx Solutions', 'nginx-helper' ); ?></a>
+				<a href="https://rtcamp.com/tutorials/nginx/" title="<?php esc_attr_e( 'Nginx Tutorials', 'nginx-helper' ); ?>"><?php esc_html_e( 'Nginx Tutorials', 'nginx-helper' ); ?></a>
 			</li>
 			<li role="listitem">
-				<a href="https://rtcamp.com/services/wordPress-themes-design-development/" title="<?php esc_attr_e( 'WordPress Theme Devleopment', 'nginx-helper' ); ?>"><?php esc_html_e( 'WordPress Theme Devleopment', 'nginx-helper' ); ?></a>
+				<a href="https://easyengine.io/" title="<?php esc_attr_e( 'EasyEngine (ee)', 'nginx-helper' ); ?>"><?php esc_html_e( 'EasyEngine (ee)', 'nginx-helper' ); ?></a>
 			</li>
 			<li role="listitem">
-				<a href="http://rtcamp.com/services/wordpress-plugins/" title="<?php esc_attr_e( 'WordPress Plugin Development', 'nginx-helper' ); ?>"><?php esc_html_e( 'WordPress Plugin Development', 'nginx-helper' ); ?></a>
+				<a href="https://github.com/rtcamp/" title="<?php esc_attr_e( 'rtCamp GitHub', 'nginx-helper' ); ?>"><?php esc_html_e( 'rtCamp GitHub', 'nginx-helper' ); ?></a>
 			</li>
 			<li role="listitem">
-				<a href="http://rtcamp.com/services/custom-wordpress-solutions/" title="<?php esc_attr_e( 'WordPress Consultancy', 'nginx-helper' ); ?>"><?php esc_html_e( 'WordPress Consultancy', 'nginx-helper' ); ?></a>
-			</li>
-			<li role="listitem">
-				<a href="https://rtcamp.com/easyengine/" title="<?php esc_attr_e( 'easyengine (ee)', 'nginx-helper' ); ?>"><?php esc_html_e( 'easyengine (ee)', 'nginx-helper' ); ?></a>
+				<a href="https://rtcamp.com/solutions/" title="<?php esc_attr_e( 'Enterprise WordPress Consultancy', 'nginx-helper' ); ?>"><?php esc_html_e( 'Enterprise WordPress Consultancy', 'nginx-helper' ); ?></a>
 			</li>
 		</ul>
 	</div>
