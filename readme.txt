@@ -93,6 +93,10 @@ To purge a page immediately, follow these instructions:
 * Just open this in a browser and the page will be purged instantly.
 * Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
+**Q. Does it need any kind of URL structure?**
+
+Yes. When setting the URL structure in nginx configuration file a trailing slash should always be added.
+
 = FAQ - Nginx Redis Cache =
 
 **Q. Can I override the redis hostname, port and prefix?**
