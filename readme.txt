@@ -95,7 +95,7 @@ To purge a page immediately, follow these instructions:
 
 **Q. Does it need any kind of URL structure?**
 
-Yes. When setting the URL structure in nginx configuration file a trailing slash should always be added.
+Yes. When setting the URL structure in Nginx configuration file a trailing slash should always be added.
 
 = FAQ - Nginx Redis Cache =
 
