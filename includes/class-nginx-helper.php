@@ -77,7 +77,7 @@ class Nginx_Helper {
 	public function __construct() {
 
 		$this->plugin_name = 'nginx-helper';
-		$this->version     = '2.2.5';
+		$this->version     = '2.3.3';
 		$this->minimum_wp  = '3.0';
 
 		if ( ! $this->required_wp_version() ) {
@@ -85,7 +85,8 @@ class Nginx_Helper {
 		}
 
 		if ( ! defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
-			define( 'RT_WP_NGINX_HELPER_CACHE_PATH', '/var/run/nginx-cache' );
+			$cache_path = apply_filters( 'rt_wp_nginx_helper_cache_path', '/var/run/nginx-cache' );
+			define( 'RT_WP_NGINX_HELPER_CACHE_PATH', $cache_path  );
 		}
 
 		$this->load_dependencies();
@@ -169,7 +170,7 @@ class Nginx_Helper {
 		global $nginx_helper_admin, $nginx_purger;
 
 		$nginx_helper_admin = new Nginx_Helper_Admin( $this->get_plugin_name(), $this->get_version() );
-
+		$this->loader->add_action( 'init', $nginx_helper_admin, 'initialize_setting_tab' );
 		// Defines global variables.
 		if ( ! empty( $nginx_helper_admin->options['cache_method'] ) && 'enable_redis' === $nginx_helper_admin->options['cache_method'] ) {
 
@@ -227,6 +228,9 @@ class Nginx_Helper {
 
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );
+		
+		// add action to preload the cache
+		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'preload_cache' );
 	}
 
 	/**
