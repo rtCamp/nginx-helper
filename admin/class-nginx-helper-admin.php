@@ -474,16 +474,22 @@ class Nginx_Helper_Admin {
 				// Loop through each feed item and display each item as a hyperlink.
 				foreach ( $rss_items as $item ) {
 					?>
-					<li role="listitem">
-						<?php
-						printf(
-							'<a href="%s" title="%s">%s</a>',
-							esc_url( $item->get_permalink() ),
-							esc_attr__( 'Posted ', 'nginx-helper' ) . esc_attr( $item->get_date( 'j F Y | g:i a' ) ),
-							esc_html( $item->get_title() )
-						);
-						?>
-					</li>
+						<li role="listitem">
+							<?php
+								printf(
+									'<a href="%s" title="%s">%s</a>',
+									esc_url( $item->get_permalink() ),
+									esc_attr(
+										sprintf(
+											/* translators: %s: date/time the feed item as been posted */
+											__( 'Posted %s', 'nginx-helper' ),
+											$item->get_date( 'j F Y | g:i a' )
+										)
+									),
+									esc_html( $item->get_title() )
+								);
+							?>
+						</li>
 					<?php
 				}
 			}
