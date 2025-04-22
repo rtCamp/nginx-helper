@@ -688,12 +688,24 @@ abstract class Purger {
 		if ( function_exists( 'icl_get_home_url' ) ) {
 
 			$homepage_url = trailingslashit( icl_get_home_url() );
-			$this->log( sprintf( __( 'Purging homepage (WPML) ', 'nginx-helper' ) . '%s', $homepage_url ) );
+			$this->log(
+				sprintf(
+					/* translators: %s homepage URL */
+					__( 'Purging homepage (WPML) %s', 'nginx-helper' ),
+					$homepage_url
+				)
+			);
 
 		} else {
 
 			$homepage_url = trailingslashit( home_url() );
-			$this->log( sprintf( __( 'Purging homepage ', 'nginx-helper' ) . '%s', $homepage_url ) );
+			$this->log( 
+				sprintf(
+					/* translators: %s homepage URL */
+					__( 'Purging homepage %s', 'nginx-helper' ),
+					$homepage_url
+				)
+			);
 
 		}
 
