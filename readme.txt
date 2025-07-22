@@ -13,6 +13,8 @@ Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/publ
 
 == Description ==
 
+✅ Confirmed compatible with PHP 8.2 and WordPress 6.7+.
+
 1. Removes `index.php` from permalinks when using WordPress with nginx.
 1. Adds support for purging redis-cache when used as full-page cache created using [nginx-srcache-module](https://github.com/openresty/srcache-nginx-module#caching-with-redis)
 1. Adds support for nginx fastcgi_cache_purge & proxy_cache_purge directive from [module](https://github.com/FRiCKLE/ngx_cache_purge "ngx_cache_purge module"). Provides settings so you can customize purging rules.
