@@ -1,7 +1,7 @@
 # Nginx Helper #
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe, webdados, ghost
 
 **Tags:** nginx, cache-purge, fastcgi, permalinks, redis-cache
 
@@ -168,10 +168,13 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 ### 2.3.4 ###
 
 * Cannot uncheck Purge Homephae options. [#Issue](https://wordpress.org/support/topic/cannot-uncheck-purge-homephae-options/) - by [diepbui4157](https://profiles.wordpress.org/diepbui4157/)
-* fastcgi cache purge fails if not using trailing slashes in URI structure. [#Issue](https://wordpress.org/support/topic/fastcgi-cache-purge-fails-if-not-using-trailing-slashes-in-uri-structure/) - by [agvs](https://profiles.wordpress.org/agvs/), [Vedant Gandhi](https://github.com/rtCamp/nginx-helper/pull/414)
+* fastcgi cache purge fails if not using trailing slashes in URI structure. [#Issue](https://wordpress.org/support/topic/fastcgi-cache-purge-fails-if-not-using-trailing-slashes-in-uri-structure/) - by [agvs](https://profiles.wordpress.org/agvs/), [Vedant-Gandhi](https://github.com/rtCamp/nginx-helper/pull/414)
 * What's _purge_personal_urls() for?. [#Issue](https://wordpress.org/support/topic/whats-_purge_personal_urls-for/) - by [Rolf Allard van Hagen](https://profiles.wordpress.org/ravanh/), [pratik-londhe4](https://github.com/rtCamp/nginx-helper/pull/407)
 * Broken link in the useful links section. [#358](https://github.com/rtCamp/nginx-helper/issues/358) - by [diepbui4157](https://profiles.wordpress.org/diepbui4157/), [pratik-londhe4](https://github.com/rtCamp/nginx-helper/pull/412)
 * Small issues with translatable strings. [#348](https://github.com/rtCamp/nginx-helper/issues/348) - by [webdados](https://github.com/rtCamp/nginx-helper/pull/349)
+* New filter for RT_WP_NGINX_HELPER_CACHE_PATH default constant value. [#298](https://github.com/rtCamp/nginx-helper/issues/298) - by [SGr33n](https://github.com/SGr33n) [Vedant-Gandhi](https://github.com/rtCamp/nginx-helper/pull/409)
+* PURGUE FOR EDITOR. [#243](https://github.com/rtCamp/nginx-helper/issues/243) - by [ghost](https://github.com/ghost), [pratik-londhe4](https://github.com/rtCamp/nginx-helper/pull/407)
+
 
 ### 2.3.3 ###
 
