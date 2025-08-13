@@ -171,7 +171,7 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 * fastcgi cache purge fails if not using trailing slashes in URI structure. [#Issue](https://wordpress.org/support/topic/fastcgi-cache-purge-fails-if-not-using-trailing-slashes-in-uri-structure/) - by [agvs](https://profiles.wordpress.org/agvs/), [Vedant-Gandhi](https://github.com/Vedant-Gandhi)
 * What's _purge_personal_urls() for?. [#Issue](https://wordpress.org/support/topic/whats-_purge_personal_urls-for/) - by [Rolf Allard van Hagen](https://profiles.wordpress.org/ravanh/), [pratik-londhe4](https://github.com/pratik-londhe4)
 * Broken link in the useful links section. [#358](https://github.com/rtCamp/nginx-helper/issues/358) - by [diepbui4157](https://profiles.wordpress.org/diepbui4157/), [pratik-londhe4](https://github.com/pratik-londhe4)
-* Small issues with translatable strings. [#348](https://github.com/rtCamp/nginx-helper/issues/348) - by [webdados](https://github.com/rtCamp/nginx-helper/pull/349)
+* Small issues with translatable strings. [#348](https://github.com/rtCamp/nginx-helper/issues/348) - by [webdados](https://github.com/webdados)
 * New filter for RT_WP_NGINX_HELPER_CACHE_PATH default constant value. [#298](https://github.com/rtCamp/nginx-helper/issues/298) - by [SGr33n](https://github.com/SGr33n) [Vedant-Gandhi](https://github.com/Vedant-Gandhi)
 * PURGUE FOR EDITOR. [#243](https://github.com/rtCamp/nginx-helper/issues/243) - by [ghost](https://github.com/ghost), [pratik-londhe4](https://github.com/pratik-londhe4)
 
