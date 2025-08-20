@@ -60,51 +60,8 @@ function deactivate_nginx_helper() {
 	Nginx_Helper_Deactivator::deactivate();
 }
 
-/**
- * The code that runs during plugin upgrade.
- *
- * @param WP_Upgrader $upgrader_object The Wordpress Upgrader Object.
- * @param array       $options The options for the upgrade process.
- */
-function handle_nginx_helper_upgrade( $upgrader_object, $options ) {
-
-	if ( ! is_array( $options ) ) {
-		return;
-	}
-
-	if ( ! array_key_exists( 'type', $options ) || ! array_key_exists( 'action', $options ) ) {
-		return;
-	}
-
-	if ( 'plugin' !== $options['type'] ||  ! in_array( $options['action'], [ 'install', 'update' ] ) ) {
-		return;
-	}
-
-	if ( 'update' === $options['action'] ) {
-		if ( ! is_array( $options['plugins'] ) || 
-			! in_array( NGINX_HELPER_BASENAME, $options['plugins'] ) ) {
-			return;
-		}
-		
-	}
-	
-	if ( 'install' === $options['action'] ) {
-    
-		if ( ! is_array( $upgrader_object->result ) || 
-			! array_key_exists( 'destination_name', $upgrader_object->result ) || 
-			$upgrader_object->result['destination_name'] !== dirname( NGINX_HELPER_BASENAME ) ) {
-			return;
-		}
-	}
-	
-	require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
-	Nginx_Helper_Activator::set_user_caps();
-
-}
-
 register_activation_hook( __FILE__, 'activate_nginx_helper' );
 register_deactivation_hook( __FILE__, 'deactivate_nginx_helper' );
-add_action( 'upgrader_process_complete', 'handle_nginx_helper_upgrade', 1, 2 );
 
 /**
  * The core plugin class that is used to define internationalization,
