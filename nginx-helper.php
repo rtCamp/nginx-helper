@@ -72,27 +72,39 @@ function handle_nginx_helper_upgrade( $upgrader_object, $options ) {
 		return;
 	}
 
-	if ( ! array_key_exists( 'type', $options ) || ! array_key_exists( 'action', $options ) || ! array_key_exists( 'plugins', $options ) ) {
+	if ( ! array_key_exists( 'type', $options ) || ! array_key_exists( 'action', $options ) ) {
 		return;
 	}
 
-	if ( 'update' !== $options['action'] || 'plugin' !== $options['type'] || ! is_array( $options['plugins'] ) ) {
+	if ( 'plugin' !== $options['type'] ||  ! in_array( $options['action'], [ 'install', 'update' ] ) ) {
 		return;
 	}
 
-	foreach ( $options['plugins'] as $plugin ) {
-		if ( $plugin === NGINX_HELPER_BASENAME ) {
-
-			// Run the user capabilities when plugin is updated.
-			Nginx_Helper_Activator::set_user_caps();
+	if ( 'update' === $options['action'] ) {
+		if ( ! is_array( $options['plugins'] ) || 
+			! in_array( NGINX_HELPER_BASENAME, $options['plugins'] ) ) {
+			return;
+		}
+		
+	}
+	
+	if ( 'install' === $options['action'] ) {
+    
+		if ( ! is_array( $upgrader_object->result ) || 
+			! array_key_exists( 'destination_name', $upgrader_object->result ) || 
+			$upgrader_object->result['destination_name'] !== dirname( NGINX_HELPER_BASENAME ) ) {
+			return;
 		}
 	}
+	
+	require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
+	Nginx_Helper_Activator::set_user_caps();
 
 }
 
 register_activation_hook( __FILE__, 'activate_nginx_helper' );
 register_deactivation_hook( __FILE__, 'deactivate_nginx_helper' );
-add_action( 'upgrader_process_complete', 'handle_nginx_helper_upgrade', 10, 2 );
+add_action( 'upgrader_process_complete', 'handle_nginx_helper_upgrade', 1, 2 );
 
 /**
  * The core plugin class that is used to define internationalization,
