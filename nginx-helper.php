@@ -60,8 +60,39 @@ function deactivate_nginx_helper() {
 	Nginx_Helper_Deactivator::deactivate();
 }
 
+/**
+ * The code that runs during plugin upgrade.
+ *
+ * @param WP_Upgrader $upgrader_object The Wordpress Upgrader Object.
+ * @param array       $options The options for the upgrade process.
+ */
+function handle_nginx_helper_upgrade( $upgrader_object, $options ) {
+
+	if ( ! is_array( $options ) ) {
+		return;
+	}
+
+	if ( ! array_key_exists( 'type', $options ) || ! array_key_exists( 'action', $options ) || ! array_key_exists( 'plugins', $options ) ) {
+		return;
+	}
+
+	if ( 'update' !== $options['action'] || 'plugin' !== $options['type'] || ! is_array( $options['plugins'] ) ) {
+		return;
+	}
+
+	foreach ( $options['plugins'] as $plugin ) {
+		if ( $plugin === NGINX_HELPER_BASENAME ) {
+
+			// Run the user capabilities when plugin is updated.
+			Nginx_Helper_Activator::set_user_caps();
+		}
+	}
+
+}
+
 register_activation_hook( __FILE__, 'activate_nginx_helper' );
 register_deactivation_hook( __FILE__, 'deactivate_nginx_helper' );
+add_action( 'upgrader_process_complete', 'handle_nginx_helper_upgrade', 10, 2 );
 
 /**
  * The core plugin class that is used to define internationalization,
