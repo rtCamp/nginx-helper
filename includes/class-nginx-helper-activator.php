@@ -44,14 +44,14 @@ class Nginx_Helper_Activator {
 
 		wp_schedule_event( time(), 'daily', 'rt_wp_nginx_helper_check_log_file_size_daily' );
 		
-		if( method_exists( $nginx_helper_admin, 'store_default_options' ) ) {
+		if ( method_exists( $nginx_helper_admin, 'store_default_options' ) ) {
 			$nginx_helper_admin->store_default_options();
 		}
 
 	}
 
 	/**
-	 * This functions sets the user capabilites appropriately.
+	 * This function sets the user capabilites appropriately.
 	 */
 	public static function set_user_caps() {
 

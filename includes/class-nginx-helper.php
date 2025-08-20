@@ -329,7 +329,7 @@ class Nginx_Helper {
 	public function handle_nginx_helper_upgrade() {
 		$installed_version = get_option( 'nginx_helper_version', '0' );
 
-		if( version_compare( $installed_version, $this->get_version(), '<' ) ) {
+		if ( version_compare( $installed_version, $this->get_version(), '<' ) ) {
 			
 			require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
 			Nginx_Helper_Activator::set_user_caps();
