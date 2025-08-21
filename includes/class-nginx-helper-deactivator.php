@@ -33,6 +33,8 @@ class Nginx_Helper_Deactivator {
 		$role->remove_cap( 'Nginx Helper | Config' );
 		$role->remove_cap( 'Nginx Helper | Purge cache' );
 
+		delete_option( 'nginx_helper_version' );
+
 	}
 
 }
