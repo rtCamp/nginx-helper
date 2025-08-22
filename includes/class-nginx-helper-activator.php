@@ -40,6 +40,25 @@ class Nginx_Helper_Activator {
 			return;
 		}
 
+		self::set_user_caps();
+
+		wp_schedule_event( time(), 'daily', 'rt_wp_nginx_helper_check_log_file_size_daily' );
+		
+		if ( method_exists( $nginx_helper_admin, 'store_default_options' ) ) {
+			$nginx_helper_admin->store_default_options();
+		}
+
+	}
+
+	/**
+	 * This function sets the user capabilites appropriately.
+	 */
+	public static function set_user_caps() {
+
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
 		$role = get_role( 'administrator' );
 
 		if ( empty( $role ) ) {
@@ -55,12 +74,6 @@ class Nginx_Helper_Activator {
 
 		$role->add_cap( 'Nginx Helper | Config' );
 		$role->add_cap( 'Nginx Helper | Purge cache' );
-
-		wp_schedule_event( time(), 'daily', 'rt_wp_nginx_helper_check_log_file_size_daily' );
-		
-		if( method_exists( $nginx_helper_admin, 'store_default_options' ) ) {
-			$nginx_helper_admin->store_default_options();
-		}
 
 	}
 

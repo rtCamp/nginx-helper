@@ -77,7 +77,7 @@ class Nginx_Helper {
 	public function __construct() {
 
 		$this->plugin_name = 'nginx-helper';
-		$this->version     = '2.3.4';
+		$this->version     = '2.3.5';
 		$this->minimum_wp  = '3.0';
 
 		if ( ! $this->required_wp_version() ) {
@@ -231,6 +231,7 @@ class Nginx_Helper {
 		
 		// add action to preload the cache
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'preload_cache' );
+		$this->loader->add_action( 'plugins_loaded', $this, 'handle_nginx_helper_upgrade' );
 	}
 
 	/**
@@ -320,5 +321,21 @@ class Nginx_Helper {
 		</p>
 	</div>
 		<?php
+	}
+
+	/**
+	 * Detects when plugin version changes and updates accordingly.
+	 */
+	public function handle_nginx_helper_upgrade() {
+		$installed_version = get_option( 'nginx_helper_version', '0' );
+
+		if ( version_compare( $installed_version, $this->get_version(), '<' ) ) {
+			
+			require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
+			Nginx_Helper_Activator::set_user_caps();
+
+			update_option( 'nginx_helper_version', $this->get_version() );
+		}
+
 	}
 }
