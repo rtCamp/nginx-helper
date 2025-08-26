@@ -74,6 +74,7 @@ class Nginx_Helper_Activator {
 
 		$role->add_cap( 'Nginx Helper | Config' );
 		$role->add_cap( 'Nginx Helper | Purge cache' );
+		do_action( 'update_site_option_rt_wp_nginx_helper_options' );
 
 	}
 
