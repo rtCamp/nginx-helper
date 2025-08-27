@@ -84,16 +84,22 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 	foreach ( $nginx_helper_admin->nginx_helper_default_settings() as $default_setting_field => $default_setting_value ) {
 
 		if ( 'roles_with_purge_cap' === $default_setting_field ) {
-			$new_roles = array( wp_strip_all_tags( $nginx_settings[ $default_setting_field ] ) );
-			foreach ( $new_roles as $role_name => $enabled ) {
 
-				$role_slug = strtolower( $role_name );
+			$new_roles      = $nginx_settings[ $default_setting_field ];
+			$filtered_roles = array();
 
-				if ( '1' === $enabled && isset( $role_names[ $role_slug ] ) && 'administrator' !== $role_slug ) {
+			if ( is_array( $new_roles ) && ! empty( $new_roles ) ) {
 
-					$all_inputs[ $val ][ $role_slug ] = 1;
+				foreach ( $nginx_settings[ $default_setting_field ] as $role_slug => $enabled ) {
+
+					$role_slug = strtolower( wp_strip_all_tags( $role_slug ) );
+					if ( '1' === $enabled && isset( $role_names[ $role_slug ] ) && ! in_array( $role_slug, array( 'administrator', 'subscriber' ), true ) ) {
+						$filtered_roles[ $role_slug ] = 1;
+					}
 				}
 			}
+			$nginx_settings[ $default_setting_field ] = $filtered_roles;
+			continue;
 		}
 
 		// Uncheck checkbox fields whose default value is `1` but user has unchecked.
@@ -729,26 +735,33 @@ if ( is_multisite() ) {
 						<td>
 							<table>
 								<?php
-								foreach ( $role_names as $role_key => $name ) {
-									$is_checked = ( 'administrator' === $role_key ) || ( isset( $nginx_helper_settings['roles_with_purge_cap'][ $role_key ] ) && 1 === (int) $nginx_helper_settings['roles_with_purge_cap'][ $role_key ] );
-									?>
-									<label for="<?php echo esc_attr( $name ); ?>">
-										<input 
-										<?php
-										if ( 'administrator' === $role_key ) {
-											echo 'disabled';}
+								if ( is_array( $role_names ) && ! empty( $role_names ) ) {
+
+									foreach ( $role_names as $role_key => $name ) {
+
+										if ( 'subscriber' === $role_key ) {
+											continue;
+										}
+										$is_checked = ( 'administrator' === $role_key ) || ( isset( $nginx_helper_settings['roles_with_purge_cap'][ $role_key ] ) && 1 === (int) $nginx_helper_settings['roles_with_purge_cap'][ $role_key ] );
 										?>
-										type="checkbox" value="1" id="<?php echo esc_attr( $name ); ?>" name="roles_with_purge_cap[<?php echo esc_attr( $role_key ); ?>]" <?php checked( $is_checked, 1 ); ?> />
-										&nbsp;
-									<?php
-									echo wp_kses(
-										$name,
-										array( 'strong' => array() )
-									);
-									?>
-									</label>
-									<br />
-									<?php
+										<label for="<?php echo esc_attr( $name ); ?>">
+											<input
+											<?php
+											if ( 'administrator' === $role_key ) {
+												echo 'disabled';}
+											?>
+											type="checkbox" value="1" id="<?php echo esc_attr( $name ); ?>" name="roles_with_purge_cap[<?php echo esc_attr( $role_key ); ?>]" <?php checked( $is_checked, 1 ); ?> />
+											&nbsp;
+											<?php
+											echo wp_kses(
+												$name,
+												array( 'strong' => array() )
+											);
+											?>
+										</label>
+										<br />
+										<?php
+									}
 								}
 								?>
 							</table>

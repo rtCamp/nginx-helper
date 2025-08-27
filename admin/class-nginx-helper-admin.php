@@ -293,7 +293,7 @@ class Nginx_Helper_Admin {
 			'redis_acl_enabled_by_constant'    => 0,
 			'preload_cache'                    => 0,
 			'is_cache_preloaded'               => 0,
-			'roles_with_purge_cap'             => Array ()
+			'roles_with_purge_cap'             => Array()
 		);
 	
 	}
