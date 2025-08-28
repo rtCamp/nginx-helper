@@ -40,11 +40,9 @@ class Nginx_Helper_Deactivator {
 			}
 
 			if ( 'administrator' === $role_key ) {
-				$role->remove_cap( $purge_cap );
 				$role->remove_cap( 'Nginx Helper | Config' );
-			} elseif ( $role->has_cap( $purge_cap ) ) {
-				$role->remove_cap( $purge_cap );
 			}
+			$role->remove_cap( $purge_cap );
 		}
 
 		delete_option( 'nginx_helper_version' );
