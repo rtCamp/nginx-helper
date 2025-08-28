@@ -963,15 +963,14 @@ class Nginx_Helper_Admin {
 				continue;
 			}
 
-			// If role is selected, ensure it has capability.
-			if ( isset( $selected_roles[ $role_key ] ) ) {
-				if ( ! $role->has_cap( $purge_cap ) ) {
-					$role->add_cap( $purge_cap );
-				}
-			} elseif ( $role->has_cap( $purge_cap ) ) {
-				// If not selected, remove capability if present.
+			// If role is NOT selected, remove cap and continue.
+			if ( ! isset( $selected_roles[ $role_key ] ) ) {
 				$role->remove_cap( $purge_cap );
+				continue;
 			}
+
+			// If selected, make sure cap is added.
+			$role->add_cap( $purge_cap );
 		}
 	}
 }
