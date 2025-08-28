@@ -753,10 +753,7 @@ if ( is_multisite() ) {
 											type="checkbox" value="1" id="<?php echo esc_attr( $name ); ?>" name="roles_with_purge_cap[<?php echo esc_attr( $role_key ); ?>]" <?php checked( $is_checked, 1 ); ?> />
 											&nbsp;
 											<?php
-											echo wp_kses(
-												$name,
-												array( 'strong' => array() )
-											);
+											echo esc_html( $name );
 											?>
 										</label>
 										<br />
