@@ -59,6 +59,8 @@ class Nginx_Helper_Activator {
 			return;
 		}
 
+		global $nginx_helper_admin;
+
 		$role = get_role( 'administrator' );
 
 		if ( empty( $role ) ) {
@@ -74,6 +76,10 @@ class Nginx_Helper_Activator {
 
 		$role->add_cap( 'Nginx Helper | Config' );
 		$role->add_cap( 'Nginx Helper | Purge cache' );
+		
+		if ( method_exists( $nginx_helper_admin, 'nginx_helper_update_role_caps' ) ) {
+			$nginx_helper_admin->nginx_helper_update_role_caps();
+		}
 
 	}
 

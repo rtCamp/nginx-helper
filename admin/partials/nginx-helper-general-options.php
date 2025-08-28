@@ -48,13 +48,25 @@ $args = array(
 	'smart_http_expire_form_nonce',
 	'purge_amp_urls',
 	'preload_cache',
+	'roles_with_purge_cap',
 );
 
 $all_inputs = array();
 
+global $wp_roles;
+$roles      = $wp_roles->roles;
+$role_names = wp_roles()->get_names();
+
 foreach ( $args as $val ) {
+
 	if ( isset( $_POST[ $val ] ) ) {
-		$all_inputs[ $val ] = wp_strip_all_tags( $_POST[ $val ] );
+
+		// If the input is an array (like roles_with_purge_cap), sanitize each value.
+		if ( is_array( $_POST[ $val ] ) ) {
+			$all_inputs[ $val ] = array_map( 'sanitize_text_field', $_POST[ $val ] );
+		} else {
+			$all_inputs[ $val ] = wp_strip_all_tags( $_POST[ $val ] );
+		}
 	}
 }
 
@@ -70,6 +82,25 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 	$site_options = get_site_option( 'rt_wp_nginx_helper_options', array() );
 
 	foreach ( $nginx_helper_admin->nginx_helper_default_settings() as $default_setting_field => $default_setting_value ) {
+
+		if ( 'roles_with_purge_cap' === $default_setting_field ) {
+
+			$new_roles      = $nginx_settings[ $default_setting_field ];
+			$filtered_roles = array();
+
+			if ( is_array( $new_roles ) && ! empty( $new_roles ) ) {
+
+				foreach ( $nginx_settings[ $default_setting_field ] as $role_slug => $enabled ) {
+
+					$role_slug = strtolower( wp_strip_all_tags( $role_slug ) );
+					if ( '1' === $enabled && isset( $role_names[ $role_slug ] ) && ! in_array( $role_slug, array( 'administrator', 'subscriber' ), true ) ) {
+						$filtered_roles[ $role_slug ] = 1;
+					}
+				}
+			}
+			$nginx_settings[ $default_setting_field ] = $filtered_roles;
+			continue;
+		}
 
 		// Uncheck checkbox fields whose default value is `1` but user has unchecked.
 		if ( 1 === $default_setting_value && isset( $site_options[ $default_setting_field ] ) && empty( $all_inputs[ $default_setting_field ] ) ) {
@@ -693,6 +724,44 @@ if ( is_multisite() ) {
 								esc_html_e( "'*' will only work with redis cache server.", 'nginx-helper' );
 								?>
 							</p>
+						</td>
+					</tr>
+				</table>
+				<table class="form-table rtnginx-table">
+					<tr valign="top">
+						<th scope="row">
+							<h4><?php esc_html_e( 'Select roles with purge cache access:', 'nginx-helper' ); ?></h4>
+						</th>
+						<td>
+							<table>
+								<?php
+								if ( is_array( $role_names ) && ! empty( $role_names ) ) {
+
+									foreach ( $role_names as $role_key => $name ) {
+
+										if ( 'subscriber' === $role_key ) {
+											continue;
+										}
+										$is_checked = ( 'administrator' === $role_key ) || ( isset( $nginx_helper_settings['roles_with_purge_cap'][ $role_key ] ) && 1 === (int) $nginx_helper_settings['roles_with_purge_cap'][ $role_key ] );
+										?>
+										<label for="<?php echo esc_attr( $name ); ?>">
+											<input
+											<?php
+											if ( 'administrator' === $role_key ) {
+												echo 'disabled';}
+											?>
+											type="checkbox" value="1" id="<?php echo esc_attr( $name ); ?>" name="roles_with_purge_cap[<?php echo esc_attr( $role_key ); ?>]" <?php checked( $is_checked, 1 ); ?> />
+											&nbsp;
+											<?php
+											echo esc_html( $name );
+											?>
+										</label>
+										<br />
+										<?php
+									}
+								}
+								?>
+							</table>
 						</td>
 					</tr>
 				</table>
