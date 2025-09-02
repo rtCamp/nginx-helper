@@ -1013,7 +1013,7 @@ class Nginx_Helper_Admin {
 		<div class="notice notice-info">
 			<p>
 				<?php
-			esc_html_e( 'A WordPress update was detected. It is recommended to purge the cache to ensure your site displays the latest changes.', 'nginx-helper' );
+				esc_html_e( 'A WordPress update was detected. It is recommended to purge the cache to ensure your site displays the latest changes.', 'nginx-helper' );
 				?>
 				<a href="<?php echo esc_url( $settings_link ); ?>"><?php esc_html_e( 'Go & Purge Cache', 'nginx-helper' ); ?></a>
 				|
