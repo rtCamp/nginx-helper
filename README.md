@@ -78,7 +78,7 @@ Yes. It handles all post-types the same way.
 
 **Q. How can I purge cache automatically after WordPress/plugin/theme updates?**
 
-Yes. By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
+By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
 If you want this behavior, you can enable it using a filter:
 
 `add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );`
