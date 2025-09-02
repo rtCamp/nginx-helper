@@ -14,7 +14,7 @@ $purge_url  = add_query_arg(
 	array(
 		'nginx_helper_action'  => 'purge',
 		'nginx_helper_urls'    => 'all',
-		'nginx_helper_dismiss' => get_transient( 'nginx_helper_suggest_purge_notice' ),
+		'nginx_helper_dismiss' => get_transient( 'rt_wp_nginx_helper_suggest_purge_notice' ),
 	)
 );
 $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );

@@ -775,7 +775,7 @@ if ( is_multisite() ) {
 						<label for="enable_auto_purge">
 							<input
 							disabled
-							type="checkbox" value="1" id="enable_auto_purge" name="enable_auto_purge" <?php checked( NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE, 1 ); ?> />
+							type="checkbox" id="enable_auto_purge" name="enable_auto_purge" <?php checked( NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE, 1 ); ?> />
 							&nbsp;
 							<?php
 							esc_html_e( 'Auto Purge when Core, Plugin or Theme updates.', 'nginx-helper' );
@@ -784,9 +784,21 @@ if ( is_multisite() ) {
 						<p>
 						<?php
 						if ( NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE ) {
-							echo wp_kses_post( __( '(NOTE: This feature is enabled via the <strong>rt_wp_nginx_helper_enable_auto_purge_on_any_update</strong> filter. To disable, remove this filter from your code.)', 'nginx-helper' ) );
+							echo wp_kses_post(
+								sprintf(
+									/* translators: %1$s: Filter name 'rt_wp_nginx_helper_enable_auto_purge_on_any_update' */
+									__( '(NOTE: This feature is enabled via the %1$s filter. To disable, remove this filter from your code.)', 'nginx-helper' ),
+									'<strong>rt_wp_nginx_helper_enable_auto_purge_on_any_update</strong>'
+								)
+							);
 						} else {
-							echo wp_kses_post( __( '(NOTE: To enable, return true in the <strong>rt_wp_nginx_helper_enable_auto_purge_on_any_update</strong> filter.)', 'nginx-helper' ) );
+							echo wp_kses_post(
+								sprintf(
+									/* translators: %1$s: Filter name 'rt_wp_nginx_helper_enable_auto_purge_on_any_update' */
+									__( '(NOTE: To enable, return true in the %1$s filter.)', 'nginx-helper' ),
+									'<strong>rt_wp_nginx_helper_enable_auto_purge_on_any_update</strong>'
+								)
+							);
 						}
 						?>
 						</p>
