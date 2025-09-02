@@ -225,7 +225,7 @@ class Nginx_Helper_Admin {
 			array(
 				'nginx_helper_action'  => 'purge',
 				'nginx_helper_urls'    => $nginx_helper_urls,
-				'nginx_helper_dismiss' => get_transient( 'nginx_helper_suggest_purge_notice' ),
+				'nginx_helper_dismiss' => get_transient( 'rt_wp_nginx_helper_suggest_purge_notice' ),
 			)
 		);
 		
@@ -979,7 +979,7 @@ class Nginx_Helper_Admin {
 	 * Automatically purges Nginx cache on any WordPress core, plugin, or theme update if enabled.
 	 *
 	 * @param WP_Upgrader $upgrader_object WP_Upgrader instance.
-	 * @param array       $options Array of bulk item update data..
+	 * @param array       $options Array of bulk item update data.
 	 */
 	public function nginx_helper_auto_purge_on_any_update( $upgrader_object, $options ) {
 
@@ -989,7 +989,7 @@ class Nginx_Helper_Admin {
 			return;
 		}
 		if ( ! defined( 'NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE' ) || ! NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE ) {
-			set_transient( 'nginx_helper_suggest_purge_notice', true, HOUR_IN_SECONDS );
+			set_transient( 'rt_wp_nginx_helper_suggest_purge_notice', true, HOUR_IN_SECONDS );
 			return;
 		}
 		global $nginx_purger;
@@ -1002,7 +1002,7 @@ class Nginx_Helper_Admin {
 	 */
 	public function suggest_purge_after_update() {
 
-		if ( ! get_transient( 'nginx_helper_suggest_purge_notice' ) ) {
+		if ( ! get_transient( 'rt_wp_nginx_helper_suggest_purge_notice' ) ) {
 			return;
 		}
 
@@ -1043,7 +1043,7 @@ class Nginx_Helper_Admin {
 
 		if ( $dismiss && $nonce_verified ) {
 
-			delete_transient( 'nginx_helper_suggest_purge_notice' );
+			delete_transient( 'rt_wp_nginx_helper_suggest_purge_notice' );
 			wp_safe_redirect( remove_query_arg( array( 'nginx_helper_dismiss', '_wpnonce' ) ) );
 			exit;
 		}
