@@ -16,7 +16,7 @@ To set up the repo locally, choose one of the following methods:
 
 ### Method 2 (For Redis Cache)
 
-1. Install EasyEngine by following the [instructions](https://easyengine.io/docs/install/).
+1. Install EasyEngine by following the [instructions](https://easyengine.io/cli/handbook/install/).
 2. Create a site with caching enabled using the command: `ee site create <site_name> --cache`
 
 3. Clone this repository inside the `wp-content/plugins` directory of the newly created site.
