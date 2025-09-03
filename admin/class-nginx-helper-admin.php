@@ -292,9 +292,10 @@ class Nginx_Helper_Admin {
 			'redis_socket_enabled_by_constant' => 0,
 			'redis_acl_enabled_by_constant'    => 0,
 			'preload_cache'                    => 0,
-			'is_cache_preloaded'               => 0
+			'is_cache_preloaded'               => 0,
+			'roles_with_purge_cap'             => array()
 		);
-		
+	
 	}
     
     public function store_default_options() {
@@ -939,6 +940,37 @@ class Nginx_Helper_Admin {
 			|| 0 !== $has_import_started
 			|| ! empty( $import_query_var );
 	}
-	
-	
+
+	/**
+	 * Sync purge capability with selected roles.
+	 */
+	public function nginx_helper_update_role_caps() {
+		$purge_cap = 'Nginx Helper | Purge cache';
+
+		// Get all available roles.
+		$all_roles    = wp_roles()->get_names();
+		$site_options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+
+		// Roles selected in settings.
+		$selected_roles = isset( $site_options['roles_with_purge_cap'] ) && is_array( $site_options['roles_with_purge_cap'] )
+			? $site_options['roles_with_purge_cap']
+			: array();
+
+		foreach ( $all_roles as $role_key => $role_name ) {
+			$role = get_role( $role_key );
+
+			if ( ! $role || 'administrator' === $role_key ) {
+				continue;
+			}
+
+			// If role is NOT selected, remove cap and continue.
+			if ( ! isset( $selected_roles[ $role_key ] ) ) {
+				$role->remove_cap( $purge_cap );
+				continue;
+			}
+
+			// If selected, make sure cap is added.
+			$role->add_cap( $purge_cap );
+		}
+	}
 }
