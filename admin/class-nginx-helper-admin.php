@@ -224,8 +224,9 @@ class Nginx_Helper_Admin {
 		
 		$purge_url = add_query_arg(
 			array(
-				'nginx_helper_action' => 'purge',
-				'nginx_helper_urls'   => $nginx_helper_urls,
+				'nginx_helper_action'  => 'purge',
+				'nginx_helper_urls'    => $nginx_helper_urls,
+				'nginx_helper_dismiss' => get_transient( 'rt_wp_nginx_helper_suggest_purge_notice' ),
 			)
 		);
 		
@@ -973,6 +974,80 @@ class Nginx_Helper_Admin {
 
 			// If selected, make sure cap is added.
 			$role->add_cap( $purge_cap );
+		}
+	}
+
+	/**
+	 * Automatically purges Nginx cache on any WordPress core, plugin, or theme update if enabled.
+	 *
+	 * @param WP_Upgrader $upgrader_object WP_Upgrader instance.
+	 * @param array       $options Array of bulk item update data.
+	 */
+	public function nginx_helper_auto_purge_on_any_update( $upgrader_object, $options ) {
+
+		if ( ! isset( $options['action'], $options['type'] )
+			|| 'update' !== $options['action']
+			|| ! in_array( $options['type'], array( 'core', 'plugin', 'theme' ), true ) ) {
+			return;
+		}
+		if ( ! defined( 'NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE' ) || ! NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE ) {
+			set_transient( 'rt_wp_nginx_helper_suggest_purge_notice', true, HOUR_IN_SECONDS );
+			return;
+		}
+		global $nginx_purger;
+
+		$nginx_purger->purge_all();
+	}
+
+	/**
+	 * Displays an admin notice suggesting the user to purge cache after a WordPress update.
+	 */
+	public function suggest_purge_after_update() {
+
+		if ( ! get_transient( 'rt_wp_nginx_helper_suggest_purge_notice' ) ) {
+			return;
+		}
+
+		$setting_page  = is_network_admin() ? 'settings.php' : 'options-general.php';
+		$settings_link = network_admin_url( $setting_page . '?page=nginx' );
+		$dismiss_url   = wp_nonce_url( add_query_arg( 'nginx_helper_dismiss', 'true' ), 'nginx_helper_dismiss_notice' );
+		?>
+		<div class="notice notice-info">
+			<p>
+				<?php
+				esc_html_e( 'A WordPress update was detected. It is recommended to purge the cache to ensure your site displays the latest changes.', 'nginx-helper' );
+				?>
+				<a href="<?php echo esc_url( $settings_link ); ?>"><?php esc_html_e( 'Go & Purge Cache', 'nginx-helper' ); ?></a>
+				|
+				<a href="<?php echo esc_url( $dismiss_url ); ?>">
+				<?php esc_html_e( 'Dismiss', 'nginx-helper' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Dismisses the "suggest purge" admin notice when the user clicks the dismiss link.
+	 */
+	public function dismiss_suggest_purge_after_update() {
+
+		if ( ! isset( $_GET['nginx_helper_dismiss'] ) || ! isset( $_GET['_wpnonce'] ) ) {
+			return;
+		}
+
+		$dismiss          = sanitize_text_field( wp_unslash( $_GET['nginx_helper_dismiss'] ) );
+		$nonce            = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
+
+		// Verify the correct nonce depending on whether this is a purge+dismiss or dismiss-only request.
+		$has_purge_params = isset( $_GET['nginx_helper_action'], $_GET['nginx_helper_urls'] );
+		$nonce_verified   = $has_purge_params ? wp_verify_nonce( $nonce, 'nginx_helper-purge_all' ) : wp_verify_nonce( $nonce, 'nginx_helper_dismiss_notice' );
+
+		if ( $dismiss && $nonce_verified ) {
+
+			delete_transient( 'rt_wp_nginx_helper_suggest_purge_notice' );
+			wp_safe_redirect( remove_query_arg( array( 'nginx_helper_dismiss', '_wpnonce' ) ) );
+			exit;
 		}
 	}
 
