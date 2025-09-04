@@ -79,7 +79,6 @@ class Nginx_Helper_Admin {
 		$this->version     = $version;
 		
 		$this->options = $this->nginx_helper_settings();
-		add_action( 'plugins_loaded', array( $this, 'init_woocommerce_hooks' ) );
 	}
 	
 	/**
