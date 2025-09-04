@@ -1012,8 +1012,8 @@ if ( is_multisite() ) {
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
-	<?php if ( ! empty( $nginx_helper_settings['enable_purge'] ) && class_exists( 'WooCommerce' ) ) : ?>
-		<div class="postbox">
+	<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+		<div class="postbox enable_purge"<?php echo empty( $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'WooCommerce Options', 'nginx-helper' ); ?></span>
 			</h3>
@@ -1021,7 +1021,7 @@ if ( is_multisite() ) {
 				<table class="form-table">
 					<tr valign="top">
 						<td>
-							<input type="checkbox" value="1" id="purge_woo_products" name="purge_woo_products" <?php checked( $nginx_helper_settings['purge_woo_products'], 1 ); ?> />
+							<input type="checkbox" value="1" id="purge_woo_products" name="purge_woo_products" <?php checked( $nginx_helper_settings['purge_woo_products'] ?? 0, 1 ); ?> />
 							<label for="purge_woo_products">
 								<?php esc_html_e( 'Purge product cache on stock change or purchase', 'nginx-helper' ); ?>
 							</label>
