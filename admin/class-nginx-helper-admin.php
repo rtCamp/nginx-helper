@@ -79,6 +79,7 @@ class Nginx_Helper_Admin {
 		$this->version     = $version;
 		
 		$this->options = $this->nginx_helper_settings();
+		add_action( 'plugins_loaded', array( $this, 'init_woocommerce_hooks' ) );
 	}
 	
 	/**
@@ -293,7 +294,8 @@ class Nginx_Helper_Admin {
 			'redis_acl_enabled_by_constant'    => 0,
 			'preload_cache'                    => 0,
 			'is_cache_preloaded'               => 0,
-			'roles_with_purge_cap'             => array()
+			'roles_with_purge_cap'             => array(),
+			'purge_woo_products'               => 0,
 		);
 	
 	}
@@ -971,6 +973,57 @@ class Nginx_Helper_Admin {
 
 			// If selected, make sure cap is added.
 			$role->add_cap( $purge_cap );
+		}
+	}
+
+	/**
+	 * Initialize WooCommerce hooks if enabled.
+	 *
+	 * @since 2.3.5
+	 */
+	public function init_woocommerce_hooks() {
+		if ( ! class_exists( 'WooCommerce' ) || empty( $this->options['purge_woo_products'] ) ) {
+			return;
+		}
+
+		add_action( 'woocommerce_reduce_order_stock', array( $this, 'purge_product_cache_on_purchase' ), 10, 1 );
+	}
+
+	/**
+	 * Purge product cache when order stock is reduced (purchase).
+	 *
+	 * @since  2.3.5
+	 * @global object $nginx_purger Nginx purger object.
+	 * @param  object $order Order object.
+	 */
+	public function purge_product_cache_on_purchase( $order ) {
+
+		global $nginx_purger;
+
+		if ( ! $order instanceof WC_Order ) {
+			return;
+		}
+
+		if ( ! $this->options['enable_purge'] ) {
+			return;
+		}
+
+		$nginx_purger->log( 'WooCommerce order stock reduction - purging product caches' );
+
+		foreach ( $order->get_items() as $item ) {
+			$product = $item->get_product();
+			if ( ! $product ) {
+				continue;
+			}
+
+			$product_id = $product->get_id();
+			$nginx_purger->log( 'Purging cache for product ID: ' . $product_id . ' due to purchase' );
+
+			$product_url = get_permalink( $product_id );
+
+			if ( $product_url ) {
+				$nginx_purger->purge_url( $product_url );
+			}
 		}
 	}
 }
