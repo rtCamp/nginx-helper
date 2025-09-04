@@ -79,6 +79,7 @@ class Nginx_Helper_Admin {
 		$this->version     = $version;
 		
 		$this->options = $this->nginx_helper_settings();
+		add_action( 'plugins_loaded', array( $this, 'init_woocommerce_hooks' ) );
 	}
 	
 	/**
@@ -293,6 +294,8 @@ class Nginx_Helper_Admin {
 			'redis_acl_enabled_by_constant'    => 0,
 			'preload_cache'                    => 0,
 			'is_cache_preloaded'               => 0,
+			'roles_with_purge_cap'             => array(),
+			'purge_woo_products'               => 0,
 			'roles_with_purge_cap'             => array(),
 			'purge_woo_products'               => 0,
 		);
@@ -981,7 +984,7 @@ class Nginx_Helper_Admin {
 	 * @since 2.3.5
 	 */
 	public function init_woocommerce_hooks() {
-		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' )  || empty( $this->options['purge_woo_products'] ) ) {
+		if ( ! class_exists( 'WooCommerce' ) || empty( $this->options['purge_woo_products'] ) ) {
 			return;
 		}
 
