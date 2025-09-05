@@ -1051,7 +1051,7 @@ if ( is_multisite() ) {
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
-	<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+	<?php if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) : ?>
 		<div class="postbox enable_purge"<?php echo empty( $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
 			<h3 class="hndle">
 				<span><?php esc_html_e( 'WooCommerce Options', 'nginx-helper' ); ?></span>
