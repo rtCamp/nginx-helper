@@ -115,6 +115,8 @@ To use it:
 
 This ensures customers always see up-to-date stock status without stale cache.
 
+Note: This option will only be visible if WooCommerce is active.
+
 ### FAQ - Nginx Redis Cache ###
 
 **Q. Can I override the redis hostname, port and prefix?**
