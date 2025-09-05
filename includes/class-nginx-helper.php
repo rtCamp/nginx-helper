@@ -249,6 +249,10 @@ class Nginx_Helper {
 		$this->loader->add_action( 'upgrader_process_complete', $nginx_helper_admin, 'nginx_helper_auto_purge_on_any_update', 10, 2 );
 		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'suggest_purge_after_update' );
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'dismiss_suggest_purge_after_update' );
+
+		// WooCommerce integration.
+		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
+
 	}
 
 	/**
