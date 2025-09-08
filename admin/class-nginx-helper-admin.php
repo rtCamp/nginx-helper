@@ -1027,6 +1027,13 @@ class Nginx_Helper_Admin {
 		}
 	}
 
+	/**
+	 * Purge product cache when a product is updated via REST API.
+	 *
+	 * @since 2.3.5
+	 * @global object $nginx_purger Nginx purger object.
+	 * @param int $product_id Product ID.
+	 */
 	public function purge_product_cache_on_update( $product_id ) {
 		global $nginx_purger;
 
