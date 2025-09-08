@@ -988,7 +988,7 @@ class Nginx_Helper_Admin {
 		add_action( 'woocommerce_reduce_order_stock', array( $this, 'purge_product_cache_on_purchase' ), 10, 1 );
 		add_action( 'woocommerce_update_product', array( $this, 'purge_product_cache_on_update' ), 10, 1 );
 	}
-	
+
 	/**
 	 * Purge product cache when order stock is reduced (purchase).
 	 *
