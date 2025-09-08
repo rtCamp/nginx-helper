@@ -236,11 +236,6 @@ class Nginx_Helper {
 		// add action to update purge caps.
 		$this->loader->add_action( 'update_site_option_rt_wp_nginx_helper_options', $nginx_helper_admin, 'nginx_helper_update_role_caps' );
 
-		// advance purge settings.
-		$this->loader->add_action( 'upgrader_process_complete', $nginx_helper_admin, 'nginx_helper_auto_purge_on_any_update', 10, 2 );
-		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'suggest_purge_after_update' );
-		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'dismiss_suggest_purge_after_update' );
-
 		// WooCommerce integration.
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
 
