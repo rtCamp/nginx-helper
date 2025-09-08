@@ -1037,6 +1037,10 @@ class Nginx_Helper_Admin {
 	public function purge_product_cache_on_update( $product_id ) {
 		global $nginx_purger;
 
+		if ( empty( $nginx_purger ) ) { 
+			return; 
+		}
+
 		if ( ! $this->options['enable_purge'] ) {
 			return;
 		}
