@@ -49,8 +49,7 @@ $args = array(
 	'purge_amp_urls',
 	'preload_cache',
 	'roles_with_purge_cap',
-	'purge_woo_products',
-	'purge_woo_rest'
+	'purge_woo_products'
 );
 
 $all_inputs = array();
@@ -1024,15 +1023,7 @@ if ( is_multisite() ) {
 						<td>
 							<input type="checkbox" value="1" id="purge_woo_products" name="purge_woo_products" <?php checked( $nginx_helper_settings['purge_woo_products'] ?? 0, 1 ); ?> />
 							<label for="purge_woo_products">
-								<?php esc_html_e( 'Purge product cache on stock change or purchase', 'nginx-helper' ); ?>
-							</label>
-						</td>
-					</tr>
-					<tr valign="top">
-						<td>
-							<input type="checkbox" value="1" id="purge_woo_rest" name="purge_woo_rest" <?php checked( $nginx_helper_settings['purge_woo_rest'] ?? 0, 1 ); ?> />
-							<label for="purge_woo_rest">
-								<?php esc_html_e( 'Enable product cache purge via REST API updates', 'nginx-helper' ); ?>
+								<?php esc_html_e( 'Purge product cache on stock change or purchase or REST API update', 'nginx-helper' ); ?>
 							</label>
 						</td>
 					</tr>

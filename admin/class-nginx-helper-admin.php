@@ -295,7 +295,6 @@ class Nginx_Helper_Admin {
 			'is_cache_preloaded'               => 0,
 			'roles_with_purge_cap'             => array(),
 			'purge_woo_products'               => 0,
-			'purge_woo_rest'				   => 0,
 		);
 	
 	}
@@ -982,19 +981,12 @@ class Nginx_Helper_Admin {
 	 * @since 2.3.5
 	 */
 	public function init_woocommerce_hooks() {
-		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) || empty( $this->options['purge_woo_products'] ) ) {
 			return;
 		}
 	
-		// Purge on purchase (stock reduction).
-		if ( ! empty( $this->options['purge_woo_products'] ) ) {
-			add_action( 'woocommerce_reduce_order_stock', array( $this, 'purge_product_cache_on_purchase' ), 10, 1 );
-		}
-	
-		// Purge on product update (Admin, REST, programmatic).
-		if ( ! empty( $this->options['purge_woo_rest'] ) ) {
-			add_action( 'woocommerce_update_product', array( $this, 'purge_product_cache_on_update' ), 10, 1 );
-		}
+		add_action( 'woocommerce_reduce_order_stock', array( $this, 'purge_product_cache_on_purchase' ), 10, 1 );
+		add_action( 'woocommerce_update_product', array( $this, 'purge_product_cache_on_update' ), 10, 1 );
 	}
 	
 
