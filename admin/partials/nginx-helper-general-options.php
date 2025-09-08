@@ -49,6 +49,7 @@ $args = array(
 	'purge_amp_urls',
 	'preload_cache',
 	'roles_with_purge_cap',
+	'purge_woo_products'
 );
 
 $all_inputs = array();
@@ -1011,6 +1012,25 @@ if ( is_multisite() ) {
 			</table>
 		</div> <!-- End of .inside -->
 	</div>
+	<?php if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) : ?>
+		<div class="postbox enable_purge"<?php echo empty( $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
+			<h3 class="hndle">
+				<span><?php esc_html_e( 'WooCommerce Options', 'nginx-helper' ); ?></span>
+			</h3>
+			<div class="inside">
+				<table class="form-table">
+					<tr valign="top">
+						<td>
+							<input type="checkbox" value="1" id="purge_woo_products" name="purge_woo_products" <?php checked( $nginx_helper_settings['purge_woo_products'] ?? 0, 1 ); ?> />
+							<label for="purge_woo_products">
+								<?php esc_html_e( 'Purge product cache on stock change or purchase', 'nginx-helper' ); ?>
+							</label>
+						</td>
+					</tr>
+				</table>
+			</div> <!-- End of .inside -->
+		</div>
+	<?php endif; ?>
 	<input type="hidden" name="smart_http_expire_form_nonce" value="<?php echo esc_attr( wp_create_nonce( 'smart-http-expire-form-nonce' ) ); ?>" />
 	<?php
 		submit_button( __( 'Save All Changes', 'nginx-helper' ), 'primary large', 'smart_http_expire_save', true );

@@ -235,6 +235,10 @@ class Nginx_Helper {
 
 		// add action to update purge caps.
 		$this->loader->add_action( 'update_site_option_rt_wp_nginx_helper_options', $nginx_helper_admin, 'nginx_helper_update_role_caps' );
+
+		// WooCommerce integration.
+		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
+
 	}
 
 	/**
