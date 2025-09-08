@@ -105,7 +105,7 @@ If enabled, cache for purchased products or products updated via REST API will b
 To use it:
 
 1. Go to Nginx Helper → Settings → WooCommerce Options.
-2. Tick “Purge product cache on product updates”.
+2. Tick “Purge product cache on updates”.
 
 This ensures customers always see up-to-date stock status and product information without stale cache.
 
