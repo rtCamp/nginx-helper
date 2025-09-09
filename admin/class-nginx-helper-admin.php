@@ -1061,6 +1061,7 @@ class Nginx_Helper_Admin {
 		}
 
 		add_action( 'woocommerce_reduce_order_stock', array( $this, 'purge_product_cache_on_purchase' ), 10, 1 );
+		add_action( 'woocommerce_update_product', array( $this, 'purge_product_cache_on_update' ), 10, 1 );
 	}
 
 	/**
@@ -1100,4 +1101,32 @@ class Nginx_Helper_Admin {
 			}
 		}
 	}
+
+	/**
+	 * Purge product cache when a product is updated via REST API.
+	 *
+	 * @since 2.3.5
+	 * @global object $nginx_purger Nginx purger object.
+	 * @param int $product_id Product ID.
+	 */
+	public function purge_product_cache_on_update( $product_id ) {
+		global $nginx_purger;
+
+		if ( empty( $nginx_purger ) ) { 
+			return; 
+		}
+
+		if ( ! $this->options['enable_purge'] ) {
+			return;
+		}
+	
+		$nginx_purger->log( 'WooCommerce product update - purging cache for product ID: ' . $product_id );
+	
+		$product_url = get_permalink( $product_id );
+	
+		if ( $product_url ) {
+			$nginx_purger->purge_url( $product_url );
+		}
+	}
+	
 }

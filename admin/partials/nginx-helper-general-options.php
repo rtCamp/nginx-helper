@@ -1062,7 +1062,7 @@ if ( is_multisite() ) {
 						<td>
 							<input type="checkbox" value="1" id="purge_woo_products" name="purge_woo_products" <?php checked( $nginx_helper_settings['purge_woo_products'] ?? 0, 1 ); ?> />
 							<label for="purge_woo_products">
-								<?php esc_html_e( 'Purge product cache on stock change or purchase', 'nginx-helper' ); ?>
+								<?php esc_html_e( 'Purge product cache on updates', 'nginx-helper' ); ?>
 							</label>
 						</td>
 					</tr>
