@@ -252,6 +252,7 @@ class Nginx_Helper {
 
 		// WooCommerce integration.
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
+		
 	}
 
 	/**
