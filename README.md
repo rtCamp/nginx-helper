@@ -76,6 +76,16 @@ Replace the path with your own.
 
 Yes. It handles all post-types the same way.
 
+**Q. How can I purge cache automatically after WordPress/plugin/theme updates?**
+
+By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
+If you want this behavior, you can enable it using a filter:
+
+`add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );`
+
+Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.  
+If left disabled (default), Nginx Helper will instead show an admin notice after updates, reminding you to purge cache manually.
+
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
 
 Manually purging any page from the cache, by following instructions in the previous answer.
