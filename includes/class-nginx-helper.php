@@ -89,6 +89,15 @@ class Nginx_Helper {
 			define( 'RT_WP_NGINX_HELPER_CACHE_PATH', $cache_path  );
 		}
 
+		/**
+		 * Flag to automatically purge Nginx cache on any WordPress update (core, plugin, theme).
+		 * Set to true to enable auto-purge; false to disable.
+		 */
+		if ( ! defined( 'NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE' ) ) {
+			$enabled = (bool) apply_filters( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', false );
+			define( 'NGINX_HELPER_AUTO_PURGE_ON_ANY_UPDATE', $enabled );
+		}
+
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
@@ -236,9 +245,13 @@ class Nginx_Helper {
 		// add action to update purge caps.
 		$this->loader->add_action( 'update_site_option_rt_wp_nginx_helper_options', $nginx_helper_admin, 'nginx_helper_update_role_caps' );
 
+		// advance purge settings.
+		$this->loader->add_action( 'upgrader_process_complete', $nginx_helper_admin, 'nginx_helper_auto_purge_on_any_update', 10, 2 );
+		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'suggest_purge_after_update' );
+		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'dismiss_suggest_purge_after_update' );
+
 		// WooCommerce integration.
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
-
 	}
 
 	/**
