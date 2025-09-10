@@ -116,14 +116,14 @@ Yes. When setting the URL structure in Nginx configuration file a trailing slash
 **Q. How can I automatically purge cache when WooCommerce product stock reduces after purchase?**
 
 Nginx Helper now includes optional WooCommerce integration.
-If enabled, cache for purchased products will be purged automatically whenever stock is reduced after an order.
+If enabled, cache for purchased products or products updated via REST API will be purged automatically.
 
 To use it:
 
 1. Go to Nginx Helper → Settings → WooCommerce Options.
-2. Tick “Purge product cache on stock change or purchase”.
+2. Tick “Purge product cache on updates”.
 
-This ensures customers always see up-to-date stock status without stale cache.
+This ensures customers always see up-to-date stock status and product information without stale cache.
 
 Note: This option will only be visible if WooCommerce is active.
 
