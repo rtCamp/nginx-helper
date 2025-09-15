@@ -12,6 +12,9 @@
  * @subpackage nginx-helper/includes
  */
 
+use EasyCache\Cloudflare_Purger;
+use EasyCache\CloudFlare_Tag_Emitter;
+
 /**
  * The core plugin class.
  *
@@ -253,6 +256,39 @@ class Nginx_Helper {
 		// WooCommerce integration.
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
 
+		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
+			$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'cf_page_rule_save_display_admin_notices' );
+			$this->loader->add_filter( 'wp_headers', $this, 'handle_cloudflare_headers', 999 );
+			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_purge', 100 );
+			$this->loader->add_action( 'wp_ajax_ec_clear_url_cache', $nginx_helper_admin, 'handle_cloudflare_clear_cache_ajax' );
+
+			// Add the cache tags.
+			$this->loader->add_filter( 'wp', CloudFlare_Tag_Emitter::get_instance(), 'action_wp' );
+			$this->loader->add_action( 'rest_api_init', CloudFlare_Tag_Emitter::get_instance(), 'action_rest_api_init' );
+			$this->loader->add_filter( 'rest_pre_dispatch', CloudFlare_Tag_Emitter::get_instance(), 'filter_rest_pre_dispatch', 10, 3 );
+			$this->loader->add_filter( 'rest_post_dispatch', CloudFlare_Tag_Emitter::get_instance(), 'filter_rest_post_dispatch', 10, 2 );
+			$this->loader->add_filter( 'graphql_dataloader_get_model', CloudFlare_Tag_Emitter::get_instance(), 'filter_graphql_dataloader_get_model' );
+			$this->loader->add_filter( 'graphql_response_headers_to_send', CloudFlare_Tag_Emitter::get_instance(), 'filter_graphql_response_headers_to_send' );
+
+			/**
+			 * Clears cache tags when various modification behaviors are performed.
+			 */
+			$this->loader->add_action( 'wp_insert_post', Cloudflare_Purger::get_instance(), 'action_wp_insert_post', 10, 2 );
+			$this->loader->add_action( 'transition_post_status', Cloudflare_Purger::get_instance(), 'action_transition_post_status', 10, 3 );
+			$this->loader->add_action( 'before_delete_post', Cloudflare_Purger::get_instance(), 'action_before_delete_post' );
+			$this->loader->add_action( 'delete_attachment', Cloudflare_Purger::get_instance(), 'action_delete_attachment' );
+			$this->loader->add_action( 'clean_post_cache', Cloudflare_Purger::get_instance(), 'action_clean_post_cache' );
+			$this->loader->add_action( 'created_term', Cloudflare_Purger::get_instance(), 'action_created_term', 10, 3 );
+			$this->loader->add_action( 'edited_term', Cloudflare_Purger::get_instance(), 'action_edited_term' );
+			$this->loader->add_action( 'delete_term', Cloudflare_Purger::get_instance(), 'action_delete_term' );
+			$this->loader->add_action( 'clean_term_cache', Cloudflare_Purger::get_instance(), 'action_clean_term_cache' );
+			$this->loader->add_action( 'wp_insert_comment', Cloudflare_Purger::get_instance(), 'action_wp_insert_comment', 10, 2 );
+			$this->loader->add_action( 'transition_comment_status', Cloudflare_Purger::get_instance(), 'action_transition_comment_status', 10, 3 );
+			$this->loader->add_action( 'clean_comment_cache', Cloudflare_Purger::get_instance(), 'action_clean_comment_cache' );
+			$this->loader->add_action( 'clean_user_cache', Cloudflare_Purger::get_instance(), 'action_clean_user_cache' );
+			$this->loader->add_action( 'updated_option', Cloudflare_Purger::get_instance(), 'action_updated_option' );
+		}
+
 	}
 
 	/**
@@ -357,6 +393,56 @@ class Nginx_Helper {
 
 			update_option( 'nginx_helper_version', $this->get_version() );
 		}
+	}
+
+	/**
+	 * Manage the cache headers for Cloudflare.
+	 *
+	 * @param array $headers The headers of the site.
+	 * 
+	 * @return array The modified headers for cache.
+	 */
+	public function handle_cloudflare_headers( $headers ) {
+
+		// Defensively remove any Cache-Control or Expires headers set by the server or other plugins.
+		// This ensures our plugin has the final say.
+		if ( isset( $headers['Cache-Control'] ) ) {
+			unset( $headers['Cache-Control'] );
+		}
+		if ( isset( $headers['Expires'] ) ) {
+			unset( $headers['Expires'] );
+		}
+
+		// Conditions for NOT caching (logged-in, admin, search, etc.)
+		$do_not_cache = is_user_logged_in() || is_admin() || is_search() || is_404() || is_customize_preview();
+
+		// Also check for common dynamic cookies
+		if ( ! $do_not_cache && ! empty( $_COOKIE ) ) {
+			foreach ( array_keys( $_COOKIE ) as $cookie_key ) {
+				if ( strpos( $cookie_key, 'wordpress_logged_in' ) !== false || strpos( $cookie_key, 'woocommerce_items_in_cart' ) !== false ) {
+					$do_not_cache = true;
+					break;
+				}
+			}
+		}
+
+		if ( $do_not_cache ) {
+			// User is logged in or page is dynamic. Send explicit NO CACHE headers.
+			$headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0';
+			$headers['Pragma']        = 'no-cache'; // For legacy HTTP/1.0 compatibility
+			$headers['Expires']       = 'Wed, 11 Jan 1984 05:00:00 GMT'; // Date in the past
+		} else {
+			// Page is for an anonymous user and is cacheable.
+			$options = get_option( 'easycache_cf_settings' );
+			$ttl     = isset( $options['default_cache_ttl'] ) ? (int) $options['default_cache_ttl'] : 0;
+
+			if ( $ttl > 0 ) {
+				// Send CDN-friendly caching headers.
+				$headers['Cache-Control'] = 'public, max-age=0, s-maxage=' . $ttl;
+			}
+		}
+
+		return $headers;
 
 	}
 }

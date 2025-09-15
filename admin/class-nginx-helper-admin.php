@@ -9,6 +9,8 @@
  * @subpackage nginx-helper/admin
  */
 
+use EasyCache\Cloudflare_Client;
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -56,7 +58,16 @@ class Nginx_Helper_Admin {
 	 * @var      string[]    $options    Purge options.
 	 */
 	public $options;
-	
+
+	/**
+	 * Purge options.
+	 *
+	 * @since    2.0.0
+	 * @access   public
+	 * @var      string[] $options Cloudflare options.
+	 */
+	public $cf_options;
+
 	/**
 	 * WP-CLI Command.
 	 *
@@ -74,11 +85,12 @@ class Nginx_Helper_Admin {
 	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
-		
+
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
-		
-		$this->options = $this->nginx_helper_settings();
+
+		$this->options    = $this->nginx_helper_settings();
+		$this->cf_options = $this->get_cloudflare_settings();
 	}
 	
 	/**
@@ -86,22 +98,26 @@ class Nginx_Helper_Admin {
 	 * Required since i18n is used in the settings tab which can be invoked only after init hook since WordPress 6.7
 	 */
 	public function initialize_setting_tab() {
-		
+
 		/**
 		 * Define settings tabs
 		 */
 		$this->settings_tabs = apply_filters(
-			'rt_nginx_helper_settings_tabs',
-			array(
-				'general' => array(
-					'menu_title' => __( 'General', 'nginx-helper' ),
-					'menu_slug'  => 'general',
-				),
-				'support' => array(
-					'menu_title' => __( 'Support', 'nginx-helper' ),
-					'menu_slug'  => 'support',
-				),
-			)
+				'rt_nginx_helper_settings_tabs',
+				array(
+						'general'    => array(
+								'menu_title' => __( 'General', 'nginx-helper' ),
+								'menu_slug'  => 'general',
+						),
+						'support'    => array(
+								'menu_title' => __( 'Support', 'nginx-helper' ),
+								'menu_slug'  => 'support',
+						),
+						'cloudflare' => array(
+								'menu_title' => __( 'Cloudflare', 'nginx-helper' ),
+								'menu_slug'  => 'cloudflare',
+						),
+				)
 		);
 	}
 	
@@ -299,28 +315,81 @@ class Nginx_Helper_Admin {
 		);
 	
 	}
-    
-    public function store_default_options() {
-        $options = get_site_option( 'rt_wp_nginx_helper_options', array() );
-        $default_settings = $this->nginx_helper_default_settings();
-        
-        $removable_default_settings = array(
-            'redis_port',
-            'redis_prefix',
-            'redis_hostname',
-            'redis_database',
-            'redis_unix_socket'
-        );
-        
-        // Remove all the keys that are not to be stored by default.
-        foreach ( $removable_default_settings as $removable_key ) {
-            unset( $default_settings[ $removable_key ] );
-        }
-        
-        $diffed_options = wp_parse_args( $options, $default_settings );
-        
-        add_site_option( 'rt_wp_nginx_helper_options', $diffed_options );
-    }
+
+	public function store_default_options() {
+		$options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+		$default_settings = $this->nginx_helper_default_settings();
+		
+		$removable_default_settings = array(
+			'redis_port',
+			'redis_prefix',
+			'redis_hostname',
+			'redis_database',
+			'redis_unix_socket'
+		);
+		
+		// Remove all the keys that are not to be stored by default.
+		foreach ( $removable_default_settings as $removable_key ) {
+			unset( $default_settings[ $removable_key ] );
+		}
+		
+		$diffed_options = wp_parse_args( $options, $default_settings );
+		
+		add_site_option( 'rt_wp_nginx_helper_options', $diffed_options );
+
+		$this->store_cloudflare_settings();
+	}
+
+	/**
+	 * Gets the default settings for cloudflare.
+	 *
+	 * @return array An array of settings.
+	 */
+	public function get_cloudflare_default_settings() {
+		return array(
+			'api_token'                     => '',
+			'zone_id'                       => '',
+			'default_cache_ttl'             => 604800,
+			'api_token_enabled_by_constant' => false,
+		);
+	}
+
+	/**
+	 * Gets the current cloudflare settings.
+	 *
+	 * @return array The current settings.
+	 */
+	public function get_cloudflare_settings() {
+		$default_settings = $this->get_cloudflare_default_settings();
+
+		$stored_options = get_site_option( 'easycache_cf_settings', array() );
+
+		if ( defined( 'EASYCACHE_CLOUDFLARE_API_TOKEN' ) && !empty( EASYCACHE_CLOUDFLARE_API_TOKEN ) ) {
+			$stored_options['api_token']                     = EASYCACHE_CLOUDFLARE_API_TOKEN;
+			$stored_options['api_token_enabled_by_constant'] = true;
+		}
+
+		$diff_options = wp_parse_args( $stored_options, $default_settings );
+
+		$diff_options['is_enabled'] = ! empty( $diff_options['api_token'] ) && ! empty( $diff_options['zone_id'] );
+
+		return $diff_options;
+	}
+
+	/**
+	 * Stores the cloudflare settings.
+	 *
+	 * @return array The current settings.
+	 */
+	public function store_cloudflare_settings() {
+		$default_settings = $this->get_cloudflare_default_settings();
+
+		$stored_options = get_site_option( 'easycache_cf_settings', array() );
+
+		$diff_options = wp_parse_args( $stored_options, $default_settings );
+
+		add_site_option( 'easycache_cf_settings', $diff_options );
+	}
 
 	/**
 	 * Get settings.
@@ -365,7 +434,7 @@ class Nginx_Helper_Admin {
 		$data['cache_method']                     = 'enable_redis';
 		$data['redis_hostname']                   = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
 		$data['redis_port']                       = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']                      = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$data['redis_prefix']                     = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		$data['redis_database']                   = defined('RT_WP_NGINX_HELPER_REDIS_DATABASE') ? RT_WP_NGINX_HELPER_REDIS_DATABASE : 0;
 
 		return $data;
@@ -821,6 +890,10 @@ class Nginx_Helper_Admin {
 			do_action( 'rt_nginx_helper_after_purge_all' );
 			
 		}
+
+		if( $this->cf_options['is_enabled'] ) {
+			Cloudflare_Client::purgeEverything();
+		}
 		
 		wp_redirect( esc_url_raw( $redirect_url ) );
 		exit();
@@ -1128,5 +1201,107 @@ class Nginx_Helper_Admin {
 			$nginx_purger->purge_url( $product_url );
 		}
 	}
-	
+
+	/**
+	 * Handles the page rule update on Cloudflare tab.
+	 *
+	 * @return void
+	 */
+	public function handle_cf_page_rule_update() {
+		$nonce = isset( $_POST['easycache_add_page_rule_nonce'] ) ? wp_unslash( $_POST['easycache_add_page_rule_nonce'] ) : '';
+		if ( wp_verify_nonce( $nonce, 'easycache_add_page_rule_nonce' ) ) {
+			
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
+			$result = EasyCache\Cloudflare_Client::setupCacheEverythingPageRule();
+			if( $result ) {
+				set_transient( 'ec_page_rule_save_state_admin_notice', $result, 60 );
+			}
+		}
+	}
+
+	/**
+	 * Display admin notices for cloudflare page save rules.
+	 */
+	public function cf_page_rule_save_display_admin_notices() {
+		if ( $result = get_transient( 'ec_page_rule_save_state_admin_notice' ) ) {
+			$class   = 'notice';
+			$message = '';
+
+			switch ( $result ) {
+				case 'created':
+					$class   .= ' notice-success';
+					$message = __( 'The Cloudflare "Cache Everything" Page Rule was created successfully.', 'nginx-helper' );
+					break;
+				case 'exists':
+					$class   .= ' notice-info';
+					$message = __( 'The "Cache Everything" Page Rule already exists. No action was taken.', 'nginx-helper' );
+					break;
+				default:
+					$class   .= ' notice-error';
+					$message = __( 'Failed to create the Page Rule. Please check that your API Token has Page Rules Read/Write permissions.', 'nginx-helper' );
+					break;
+			}
+
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+			delete_transient( 'ec_page_rule_save_state_admin_notice' );
+		}
+	}
+
+	/**
+	 * Register a toolbar button to purge the cache for the current page.
+	 *
+	 * @param object $wp_admin_bar Instance of WP_Admin_Bar.
+	 */
+	public static function add_cloudflare_admin_bar_purge( $wp_admin_bar ) {
+		if ( is_admin() || ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( ! empty( $_GET['message'] ) && 'ec-cleared-url-cache' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$title = esc_html__( 'URL Cache Cleared', 'easycache' );
+		} else {
+			$title = esc_html__( 'Clear URL Cache', 'easycache' );
+		}
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( $_SERVER['REQUEST_URI'] ) : '';
+		$wp_admin_bar->add_menu( [
+			'parent' => '',
+			'id'     => 'clear-page-cache',
+			'title'  => $title,
+			'meta'   => [
+				'title' => __( 'Purge the current URL from Cloudflare cache.', 'easycache' ),
+			],
+			'href'   => wp_nonce_url( admin_url( 'admin-ajax.php?action=ec_clear_url_cache&path=' . rawurlencode( home_url( $request_uri ) ) ), 'ec-clear-url-cache' ),
+		] );
+	}
+
+	/**
+	 * Handle an admin-ajax request to clear the URL cache for Cloudflare.
+	 *
+	 * @return void
+	 */
+	public static function handle_cloudflare_clear_cache_ajax() {
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( $_GET['_wpnonce'] ) : '';
+		if ( empty( $nonce )
+			 || ! wp_verify_nonce( $nonce, 'ec-clear-url-cache' )
+			 || ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( "You shouldn't be doing this.", 'easycache' ) );
+		}
+
+		$path = isset( $_GET['path'] ) ? esc_url_raw( $_GET['path'] ) : '';
+		if ( empty( $path ) ) {
+			wp_die( esc_html__( 'No path provided.', 'easycache' ) );
+		}
+
+		$ret = Cloudflare_Client::purgeByUrls( [ $path ] );
+		if ( ! $ret ) {
+			wp_die( esc_html__( 'Failed to clear URL cache.', 'easycache' ) );
+		}
+
+		wp_safe_redirect( add_query_arg( 'message', 'ec-cleared-url-cache', $path ) );
+		exit;
+	}
 }
