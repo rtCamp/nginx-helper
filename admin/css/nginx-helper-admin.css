@@ -3,8 +3,19 @@
  * included in this file.
  */
 
+:root {
+	--green-color: green;
+	--faint-green-color: #20c420;
+	--extra-light-green-color: #c9ffc9;
+	--white-color: #fff;
+	--off-white: #f2f2f2;
+	--whitish-gray: #d2d2d2;
+	--shadow-black: #00000033;
+	--nav-black: #1d2327;
+}
 .clearfix {
 	zoom: 1;
+	margin-top: 15px;
 }
 .clearfix:before,
 .clearfix:after {
@@ -52,7 +63,10 @@ form#purgeall .button-primary {
 	border-radius: 5px;
 	color: #FFF;
 	background: #DD3D36;
-	height: auto;
+	width: 100%;
+	text-align: center;
+	height: 75px;
+	align-content: center;
 }
 form#purgeall .button-primary:hover,
 form#purgeall .button-primary:focus {
@@ -117,4 +131,193 @@ form#purgeall .button-primary:focus {
 
 .password-wrapper {
 	display: flex;
+}
+
+.rt-nginx-wrapper h2.nav-tab-wrapper {
+	display: flex;
+	gap: 12px;
+	border: unset;
+	background: var(--white-color);
+}
+
+#poststuff h2 {
+	padding: 20px;
+	border-radius: 15px;
+	margin-bottom: 10px;
+}
+
+.nav-tab {
+	cursor: pointer;
+	font-size: 1.18rem;
+	white-space: nowrap;
+	background: var(--extra-light-green-color);
+	padding: 13px 20px;
+	box-shadow: unset;
+	border-radius: 30px;
+	color: var(--green-color);
+	text-decoration: none;
+	border: unset;
+}
+.nav-tab:hover {
+	background: var(--faint-green-color);
+	color: var(--white-color);
+}
+
+.nav-tab-active {
+	color: var(--white-color);
+	background: var(--green-color);
+	border-color: transparent;
+}
+
+.rt-setting-section{
+	margin: auto;
+	display: flex;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+#post-body-content {
+	width: 54%;
+	scroll-behavior: smooth;
+}
+
+#postbox-container-1.postbox-container {
+	margin: 0 15px 15px 15px;
+	width: 25%;
+}
+
+.table-of-content {
+	width: 13%;
+	padding: 15px 0;
+	padding-left: 10px;
+	background-color: var(--white-color);
+	margin: 15px;
+	border-radius: 25px;
+}
+
+nav a {
+	color: var(--nav-black);
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.nav-active a {
+	color: var(--green-color);
+	border-left: 3px solid var(--green-color);
+}
+
+.fixed {
+	top: 60px;
+	position: sticky;
+}
+
+
+.inner-toc {
+	margin-left: 20px;
+}
+
+.outer-toc {
+	font-weight: 700;
+}
+
+.rt-switch, input[type="checkbox"]:disabled.rt-switch {
+	position: absolute;
+	width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.rt-switch + label {
+	position: relative;
+	display: inline-block;
+	width: 42px;
+	height: 20px;
+	background: var(--off-white);
+	border-radius: 25px;
+	border: 3px solid var(--whitish-gray);
+	cursor: pointer;
+	transition: 0.2s;
+	transform: scale(0.8);
+}
+
+input[type="checkbox"]:disabled.rt-switch + label {
+	opacity: 0.3;
+}
+
+.rt-switch + label:after {
+	content: "";
+	width: 16px;
+	height: 16px;
+	background: var(--white-color);
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+	border-radius: 50%;
+	transition: 0.5s;
+	box-shadow: 1px 0 5px -1px var(--shadow-black);
+}
+
+.rt-switch:checked + label {
+	background: var(--green-color);
+	border-color: var(--faint-green-color);
+}
+
+
+.rt-switch:checked + label:after {
+	left: 22px;
+	box-shadow: -1px 0 5px -1px var(--shadow-black);
+}
+
+.rt-setting-section .rt-submit {
+	background: var(--green-color);
+	color: var(--white-color);
+	border-radius: 5px;
+	width: 150px;
+	height: 45px;
+	border: none;
+	font-size: 15px;
+}
+
+.rt-setting-section .rt-submit:hover {
+	background: var(--extra-light-green-color);
+	color: var(--green-color);
+}
+
+.postbox {
+	border-radius: 10px;
+}
+
+input[type="radio"] {
+	height: 24px;
+	width: 24px;
+}
+
+input[type="radio"]:checked::before {
+	width: 10px;
+	height: 10px;
+	border: 3px solid var(--faint-green-color);
+	background-color: var(--green-color);
+}
+
+.nav-tab-disabled {
+	pointer-events:none;
+	opacity:0.5;
+}
+
+.hide-toc {
+	display: none;
+}
+
+.support-postbox {
+	margin-top: 15px;
+}
+
+.purging-tab-form {
+	height: 260vh;
 }

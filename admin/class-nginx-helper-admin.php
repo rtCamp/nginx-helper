@@ -97,6 +97,14 @@ class Nginx_Helper_Admin {
 					'menu_title' => __( 'General', 'nginx-helper' ),
 					'menu_slug'  => 'general',
 				),
+				'purging' => array(
+					'menu_title' => __( 'Purging', 'nginx-helper' ),
+					'menu_slug'  => 'purging',
+				),
+				'logging_tools' => array(
+					'menu_title' => __( 'Logging & Tools', 'nginx-helper' ),
+					'menu_slug'  => 'logging_tools',
+				),
 				'support' => array(
 					'menu_title' => __( 'Support', 'nginx-helper' ),
 					'menu_slug'  => 'support',
@@ -166,6 +174,8 @@ class Nginx_Helper_Admin {
 			'purge_confirm_string' => esc_html__( 'Purging entire cache is not recommended. Would you like to continue?', 'nginx-helper' ),
 		);
 		wp_localize_script( $this->plugin_name, 'nginx_helper', $do_localize );
+
+		wp_enqueue_script( $this->plugin_name . 'extras', plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin-extra.js', array( 'jquery' ), $this->version, true );
 		
 	}
 	

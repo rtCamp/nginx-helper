@@ -13,24 +13,24 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<div class="postbox">
-	<h3 class="hndle">
+<div class="postbox support-postbox">
+	<h3 class="hndle" id="support_forum">
 		<span><?php esc_html_e( 'Support Forums', 'nginx-helper' ); ?></span>
 	</h3>
 	<div class="inside">
 		<table class="form-table">
 			<tr valign="top">
-				<th>
+				<th id="free_support">
 					<?php esc_html_e( 'Free Support', 'nginx-helper' ); ?>
 				</th>
-				<td>
+				<td id="free_support">
 					<a href="https://community.easyengine.io/c/wordpress-nginx/" title="<?php esc_attr_e( 'Free Support Forum', 'nginx-helper' ); ?>" target="_blank">
 						<?php esc_html_e( 'Link to forum', 'nginx-helper' ); ?>
 					</a>
 				</td>
 			</tr>
 			<tr valign="top">
-				<th>
+				<th id="premium_support">
 					<?php esc_html_e( 'Premium Support', 'nginx-helper' ); ?>
 				</th>
 				<td>
