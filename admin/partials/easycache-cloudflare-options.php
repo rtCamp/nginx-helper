@@ -57,7 +57,7 @@ $ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
 			<?php wp_nonce_field( 'easycache_cf_settings_nonce', 'easycache_cf_settings_nonce' ); ?>
 			<input type="hidden" value="1" name="easycache_settings_save"/>
 			<div class="postbox">
-				<h2 class="hndle"><?php esc_html_e( 'Cloudflare Settings', 'nginx-helper' ); ?></h2>
+				<h3 class="hndle"><?php esc_html_e( 'Cloudflare Settings', 'nginx-helper' ); ?></h3>
 				<div class="inside">
 					<table class="form-table rtnginx-table">
 						<tbody>
@@ -84,7 +84,7 @@ $ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
 									if ( $ec_site_settings['api_token_enabled_by_constant'] ) {
 										esc_html_e( 'Field enabled by constant.', 'nginx-helper' );
 									} else {
-										esc_html_e( 'Required permissions: Zone.Cache Purge.', 'nginx-helper' );
+										esc_html_e( 'Required permissions: Zone.Cache Purge, Zone.Cache Rules, Account.Account Rulesets.Edit,  Account.Account Filter Lists.Edit', 'nginx-helper' );
 									}
 									?>
 								</p>
