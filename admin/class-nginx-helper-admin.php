@@ -1207,15 +1207,16 @@ class Nginx_Helper_Admin {
 	 *
 	 * @return void
 	 */
-	public function handle_cf_page_rule_update() {
-		$nonce = isset( $_POST['easycache_add_page_rule_nonce'] ) ? wp_unslash( $_POST['easycache_add_page_rule_nonce'] ) : '';
-		if ( wp_verify_nonce( $nonce, 'easycache_add_page_rule_nonce' ) ) {
+	public function handle_cf_cache_rule_update() {
+		$nonce = isset( $_POST['easycache_add_cache_rule_nonce'] ) ? wp_unslash( $_POST['easycache_add_cache_rule_nonce'] ) : '';
+		
+		if ( wp_verify_nonce( $nonce, 'easycache_add_cache_rule_nonce' ) ) {
 			
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
 
-			$result = EasyCache\Cloudflare_Client::setupCacheEverythingPageRule();
+			$result = EasyCache\Cloudflare_Client::setupCacheRule();
 			if( $result ) {
 				set_transient( 'ec_page_rule_save_state_admin_notice', $result, 60 );
 			}

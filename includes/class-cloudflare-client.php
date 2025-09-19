@@ -10,8 +10,6 @@ namespace EasyCache;
 use Cloudflare\API\Auth\APIToken;
 use Cloudflare\API\Adapter\Guzzle;
 use Cloudflare\API\Endpoints\Zones;
-use Cloudflare\API\Endpoints\PageRules;
-use Cloudflare\API\Configurations\PageRules as PageRulesConfig;
 use Exception;
 
 /**
@@ -31,7 +29,9 @@ class Cloudflare_Client {
 			return false;
 		}
 
-		$options = get_option( 'easycache_cf_settings' );
+		global $nginx_helper_admin;
+
+		$options = $nginx_helper_admin->get_cloudflare_settings();
 		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
 		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
 
@@ -70,7 +70,9 @@ class Cloudflare_Client {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purgeEverything() {
-		$options = get_option( 'easycache_cf_settings' );
+		global $nginx_helper_admin;
+
+		$options = $nginx_helper_admin->get_cloudflare_settings();
 		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
 		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
 
@@ -115,7 +117,9 @@ class Cloudflare_Client {
 			return false;
 		}
 
-		$options = get_option( 'easycache_cf_settings' );
+		global $nginx_helper_admin;
+
+		$options = $nginx_helper_admin->get_cloudflare_settings();
 		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
 		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
 
@@ -149,57 +153,95 @@ class Cloudflare_Client {
 	}
 
 	/**
-	 * Sets up the "Cache Everything" Page Rule in Cloudflare.
+	 * Sets up the "Cache Rule" required to purge the edge cache.
 	 *
 	 * @return string|false 'created', 'exists', or false on failure.
 	 */
-	public static function setupCacheEverythingPageRule() {
-		$options = get_option( 'easycache_cf_settings' );
+	public static function setupCacheRule() {
+		global $nginx_helper_admin;
+
+		if ( ! $nginx_helper_admin ) {
+			return;
+		}
+
+		$options = $nginx_helper_admin->get_cloudflare_settings();
+
 		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
 		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
 
 		if ( empty( $token ) || empty( $zone_id ) ) {
 			error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
-
 			return false;
 		}
 
 		try {
 			$key       = new APIToken( $token );
 			$adapter   = new Guzzle( $key );
-			$pageRules = new PageRules( $adapter );
 
-			$rules    = $pageRules->listPageRules( $zone_id );
-			$rule_url = home_url() . '/*';
+			$rulesets_response = $adapter->get( sprintf( "zones/%s/rulesets", $zone_id ) );
+			$raw_existing_response    = $rulesets_response->getBody() ?? [];
+			$cache_ruleset_id  = null;
 
-			foreach ( $rules->result as $rule ) {
-				if ( ! empty( $rule->targets ) ) {
-					foreach ( $rule->targets as $target ) {
-						if ( $target->target === 'url' && $target->constraint->operator === 'matches' && $target->constraint->value === $rule_url ) {
-							if ( ! empty( $rule->actions ) ) {
-								foreach ( $rule->actions as $action ) {
-									if ( $action->id === 'cache_level' && $action->value === 'cache_everything' ) {
-										return 'exists';
-									}
-								}
-							}
-						}
-					}
+			$existing_rules = json_decode( $raw_existing_response, true );
+
+			if( ! array_key_exists( 'result', $existing_rules ) ) {
+				return false;
+			}
+
+			$existing_rules = $existing_rules['result'];
+			
+			foreach ( $existing_rules as $ruleset ) {
+				if ( 'http_request_cache_settings' === $ruleset['phase']  && 
+					isset( $ruleset['name'] ) && 'nginx_helper_cache_ruleset' === $ruleset['name'] ) {
+					return 'exists';
+				}
+				
+				if ( 'http_request_cache_settings' === $ruleset['phase'] && $cache_ruleset_id === null ) {
+					$cache_ruleset_id = $ruleset->id;
 				}
 			}
 
-			$config = new PageRulesConfig( $rule_url, 'cache_everything' );
-			$config->setPriority( 1 );
+			$site_url = get_site_url();
 
-			if ( $pageRules->createPageRule( $zone_id, $config ) ) {
-				return 'created';
+			$ruleset = array(
+				'kind'        => 'zone',
+				'name'        => 'nginx_helper_cache_ruleset',
+				'phase'       => 'http_request_cache_settings',
+				'description' => 'Determines cache serve.',
+				'rules'       => [
+					[
+						'expression'        => "(http.request.full_uri wildcard \"". $site_url ."/*\" and not http.cookie contains \"wordpress_logged\" and not http.cookie contains \"NO_CACHE\" and not http.cookie contains \"S+ESS\" and not http.cookie contains \"fbs\" and not http.cookie contains \"SimpleSAML\" and not http.cookie contains \"PHPSESSID\" and not http.cookie contains \"wordpress\" and not http.cookie contains \"wp-\" and not http.cookie contains \"comment_author_\" and not http.cookie contains \"duo_wordpress_auth_cookie\" and not http.cookie contains \"duo_secure_wordpress_auth_cookie\" and not http.cookie contains \"bp_completed_create_steps\" and not http.cookie contains \"bp_new_group_id\" and not http.cookie contains \"wp-resetpass-\" and not http.cookie contains \"woocommerce\" and not http.cookie contains \"amazon_Login_\")",
+						'action'            => 'set_cache_settings',
+						'action_parameters' => [
+							'cache'       => true,
+							'edge_ttl'    => [
+								'mode'    => 'override_origin',
+								'default' => 3600
+							],
+							'browser_ttl' => [
+								'mode'    => 'override_origin',
+								'default' => 1800
+							]
+						]
+					]
+				]
+			);
+
+			if ( $cache_ruleset_id === null ) {
+				$ruleset_resp = $adapter->post( sprintf( 'zones/%s/rulesets', $zone_id ), $ruleset );
+			} else {
+				$ruleset_resp = $adapter->put( sprintf( 'zones/%s/rulesets/%s', $zone_id, $cache_ruleset_id ), array( 'rules' => $ruleset ) );
 			}
 
-			return false;
+			if ( isset( $ruleset_resp->success ) && $ruleset_resp->success ) {
+				return 'created';
+			} else {
+				error_log( 'Advanced Cloudflare Cache: Failed to create/update cache rule. Response: ' . json_encode( $ruleset_resp ) );
+				return false;
+			}
 
 		} catch ( Exception $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when setting up Page Rule: ' . $e->getMessage() );
-
+			error_log( 'Advanced Cloudflare Cache: Exception when setting up Cache Rule: ' . $e->getMessage() );
 			return false;
 		}
 	}

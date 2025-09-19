@@ -43,6 +43,11 @@ if ( isset( $all_inputs['easycache_settings_save'] ) && isset( $all_inputs['easy
 	echo '<div class="updated"><p>' . esc_html__( 'Settings saved.', 'nginx-helper' ) . '</p></div>';
 }
 
+if( isset( $nginx_helper_admin ) && method_exists( $nginx_helper_admin, 'handle_cf_cache_rule_update' ) ) {
+	$nginx_helper_admin->handle_cf_cache_rule_update();
+	
+}
+
 
 $ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
 ?>
@@ -128,6 +133,14 @@ $ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
 <?php
 if ( $ec_site_settings['is_enabled'] ) {
 	?>
+	<form name="easycache_add_cache_rule" method="POST" >
+		<?php
+			wp_nonce_field( 'easycache_add_cache_rule_nonce', 'easycache_add_cache_rule_nonce' );
+			submit_button( __( 'Setup Cache Rules', 'nginx-helper' ), 'secondary large', 'easycache_add_cache_rule_save', false );
+		?>
+
+	</form>
+	
 	<?php
 }
 ?>
