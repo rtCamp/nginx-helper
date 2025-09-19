@@ -207,7 +207,7 @@ class Cloudflare_Client {
 				'kind'        => 'zone',
 				'name'        => 'nginx_helper_cache_ruleset',
 				'phase'       => 'http_request_cache_settings',
-				'description' => 'Determines cache serve.',
+				'description' => 'Set\'s the edge cache rules by Nginx Helper Plugin. ',
 				'rules'       => [
 					[
 						'expression'        => "(http.request.full_uri wildcard \"". $site_url ."/*\" and not http.cookie contains \"wordpress_logged\" and not http.cookie contains \"NO_CACHE\" and not http.cookie contains \"S+ESS\" and not http.cookie contains \"fbs\" and not http.cookie contains \"SimpleSAML\" and not http.cookie contains \"PHPSESSID\" and not http.cookie contains \"wordpress\" and not http.cookie contains \"wp-\" and not http.cookie contains \"comment_author_\" and not http.cookie contains \"duo_wordpress_auth_cookie\" and not http.cookie contains \"duo_secure_wordpress_auth_cookie\" and not http.cookie contains \"bp_completed_create_steps\" and not http.cookie contains \"bp_new_group_id\" and not http.cookie contains \"wp-resetpass-\" and not http.cookie contains \"woocommerce\" and not http.cookie contains \"amazon_Login_\")",
