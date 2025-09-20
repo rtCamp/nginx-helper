@@ -29,9 +29,23 @@ class Nginx_Helper_Deactivator {
 
 		wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
 
-		$role = get_role( 'administrator' );
-		$role->remove_cap( 'Nginx Helper | Config' );
-		$role->remove_cap( 'Nginx Helper | Purge cache' );
+		$purge_cap = 'Nginx Helper | Purge cache';
+		$all_roles = wp_roles()->get_names();
+
+		foreach ( $all_roles as $role_key => $role_name ) {
+			$role = get_role( $role_key );
+
+			if ( ! $role ) {
+				continue;
+			}
+
+			if ( 'administrator' === $role_key ) {
+				$role->remove_cap( 'Nginx Helper | Config' );
+			}
+			$role->remove_cap( $purge_cap );
+		}
+
+		delete_option( 'nginx_helper_version' );
 
 	}
 

@@ -1,12 +1,13 @@
 === Nginx Helper ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, vincent-lu, murrayjbrown, bryant1410, 1gor, matt-h, pySilver, johan-chassaing, dotsam, sanketio, petenelson, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, Joel-James, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, ravanh, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason
+Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47
 Donate Link: http://rt.cx/eedonate/
-Tags: nginx, cache, purge, nginx map, nginx cache, maps, fastcgi, proxy, redis, redis-cache, rewrite, permalinks
+Tags: nginx, cache-purge, fastcgi, permalinks, redis-cache
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
-Tested up to: 6.1
-Stable tag: 2.2.5
+Tested up to: 6.8
+Stable tag: 2.3.5
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -68,6 +69,16 @@ Replace the path with your own.
 
 Yes. It handles all post-types the same way.
 
+**Q. How can I purge cache automatically after WordPress/plugin/theme updates?**
+
+By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
+If you want this behavior, you can enable it using a filter:
+
+`add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );`
+
+Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.  
+If left disabled (default), Nginx Helper will instead show an admin notice after updates, reminding you to purge cache manually.
+
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
 
 Manually purging any page from the cache, by following instructions in the previous answer.
@@ -92,6 +103,24 @@ To purge a page immediately, follow these instructions:
 * Just open this in a browser and the page will be purged instantly.
 * Needless to say, this won't work, if you have a page or taxonomy called 'purge'.
 
+**Q. Does it need any kind of URL structure?**
+
+Yes. When setting the URL structure in Nginx configuration file a trailing slash should always be added.
+
+**Q. How can I automatically purge cache when WooCommerce product stock reduces after purchase?**
+
+Nginx Helper now includes optional WooCommerce integration.
+If enabled, cache for purchased products or products updated via REST API will be purged automatically.
+
+To use it:
+
+1. Go to Nginx Helper → Settings → WooCommerce Options.
+2. Tick “Purge product cache on updates”.
+
+This ensures customers always see up-to-date stock status and product information without stale cache.
+
+Note: This option will only be visible if WooCommerce is active.
+
 = FAQ - Nginx Redis Cache =
 
 **Q. Can I override the redis hostname, port and prefix?**
@@ -106,6 +135,18 @@ define('RT_WP_NGINX_HELPER_REDIS_PORT', '6000');
 define('RT_WP_NGINX_HELPER_REDIS_PREFIX', 'page-cache:');
 ```
 
+**Q. Can I override the redis socket path, username, password?**
+
+Yes, you can force override the redis socket path, username, password by defining constant in wp-config.php. For example:
+
+```php
+define( 'RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET', '/var/run/redis/redis.sock' );
+
+define( 'RT_WP_NGINX_HELPER_REDIS_USERNAME', 'admin' );
+
+define( 'RT_WP_NGINX_HELPER_REDIS_PASSWORD', 'admin' );
+```
+
 = FAQ - Nginx Map =
 
 **Q. My multisite already uses `WPMU_ACCEL_REDIRECT`. Do I still need Nginx Map?**
@@ -117,6 +158,14 @@ Definitely. `WPMU_ACCEL_REDIRECT` reduces the load on PHP, but it still ask Word
 Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod, should work on Nginx. Some plugin may need some extra work.
 
 
+= FAQ - WP-CLI =
+
+**Q. How can I update the options using WP-CLI?**
+
+```shell
+wp option patch update rt_wp_nginx_helper_options <option_name> <option_value>
+```
+
 = Still need help! =
 
 Please post your problem in [our free support forum](https://github.com/rtCamp/nginx-helper/issues).
@@ -126,6 +175,47 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 2. Remaining settings
 
 == Changelog ==
+
+= 2.3.5 =
+
+* Purge not working. [#Issue](https://wordpress.org/support/topic/purge-not-working-7/) - by [tjalexander70](https://profiles.wordpress.org/tjalexander70/), [mrrobot47](https://github.com/mrrobot47)
+
+
+= 2.3.4 =
+
+* Cannot uncheck Purge Homephae options. [#Issue](https://wordpress.org/support/topic/cannot-uncheck-purge-homephae-options/) - by [diepbui4157](https://profiles.wordpress.org/diepbui4157/)
+* FastCGI cache purge fails if not using trailing slashes in URI structure. [#Issue](https://wordpress.org/support/topic/fastcgi-cache-purge-fails-if-not-using-trailing-slashes-in-uri-structure/) - by [agvs](https://profiles.wordpress.org/agvs/), [Vedant-Gandhi](https://github.com/Vedant-Gandhi)
+* What's _purge_personal_urls() for?. [#Issue](https://wordpress.org/support/topic/whats-_purge_personal_urls-for/) - by [Rolf Allard van Hagen](https://profiles.wordpress.org/ravanh/), [pratik-londhe4](https://github.com/pratik-londhe4)
+* Broken link in the useful links section. [#358](https://github.com/rtCamp/nginx-helper/issues/358) - by [diepbui4157](https://profiles.wordpress.org/diepbui4157/), [pratik-londhe4](https://github.com/rtCamp/pratiklondhe4)
+* Small issues with translatable strings. [#348](https://github.com/rtCamp/nginx-helper/issues/348) - by [webdados](https://github.com/webdados)
+* New filter for RT_WP_NGINX_HELPER_CACHE_PATH default constant value. [#298](https://github.com/rtCamp/nginx-helper/issues/298) - by [SGr33n](https://github.com/SGr33n), [Vedant-Gandhi](https://github.com/Vedant-Gandhi)
+* PURGUE FOR EDITOR. [#243](https://github.com/rtCamp/nginx-helper/issues/243) - by [ghost](https://github.com/ghost), [pratik-londhe4](https://github.com/pratik-londhe4)
+
+
+= 2.3.3 =
+
+* Fix AMP Purge for method unlink. [#396](https://github.com/rtCamp/nginx-helper/issues/343) - by [Stefan Fisk](https://github.com/stefanfisk)
+
+
+= 2.3.2 =
+
+* Update the contributors list for the plugin. [#343](https://github.com/rtCamp/nginx-helper/issues/343) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+
+
+= 2.3.1 =
+
+* Update the contributors list and tags for the plugin. [#378](https://github.com/rtCamp/nginx-helper/issues/378) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+
+
+= 2.3.0 =
+
+* Disable the purge functionality when importing data. [#52](https://github.com/rtCamp/nginx-helper/pull/52) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Added option to preload cache for all Post and Pages. [#47](https://github.com/rtCamp/nginx-helper/pull/47) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Added the capability to purge Amp URL's. [#135](https://github.com/rtCamp/nginx-helper/pull/135) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Add support for adding Username, Password support for Redis. It also includes the support for Unix Socket Path for Redis along with Database selection. [#343](https://github.com/rtCamp/nginx-helper/pull/343),[#350](https://github.com/rtCamp/nginx-helper/pull/350) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Add capability to allow modifying options using WP-CLI. [#307](https://github.com/rtCamp/nginx-helper/pull/307) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+* Fix the plugin crash issue due to internationalization after upgrading to WordPress Version 6.7. [#364](https://github.com/rtCamp/nginx-helper/pull/364) - by [Vedant Gandhi](https://github.com/Vedant-Gandhi)
+
 
 = 2.2.5 =
 * Add the capability to enable/disable purging of feeds. [#281](https://github.com/rtCamp/nginx-helper/issues/281) - by [Amaan Khan](https://github.com/pathan-amaankhan)
