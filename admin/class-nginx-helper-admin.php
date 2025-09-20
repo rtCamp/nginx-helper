@@ -1056,7 +1056,7 @@ class Nginx_Helper_Admin {
 	 * @since 2.3.5
 	 */
 	public function init_woocommerce_hooks() {
-		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) || empty( $this->options['purge_woo_products'] ) ) {
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' )  || empty( $this->options['purge_woo_products'] ) ) {
 			return;
 		}
 
