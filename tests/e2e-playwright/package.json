@@ -22,7 +22,7 @@
 	"dependencies": {
 		"@wordpress/api-fetch": "6.10.0",
 		"@wordpress/keycodes": "3.13.0",
-		"@wordpress/scripts": "23.5.0",
+		"@wordpress/scripts": "30.24.0",
 		"@wordpress/url": "3.14.0",
 		"form-data": "^4.0.0",
 		"lodash": "^4.17.21",
