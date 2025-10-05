@@ -471,7 +471,7 @@ class Nginx_Helper_Admin {
 		<ul role="list">
 			<?php
 			if ( 0 === $maxitems ) {
-				echo '<li role="listitem">' . esc_html_e( 'No items', 'nginx-helper' ) . '.</li>';
+				echo '<li role="listitem">' . esc_html__( 'No items', 'nginx-helper' ) . '.</li>';
 			} else {
 				
 				// Loop through each feed item and display each item as a hyperlink.
