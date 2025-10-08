@@ -155,7 +155,7 @@ class Cloudflare_Client {
 	/**
 	 * Sets up the "Cache Rule" required to purge the edge cache.
 	 *
-	 * @return string|false 'created', 'exists', or false on failure.
+	 * @return string 'created', 'exists', or 'failed.
 	 */
 	public static function setupCacheRule() {
 		global $nginx_helper_admin;
@@ -185,17 +185,17 @@ class Cloudflare_Client {
 			$existing_rules = json_decode( $raw_existing_response, true );
 
 			if( ! array_key_exists( 'result', $existing_rules ) ) {
-				return false;
+				return 'failed';
 			}
 
 			$existing_rules = $existing_rules['result'];
-			
+
 			foreach ( $existing_rules as $ruleset ) {
-				if ( 'http_request_cache_settings' === $ruleset['phase']  && 
+				if ( 'http_request_cache_settings' === $ruleset['phase']  &&
 					isset( $ruleset['name'] ) && 'nginx_helper_cache_ruleset' === $ruleset['name'] ) {
 					return 'exists';
 				}
-				
+
 				if ( 'http_request_cache_settings' === $ruleset['phase'] && $cache_ruleset_id === null ) {
 					$cache_ruleset_id = $ruleset->id;
 				}
@@ -233,16 +233,19 @@ class Cloudflare_Client {
 				$ruleset_resp = $adapter->put( sprintf( 'zones/%s/rulesets/%s', $zone_id, $cache_ruleset_id ), array( 'rules' => $ruleset ) );
 			}
 
-			if ( isset( $ruleset_resp->success ) && $ruleset_resp->success ) {
+			$raw_ruleset_body = $ruleset_resp->getBody();
+			$ruleset_body     = json_decode( $raw_ruleset_body );
+
+			if ( isset( $ruleset_body->success ) && true === $ruleset_body->success ) {
 				return 'created';
 			} else {
-				error_log( 'Advanced Cloudflare Cache: Failed to create/update cache rule. Response: ' . json_encode( $ruleset_resp ) );
-				return false;
+				error_log( 'Advanced Cloudflare Cache: Failed to create/update cache rule. Response: ' . json_encode( $ruleset_body ) );
+				return 'failed';
 			}
 
 		} catch ( Exception $e ) {
 			error_log( 'Advanced Cloudflare Cache: Exception when setting up Cache Rule: ' . $e->getMessage() );
-			return false;
+			return 'failed';
 		}
 	}
 }

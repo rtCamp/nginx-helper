@@ -240,7 +240,7 @@ class Nginx_Helper {
 
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );
-		
+
 		// add action to preload the cache
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'preload_cache' );
 		$this->loader->add_action( 'plugins_loaded', $this, 'handle_nginx_helper_upgrade' );
@@ -257,7 +257,6 @@ class Nginx_Helper {
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
 
 		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
-			$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'cf_page_rule_save_display_admin_notices' );
 			$this->loader->add_filter( 'wp_headers', $this, 'handle_cloudflare_headers', 999 );
 			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_purge', 100 );
 			$this->loader->add_action( 'wp_ajax_ec_clear_url_cache', $nginx_helper_admin, 'handle_cloudflare_clear_cache_ajax' );
@@ -387,7 +386,7 @@ class Nginx_Helper {
 		$installed_version = get_option( 'nginx_helper_version', '0' );
 
 		if ( version_compare( $installed_version, $this->get_version(), '<' ) ) {
-			
+
 			require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
 			Nginx_Helper_Activator::set_user_caps();
 
@@ -399,7 +398,7 @@ class Nginx_Helper {
 	 * Manage the cache headers for Cloudflare.
 	 *
 	 * @param array $headers The headers of the site.
-	 * 
+	 *
 	 * @return array The modified headers for cache.
 	 */
 	public function handle_cloudflare_headers( $headers ) {

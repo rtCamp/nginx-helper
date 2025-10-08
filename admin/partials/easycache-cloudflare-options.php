@@ -45,7 +45,11 @@ if ( isset( $all_inputs['easycache_settings_save'] ) && isset( $all_inputs['easy
 
 if( isset( $nginx_helper_admin ) && method_exists( $nginx_helper_admin, 'handle_cf_cache_rule_update' ) ) {
 	$nginx_helper_admin->handle_cf_cache_rule_update();
-	
+}
+
+// Display any updates from Cloudflare Purge Rules.
+if( isset( $nginx_helper_admin ) && method_exists( $nginx_helper_admin, 'cf_page_rule_save_display_admin_notices' ) ) {
+	$nginx_helper_admin->cf_page_rule_save_display_admin_notices();
 }
 
 
@@ -140,7 +144,7 @@ if ( $ec_site_settings['is_enabled'] ) {
 		?>
 
 	</form>
-	
+
 	<?php
 }
 ?>
