@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Nginx Helper
+ * Plugin Name:       EasyCache Manager
  * Plugin URI:        https://rtcamp.com/nginx-helper/
  * Description:       Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does few more things.
  * Version:           2.3.5

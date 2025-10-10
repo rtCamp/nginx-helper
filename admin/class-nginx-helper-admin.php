@@ -106,7 +106,7 @@ class Nginx_Helper_Admin {
 				'rt_nginx_helper_settings_tabs',
 				array(
 						'general'    => array(
-								'menu_title' => __( 'General', 'nginx-helper' ),
+								'menu_title' => __( 'Nginx', 'nginx-helper' ),
 								'menu_slug'  => 'general',
 						),
 						'cloudflare' => array(
@@ -192,8 +192,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'settings.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
+				__( 'EasyCache Manager', 'nginx-helper' ),
+				__( 'EasyCache Manager', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
@@ -203,8 +203,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'options-general.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
+				__( 'EasyCache Manager', 'nginx-helper' ),
+				__( 'EasyCache Manager', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )

@@ -18,7 +18,7 @@ global $pagenow;
 
 <div class="wrap rt-nginx-wrapper">
 	<h2 class="rt_option_title">
-		<?php esc_html_e( 'Nginx Settings', 'nginx-helper' ); ?>
+		<?php esc_html_e( 'EasyCache Manager Settings', 'nginx-helper' ); ?>
 	</h2>
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-2">
