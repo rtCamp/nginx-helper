@@ -109,10 +109,6 @@ class Nginx_Helper_Admin {
 								'menu_title' => __( 'General', 'nginx-helper' ),
 								'menu_slug'  => 'general',
 						),
-						'support'    => array(
-								'menu_title' => __( 'Support', 'nginx-helper' ),
-								'menu_slug'  => 'support',
-						),
 						'cloudflare' => array(
 								'menu_title' => __( 'Cloudflare', 'nginx-helper' ),
 								'menu_slug'  => 'cloudflare',
