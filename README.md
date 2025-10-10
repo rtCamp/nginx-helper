@@ -1,4 +1,4 @@
-# Nginx Helper #
+# EasyCache Manager (formerly Nginx Helper) #
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 **Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe, webdados, ghost, ravanh, tjalexander70, mrrobot47, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason
@@ -17,7 +17,7 @@
 
 **Donate Link:** http://rt.cx/eedonate
 
-Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
+Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also provides cloudflare edge cache purging with Cache-Tags.
 
 ## Description ##
 
@@ -25,6 +25,7 @@ Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/publ
 1. Adds support for purging redis-cache when used as full-page cache created using [nginx-srcache-module](https://github.com/openresty/srcache-nginx-module#caching-with-redis)
 1. Adds support for nginx fastcgi_cache_purge & proxy_cache_purge directive from [module](https://github.com/FRiCKLE/ngx_cache_purge "ngx_cache_purge module"). Provides settings so you can customize purging rules.
 1. Adds support for nginx `map{..}` on a WordPress-multisite network installation. Using it, Nginx can serve PHP file uploads even if PHP/MySQL crashes. Please check the tutorial list below for related Nginx configurations.
+1. Add support for purging on Cloudflare Edge Cache with Cache-Tags.
 
 ### Tutorials ###
 
@@ -78,12 +79,12 @@ Yes. It handles all post-types the same way.
 
 **Q. How can I purge cache automatically after WordPress/plugin/theme updates?**
 
-By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
+By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.
 If you want this behavior, you can enable it using a filter:
 
 `add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );`
 
-Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.  
+Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.
 If left disabled (default), Nginx Helper will instead show an admin notice after updates, reminding you to purge cache manually.
 
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
@@ -179,13 +180,13 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 
 ## Screenshots ##
 
-### 1. Nginx plugin settings ###
+### 1. Nginx settings ###
 
-![Nginx plugin settings](https://ps.w.org/nginx-helper/assets/screenshot-1.png)
+![Nginx plugin settings](wpassets/screenshot-1.png)
 
-### 2. Remaining settings ###
+### 2. Cloudflare settings ###
 
-![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
+![Remaining settings](wpassets/screenshot-2.png)
 
 ## Changelog ##
 
