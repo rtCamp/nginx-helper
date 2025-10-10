@@ -173,6 +173,27 @@ Most likely yes. A wordpress plugin, if not using explicitly any Apache-only mod
 wp option patch update rt_wp_nginx_helper_options <option_name> <option_value>
 ```
 
+### FAQ - Cloudflare Edge Cache ###
+
+**Q. Why is the setup cache rule button not visible?**
+
+You need to enter the Zone ID and a API key to allow setting up the Cache Rule.
+
+**Q. Why is my cache rule setup failing?**
+
+Always ensure that the API key has the permissions listed in the description under the API Key field. If any of the permission is missing, we will not be able to set up the cache rule.
+
+**Q. What happens if I already have rulesets for Cloudflare Edge Cache?**
+
+The plugin will update those rules to add the required configuration.
+
+**Q. How can I purge the entire cache when Cloudflare Edge Cache is activated?**
+
+You can use the default Purge Entire Cache button on the settings page to purge the cache. It will purge the Nginx cache if it is activated as well as Cloudflare Edge Cache.
+
+**Q. How can I purge the cache of a single page only for Cloudflare Edge Cache?**
+
+If you are logged in as a user with purge permissions, you can purge a page by visiting it (for example, https://mydomain.com/my-page) and clicking the `Clear Cloudflare Edge Cache` button in the admin toolbar.
 
 ### Still need help! ###
 

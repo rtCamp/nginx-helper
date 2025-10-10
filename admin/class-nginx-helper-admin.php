@@ -1259,7 +1259,7 @@ class Nginx_Helper_Admin {
 		if ( ! empty( $_GET['message'] ) && 'ec-cleared-url-cache' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$title = esc_html__( 'URL Cache Cleared', 'easycache' );
 		} else {
-			$title = esc_html__( 'Clear URL Cache', 'easycache' );
+			$title = esc_html__( 'Clear Cloudflare Edge Cache', 'easycache' );
 		}
 
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( $_SERVER['REQUEST_URI'] ) : '';
