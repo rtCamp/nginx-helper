@@ -526,7 +526,7 @@ class Nginx_Helper_Admin {
 		$rss_items = array();
 
 		// Get a SimplePie feed object from the specified feed source.
-		$rss = fetch_feed( 'https://rtcamp.com/blog/feed/' );
+		$rss = fetch_feed( 'https://easyengine.io/blog/feed/' );
 
 		if ( ! is_wp_error( $rss ) ) { // Checks that the object is created correctly.
 
