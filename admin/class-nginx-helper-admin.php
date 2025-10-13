@@ -9,7 +9,7 @@
  * @subpackage nginx-helper/admin
  */
 
-use EasyCache\Cloudflare_Client;
+use EECacheHelper\Cloudflare_Client;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -1212,7 +1212,7 @@ class Nginx_Helper_Admin {
 				return;
 			}
 
-			$result = EasyCache\Cloudflare_Client::setupCacheRule();
+			$result = EECacheHelper\Cloudflare_Client::setupCacheRule();
 
 			set_transient( 'ec_page_rule_save_state_admin_notice', $result, 60 );
 		}

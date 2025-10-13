@@ -2,10 +2,10 @@
 /**
  * A wrapper for the Cloudflare API client.
  *
- * @package EasyCache
+ * @package EECacheHelper
  */
 
-namespace EasyCache;
+namespace EECacheHelper;
 
 use Cloudflare\API\Auth\APIToken;
 use Cloudflare\API\Adapter\Guzzle;

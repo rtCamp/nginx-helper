@@ -98,7 +98,7 @@ function run_nginx_helper() {
 
 		require_once NGINX_HELPER_BASEPATH . 'class-nginx-helper-wp-cli-command.php';
 		\WP_CLI::add_command( 'nginx-helper', 'Nginx_Helper_WP_CLI_Command' );
-		\WP_CLI::add_command( 'cloudflare cache', 'EasyCache\\CLI' );
+		\WP_CLI::add_command( 'cloudflare cache', 'EECacheHelper\\CLI' );
 	}
 
 }

@@ -12,8 +12,8 @@
  * @subpackage nginx-helper/includes
  */
 
-use EasyCache\Cloudflare_Purger;
-use EasyCache\CloudFlare_Tag_Emitter;
+use EECacheHelper\Cloudflare_Purger;
+use EECacheHelper\CloudFlare_Tag_Emitter;
 
 /**
  * The core plugin class.
