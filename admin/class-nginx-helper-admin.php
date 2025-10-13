@@ -192,8 +192,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'settings.php',
-				__( 'EasyCache Manager', 'nginx-helper' ),
-				__( 'EasyCache Manager', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
@@ -203,8 +203,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'options-general.php',
-				__( 'EasyCache Manager', 'nginx-helper' ),
-				__( 'EasyCache Manager', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
@@ -610,7 +610,7 @@ class Nginx_Helper_Admin {
 		}
 
 		$timestamps = "\n<!--" .
-			'Cached using EasyCache Manager on ' . current_time( 'mysql' ) . '. ' .
+			'Cached using EasyEngine Cache Helper for Nginx & Cloudflare on ' . current_time( 'mysql' ) . '. ' .
 			'It took ' . get_num_queries() . ' queries executed in ' . timer_stop() . ' seconds.' .
 			"-->\n" .
 			'<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->';
