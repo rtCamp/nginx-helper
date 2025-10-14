@@ -214,14 +214,6 @@ class Cloudflare_Client {
 						'action'            => 'set_cache_settings',
 						'action_parameters' => [
 							'cache'       => true,
-							'edge_ttl'    => [
-								'mode'    => 'override_origin',
-								'default' => 3600
-							],
-							'browser_ttl' => [
-								'mode'    => 'override_origin',
-								'default' => 1800
-							]
 						]
 					]
 				]
