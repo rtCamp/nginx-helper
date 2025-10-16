@@ -49,6 +49,9 @@ global $pagenow;
 					case 'support':
 						include plugin_dir_path( __FILE__ ) . 'nginx-helper-support-options.php';
 						break;
+					case 'cloudflare':
+						include plugin_dir_path( __FILE__ ) . 'easycache-cloudflare-options.php';
+						break;
 
 				}
 				?>
