@@ -722,7 +722,7 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
-		$exclude_post_types = array( 'nav_menu_item' );
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item' ) );
 
 		if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
 			return;
@@ -1129,7 +1129,7 @@ class Nginx_Helper_Admin {
 	 * @since 2.3.5
 	 */
 	public function init_woocommerce_hooks() {
-		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) || empty( $this->options['purge_woo_products'] ) ) {
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' )  || empty( $this->options['purge_woo_products'] ) ) {
 			return;
 		}
 
