@@ -87,6 +87,12 @@ abstract class Purger {
 		$_post_id    = $comment->comment_post_ID;
 		$_comment_id = $comment->comment_ID;
 
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_comment_change_exclude_post_types', array() );
+
+                if ( in_array( get_post_type( $_post_id ), $exclude_post_types, true ) ) {
+                        return;
+                }
+
 		$this->log( '* * * * *' );
 		$this->log( '* Blog :: ' . addslashes( get_bloginfo( 'name' ) ) . ' ( ' . $blog_id . ' ). ' );
 		$this->log( '* Post :: ' . get_the_title( $_post_id ) . ' ( ' . $_post_id . ' ) ' );
@@ -529,7 +535,7 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
-		if ( ! $nginx_helper_admin->options['enable_log'] ) {
+		if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
 			return;
 		}
 
@@ -562,7 +568,7 @@ abstract class Purger {
 
 		global $nginx_helper_admin;
 
-		if ( ! $nginx_helper_admin->options['enable_log'] ) {
+		if ( ! $nginx_helper_admin->is_nginx_log_enabled() ) {
 			return;
 		}
 
@@ -688,12 +694,24 @@ abstract class Purger {
 		if ( function_exists( 'icl_get_home_url' ) ) {
 
 			$homepage_url = trailingslashit( icl_get_home_url() );
-			$this->log( sprintf( __( 'Purging homepage (WPML) ', 'nginx-helper' ) . '%s', $homepage_url ) );
+			$this->log(
+				sprintf(
+					/* translators: %s homepage URL */
+					__( 'Purging homepage (WPML) %s', 'nginx-helper' ),
+					$homepage_url
+				)
+			);
 
 		} else {
 
 			$homepage_url = trailingslashit( home_url() );
-			$this->log( sprintf( __( 'Purging homepage ', 'nginx-helper' ) . '%s', $homepage_url ) );
+			$this->log( 
+				sprintf(
+					/* translators: %s homepage URL */
+					__( 'Purging homepage %s', 'nginx-helper' ),
+					$homepage_url
+				)
+			);
 
 		}
 
@@ -703,29 +721,6 @@ abstract class Purger {
 
 	}
 
-	/**
-	 * Purge personal urls.
-	 *
-	 * @return bool
-	 */
-	private function _purge_personal_urls() {
-
-		global $nginx_helper_admin;
-
-		$this->log( __( 'Purging personal urls', 'nginx-helper' ) );
-
-		if ( isset( $nginx_helper_admin->options['purgeable_url']['urls'] ) ) {
-
-			foreach ( $nginx_helper_admin->options['purgeable_url']['urls'] as $url ) {
-				$this->purge_url( $url, false );
-			}
-		} else {
-			$this->log( '- ' . __( 'No personal urls available', 'nginx-helper' ) );
-		}
-
-		return true;
-
-	}
 
 	/**
 	 * Purge post categories.
@@ -1140,7 +1135,6 @@ abstract class Purger {
 
 		$this->log( __( "Let's purge everything!", 'nginx-helper' ) );
 		$this->_purge_homepage();
-		$this->_purge_personal_urls();
 		$this->_purge_all_posts();
 		$this->_purge_all_taxonomies();
 		$this->_purge_all_date_archives();
