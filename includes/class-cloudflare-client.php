@@ -155,96 +155,131 @@ class Cloudflare_Client {
 	/**
 	 * Sets up the "Cache Rule" required to purge the edge cache.
 	 *
-	 * @return string 'created', 'exists', or 'failed.
+	 * @return string 'created', 'exists', or 'failed'.
 	 */
 	public static function setupCacheRule() {
 		global $nginx_helper_admin;
 
 		if ( ! $nginx_helper_admin ) {
-			return;
+			return 'failed';
 		}
 
 		$options = $nginx_helper_admin->get_cloudflare_settings();
-
-		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
-		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
+		$token   = isset( $options['api_token'] ) ? sanitize_text_field( $options['api_token'] ) : '';
+		$zone_id = isset( $options['zone_id'] ) ? sanitize_text_field( $options['zone_id'] ) : '';
 
 		if ( empty( $token ) || empty( $zone_id ) ) {
 			error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
-			return false;
+			return 'failed';
 		}
 
+		$key     = new APIToken( $token );
+		$adapter = new Guzzle( $key );
+
 		try {
-			$key       = new APIToken( $token );
-			$adapter   = new Guzzle( $key );
+			$rulesets_response = $adapter->get( sprintf( 'zones/%s/rulesets', esc_attr( $zone_id ) ) );
+			$raw_response      = $rulesets_response->getBody() ?? '';
+			$response_data     = json_decode( $raw_response, true );
 
-			$rulesets_response = $adapter->get( sprintf( "zones/%s/rulesets", $zone_id ) );
-			$raw_existing_response    = $rulesets_response->getBody() ?? [];
-			$cache_ruleset_id  = null;
-
-			$existing_rules = json_decode( $raw_existing_response, true );
-
-			if( ! array_key_exists( 'result', $existing_rules ) ) {
+			if ( ! is_array( $response_data ) || ! array_key_exists( 'result', $response_data ) ) {
+				error_log( 'Advanced Cloudflare Cache: Invalid response when fetching rulesets.' );
 				return 'failed';
 			}
+		} catch ( Exception $e ) {
+			error_log( 'Advanced Cloudflare Cache: Exception when fetching rulesets: ' . esc_html( $e->getMessage() ) );
+			return 'failed';
+		}
 
-			$existing_rules = $existing_rules['result'];
-
-			foreach ( $existing_rules as $ruleset ) {
-				if ( 'http_request_cache_settings' === $ruleset['phase']  &&
-					isset( $ruleset['name'] ) && 'nginx_helper_cache_ruleset' === $ruleset['name'] ) {
-					return 'exists';
-				}
-
-				if ( 'http_request_cache_settings' === $ruleset['phase'] && $cache_ruleset_id === null ) {
-					$cache_ruleset_id = $ruleset->id;
-				}
+		$cache_ruleset_id = null;
+		foreach ( $response_data['result'] as $ruleset ) {
+			if ( 'http_request_cache_settings' === $ruleset['phase'] ) {
+				$cache_ruleset_id = sanitize_text_field( $ruleset['id'] );
+				break;
 			}
+		}
 
-			$site_url = get_site_url();
+		$site_url = esc_url( get_site_url() );
+		$rule     = [
+			'expression'        => '(http.request.full_uri wildcard "' . $site_url . '/*" and not http.cookie contains "wordpress_logged" and not http.cookie contains "NO_CACHE" and not http.cookie contains "S+ESS" and not http.cookie contains "fbs" and not http.cookie contains "SimpleSAML" and not http.cookie contains "PHPSESSID" and not http.cookie contains "wordpress" and not http.cookie contains "wp-" and not http.cookie contains "comment_author_" and not http.cookie contains "duo_wordpress_auth_cookie" and not http.cookie contains "duo_secure_wordpress_auth_cookie" and not http.cookie contains "bp_completed_create_steps" and not http.cookie contains "bp_new_group_id" and not http.cookie contains "wp-resetpass-" and not http.cookie contains "woocommerce" and not http.cookie contains "amazon_Login_")',
+			'action'            => 'set_cache_settings',
+			'action_parameters' => [
+				'cache' => true,
+			],
+			'description'       => 'EasyEngine Cache Manager Ruleset',
+		];
 
-			$ruleset = array(
+		// If no cache rule exist then we can directly create a new.
+		if ( null === $cache_ruleset_id ) {
+			$ruleset = [
+				'name'        => 'default',
 				'kind'        => 'zone',
-				'name'        => 'nginx_helper_cache_ruleset',
 				'phase'       => 'http_request_cache_settings',
-				'description' => 'Set\'s the edge cache rules by Nginx Helper Plugin. ',
-				'rules'       => [
-					[
-						'expression'        => "(http.request.full_uri wildcard \"". $site_url ."/*\" and not http.cookie contains \"wordpress_logged\" and not http.cookie contains \"NO_CACHE\" and not http.cookie contains \"S+ESS\" and not http.cookie contains \"fbs\" and not http.cookie contains \"SimpleSAML\" and not http.cookie contains \"PHPSESSID\" and not http.cookie contains \"wordpress\" and not http.cookie contains \"wp-\" and not http.cookie contains \"comment_author_\" and not http.cookie contains \"duo_wordpress_auth_cookie\" and not http.cookie contains \"duo_secure_wordpress_auth_cookie\" and not http.cookie contains \"bp_completed_create_steps\" and not http.cookie contains \"bp_new_group_id\" and not http.cookie contains \"wp-resetpass-\" and not http.cookie contains \"woocommerce\" and not http.cookie contains \"amazon_Login_\")",
-						'action'            => 'set_cache_settings',
-						'action_parameters' => [
-							'cache'       => true,
-							'edge_ttl'    => [
-								'mode'    => 'override_origin',
-								'default' => 3600
-							],
-							'browser_ttl' => [
-								'mode'    => 'override_origin',
-								'default' => 1800
-							]
-						]
-					]
-				]
-			);
+				'description' => 'Set\'s the edge cache rules by Nginx-Helper Cache Manager.',
+				'rules'       => [ $rule ],
+			];
 
-			if ( $cache_ruleset_id === null ) {
-				$ruleset_resp = $adapter->post( sprintf( 'zones/%s/rulesets', $zone_id ), $ruleset );
-			} else {
-				$ruleset_resp = $adapter->put( sprintf( 'zones/%s/rulesets/%s', $zone_id, $cache_ruleset_id ), array( 'rules' => $ruleset ) );
+			try {
+				$ruleset_resp     = $adapter->post( sprintf( 'zones/%s/rulesets', esc_attr( $zone_id ) ), $ruleset );
+				$raw_ruleset_body = $ruleset_resp->getBody();
+				$ruleset_body     = json_decode( $raw_ruleset_body );
+
+				if ( isset( $ruleset_body->success ) && true === $ruleset_body->success ) {
+					return 'created';
+				}
+
+				error_log( 'Advanced Cloudflare Cache: Failed to create cache rule. Response: ' . wp_json_encode( $ruleset_body ) );
+				return 'failed';
+			} catch ( Exception $e ) {
+				error_log( 'Advanced Cloudflare Cache: Exception when creating cache ruleset: ' . esc_html( $e->getMessage() ) );
+				return 'failed';
 			}
+		}
 
+		// Get the existing rule for cache and then update it to add our new rule.
+		try {
+			$ruleset_resp = $adapter->get( sprintf( 'zones/%s/rulesets/%s', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) ) );
+
+			if ( 200 !== $ruleset_resp->getStatusCode() ) {
+				error_log( 'Advanced Cloudflare Cache: Failed to fetch existing cache rule. Ruleset ID: ' . wp_json_encode( $cache_ruleset_id ) );
+				return 'failed';
+			}
+		} catch ( Exception $e ) {
+			error_log( 'Advanced Cloudflare Cache: Exception when fetching existing ruleset: ' . esc_html( $e->getMessage() ) );
+			return 'failed';
+		}
+
+		$raw_ruleset_body = $ruleset_resp->getBody();
+		$ruleset_body     = json_decode( $raw_ruleset_body, true );
+
+		$existing_rules = is_array( $ruleset_body['result']['rules'] ) ? $ruleset_body['result']['rules'] : [];
+
+		$rule_exists = false;
+		foreach ( $existing_rules as $existing_rule ) {
+			if ( isset( $existing_rule['description'] ) && 'EasyEngine Cache Manager Ruleset' === $existing_rule['description'] ) {
+				$rule_exists = true;
+				break;
+			}
+		}
+
+		if ( $rule_exists ) {
+			return 'exists';
+		}
+
+		$existing_rules[] = $rule;
+
+		try {
+			$ruleset_resp     = $adapter->put( sprintf( 'zones/%s/rulesets/%s', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) ), [ 'rules' => $existing_rules ] );
 			$raw_ruleset_body = $ruleset_resp->getBody();
 			$ruleset_body     = json_decode( $raw_ruleset_body );
 
 			if ( isset( $ruleset_body->success ) && true === $ruleset_body->success ) {
 				return 'created';
-			} else {
-				error_log( 'Advanced Cloudflare Cache: Failed to create/update cache rule. Response: ' . json_encode( $ruleset_body ) );
-				return 'failed';
 			}
 
+			error_log( 'Advanced Cloudflare Cache: Failed to update cache rule. Response: ' . wp_json_encode( $ruleset_body ) );
+			return 'failed';
 		} catch ( Exception $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when setting up Cache Rule: ' . $e->getMessage() );
+			error_log( 'Advanced Cloudflare Cache: Exception when updating cache ruleset: ' . esc_html( $e->getMessage() ) );
 			return 'failed';
 		}
 	}

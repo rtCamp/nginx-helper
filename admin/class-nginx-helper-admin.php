@@ -718,7 +718,7 @@ class Nginx_Helper_Admin {
 
 		global $blog_id, $nginx_purger;
 
-		$exclude_post_types = array( 'nav_menu_item' );
+		$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item' ) );
 
 		if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
 			return;
@@ -1199,7 +1199,7 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
-	 * Handles the page rule update on Cloudflare tab.
+	 * Handles the cache rule update on Cloudflare tab.
 	 *
 	 * @return void
 	 */
@@ -1229,15 +1229,15 @@ class Nginx_Helper_Admin {
 			switch ( $result ) {
 				case 'created':
 					$class   .= ' notice-success';
-					$message = __( 'The Cloudflare "Cache Everything" Page Rule was created successfully.', 'nginx-helper' );
+					$message = __( 'The Cloudflare Cache Rule was created successfully.', 'nginx-helper' );
 					break;
 				case 'exists':
 					$class   .= ' notice-info';
-					$message = __( 'The "Cache Everything" Page Rule already exists. No action was taken.', 'nginx-helper' );
+					$message = __( 'The Cache Rule already exists. No action was taken.', 'nginx-helper' );
 					break;
 				default:
 					$class   .= ' notice-error';
-					$message = __( 'Failed to create the Page Rule. Please check that your API Token has Page Rules Read/Write permissions.', 'nginx-helper' );
+					$message = __( 'Failed to create the Cache Rule. Please check that your API Token has Cache Rules Read/Write permissions.', 'nginx-helper' );
 					break;
 			}
 
