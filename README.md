@@ -128,6 +128,10 @@ This ensures customers always see up-to-date stock status and product informatio
 
 Note: This option will only be visible if WooCommerce is active.
 
+**Q. What are the two different options for ngx_cache_purge module?**
+
+We have added support for two versions of the ngx_cache_purge module. The module developed by FRiCKLE is the original implementation that we have supported for a long time. We have now added support for a fork of the module developed by torden, which introduces Nginx module-level wildcard-based purging to help improve performance up to a certain level. You can purge it directly using the following format: `https://example.com/*` with the PURGE method, which will purge the cache of all descendants.
+
 ### FAQ - Nginx Redis Cache ###
 
 **Q. Can I override the redis hostname, port and prefix?**
