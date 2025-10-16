@@ -205,7 +205,7 @@ class Cloudflare_Client {
 			'action_parameters' => [
 				'cache' => true,
 			],
-			'description'       => 'EasyEngine Cache Manager Cache Ruleset',
+			'description'       => 'EasyCache Cache Manager Ruleset',
 		];
 
 		// If no cache rule exist then we can directly create a new.
@@ -214,7 +214,7 @@ class Cloudflare_Client {
 				'name'        => 'default',
 				'kind'        => 'zone',
 				'phase'       => 'http_request_cache_settings',
-				'description' => 'Set\'s the edge cache rules by EasyEngine Cache Manager.',
+				'description' => 'Set\'s the edge cache rules by EasyCache Cache Manager.',
 				'rules'       => [ $rule ],
 			];
 
@@ -255,7 +255,7 @@ class Cloudflare_Client {
 
 		$rule_exists = false;
 		foreach ( $existing_rules as $existing_rule ) {
-			if ( isset( $existing_rule['description'] ) && 'EasyEngine Cache Manager Cache Ruleset' === $existing_rule['description'] ) {
+			if ( isset( $existing_rule['description'] ) && 'EasyCache Cache Manager Cache Ruleset' === $existing_rule['description'] ) {
 				$rule_exists = true;
 				break;
 			}
