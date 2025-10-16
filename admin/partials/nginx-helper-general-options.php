@@ -247,7 +247,40 @@ if ( is_multisite() ) {
 													sprintf(
 														// translators: %s Nginx cache purge module link.
 														__( 'Uses the %s module.', 'nginx-helper' ),
-														'<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge</a></strong>'
+														'<strong><a href="https://github.com/FRiCKLE/ngx_cache_purge">ngx_cache_purge (FRiCKLE)</a></strong>'
+													),
+													array(
+														'strong' => array(),
+														'a'      => array(
+															'href' => array(),
+														),
+													)
+												);
+											?>
+										</small>
+                  </label>
+                  <br />
+									<label for="purge_method_get_request_torden">
+										<input type="radio" value="get_request_torden" id="purge_method_get_request_torden" name="purge_method" <?php checked( $nginx_helper_settings['purge_method'], 'get_request_torden' ); ?>>
+										&nbsp;
+										<?php
+											echo wp_kses(
+												sprintf(
+													'%1$s <strong>PURGE/url</strong> %2$s',
+													esc_html__( 'Using a GET request to', 'nginx-helper' ),
+													esc_html__( '(Supports torden\'s `purge_all` method)', 'nginx-helper' )
+												),
+												array( 'strong' => array() )
+											);
+										?>
+										<br />
+										<small>
+											<?php
+												echo wp_kses(
+													sprintf(
+														// translators: %s Nginx cache purge module link.
+														__( 'Uses the %s module.', 'nginx-helper' ),
+														'<strong><a href="https://github.com/torden/ngx_cache_purge">ngx_cache_purge (torden)</a></strong>'
 													),
 													array(
 														'strong' => array(),
