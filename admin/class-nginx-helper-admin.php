@@ -1233,11 +1233,11 @@ class Nginx_Helper_Admin {
 			switch ( $result ) {
 				case 'created':
 					$class   .= ' notice-success';
-					$message = __( 'The Cloudflare "Cache Everything" Cache Rule was created successfully.', 'nginx-helper' );
+					$message = __( 'The Cloudflare Cache Rule was created successfully.', 'nginx-helper' );
 					break;
 				case 'exists':
 					$class   .= ' notice-info';
-					$message = __( 'The "Cache Everything" Cache Rule already exists. No action was taken.', 'nginx-helper' );
+					$message = __( 'The Cache Rule already exists. No action was taken.', 'nginx-helper' );
 					break;
 				default:
 					$class   .= ' notice-error';
