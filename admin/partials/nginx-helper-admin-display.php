@@ -47,7 +47,7 @@ global $pagenow;
 						include plugin_dir_path( __FILE__ ) . 'nginx-helper-general-options.php';
 						break;
 					case 'cloudflare':
-						include plugin_dir_path( __FILE__ ) . 'easycache-cloudflare-options.php';
+						include plugin_dir_path( __FILE__ ) . 'easyengine-cache-manager-cloudflare-options.php';
 						break;
 
 				}

@@ -432,7 +432,7 @@ class Nginx_Helper {
 			$headers['Expires']       = 'Wed, 11 Jan 1984 05:00:00 GMT'; // Date in the past
 		} else {
 			// Page is for an anonymous user and is cacheable.
-			$options = get_option( 'easycache_cf_settings' );
+			$options = get_option( 'easyengine_cache_manager_cf_settings' );
 			$ttl     = isset( $options['default_cache_ttl'] ) ? (int) $options['default_cache_ttl'] : 0;
 
 			if ( $ttl > 0 ) {
