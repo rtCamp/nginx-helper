@@ -2,7 +2,7 @@
 /**
  * Purges the cache based on a variety of WordPress events.
  *
- * @package EECacheHelper
+ * @package nginx-helper
  */
 
 namespace EECacheHelper;

@@ -2,7 +2,7 @@
 /**
  * A wrapper for the Cloudflare API client.
  *
- * @package EECacheHelper
+ * @package nginx-helper
  */
 
 namespace EECacheHelper;

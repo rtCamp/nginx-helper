@@ -2,7 +2,7 @@
 /**
  * WP-CLI commands for managing the Advanced Cloudflare Cache.
  *
- * @package EECacheHelper
+ * @package nginx-helper
  *
  * @phpcs   :disable Squiz.Commenting.FunctionComment.MissingParamTag
  */

@@ -2,7 +2,7 @@
 /**
  * Generates and emits cache tags based on the current request.
  *
- * @package EECacheHelper
+ * @package nginx-helper
  */
 
 namespace EECacheHelper;
