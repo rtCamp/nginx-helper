@@ -585,7 +585,7 @@ abstract class Purger {
 		if ( $file_size > $max_size_allowed ) {
 
 			$offset       = $file_size - $max_size_allowed;
-			$file_content = file_get_contents( $nginx_asset_path, null, null, $offset );
+			$file_content = file_get_contents( $nginx_asset_path, false, null, $offset );
 			$file_content = empty( $file_content ) ? '' : strstr( $file_content, "\n" );
 
 			$fp = fopen( $nginx_asset_path, 'w+' );
