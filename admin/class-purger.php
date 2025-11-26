@@ -70,6 +70,58 @@ abstract class Purger {
 	}
 
 	/**
+	 * Purge cache when a post is being deleted (including force delete).
+	 *
+	 * @global object $nginx_helper_admin Nginx helper admin object.
+	 * @global string $blog_id Blog id.
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
+	 *
+	 * @return bool|void
+	 */
+	public function purge_on_before_delete_post( $post_id, $post ) {
+
+		global $nginx_helper_admin, $blog_id;
+
+		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
+			return;
+		}
+
+		// Check if the post is not already in trash (force delete case).
+		if ( 'trash' !== $post->post_status && 'publish' === $post->post_status ) {
+
+			$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item', 'revision' ) );
+
+			if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
+				return;
+			}
+
+			$this->log( '# # # # #' );
+			$this->log( "# Post '$post->post_title' ( id " . $post->ID . ' ) force deleted.' );
+			$this->log( '# # # # #' );
+			$this->log( 'Function purge_on_before_delete_post ( post id ' . $post->ID . ' ) BEGIN ===' );
+
+			if ( 1 === (int) $nginx_helper_admin->options['purge_homepage_on_del'] ) {
+				$this->_purge_homepage();
+			}
+
+			$this->_purge_by_options(
+				$post->ID,
+				$blog_id,
+				true,
+				$nginx_helper_admin->options['purge_archive_on_del'],
+				$nginx_helper_admin->options['purge_archive_on_del']
+			);
+
+			$this->log( 'Function purge_on_before_delete_post ( post id ' . $post->ID . ' ) END ===' );
+		}
+
+		return true;
+
+	}
+
+	/**
 	 * Purge post cache on comment change.
 	 *
 	 * @param string $newstatus New status.
