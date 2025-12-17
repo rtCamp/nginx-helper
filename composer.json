@@ -14,7 +14,7 @@
 		"cloudflare",
 		"cloudflare-edge-cache",
 		"cache-tags",
-    "easyengine cache helper"
+		"easyengine cache helper"
 	],
 	"homepage": "https://rtcamp.com/nginx-helper/",
 	"license": "GPL-2.0+",
