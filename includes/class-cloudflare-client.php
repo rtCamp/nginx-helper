@@ -214,7 +214,7 @@ class Cloudflare_Client {
 				'name'        => 'default',
 				'kind'        => 'zone',
 				'phase'       => 'http_request_cache_settings',
-				'description' => 'Set\'s the edge cache rules by Nginx-Helper Cache Helper.',
+				'description' => 'Set\'s the edge cache rules by EasyEngine Cache Helper.',
 				'rules'       => [ $rule ],
 			];
 
