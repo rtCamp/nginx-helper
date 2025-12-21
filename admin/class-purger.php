@@ -89,7 +89,7 @@ abstract class Purger {
 		}
 
 		// Check if the post is not already in trash (force delete case).
-		if ( 'trash' !== $post->post_status && 'publish' === $post->post_status ) {
+		if ( 'trash' !== $post->post_status ) {
 
 			$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item', 'revision' ) );
 
