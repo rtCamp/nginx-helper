@@ -233,6 +233,7 @@ class Nginx_Helper {
 		$this->loader->add_action( 'edit_attachment', $nginx_purger, 'purge_image_on_edit', 100, 1 );
 		$this->loader->add_action( 'wpmu_new_blog', $nginx_helper_admin, 'update_new_blog_options', 10, 1 );
 		$this->loader->add_action( 'transition_post_status', $nginx_purger, 'purge_on_post_moved_to_trash', 20, 3 );
+		$this->loader->add_action( 'before_delete_post', $nginx_purger, 'purge_on_before_delete_post', 20, 2 );
 		$this->loader->add_action( 'edit_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
 		$this->loader->add_action( 'delete_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
 		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20 );
