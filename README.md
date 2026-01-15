@@ -78,12 +78,12 @@ Yes. It handles all post-types the same way.
 
 **Q. How can I purge cache automatically after WordPress/plugin/theme updates?**
 
-By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
+By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.
 If you want this behavior, you can enable it using a filter:
 
 `add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );`
 
-Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.  
+Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.
 If left disabled (default), Nginx Helper will instead show an admin notice after updates, reminding you to purge cache manually.
 
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
@@ -600,3 +600,8 @@ Nginx Helper 2.2.3, Fix performance issue when saving nav menus, purging date ar
 ## Does this interest you? ##
 
 <a href="https://rtcamp.com/"><img src="https://rtcamp.com/wp-content/uploads/sites/2/2019/04/github-banner@2x.png" alt="Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions"></a>
+
+
+## Contributing
+Please read the contributing guidelines before submitting issues or pull requests:
+[CONTRIBUTING.md](.github/CONTRIBUTING.md)
