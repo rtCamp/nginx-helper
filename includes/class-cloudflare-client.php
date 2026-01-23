@@ -2,10 +2,10 @@
 /**
  * A wrapper for the Cloudflare API client.
  *
- * @package EasyCache
+ * @package nginx-helper
  */
 
-namespace EasyCache;
+namespace EECacheHelper;
 
 use Cloudflare\API\Auth\APIToken;
 use Cloudflare\API\Adapter\Guzzle;
@@ -205,7 +205,7 @@ class Cloudflare_Client {
 			'action_parameters' => [
 				'cache' => true,
 			],
-			'description'       => 'EasyEngine Cache Manager Ruleset',
+			'description'       => 'EasyEngine Cache Helper Ruleset',
 		];
 
 		// If no cache rule exist then we can directly create a new.
@@ -214,7 +214,7 @@ class Cloudflare_Client {
 				'name'        => 'default',
 				'kind'        => 'zone',
 				'phase'       => 'http_request_cache_settings',
-				'description' => 'Set\'s the edge cache rules by Nginx-Helper Cache Manager.',
+				'description' => 'Set\'s the edge cache rules by EasyEngine Cache Helper.',
 				'rules'       => [ $rule ],
 			];
 
@@ -255,7 +255,7 @@ class Cloudflare_Client {
 
 		$rule_exists = false;
 		foreach ( $existing_rules as $existing_rule ) {
-			if ( isset( $existing_rule['description'] ) && 'EasyEngine Cache Manager Ruleset' === $existing_rule['description'] ) {
+			if ( isset( $existing_rule['description'] ) && 'EasyEngine Cache Helper Ruleset' === $existing_rule['description'] ) {
 				$rule_exists = true;
 				break;
 			}

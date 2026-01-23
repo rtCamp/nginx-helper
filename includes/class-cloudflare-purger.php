@@ -2,12 +2,12 @@
 /**
  * Purges the cache based on a variety of WordPress events.
  *
- * @package EasyCache
+ * @package nginx-helper
  */
 
-namespace EasyCache;
+namespace EECacheHelper;
 
-use EasyCache\Cloudflare_Client;
+use EECacheHelper\Cloudflare_Client;
 
 /**
  * Purges the appropriate cache tag based on the event.
