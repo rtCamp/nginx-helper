@@ -16,8 +16,8 @@ $settings_save_args = array(
 	'api_token',
 	'zone_id',
 	'default_cache_ttl',
-	'easycache_cf_settings_nonce',
-	'easycache_settings_save'
+	'easyengine_cache_manager_cf_settings_nonce',
+	'easyengine_cache_manager_settings_save'
 );
 
 foreach ( $settings_save_args as $val ) {
@@ -26,9 +26,9 @@ foreach ( $settings_save_args as $val ) {
 	}
 }
 
-if ( isset( $all_inputs['easycache_settings_save'] ) && isset( $all_inputs['easycache_cf_settings_nonce'] ) && wp_verify_nonce( $all_inputs['easycache_cf_settings_nonce'], 'easycache_cf_settings_nonce' ) ) {
-	unset( $all_inputs['easycache_cf_settings_nonce'] );
-	unset( $all_inputs['easycache_settings_save'] );
+if ( isset( $all_inputs['easyengine_cache_manager_settings_save'] ) && isset( $all_inputs['easyengine_cache_manager_cf_settings_nonce'] ) && wp_verify_nonce( $all_inputs['easyengine_cache_manager_cf_settings_nonce'], 'easyengine_cache_manager_cf_settings_nonce' ) ) {
+	unset( $all_inputs['easyengine_cache_manager_cf_settings_nonce'] );
+	unset( $all_inputs['easyengine_cache_manager_settings_save'] );
 
 	if ( ! $nginx_helper_admin || ! method_exists( $nginx_helper_admin, 'get_cloudflare_default_settings' ) ) {
 		return;
@@ -38,7 +38,7 @@ if ( isset( $all_inputs['easycache_settings_save'] ) && isset( $all_inputs['easy
 
 	$args = wp_parse_args( $all_inputs, $default_args );
 
-	update_site_option( 'easycache_cf_settings', $args );
+	update_site_option( 'easyengine_cache_manager_cf_settings', $args );
 
 	echo '<div class="updated"><p>' . esc_html__( 'Settings saved.', 'nginx-helper' ) . '</p></div>';
 }
@@ -57,9 +57,9 @@ $ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
 ?>
 
 	<div class="ec-cf-settings">
-		<form id="post_form" method="post" action="#" name="easycache_cf_settings_form" class="clearfix">
-			<?php wp_nonce_field( 'easycache_cf_settings_nonce', 'easycache_cf_settings_nonce' ); ?>
-			<input type="hidden" value="1" name="easycache_settings_save"/>
+		<form id="post_form" method="post" action="#" name="easyengine_cache_manager_cf_settings_form" class="clearfix">
+			<?php wp_nonce_field( 'easyengine_cache_manager_cf_settings_nonce', 'easyengine_cache_manager_cf_settings_nonce' ); ?>
+			<input type="hidden" value="1" name="easyengine_cache_manager_settings_save"/>
 			<div class="postbox">
 				<h3 class="hndle"><?php esc_html_e( 'Cloudflare Settings', 'nginx-helper' ); ?></h3>
 				<div class="inside">
@@ -129,7 +129,7 @@ $ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
 
 			</div>
 			<?php
-			submit_button( __( 'Save Changes', 'nginx-helper' ), 'primary large', 'easycache_cf_settings_save', true );
+			submit_button( __( 'Save Changes', 'nginx-helper' ), 'primary large', 'easyengine_cache_manager_cf_settings_save', true );
 			?>
 		</form>
 	</div>
@@ -137,10 +137,10 @@ $ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
 <?php
 if ( $ec_site_settings['is_enabled'] ) {
 	?>
-	<form name="easycache_add_cache_rule" method="POST" >
+	<form name="easyengine_cache_manager_add_cache_rule" method="POST" >
 		<?php
-			wp_nonce_field( 'easycache_add_cache_rule_nonce', 'easycache_add_cache_rule_nonce' );
-			submit_button( __( 'Setup Cache Rules', 'nginx-helper' ), 'secondary large', 'easycache_add_cache_rule_save', false );
+			wp_nonce_field( 'easyengine_cache_manager_add_cache_rule_nonce', 'easyengine_cache_manager_add_cache_rule_nonce' );
+			submit_button( __( 'Setup Cache Rules', 'nginx-helper' ), 'secondary large', 'easyengine_cache_manager_add_cache_rule_save', false );
 		?>
 
 	</form>

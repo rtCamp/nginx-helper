@@ -1,4 +1,4 @@
-=== Nginx Helper ===
+=== EasyEngine Cache Helper for Nginx & Cloudflare (formerly Nginx Helper) ===
 Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, ravanh, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif
 Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47
 Donate Link: http://rt.cx/eedonate/
@@ -9,7 +9,7 @@ Requires at least: 3.0
 Tested up to: 6.8
 Stable tag: 2.3.5
 
-Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
+Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also provides cloudflare edge cache purging with Cache-Tags.
 
 == Description ==
 
@@ -71,12 +71,12 @@ Yes. It handles all post-types the same way.
 
 **Q. How can I purge cache automatically after WordPress/plugin/theme updates?**
 
-By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
+By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.
 If you want this behavior, you can enable it using a filter:
 
 `add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );`
 
-Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.  
+Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.
 If left disabled (default), Nginx Helper will instead show an admin notice after updates, reminding you to purge cache manually.
 
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
@@ -171,8 +171,8 @@ wp option patch update rt_wp_nginx_helper_options <option_name> <option_value>
 Please post your problem in [our free support forum](https://github.com/rtCamp/nginx-helper/issues).
 
 == Screenshots ==
-1. Nginx plugin settings
-2. Remaining settings
+1. Nginx settings
+2. Cloudflare settings
 
 == Changelog ==
 
