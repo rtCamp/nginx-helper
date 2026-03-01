@@ -10,6 +10,7 @@
  * Domain Path:       /languages
  * Requires at least: 3.0
  * Tested up to:      6.8
+ * Requires PHP:      7.2
  *
  * @link              https://rtcamp.com/nginx-helper/
  * @since             2.0.0
