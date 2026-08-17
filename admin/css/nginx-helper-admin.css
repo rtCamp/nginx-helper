@@ -36,8 +36,9 @@ pre#map {
 	padding: 10px;
 }
 .wrap h2.rt_option_title {
-	background: url(../icons/nginx-icon-32x32.png) 0 6px no-repeat rgba(0, 0, 0, 0);
+	background: url(../icons/icon-64x64.png) 0 6px no-repeat rgba(0, 0, 0, 0);
 	padding-left: 40px;
+	background-size: 36px 36px;
 }
 #poststuff h2 {
 	padding: 0 0 0 10px;

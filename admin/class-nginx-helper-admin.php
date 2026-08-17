@@ -9,7 +9,7 @@
  * @subpackage nginx-helper/admin
  */
 
-use EasyCache\Cloudflare_Client;
+use EECacheHelper\Cloudflare_Client;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -106,12 +106,8 @@ class Nginx_Helper_Admin {
 				'rt_nginx_helper_settings_tabs',
 				array(
 						'general'    => array(
-								'menu_title' => __( 'General', 'nginx-helper' ),
+								'menu_title' => __( 'Nginx', 'nginx-helper' ),
 								'menu_slug'  => 'general',
-						),
-						'support'    => array(
-								'menu_title' => __( 'Support', 'nginx-helper' ),
-								'menu_slug'  => 'support',
 						),
 						'cloudflare' => array(
 								'menu_title' => __( 'Cloudflare', 'nginx-helper' ),
@@ -196,8 +192,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'settings.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
@@ -207,8 +203,8 @@ class Nginx_Helper_Admin {
 
 			add_submenu_page(
 				'options-general.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
@@ -362,10 +358,10 @@ class Nginx_Helper_Admin {
 	public function get_cloudflare_settings() {
 		$default_settings = $this->get_cloudflare_default_settings();
 
-		$stored_options = get_site_option( 'easycache_cf_settings', array() );
+		$stored_options = get_site_option( 'easyengine_cache_manager_cf_settings', array() );
 
-		if ( defined( 'EASYCACHE_CLOUDFLARE_API_TOKEN' ) && !empty( EASYCACHE_CLOUDFLARE_API_TOKEN ) ) {
-			$stored_options['api_token']                     = EASYCACHE_CLOUDFLARE_API_TOKEN;
+		if ( defined( 'EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN' ) && !empty( EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN ) ) {
+			$stored_options['api_token']                     = EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN;
 			$stored_options['api_token_enabled_by_constant'] = true;
 		}
 
@@ -384,11 +380,11 @@ class Nginx_Helper_Admin {
 	public function store_cloudflare_settings() {
 		$default_settings = $this->get_cloudflare_default_settings();
 
-		$stored_options = get_site_option( 'easycache_cf_settings', array() );
+		$stored_options = get_site_option( 'easyengine_cache_manager_cf_settings', array() );
 
 		$diff_options = wp_parse_args( $stored_options, $default_settings );
 
-		add_site_option( 'easycache_cf_settings', $diff_options );
+		add_site_option( 'easyengine_cache_manager_cf_settings', $diff_options );
 	}
 
 	/**
@@ -526,7 +522,7 @@ class Nginx_Helper_Admin {
 		$rss_items = array();
 
 		// Get a SimplePie feed object from the specified feed source.
-		$rss = fetch_feed( 'https://rtcamp.com/blog/feed/' );
+		$rss = fetch_feed( 'https://easyengine.io/blog/feed/' );
 
 		if ( ! is_wp_error( $rss ) ) { // Checks that the object is created correctly.
 
@@ -614,7 +610,7 @@ class Nginx_Helper_Admin {
 		}
 
 		$timestamps = "\n<!--" .
-			'Cached using Nginx-Helper on ' . current_time( 'mysql' ) . '. ' .
+			'Cached using EasyEngine Cache Helper for Nginx & Cloudflare on ' . current_time( 'mysql' ) . '. ' .
 			'It took ' . get_num_queries() . ' queries executed in ' . timer_stop() . ' seconds.' .
 			"-->\n" .
 			'<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->';
@@ -1208,15 +1204,15 @@ class Nginx_Helper_Admin {
 	 * @return void
 	 */
 	public function handle_cf_cache_rule_update() {
-		$nonce = isset( $_POST['easycache_add_cache_rule_nonce'] ) ? wp_unslash( $_POST['easycache_add_cache_rule_nonce'] ) : '';
+		$nonce = isset( $_POST['easyengine_cache_manager_add_cache_rule_nonce'] ) ? wp_unslash( $_POST['easyengine_cache_manager_add_cache_rule_nonce'] ) : '';
 
-		if ( wp_verify_nonce( $nonce, 'easycache_add_cache_rule_nonce' ) ) {
+		if ( wp_verify_nonce( $nonce, 'easyengine_cache_manager_add_cache_rule_nonce' ) ) {
 
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
 
-			$result = EasyCache\Cloudflare_Client::setupCacheRule();
+			$result = EECacheHelper\Cloudflare_Client::setupCacheRule();
 
 			set_transient( 'ec_page_rule_save_state_admin_notice', $result, 60 );
 		}
@@ -1261,9 +1257,9 @@ class Nginx_Helper_Admin {
 		}
 
 		if ( ! empty( $_GET['message'] ) && 'ec-cleared-url-cache' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$title = esc_html__( 'URL Cache Cleared', 'easycache' );
+			$title = esc_html__( 'URL Cache Cleared', 'nginx-helper' );
 		} else {
-			$title = esc_html__( 'Clear URL Cache', 'easycache' );
+			$title = esc_html__( 'Clear Cloudflare Edge Cache', 'nginx-helper' );
 		}
 
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( $_SERVER['REQUEST_URI'] ) : '';
@@ -1272,7 +1268,7 @@ class Nginx_Helper_Admin {
 			'id'     => 'clear-page-cache',
 			'title'  => $title,
 			'meta'   => [
-				'title' => __( 'Purge the current URL from Cloudflare cache.', 'easycache' ),
+				'title' => __( 'Purge the current URL from Cloudflare cache.', 'nginx-helper' ),
 			],
 			'href'   => wp_nonce_url( admin_url( 'admin-ajax.php?action=ec_clear_url_cache&path=' . rawurlencode( home_url( $request_uri ) ) ), 'ec-clear-url-cache' ),
 		] );
@@ -1288,17 +1284,17 @@ class Nginx_Helper_Admin {
 		if ( empty( $nonce )
 			 || ! wp_verify_nonce( $nonce, 'ec-clear-url-cache' )
 			 || ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( "You shouldn't be doing this.", 'easycache' ) );
+			wp_die( esc_html__( "You shouldn't be doing this.", 'nginx-helper' ) );
 		}
 
 		$path = isset( $_GET['path'] ) ? esc_url_raw( $_GET['path'] ) : '';
 		if ( empty( $path ) ) {
-			wp_die( esc_html__( 'No path provided.', 'easycache' ) );
+			wp_die( esc_html__( 'No path provided.', 'nginx-helper' ) );
 		}
 
 		$ret = Cloudflare_Client::purgeByUrls( [ $path ] );
 		if ( ! $ret ) {
-			wp_die( esc_html__( 'Failed to clear URL cache.', 'easycache' ) );
+			wp_die( esc_html__( 'Failed to clear URL cache.', 'nginx-helper' ) );
 		}
 
 		wp_safe_redirect( add_query_arg( 'message', 'ec-cleared-url-cache', $path ) );

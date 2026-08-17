@@ -37,7 +37,7 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 			printf(
 				'%s <a href=\'%s\'>%s</a>.',
 				esc_html__( 'Please use our', 'nginx-helper' ),
-				esc_url( 'http://rtcamp.com/support/forum/wordpress-nginx/' ),
+				esc_url( 'https://wordpress.org/support/plugin/nginx-helper/' ),
 				esc_html__( 'free support forum', 'nginx-helper' )
 			);
 			?>
@@ -52,8 +52,8 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 		</span>
 	</h3>
 	<div style="text-align:center;" class="inside">
-		<a class="nginx-helper-facebook" title="<?php esc_attr_e( 'Become a fan on Facebook', 'nginx-helper' ); ?>" target="_blank" href="http://www.facebook.com/rtCamp.solutions/"></a>
-		<a class="nginx-helper-twitter" title="<?php esc_attr_e( 'Follow us on Twitter', 'nginx-helper' ); ?>" target="_blank" href="https://twitter.com/rtcamp/"></a>
+		<a class="nginx-helper-facebook" title="<?php esc_attr_e( 'Become a fan on Facebook', 'nginx-helper' ); ?>" target="_blank" href="https://www.facebook.com/easyengine/"></a>
+		<a class="nginx-helper-twitter" title="<?php esc_attr_e( 'Follow us on Twitter', 'nginx-helper' ); ?>" target="_blank" href="https://x.com/easyengine"></a>
 	</div>
 </div>
 
@@ -64,16 +64,13 @@ $nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
 	<div class="inside">
 		<ul role="list">
 			<li role="listitem">
-				<a href="https://rtcamp.com/tutorials/nginx/" title="<?php esc_attr_e( 'Nginx Tutorials', 'nginx-helper' ); ?>"><?php esc_html_e( 'Nginx Tutorials', 'nginx-helper' ); ?></a>
+				<a href="https://easyengine.io/tutorials/nginx/" title="<?php esc_attr_e( 'Nginx Tutorials', 'nginx-helper' ); ?>"><?php esc_html_e( 'Nginx Tutorials', 'nginx-helper' ); ?></a>
 			</li>
 			<li role="listitem">
 				<a href="https://easyengine.io/" title="<?php esc_attr_e( 'EasyEngine (ee)', 'nginx-helper' ); ?>"><?php esc_html_e( 'EasyEngine (ee)', 'nginx-helper' ); ?></a>
 			</li>
 			<li role="listitem">
-				<a href="https://github.com/rtcamp/" title="<?php esc_attr_e( 'rtCamp GitHub', 'nginx-helper' ); ?>"><?php esc_html_e( 'rtCamp GitHub', 'nginx-helper' ); ?></a>
-			</li>
-			<li role="listitem">
-				<a href="https://rtcamp.com/solutions/" title="<?php esc_attr_e( 'Enterprise WordPress Consultancy', 'nginx-helper' ); ?>"><?php esc_html_e( 'Enterprise WordPress Consultancy', 'nginx-helper' ); ?></a>
+				<a href="https://github.com/EasyEngine" title="<?php esc_attr_e( 'EasyEngine GitHub', 'nginx-helper' ); ?>"><?php esc_html_e( 'EasyEngine GitHub', 'nginx-helper' ); ?></a>
 			</li>
 		</ul>
 	</div>

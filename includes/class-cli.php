@@ -2,15 +2,15 @@
 /**
  * WP-CLI commands for managing the Advanced Cloudflare Cache.
  *
- * @package EasyCache
+ * @package nginx-helper
  *
  * @phpcs   :disable Squiz.Commenting.FunctionComment.MissingParamTag
  */
 
-namespace EasyCache;
+namespace EECacheHelper;
 
 use WP_CLI;
-use EasyCache\Cloudflare_Client;
+use EECacheHelper\Cloudflare_Client;
 
 /**
  * Manage the Advanced Cloudflare Cache.
