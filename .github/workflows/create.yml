@@ -9,7 +9,7 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: WordPress Plugin Deploy
         uses: rtCamp/action-wordpress-org-plugin-deploy@master
         env:
