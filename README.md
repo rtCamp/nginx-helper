@@ -587,10 +587,6 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 * First release
 
-## Credits ##
-
-This plugin’s Cloudflare edge cache purging and cache tag architecture is inspired by the excellent work in [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache).
-
 ## Upgrade Notice ##
 
 ### 2.2.3 ###
