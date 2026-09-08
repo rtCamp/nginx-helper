@@ -1,15 +1,15 @@
 # Nginx Helper #
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe, webdados, ghost, ravanh, tjalexander70, mrrobot47, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe, webdados, ghost, ravanh, tjalexander70, mrrobot47, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, thisismyurl, DAnn2012
 
 **Tags:** nginx, cache-purge, fastcgi, permalinks, redis-cache
 
 **Requires at least:** 3.0
 
-**Tested up to:** 6.8
+**Tested up to:** 7.1
 
-**Stable tag:** 2.3.5
+**Stable tag:** 2.4.0
 
 **License:** GPLv2 or later (of-course)
 
@@ -188,6 +188,18 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 ![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
 
 ## Changelog ##
+
+### 2.4.0 ###
+
+* Update plugin compatibility to upto WordPress 7.1 - by [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28)
+* Load Plugin TextDomain on init hook - by [thisismyurl](https://github.com/thisismyurl)
+* Fix escaped HTML when fetching feed - by [DAnn2012](https://github.com/DAnn2012)
+* Posts that are deleted using wp_delete_post($postId, force_delete: true) are not purged. [#Issue](https://github.com/rtCamp/nginx-helper/issues/453) - by [stefanfisk](https://github.com/stefanfisk), [sarthak8858](https://profiles.wordpress.org/sarthak8858/)
+* Add support for the torden branch of ngx_cache_purge. - by [gnif](https://github.com/gnif), [gridpane](https://github.com/gridpane)
+* Extend WooCommerce Purging Functionality For REST API. - by [im3dabasia1](https://profiles.wordpress.org/im3dabasia1/)
+* Add filters to exclude post types - by [gutobenn](https://github.com/gutobenn)
+* Clearing the cache when changing the product status [#Issue](https://wordpress.org/support/topic/clearing-the-cache-when-changing-the-product-status/) - by [tores54](https://wordpress.org/support/users/tores54/), [im3dabasia1](https://profiles.wordpress.org/im3dabasia1/)
+
 
 ### 2.3.5 ###
 
