@@ -1,13 +1,13 @@
 === Nginx Helper ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, ravanh, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif
-Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, ravanh, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, sarthak8858, im3dabasia1, tores54, mcsr, sarthaknagoshe2002
+Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47, thisismyurl, DAnn2012, gridpane, gutobenn
 Donate Link: http://rt.cx/eedonate/
 Tags: nginx, cache-purge, fastcgi, permalinks, redis-cache
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
-Tested up to: 6.8
-Stable tag: 2.3.5
+Tested up to: 7.1
+Stable tag: 2.4.0
 
 Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
 
@@ -71,12 +71,12 @@ Yes. It handles all post-types the same way.
 
 **Q. How can I purge cache automatically after WordPress/plugin/theme updates?**
 
-By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.  
+By default, Nginx Helper does **not** purge cache on WordPress core, plugin, or theme updates.
 If you want this behavior, you can enable it using a filter:
 
 `add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );`
 
-Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.  
+Once enabled, cache will be purged automatically whenever WordPress core, plugins, or themes are updated.
 If left disabled (default), Nginx Helper will instead show an admin notice after updates, reminding you to purge cache manually.
 
 **Q. How do I know my Nginx config is correct for fastcgi purging?**
@@ -175,6 +175,19 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 2. Remaining settings
 
 == Changelog ==
+
+= 2.4.0 =
+
+* Update plugin compatibility to upto WordPress 7.1 - by [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28)
+* Load Plugin TextDomain on init hook - by [thisismyurl](https://github.com/thisismyurl)
+* Fix escaped HTML when fetching feed - by [DAnn2012](https://github.com/DAnn2012)
+* Posts that are deleted using wp_delete_post($postId, force_delete: true) are not purged. [#Issue](https://github.com/rtCamp/nginx-helper/issues/453) - by [stefanfisk](https://github.com/stefanfisk), [sarthak8858](https://profiles.wordpress.org/sarthak8858/)
+* Add support for the torden branch of ngx_cache_purge. - by [gnif](https://github.com/gnif), [gridpane](https://github.com/gridpane)
+* Extend WooCommerce Purging Functionality For REST API. - by [im3dabasia1](https://profiles.wordpress.org/im3dabasia1/)
+* Add filters to exclude post types - by [gutobenn](https://github.com/gutobenn)
+* Clearing the cache when changing the product status [#Issue](https://wordpress.org/support/topic/clearing-the-cache-when-changing-the-product-status/) - by [tores54](https://wordpress.org/support/users/tores54/), [im3dabasia1](https://profiles.wordpress.org/im3dabasia1/)
+* Enable purge cache option in admin bar for user role [#Issue](https://wordpress.org/support/topic/enable-purge-cache-option-in-admin-bar-for-user-role/) - by [Marco Feicht](https://wordpress.org/support/users/mcsr/), [sarthaknagoshe2002](https://profiles.wordpress.org/sarthaknagoshe2002/)
+
 
 = 2.3.5 =
 
