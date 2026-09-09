@@ -1056,6 +1056,11 @@ class Nginx_Helper_Admin {
 	 * @since 2.3.5
 	 */
 	public function init_woocommerce_hooks() {
+
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) || empty( $this->options['purge_woo_products'] ) ) {
 			return;
 		}
