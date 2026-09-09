@@ -48,7 +48,7 @@ class FastCGI_Purger extends Purger {
 		switch ( $nginx_helper_admin->options['purge_method'] ) {
 
 			case 'unlink_files':
-				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'] . $parse['path'];
+				$_url_purge_base = ( $parse['scheme'] ?? 'https' ) . '://' . ( $parse['host'] ?? $_SERVER['HTTP_HOST'] ) . ( $parse['path'] ?? '/' );
 				$_url_purge      = $_url_purge_base;
 
 				if ( ! empty( $parse['query'] ) ) {
@@ -143,7 +143,7 @@ class FastCGI_Purger extends Purger {
 		switch ( $nginx_helper_admin->options['purge_method'] ) {
 
 			case 'unlink_files':
-				$_url_purge_base = $parse['scheme'] . '://' . $parse['host'];
+				$_url_purge_base = ( $parse['scheme'] ?? 'https' ) . '://' . ( $parse['host'] ?? $_SERVER['HTTP_HOST'] );
 
 				if ( is_array( $purge_urls ) && ! empty( $purge_urls ) ) {
 
@@ -274,7 +274,7 @@ class FastCGI_Purger extends Purger {
 		// Prevent users from inserting a trailing '/' that could break the url purging.
 		$path = trim( $path, '/' );
 
-		$purge_url_base = $parse['scheme'] . '://' . $parse['host'] . '/' . $path;
+		$purge_url_base = ( $parse['scheme'] ?? 'https' ) . '://' . ( $parse['host'] ?? $_SERVER['HTTP_HOST'] ) . '/' . $path;
 
 		/**
 		 * Filter to change purge URL base for FastCGI cache.
