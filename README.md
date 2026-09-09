@@ -1,7 +1,7 @@
 # Nginx Helper #
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe, webdados, ghost, ravanh, tjalexander70, mrrobot47, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, thisismyurl, DAnn2012, sarthak8858, gridpane, im3dabasia1, gutobenn, tores54, mcsr, sarthaknagoshe2002
+**Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe, webdados, ghost, ravanh, tjalexander70, mrrobot47, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, thisismyurl, DAnn2012, sarthak8858, gridpane, im3dabasia1, gutobenn, tores54, mcsr, sarthaknagoshe2002, Titan21, smartyp
 
 **Tags:** nginx, cache-purge, fastcgi, permalinks, redis-cache
 
@@ -9,7 +9,7 @@
 
 **Tested up to:** 7.1
 
-**Stable tag:** 2.4.0
+**Stable tag:** 2.4.1
 
 **License:** GPLv2 or later (of-course)
 
@@ -188,6 +188,9 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 ![Remaining settings](https://ps.w.org/nginx-helper/assets/screenshot-2.png)
 
 ## Changelog ##
+
+### 2.4.1 ###
+* Call to undefined function is_plugin_active() [#Issue](https://github.com/rtCamp/nginx-helper/issues/510) - by [Titan21](https://github.com/Titan21), [smartyp](https://profiles.wordpress.org/smartyp/), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 
 ### 2.4.0 ###
 
