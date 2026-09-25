@@ -18,7 +18,7 @@ global $pagenow;
 
 <div class="wrap rt-nginx-wrapper">
 	<h2 class="rt_option_title">
-		<?php esc_html_e( 'Nginx Settings', 'nginx-helper' ); ?>
+		<?php esc_html_e( 'EasyEngine Cache Helper for Nginx & Cloudflare Settings', 'nginx-helper' ); ?>
 	</h2>
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-2">
@@ -46,11 +46,8 @@ global $pagenow;
 					case 'general':
 						include plugin_dir_path( __FILE__ ) . 'nginx-helper-general-options.php';
 						break;
-					case 'support':
-						include plugin_dir_path( __FILE__ ) . 'nginx-helper-support-options.php';
-						break;
 					case 'cloudflare':
-						include plugin_dir_path( __FILE__ ) . 'easycache-cloudflare-options.php';
+						include plugin_dir_path( __FILE__ ) . 'easyengine-cache-manager-cloudflare-options.php';
 						break;
 
 				}

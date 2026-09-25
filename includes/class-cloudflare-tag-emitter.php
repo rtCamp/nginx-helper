@@ -2,10 +2,10 @@
 /**
  * Generates and emits cache tags based on the current request.
  *
- * @package EasyCache
+ * @package nginx-helper
  */
 
-namespace EasyCache;
+namespace EECacheHelper;
 
 /**
  * Generates and emits cache tags based on the current request.
