@@ -5,11 +5,11 @@
 
 **Tags:** nginx, cache-purge, fastcgi, permalinks, redis-cache
 
-**Requires at least:** 3.0
+**Requires at least:** 7.3
 
 **Tested up to:** 7.1
 
-**Stable tag:** 2.4.1
+**Stable tag:** 3.0.0
 
 **License:** GPLv2 or later (of-course)
 
@@ -214,6 +214,12 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 ![Remaining settings](wpassets/screenshot-2.png)
 
 ## Changelog ##
+
+### 3.0.0 ###
+* Add support for Cloudflare Edge Cache purge with Cache Tags inspired by [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache). [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
+* Revamped the settings page to modulize all the options making it easier to track different types of cache purge. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
+* Add a new Command to allow purging Cloudflare cache using CLI. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
+
 
 ### 2.4.1 ###
 * Call to undefined function is_plugin_active() [#Issue](https://github.com/rtCamp/nginx-helper/issues/510) - by [Titan21](https://github.com/Titan21), [smartyp](https://profiles.wordpress.org/smartyp/), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
