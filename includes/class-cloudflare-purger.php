@@ -1,5 +1,7 @@
 <?php
 /**
+ * Adapted from Pantheon Advanced Page Cache (GPLv2 or later), modified by rtCamp.
+ *
  * Purges the cache based on a variety of WordPress events.
  *
  * @package nginx-helper

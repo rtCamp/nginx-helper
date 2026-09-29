@@ -1,5 +1,7 @@
 <?php
 /**
+ * Adapted from Pantheon Advanced Page Cache (GPLv2 or later), modified by rtCamp.
+ *
  * Autoloader to load the files.
  *
  * @package nginx-helper

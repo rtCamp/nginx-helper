@@ -1,5 +1,7 @@
 <?php
 /**
+ * Adapted from Pantheon Advanced Page Cache (GPLv2 or later), modified by rtCamp.
+ *
  * Utility functions used in the plugin.
  *
  * @package nginx-helper

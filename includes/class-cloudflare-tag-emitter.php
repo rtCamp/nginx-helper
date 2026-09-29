@@ -1,5 +1,7 @@
 <?php
 /**
+ * Adapted from Pantheon Advanced Page Cache (GPLv2 or later), modified by rtCamp.
+ *
  * Generates and emits cache tags based on the current request.
  *
  * @package nginx-helper
