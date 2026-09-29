@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       EasyEngine Cache Helper for Nginx & Cloudflare (formerly Nginx Helper)
  * Plugin URI:        https://rtcamp.com/nginx-helper/
- * Description:       Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does few more things.
+ * Description:       Purge Nginx and Redis page cache, plus Cloudflare edge cache with cache tags, when WordPress content changes.
  * Version:           3.0.0
  * Author:            rtCamp
  * Author URI:        https://rtcamp.com
