@@ -3,13 +3,13 @@
 
 **Contributors:** rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, stefanfisk, SGr33n, agvs, diepbui4157, pratiklondhe, webdados, ghost, tjalexander70, mrrobot47, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, thisismyurl, DAnn2012, sarthak8858, im3dabasia1, gutobenn, tores54, mcsr, sarthaknagoshe2002, Titan21, smartyp
 
-**Tags:** nginx, cache-purge, fastcgi, permalinks, redis-cache
+**Tags:** nginx, cache-purge, fastcgi, cloudflare, redis-cache
 
-**Requires at least:** 5.2
+**Requires at least:** 5.4
 
 **Tested up to:** 7.1
 
-**Requires PHP:** 5.3.2
+**Requires PHP:** 7.4
 
 **Stable tag:** 3.0.0
 
@@ -19,7 +19,7 @@
 
 **Donate Link:** http://rt.cx/eedonate
 
-Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also provides cloudflare edge cache purging with Cache-Tags.
+Purge Nginx and Redis page cache, plus Cloudflare edge cache with cache tags, when WordPress content changes.
 
 ## Description ##
 

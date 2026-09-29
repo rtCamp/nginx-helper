@@ -5,10 +5,10 @@ Donate Link: http://rt.cx/eedonate/
 Tags: nginx, cache-purge, fastcgi, cloudflare, redis-cache
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 5.2
+Requires at least: 5.4
 Tested up to: 7.1
 Stable tag: 3.0.0
-Requires PHP: 5.3.2
+Requires PHP: 7.4
 
 Purge Nginx and Redis page cache, plus Cloudflare edge cache with cache tags, when WordPress content changes.
 

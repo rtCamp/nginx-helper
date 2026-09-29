@@ -8,8 +8,9 @@
  * Author URI:        https://rtcamp.com
  * Text Domain:       nginx-helper
  * Domain Path:       /languages
- * Requires at least: 3.0
+ * Requires at least: 5.4
  * Tested up to:      7.1
+ * Requires PHP:      7.4
  *
  * @link              https://rtcamp.com/nginx-helper/
  * @since             2.0.0
