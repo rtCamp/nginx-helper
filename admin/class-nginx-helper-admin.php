@@ -870,6 +870,11 @@ class Nginx_Helper_Admin {
 		switch ( $action ) {
 			case 'purge':
 				$nginx_purger->purge_all();
+
+				if( $this->cf_options['is_enabled'] ) {
+					Cloudflare_Client::purgeEverything();
+				}
+
 				break;
 			case 'purge_current_page':
 				$nginx_purger->purge_url( $current_url );
@@ -878,6 +883,16 @@ class Nginx_Helper_Admin {
 
 		if ( 'purge' === $action ) {
 
+			if( $this->cf_options['is_enabled'] ) {
+
+				/**
+				 * Fire an action after the entire cache has been purged whatever caching type is used.
+				 *
+				 * @since 2.2.2
+				*/
+				do_action( 'rt_nginx_helper_after_cf_purge_all' );
+			}
+
 			/**
 			 * Fire an action after the entire cache has been purged whatever caching type is used.
 			 *
@@ -885,10 +900,6 @@ class Nginx_Helper_Admin {
 			 */
 			do_action( 'rt_nginx_helper_after_purge_all' );
 
-		}
-
-		if( $this->cf_options['is_enabled'] ) {
-			Cloudflare_Client::purgeEverything();
 		}
 
 		wp_redirect( esc_url_raw( $redirect_url ) );

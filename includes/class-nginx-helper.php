@@ -81,7 +81,7 @@ class Nginx_Helper {
 
 		$this->plugin_name = 'nginx-helper';
 		$this->version     = '3.0.0';
-		$this->minimum_wp  = '5.4';
+		$this->minimum_wp  = '5.5';
 
 		if ( ! $this->required_wp_version() ) {
 			return;
@@ -297,6 +297,11 @@ class Nginx_Helper {
 	 * @since    2.0.0
 	 */
 	public function run() {
+
+		if ( ! $this->required_wp_version() ) {
+			return;
+		}
+
 		$this->loader->run();
 	}
 
@@ -433,7 +438,8 @@ class Nginx_Helper {
 			$headers['Expires']       = 'Wed, 11 Jan 1984 05:00:00 GMT'; // Date in the past
 		} else {
 			// Page is for an anonymous user and is cacheable.
-			$options = get_option( 'easyengine_cache_manager_cf_settings' );
+			$options = get_network_option( null, 'easyengine_cache_manager_cf_settings' );
+
 			$ttl     = isset( $options['default_cache_ttl'] ) ? (int) $options['default_cache_ttl'] : 0;
 
 			if ( $ttl > 0 ) {

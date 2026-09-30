@@ -113,9 +113,12 @@ class Cloudflare_Client {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purgeByUrls( array $urls ) {
+
 		if ( empty( $urls ) ) {
 			return false;
 		}
+
+		$urls = array_values( array_unique( array_filter( array_map( array( self::class , 'to_full_url' ), $urls ) ) ) );
 
 		global $nginx_helper_admin;
 
@@ -150,6 +153,30 @@ class Cloudflare_Client {
 
 			return false;
 		}
+	}
+
+	/**
+	 * Convert a path to a full URL, leaving full URLs untouched.
+	 *
+	 * @param mixed $path Path such as '/' or '/blog/', or a full URL.
+	 *
+	 * @return string Full URL, or an empty string for an empty value.
+	 */
+	public static function to_full_url( $path ) {
+		$path = trim( (string) $path );
+
+		if ( '' === $path ) {
+			return '';
+		}
+
+		$parsed = wp_parse_url( $path );
+
+		// Skip values that are absolute URLs.
+		if ( ! empty( $parsed['host'] ) && ! empty( $parsed['scheme'] ) && in_array( strtolower( $parsed['scheme'] ), array( 'http', 'https' ), true ) ) {
+			return $path;
+		}
+
+		return home_url( $path );
 	}
 
 	/**
@@ -251,7 +278,7 @@ class Cloudflare_Client {
 		$raw_ruleset_body = $ruleset_resp->getBody();
 		$ruleset_body     = json_decode( $raw_ruleset_body, true );
 
-		$existing_rules = is_array( $ruleset_body['result']['rules'] ) ? $ruleset_body['result']['rules'] : [];
+		$existing_rules = ( \array_key_exists( 'rules', $ruleset_body['result'] ) && is_array( $ruleset_body['result']['rules'] ) ) ? $ruleset_body['result']['rules'] : [];
 
 		$rule_exists = false;
 		foreach ( $existing_rules as $existing_rule ) {

@@ -74,7 +74,7 @@ class CloudFlare_Tag_Emitter {
 	public function action_wp() {
 		$keys = self::get_main_query_cache_tags();
 		if ( ! empty( $keys ) ) {
-			@header( self::HEADER_KEY . ': ' . implode( ' ', $keys ) ); // phpcs:ignore
+			@header( self::HEADER_KEY . ': ' . implode( ',', $keys ) ); // phpcs:ignore
 		}
 	}
 
@@ -123,7 +123,7 @@ class CloudFlare_Tag_Emitter {
 	public function filter_rest_post_dispatch( $result, $server ) {
 		$keys = self::get_rest_api_cache_tags();
 		if ( ! empty( $keys ) && $result instanceof \WP_REST_Response ) {
-			$result->header( self::HEADER_KEY, implode( ' ', $keys ) );
+			$result->header( self::HEADER_KEY, implode( ',', $keys ) );
 		}
 
 		return $result;
@@ -456,7 +456,7 @@ class CloudFlare_Tag_Emitter {
 	public function filter_graphql_response_headers_to_send( $headers ) {
 		$keys = self::get_graphql_cache_tags();
 		if ( ! empty( $keys ) ) {
-			$headers[ self::HEADER_KEY ] = implode( ' ', $keys );
+			$headers[ self::HEADER_KEY ] = implode( ',', $keys );
 		}
 
 		return $headers;

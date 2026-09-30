@@ -5,7 +5,7 @@
 
 **Tags:** nginx, cache-purge, fastcgi, cloudflare, redis-cache
 
-**Requires at least:** 5.4
+**Requires at least:** 5.5
 
 **Tested up to:** 7.1
 
@@ -694,7 +694,10 @@ Fix url escaping [#82](https://github.com/rtCamp/nginx-helper/pull/82) - by
 
 ## Credits ##
 
-This plugin’s Cloudflare edge cache purging and cache tag architecture is inspired by the excellent work in [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache).
+The Cloudflare cache purge feature is adapted from the [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache) plugin, Copyright Pantheon Systems, licensed under GPLv2 or later.
+
+The derived code has been modified to emit Cloudflare Cache-Tag headers instead of Surrogate-Key headers.
+
 
 ## Upgrade Notice ##
 

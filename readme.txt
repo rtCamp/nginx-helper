@@ -1,11 +1,11 @@
 === EasyEngine Cache Helper for Nginx & Cloudflare (formerly Nginx Helper) ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, sarthak8858, im3dabasia1, tores54, mcsr, sarthaknagoshe2002, smartyp
-Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47, thisismyurl, DAnn2012, gutobenn, Titan21
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, sarthak8858, im3dabasia1, tores54, mcsr, sarthaknagoshe2002, smartyp
+Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47, thisismyurl, DAnn2012, gutobenn, Titan21, millionleave
 Donate Link: http://rt.cx/eedonate/
 Tags: nginx, cache-purge, fastcgi, cloudflare, redis-cache
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 5.4
+Requires at least: 5.5
 Tested up to: 7.1
 Stable tag: 3.0.0
 Requires PHP: 7.4
@@ -38,9 +38,7 @@ You will need to follow one or more tutorials below to get desired functionality
 
 == Credits ==
 
-The Cloudflare cache purge feature is adapted from the Pantheon Advanced Page Cache
-plugin, Copyright Pantheon Systems, licensed under GPLv2 or later.
-https://github.com/pantheon-systems/pantheon-advanced-page-cache
+The Cloudflare cache purge feature is adapted from the [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache) plugin, Copyright Pantheon Systems, licensed under GPLv2 or later.
 
 The derived code has been modified to emit Cloudflare Cache-Tag headers instead of Surrogate-Key headers.
 
@@ -84,7 +82,7 @@ The plugin adds cache tags to cacheable responses and requests tag purges when r
 
 = Can I purge one page manually? =
 
-Yes. An administrator can visit the page while logged in and use **Clear Cloudflare Edge Cache** in the toolbar to purge that URL from Cloudflare. When Nginx purging is enabled, **Purge Current Page** handles the configured Nginx or Redis cache. The Cloudflare single-page behavior must be confirmed after the release fix noted below.
+Yes. An administrator can visit the page while logged in and use **Clear Cloudflare Edge Cache** in the toolbar to purge that URL from Cloudflare. When Nginx purging is enabled, **Purge Current Page** handles the configured Nginx or Redis cache.
 
 = What does Purge Entire Cache clear? =
 
@@ -100,7 +98,7 @@ Yes. Define `EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN` in wp-config.php, th
 
 = Are there Cloudflare WP-CLI commands? =
 
-Version 3.0.0 adds `wp cloudflare cache purge-tag <tag>`, `wp cloudflare cache purge-path <url>`, and `wp cloudflare cache purge-all`. The full purge prompts for confirmation unless `--yes` is passed. Publish this answer after the URL command is validated against Cloudflare's API.
+Version 3.0.0 adds `wp cloudflare cache purge-tag <tag>`, `wp cloudflare cache purge-path <url>`, and `wp cloudflare cache purge-all`. The full purge prompts for confirmation unless `--yes` is passed.
 
 = Where can I get help? =
 
