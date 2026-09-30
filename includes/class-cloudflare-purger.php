@@ -77,15 +77,18 @@ class Cloudflare_Purger {
 	 * @since 1.0.0
 	 */
 	public function clear_post_path( $post ) {
-		$post_path  = get_permalink( $post->ID );
-		$parsed_url = \wp_parse_url( $post_path );
-		$path       = $parsed_url['path'];
-		$paths      = [ trailingslashit( $path ), untrailingslashit( $path ) ];
+		$permalink = get_permalink( $post->ID );
+		$paths = [ $permalink ];
+
+		// If the permalink does not use query string, we standardize the url to both cases.
+		if ( false === strpos( $permalink, '?' ) ) {
+			$paths = [ trailingslashit( $permalink ), untrailingslashit( $permalink ) ];
+		}
 
 		/**
 		 * Paths possibly without cache tags purges
 		 *
-		 * @param array $paths paths to clear.
+		 * @param array $paths Full URLs to clear.
 		 */
 		$paths = apply_filters( 'ec_clear_post_path', $paths );
 		Cloudflare_Client::purgeByUrls( $paths );

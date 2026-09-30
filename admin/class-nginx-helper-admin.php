@@ -886,9 +886,9 @@ class Nginx_Helper_Admin {
 			if( $this->cf_options['is_enabled'] ) {
 
 				/**
-				 * Fire an action after the entire cache has been purged whatever caching type is used.
+				 * Fire an action after the entire cache has been purged for cloudflare.
 				 *
-				 * @since 2.2.2
+				 * @since 3.0.0
 				*/
 				do_action( 'rt_nginx_helper_after_cf_purge_all' );
 			}
@@ -1268,17 +1268,19 @@ class Nginx_Helper_Admin {
 	 * @param object $wp_admin_bar Instance of WP_Admin_Bar.
 	 */
 	public static function add_cloudflare_admin_bar_purge( $wp_admin_bar ) {
-		if ( is_admin() || ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+		global $wp;
+
+		if ( is_admin() || ! is_user_logged_in() || ! current_user_can( 'manage_options' ) || !$wp ) {
 			return;
 		}
 
-		if ( ! empty( $_GET['message'] ) && 'ec-cleared-url-cache' === $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! empty( $_GET['ec_cf_message'] ) && 'ec-cleared-url-cache' === $_GET['ec_cf_message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$title = esc_html__( 'URL Cache Cleared', 'nginx-helper' );
 		} else {
 			$title = esc_html__( 'Clear Cloudflare Edge Cache', 'nginx-helper' );
 		}
 
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( $_SERVER['REQUEST_URI'] ) : '';
+		$request_uri = isset( $wp->request ) ? sanitize_text_field( $wp->request ) : '';
 		$wp_admin_bar->add_menu( [
 			'parent' => '',
 			'id'     => 'clear-page-cache',
@@ -1313,7 +1315,7 @@ class Nginx_Helper_Admin {
 			wp_die( esc_html__( 'Failed to clear URL cache.', 'nginx-helper' ) );
 		}
 
-		wp_safe_redirect( add_query_arg( 'message', 'ec-cleared-url-cache', $path ) );
+		wp_safe_redirect( add_query_arg( 'ec_cf_message', 'ec-cleared-url-cache', $path ) );
 		exit;
 	}
 }

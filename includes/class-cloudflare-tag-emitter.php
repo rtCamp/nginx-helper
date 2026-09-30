@@ -53,7 +53,7 @@ class CloudFlare_Tag_Emitter {
 	 *
 	 * @var integer
 	 */
-	const HEADER_MAX_LENGTH = 32512;  // 32k output buffer default on nginx, minus 256 for header name.
+	const HEADER_MAX_LENGTH = 16128; // 16 KB Cloudflare Cache-Tag limit, minus 256 for header name.
 
 	/**
 	 * Get a copy of the current instance.

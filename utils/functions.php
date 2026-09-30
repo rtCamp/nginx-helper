@@ -29,3 +29,10 @@ function ec_cf_prefix_cache_tags_with_blog_id( $keys ) {
 
 	return $prefixed_keys;
 }
+
+function ec_cf_maybe_load_vendor_autoloader() {
+	// Load Composer dependencies.
+	if ( file_exists( NGINX_HELPER_BASEPATH . '/vendor/autoload.php' ) ) {
+		require_once NGINX_HELPER_BASEPATH . '/vendor/autoload.php';
+	}
+}

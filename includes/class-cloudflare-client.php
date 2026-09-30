@@ -7,6 +7,8 @@
 
 namespace EECacheHelper;
 
+\ec_cf_maybe_load_vendor_autoloader();
+
 use Cloudflare\API\Auth\APIToken;
 use Cloudflare\API\Adapter\Guzzle;
 use Cloudflare\API\Endpoints\Zones;

@@ -12,7 +12,8 @@
 namespace EECacheHelper;
 
 use WP_CLI;
-use EECacheHelper\Cloudflare_Client;
+
+\ec_cf_maybe_load_vendor_autoloader();
 
 /**
  * Manage the Advanced Cloudflare Cache.
