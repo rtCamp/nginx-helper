@@ -1280,7 +1280,14 @@ class Nginx_Helper_Admin {
 			$title = esc_html__( 'Clear Cloudflare Edge Cache', 'nginx-helper' );
 		}
 
-		$request_uri = isset( $wp->request ) ? sanitize_text_field( $wp->request ) : '';
+		$current_url = home_url( $wp->request );
+		$current_url = ( '' === $wp->request ) ? trailingslashit( $current_url ) : user_trailingslashit( $current_url );
+
+		$query = wp_unslash( $_GET ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		unset( $query['ec_cf_message'] );
+		if ( ! empty( $query ) ) {
+			$current_url = add_query_arg( urlencode_deep( $query ), $current_url );
+		}
 		$wp_admin_bar->add_menu( [
 			'parent' => '',
 			'id'     => 'clear-page-cache',
@@ -1288,7 +1295,7 @@ class Nginx_Helper_Admin {
 			'meta'   => [
 				'title' => __( 'Purge the current URL from Cloudflare cache.', 'nginx-helper' ),
 			],
-			'href'   => wp_nonce_url( admin_url( 'admin-ajax.php?action=ec_clear_url_cache&path=' . rawurlencode( home_url( $request_uri ) ) ), 'ec-clear-url-cache' ),
+			'href'   => wp_nonce_url( admin_url( 'admin-ajax.php?action=ec_clear_url_cache&path=' . rawurlencode( $current_url ) ), 'ec-clear-url-cache' ),
 		] );
 	}
 

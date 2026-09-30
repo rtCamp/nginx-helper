@@ -278,26 +278,38 @@ class Cloudflare_Client {
 		}
 
 		$raw_ruleset_body = $ruleset_resp->getBody();
-		$ruleset_body     = json_decode( $raw_ruleset_body, true );
+		// Decode as objects so empty JSON objects ({}) are not turned into arrays ([]) on the way back.
+		$ruleset_body   = json_decode( $raw_ruleset_body );
+		$existing_rules = ( isset( $ruleset_body->result->rules ) && is_array( $ruleset_body->result->rules ) ) ? $ruleset_body->result->rules : [];
 
-		$existing_rules = ( \array_key_exists( 'rules', $ruleset_body['result'] ) && is_array( $ruleset_body['result']['rules'] ) ) ? $ruleset_body['result']['rules'] : [];
+		// Only these fields are writable; id, version, last_updated etc. are read-only and rejected by the API.
+		$writable_fields = [ 'action', 'action_parameters', 'expression', 'description', 'enabled', 'ref' ];
+		$rules_to_save   = [];
 
-		$rule_exists = false;
 		foreach ( $existing_rules as $existing_rule ) {
-			if ( isset( $existing_rule['description'] ) && 'EasyEngine Cache Helper Ruleset' === $existing_rule['description'] ) {
-				$rule_exists = true;
-				break;
+			if ( isset( $existing_rule->description ) && 'EasyEngine Cache Helper Ruleset' === $existing_rule->description ) {
+				return 'exists';
 			}
+
+			$clean_rule = new \stdClass();
+			foreach ( $writable_fields as $field ) {
+				if ( isset( $existing_rule->$field ) ) {
+					$clean_rule->$field = $existing_rule->$field;
+				}
+			}
+
+			// An empty serve_stale is rejected by the API.
+			if ( isset( $clean_rule->action_parameters->serve_stale ) && empty( (array) $clean_rule->action_parameters->serve_stale ) ) {
+				unset( $clean_rule->action_parameters->serve_stale );
+			}
+
+			$rules_to_save[] = $clean_rule;
 		}
 
-		if ( $rule_exists ) {
-			return 'exists';
-		}
-
-		$existing_rules[] = $rule;
+		$rules_to_save[] = $rule;
 
 		try {
-			$ruleset_resp     = $adapter->put( sprintf( 'zones/%s/rulesets/%s', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) ), [ 'rules' => $existing_rules ] );
+			$ruleset_resp     = $adapter->put( sprintf( 'zones/%s/rulesets/%s', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) ), [ 'rules' => $rules_to_save ] );
 			$raw_ruleset_body = $ruleset_resp->getBody();
 			$ruleset_body     = json_decode( $raw_ruleset_body );
 

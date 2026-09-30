@@ -77,6 +77,10 @@ class Cloudflare_Purger {
 	 * @since 1.0.0
 	 */
 	public function clear_post_path( $post ) {
+		if ( in_array( $post->post_type, self::get_ignored_post_types(), true ) ) {
+			return;
+		}
+
 		$permalink = get_permalink( $post->ID );
 		$paths = [ $permalink ];
 
@@ -122,17 +126,7 @@ class Cloudflare_Purger {
 	public function action_clean_post_cache( $post_id ) {
 		$type = get_post_type( $post_id );
 
-		/**
-		 * Allow specific post types to ignore the purge process.
-		 *
-		 * @param array $ignored_post_types Post types to ignore.
-		 *
-		 * @return array
-		 * @since 1.0.0
-		 */
-		$ignored_post_types = apply_filters( 'ec_purge_post_type_ignored', [ 'revision' ] );
-
-		if ( $type && in_array( $type, $ignored_post_types, true ) ) {
+		if ( $type && in_array( $type, self::get_ignored_post_types(), true ) ) {
 			return;
 		}
 
@@ -295,11 +289,13 @@ class Cloudflare_Purger {
 	}
 
 	/**
-	 * Purge the cache tags associated with a post being modified.
+	 * Get the post types for which purging is skipped.
 	 *
-	 * @param object $post Object representing the modified post.
+	 * Defaults to revisions and internal types WordPress creates behind the scenes during page views.
+	 *
+	 * @return string[]
 	 */
-	private function purge_post_with_related( $post ) {
+	private static function get_ignored_post_types() {
 		/**
 		 * Allow specific post types to ignore the purge process.
 		 *
@@ -308,9 +304,16 @@ class Cloudflare_Purger {
 		 * @return array
 		 * @since 1.0.0
 		 */
-		$ignored_post_types = apply_filters( 'ec_purge_post_type_ignored', [ 'revision' ] );
+		return (array) apply_filters( 'ec_purge_post_type_ignored', [ 'revision', 'oembed_cache', 'scheduled-action', 'customize_changeset' ] );
+	}
 
-		if ( in_array( $post->post_type, $ignored_post_types, true ) ) {
+	/**
+	 * Purge the cache tags associated with a post being modified.
+	 *
+	 * @param object $post Object representing the modified post.
+	 */
+	private function purge_post_with_related( $post ) {
+		if ( in_array( $post->post_type, self::get_ignored_post_types(), true ) ) {
 			return;
 		}
 
