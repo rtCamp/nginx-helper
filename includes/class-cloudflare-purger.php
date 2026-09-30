@@ -36,31 +36,29 @@ class Cloudflare_Purger {
 	}
 
 	/**
-	 * Purge cache tags associated with a post being updated.
+	 * Purge cache tags associated with a post once it is fully saved (terms and meta included).
 	 *
-	 * @param integer $post_id ID for the modified post.
-	 * @param object $post     The post object.
+	 * Mirrors the Nginx purger: purge when the old or new status is publish or future,
+	 * and when a post is moved to trash from any status. Also runs for wp_publish_post(),
+	 * which does not fire wp_insert_post. Requires WordPress 5.6+.
+	 *
+	 * @param integer      $post_id     ID for the saved post.
+	 * @param WP_Post      $post        Post object.
+	 * @param bool         $update      Whether this is an update.
+	 * @param WP_Post|null $post_before Post object before the update, null for new posts.
 	 */
-	public function action_wp_insert_post( $post_id, $post ) {
-		if ( 'publish' !== $post->post_status ) {
-			return;
-		}
-		self::purge_post_with_related( $post );
-	}
+	public function action_wp_after_insert_post( $post_id, $post, $update, $post_before ) {
+		$new_status   = $post->post_status;
+		$old_status   = $post_before ? $post_before->post_status : 'new';
+		$purge_status = [ 'publish', 'future' ];
 
-	/**
-	 * Purge cache tags associated with a post being published or unpublished.
-	 *
-	 * @param string $new_status New status for the post.
-	 * @param string $old_status Old status for the post.
-	 * @param WP_Post $post      Post object.
-	 */
-	public function action_transition_post_status( $new_status, $old_status, $post ) {
-		if ( 'publish' !== $new_status && 'publish' !== $old_status ) {
+		if ( ! in_array( $new_status, $purge_status, true )
+			&& ! in_array( $old_status, $purge_status, true )
+			&& 'trash' !== $new_status ) {
 			return;
 		}
 		self::purge_post_with_related( $post );
-		if ( 'publish' === $old_status ) {
+		if ( 'publish' !== $new_status || 'publish' === $old_status ) {
 			return;
 		}
 		// Targets 404 pages that could be cached with no cache tags (i.e.
@@ -101,10 +99,15 @@ class Cloudflare_Purger {
 	/**
 	 * Purge cache tags associated with a post being deleted.
 	 *
+	 * Mirrors the Nginx purger: a post already in trash was purged when it was trashed.
+	 *
 	 * @param integer $post_id ID for the post to be deleted.
 	 */
 	public function action_before_delete_post( $post_id ) {
 		$post = get_post( $post_id );
+		if ( ! $post instanceof \WP_Post || 'trash' === $post->post_status ) {
+			return;
+		}
 		self::purge_post_with_related( $post );
 	}
 
@@ -119,32 +122,23 @@ class Cloudflare_Purger {
 	}
 
 	/**
-	 * Purge the post's cache tag when the post cache is cleared.
+	 * Purge the cache tags of an attachment being edited.
 	 *
-	 * @param integer $post_id ID for the modified post.
+	 * @param integer $post_id ID for the edited attachment.
 	 */
-	public function action_clean_post_cache( $post_id ) {
-		$type = get_post_type( $post_id );
-
-		if ( $type && in_array( $type, self::get_ignored_post_types(), true ) ) {
-			return;
-		}
-
+	public function action_edit_attachment( $post_id ) {
 		$keys = [
 			'post-' . $post_id,
 			'rest-post-' . $post_id,
-			'post-huge',
-			'rest-post-huge',
 		];
-
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
-		 * cache tags purged when clearing post cache.
+		 * cache tags purged when editing an attachment.
 		 *
-		 * @param array $keys    cache tags.
-		 * @param array $post_id ID for purged post.
+		 * @param array $keys      cache tags.
+		 * @param integer $post_id ID for the edited attachment.
 		 */
-		$keys = apply_filters( 'ec_purge_clean_post_cache', $keys, $post_id );
+		$keys = apply_filters( 'ec_purge_edit_attachment', $keys, $post_id );
 		Cloudflare_Client::purgeByTags( $keys );
 	}
 
@@ -228,6 +222,8 @@ class Cloudflare_Purger {
 			'rest-comment-' . $comment->comment_ID,
 			'rest-comment-collection',
 			'rest-comment-huge',
+			'post-' . $comment->comment_post_ID,
+			'rest-comment-post-' . $comment->comment_post_ID,
 		];
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
@@ -254,6 +250,11 @@ class Cloudflare_Purger {
 			'rest-comment-collection',
 			'rest-comment-huge',
 		];
+		// Like the Nginx purger, the post page only changes when an approved comment is added or removed.
+		if ( 'approved' === $new_status || 'approved' === $old_status ) {
+			$keys[] = 'post-' . $comment->comment_post_ID;
+			$keys[] = 'rest-comment-post-' . $comment->comment_post_ID;
+		}
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
 		 * cache tags purged when transitioning a comment status.
@@ -319,6 +320,7 @@ class Cloudflare_Purger {
 
 		$keys = [
 			'post-' . $post->ID,
+			'rest-post-' . $post->ID,
 			$post->post_type . '-archive',
 			'rest-' . $post->post_type . '-collection',
 			'home',
@@ -326,6 +328,7 @@ class Cloudflare_Purger {
 			'404',
 			'feed',
 			'post-huge',
+			'rest-post-huge',
 		];
 
 		if ( post_type_supports( $post->post_type, 'author' ) ) {
@@ -401,6 +404,8 @@ class Cloudflare_Purger {
 			'rest-user-' . $user_id,
 			'user-huge',
 			'rest-user-huge',
+			'post-user-' . $user_id,
+			'post-user-huge',
 		];
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**

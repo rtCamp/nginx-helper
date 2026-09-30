@@ -20,6 +20,13 @@ use Exception;
 class Cloudflare_Client {
 
 	/**
+	 * Maximum number of tags or URLs sent in a single purge request.
+	 *
+	 * @var integer
+	 */
+	const PURGE_BATCH_SIZE = 100;
+
+	/**
 	 * Purge the cache for a given set of tags.
 	 *
 	 * @param array $tags The tags to purge.
@@ -33,6 +40,11 @@ class Cloudflare_Client {
 
 		global $nginx_helper_admin;
 
+		// Same as the Nginx purger: do not purge while an import is running.
+		if ( $nginx_helper_admin->is_import_request() ) {
+			return false;
+		}
+
 		$options = $nginx_helper_admin->get_cloudflare_settings();
 		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
 		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
@@ -43,27 +55,30 @@ class Cloudflare_Client {
 			return false;
 		}
 
-		try {
-			$key     = new APIToken( $token );
-			$adapter = new Guzzle( $key );
-			$zones   = new Zones( $adapter );
+		$success = true;
 
-			$result = $zones->cachePurge( $zone_id, null, $tags, null );
+		// Cloudflare limits the number of tags accepted per purge request.
+		foreach ( array_chunk( array_values( array_unique( $tags ) ), self::PURGE_BATCH_SIZE ) as $batch ) {
+			try {
+				$key     = new APIToken( $token );
+				$adapter = new Guzzle( $key );
+				$zones   = new Zones( $adapter );
 
-			if ( $result ) {
-				error_log( 'Advanced Cloudflare Cache: Successfully purged by tags: ' . implode( ', ', $tags ) );
+				$result = $zones->cachePurge( $zone_id, null, $batch, null );
 
-				return true;
-			} else {
-				error_log( 'Advanced Cloudflare Cache: Failed to purge by tags: ' . implode( ', ', $tags ) );
-
-				return false;
+				if ( $result ) {
+					error_log( 'Advanced Cloudflare Cache: Successfully purged by tags: ' . implode( ', ', $batch ) );
+				} else {
+					error_log( 'Advanced Cloudflare Cache: Failed to purge by tags: ' . implode( ', ', $batch ) );
+					$success = false;
+				}
+			} catch ( Exception $e ) {
+				error_log( 'Advanced Cloudflare Cache: Exception when purging by tags: ' . $e->getMessage() );
+				$success = false;
 			}
-		} catch ( Exception $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when purging by tags: ' . $e->getMessage() );
-
-			return false;
 		}
+
+		return $success;
 	}
 
 	/**
@@ -122,7 +137,16 @@ class Cloudflare_Client {
 
 		$urls = array_values( array_unique( array_filter( array_map( array( self::class , 'to_full_url' ), $urls ) ) ) );
 
+		if ( empty( $urls ) ) {
+			return false;
+		}
+
 		global $nginx_helper_admin;
+
+		// Same as the Nginx purger: do not purge while an import is running.
+		if ( $nginx_helper_admin->is_import_request() ) {
+			return false;
+		}
 
 		$options = $nginx_helper_admin->get_cloudflare_settings();
 		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
@@ -134,27 +158,30 @@ class Cloudflare_Client {
 			return false;
 		}
 
-		try {
-			$key     = new APIToken( $token );
-			$adapter = new Guzzle( $key );
-			$zones   = new Zones( $adapter );
+		$success = true;
 
-			$result = $zones->cachePurge( $zone_id, $urls, null, null );
+		// Cloudflare limits the number of URLs accepted per purge request.
+		foreach ( array_chunk( $urls, self::PURGE_BATCH_SIZE ) as $batch ) {
+			try {
+				$key     = new APIToken( $token );
+				$adapter = new Guzzle( $key );
+				$zones   = new Zones( $adapter );
 
-			if ( $result ) {
-				error_log( 'Advanced Cloudflare Cache: Successfully purged by URLs: ' . implode( ', ', $urls ) );
+				$result = $zones->cachePurge( $zone_id, $batch, null, null );
 
-				return true;
-			} else {
-				error_log( 'Advanced Cloudflare Cache: Failed to purge by URLs: ' . implode( ', ', $urls ) );
-
-				return false;
+				if ( $result ) {
+					error_log( 'Advanced Cloudflare Cache: Successfully purged by URLs: ' . implode( ', ', $batch ) );
+				} else {
+					error_log( 'Advanced Cloudflare Cache: Failed to purge by URLs: ' . implode( ', ', $batch ) );
+					$success = false;
+				}
+			} catch ( Exception $e ) {
+				error_log( 'Advanced Cloudflare Cache: Exception when purging by URLs: ' . $e->getMessage() );
+				$success = false;
 			}
-		} catch ( Exception $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when purging by URLs: ' . $e->getMessage() );
-
-			return false;
 		}
+
+		return $success;
 	}
 
 	/**

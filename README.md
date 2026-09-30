@@ -5,7 +5,7 @@
 
 **Tags:** nginx, cache-purge, fastcgi, cloudflare, redis-cache
 
-**Requires at least:** 5.5
+**Requires at least:** 5.6
 
 **Tested up to:** 7.1
 
