@@ -404,8 +404,6 @@ class Cloudflare_Purger {
 			'rest-user-' . $user_id,
 			'user-huge',
 			'rest-user-huge',
-			'post-user-' . $user_id,
-			'post-user-huge',
 		];
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
@@ -415,6 +413,73 @@ class Cloudflare_Purger {
 		 * @param array $user_id ID for purged user.
 		 */
 		$keys = apply_filters( 'ec_purge_clean_user_cache', $keys, $user_id );
+		Cloudflare_Client::purgeByTags( $keys );
+	}
+
+	/**
+	 * Purge post pages that show an author when the author's public profile changes.
+	 *
+	 * @param integer $user_id       ID for the updated user.
+	 * @param WP_User $old_user_data User object before the update.
+	 */
+	public function action_profile_update( $user_id, $old_user_data ) {
+		$user = get_userdata( $user_id );
+		if ( ! $user || ! $old_user_data ) {
+			return;
+		}
+
+		$changed = false;
+		foreach ( [ 'display_name', 'user_nicename', 'user_url', 'user_email', 'description' ] as $field ) {
+			if ( $user->$field !== $old_user_data->$field ) {
+				$changed = true;
+				break;
+			}
+		}
+
+		if ( ! $changed ) {
+			return;
+		}
+
+		$keys = [
+			'post-user-' . $user_id,
+			'post-user-huge',
+		];
+		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+		/**
+		 * cache tags purged when an author's public profile changes.
+		 *
+		 * @param array $keys      cache tags.
+		 * @param integer $user_id ID for the updated user.
+		 */
+		$keys = apply_filters( 'ec_purge_profile_update', $keys, $user_id );
+		Cloudflare_Client::purgeByTags( $keys );
+	}
+
+	/**
+	 * Purge post pages and author archives after a user is deleted and their posts reassigned.
+	 *
+	 * @param integer      $user_id  ID for the deleted user.
+	 * @param integer|null $reassign ID the posts were reassigned to, if any.
+	 */
+	public function action_deleted_user( $user_id, $reassign ) {
+		$keys = [
+			'post-user-' . $user_id,
+			'post-user-huge',
+		];
+		if ( $reassign ) {
+			// The new author's archive now lists the reassigned posts.
+			$keys[] = 'user-' . (int) $reassign;
+			$keys[] = 'user-huge';
+		}
+		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+		/**
+		 * cache tags purged when a user is deleted.
+		 *
+		 * @param array $keys            cache tags.
+		 * @param integer $user_id       ID for the deleted user.
+		 * @param integer|null $reassign ID the posts were reassigned to.
+		 */
+		$keys = apply_filters( 'ec_purge_deleted_user', $keys, $user_id, $reassign );
 		Cloudflare_Client::purgeByTags( $keys );
 	}
 

@@ -285,6 +285,8 @@ class Nginx_Helper {
 			$this->loader->add_action( 'transition_comment_status', Cloudflare_Purger::get_instance(), 'action_transition_comment_status', 10, 3 );
 			$this->loader->add_action( 'clean_comment_cache', Cloudflare_Purger::get_instance(), 'action_clean_comment_cache' );
 			$this->loader->add_action( 'clean_user_cache', Cloudflare_Purger::get_instance(), 'action_clean_user_cache' );
+			$this->loader->add_action( 'profile_update', Cloudflare_Purger::get_instance(), 'action_profile_update', 10, 2 );
+			$this->loader->add_action( 'deleted_user', Cloudflare_Purger::get_instance(), 'action_deleted_user', 10, 2 );
 			$this->loader->add_action( 'updated_option', Cloudflare_Purger::get_instance(), 'action_updated_option' );
 		}
 
