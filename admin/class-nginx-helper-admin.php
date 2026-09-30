@@ -772,7 +772,7 @@ class Nginx_Helper_Admin {
 			! $this->options['enable_purge'] ||
 			empty( $this->options['future_posts'] ) ||
 			empty( $this->options['future_posts'][ $blog_id ] ) ||
-			isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) ||
+			!isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) ||
 			wp_is_post_revision( $post_id )
 		) {
 			return;
