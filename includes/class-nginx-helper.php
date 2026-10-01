@@ -396,9 +396,10 @@ class Nginx_Helper {
 		if ( version_compare( $installed_version, $this->get_version(), '<' ) ) {
 
 			require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
-			Nginx_Helper_Activator::set_user_caps();
 
-			update_option( 'nginx_helper_version', $this->get_version() );
+			if ( Nginx_Helper_Activator::set_user_caps() ) {
+				update_option( 'nginx_helper_version', $this->get_version() );
+			}
 		}
 	}
 

@@ -1297,7 +1297,7 @@ class Nginx_Helper_Admin {
 	 * Load the script that removes the cleared message from the URL and restores the button label.
 	 */
 	public function enqueue_cloudflare_admin_bar_script() {
-		if ( ! is_admin_bar_showing() || ! current_user_can( 'manage_options' ) || ! self::has_cloudflare_cleared_message() ) {
+		if ( ! is_admin_bar_showing() || ! current_user_can( 'Nginx Helper | Purge cache' ) || ! self::has_cloudflare_cleared_message() ) {
 			return;
 		}
 
@@ -1324,7 +1324,7 @@ class Nginx_Helper_Admin {
 	public static function add_cloudflare_admin_bar_purge( $wp_admin_bar ) {
 		global $wp;
 
-		if ( is_admin() || ! is_user_logged_in() || ! current_user_can( 'manage_options' ) || !$wp ) {
+		if ( is_admin() || ! is_user_logged_in() || ! current_user_can( 'Nginx Helper | Purge cache' ) || !$wp ) {
 			return;
 		}
 
@@ -1362,7 +1362,7 @@ class Nginx_Helper_Admin {
 		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( $_GET['_wpnonce'] ) : '';
 		if ( empty( $nonce )
 			 || ! wp_verify_nonce( $nonce, 'ec-clear-url-cache' )
-			 || ! current_user_can( 'manage_options' ) ) {
+			 || ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
 			wp_die( esc_html__( "You shouldn't be doing this.", 'nginx-helper' ) );
 		}
 
