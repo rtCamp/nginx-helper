@@ -16,6 +16,21 @@ use EECacheHelper\Cloudflare_Client;
  */
 class Cloudflare_Purger {
 	/**
+	 * Columns of the users table that are never shown publicly. Any other column changing purges the author's pages.
+	 *
+	 * @var string[]
+	 */
+	const NON_PUBLIC_USER_FIELDS = [ 'user_pass', 'user_activation_key' ];
+
+	/**
+	 * User meta keys that are shown publicly. A change purges the author's pages.
+	 * Sites can add their own keys with the ec_purge_user_meta_keys filter.
+	 *
+	 * @var string[]
+	 */
+	const PUBLIC_USER_META_KEYS = [ 'description', 'first_name', 'last_name', 'nickname' ];
+
+	/**
 	 * Current instance when set.
 	 *
 	 * @var Emitter
@@ -476,19 +491,60 @@ class Cloudflare_Purger {
 			return;
 		}
 
-		$changed = false;
-		foreach ( [ 'display_name', 'user_nicename', 'user_url', 'user_email', 'description' ] as $field ) {
-			if ( $user->$field !== $old_user_data->$field ) {
-				$changed = true;
-				break;
-			}
-		}
+		// Columns of the users table. Meta such as the bio is handled in action_user_meta_changed().
+		$changed = array_diff_assoc( (array) $user->data, (array) $old_user_data->data );
+		$changed = array_diff_key( $changed, array_flip( self::NON_PUBLIC_USER_FIELDS ) );
 
-		if ( ! $changed ) {
+		if ( ! empty( $changed ) ) {
+			$this->queue_author_tags( $user_id );
+		}
+	}
+
+	/**
+	 * Purge the author tags when a public user meta value changes.
+	 *
+	 * Runs on added_user_meta, updated_user_meta and deleted_user_meta. WordPress only fires the
+	 * updated hook when the stored value really changed.
+	 *
+	 * @param int|int[] $meta_id    Meta ID (or IDs when deleted).
+	 * @param integer   $user_id    ID of the user the meta belongs to.
+	 * @param string    $meta_key   Meta key.
+	 * @param mixed     $meta_value Meta value.
+	 */
+	public function action_user_meta_changed( $meta_id, $user_id, $meta_key, $meta_value = null ) {
+		/**
+		 * Filters the user meta keys that are shown publicly, so a change purges the author's pages.
+		 *
+		 * Add keys for custom profile fields, avatars or social links.
+		 *
+		 * @param string[] $keys Meta keys.
+		 */
+		$public_keys = (array) apply_filters( 'ec_purge_user_meta_keys', self::PUBLIC_USER_META_KEYS );
+
+		if ( ! in_array( $meta_key, $public_keys, true ) ) {
 			return;
 		}
 
+		// Adding an empty value (new accounts get empty name and bio rows) changes nothing public.
+		// Clearing an existing value still purges, as that goes through updated_user_meta.
+		if ( 'added_user_meta' === current_filter() && '' === $meta_value ) {
+			return;
+		}
+
+		$this->queue_author_tags( $user_id );
+	}
+
+	/**
+	 * Queue the cache tags of an author's archive, REST user and post pages.
+	 *
+	 * @param integer $user_id User ID.
+	 */
+	private function queue_author_tags( $user_id ) {
 		$keys = [
+			'user-' . $user_id,
+			'rest-user-' . $user_id,
+			'user-huge',
+			'rest-user-huge',
 			'post-user-' . $user_id,
 			'post-user-huge',
 		];

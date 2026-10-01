@@ -1317,6 +1317,41 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
+	 * Get the URL of the current request exactly as the visitor loaded it, without the cleared message.
+	 *
+	 * The path and query string come from the raw request URI. Rebuilding the query from $_GET would
+	 * change how it is encoded (e.g. "red,blue" becoming "red%2Cblue"), and Cloudflare purges by exact URL.
+	 *
+	 * @return string
+	 */
+	private static function get_current_request_url() {
+		global $wp;
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+
+		if ( 0 !== strpos( $request_uri, '/' ) ) {
+			return user_trailingslashit( home_url( $wp->request ) );
+		}
+
+		$home   = wp_parse_url( home_url() );
+		$origin = $home['scheme'] . '://' . $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+
+		list( $path, $query ) = array_pad( explode( '?', $request_uri, 2 ), 2, '' );
+
+		if ( '' !== $query ) {
+			$pairs = array_filter(
+				explode( '&', $query ),
+				function ( $pair ) {
+					return '' !== $pair && self::CF_MESSAGE_PARAM !== $pair && 0 !== strpos( $pair, self::CF_MESSAGE_PARAM . '=' );
+				}
+			);
+			$query = implode( '&', $pairs );
+		}
+
+		return $origin . $path . ( '' !== $query ? '?' . $query : '' );
+	}
+
+	/**
 	 * Register a toolbar button to purge the cache for the current page.
 	 *
 	 * @param object $wp_admin_bar Instance of WP_Admin_Bar.
@@ -1334,14 +1369,7 @@ class Nginx_Helper_Admin {
 			$title = esc_html__( 'Clear Cloudflare Edge Cache', 'nginx-helper' );
 		}
 
-		$current_url = home_url( $wp->request );
-		$current_url = ( '' === $wp->request ) ? trailingslashit( $current_url ) : user_trailingslashit( $current_url );
-
-		$query = wp_unslash( $_GET ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		unset( $query[ self::CF_MESSAGE_PARAM ] );
-		if ( ! empty( $query ) ) {
-			$current_url = add_query_arg( urlencode_deep( $query ), $current_url );
-		}
+		$current_url = self::get_current_request_url();
 		$wp_admin_bar->add_menu( [
 			'parent' => '',
 			'id'     => 'clear-page-cache',
@@ -1376,7 +1404,9 @@ class Nginx_Helper_Admin {
 			wp_die( esc_html__( 'Failed to clear URL cache.', 'nginx-helper' ) );
 		}
 
-		wp_safe_redirect( add_query_arg( self::CF_MESSAGE_PARAM, self::CF_MESSAGE_CLEARED, $path ) );
+		// Append the flag as text; add_query_arg() would re-encode the existing query string.
+		$separator = false === strpos( $path, '?' ) ? '?' : '&';
+		wp_safe_redirect( $path . $separator . self::CF_MESSAGE_PARAM . '=' . self::CF_MESSAGE_CLEARED );
 		exit;
 	}
 }
