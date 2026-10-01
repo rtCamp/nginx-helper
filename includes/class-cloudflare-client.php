@@ -12,7 +12,6 @@ namespace EECacheHelper;
 use Cloudflare\API\Auth\APIToken;
 use Cloudflare\API\Adapter\Guzzle;
 use Cloudflare\API\Endpoints\Zones;
-use Exception;
 
 /**
  * Class Cloudflare_Client
@@ -53,6 +52,24 @@ class Cloudflare_Client {
 	 * @var bool
 	 */
 	private static $shutdown_hooked = false;
+
+	/**
+	 * Whether the Cloudflare SDK is available. Logs the reason when it is not.
+	 *
+	 * Callers such as the CLI commands do not check that Cloudflare is enabled, and constructing an
+	 * SDK class that was never loaded is a fatal error that cannot be caught as an Exception.
+	 *
+	 * @return bool
+	 */
+	private static function is_ready() {
+		$is_ready = ec_cf_maybe_load_vendor_autoloader();
+
+		if ( ! $is_ready ) {
+			error_log( 'Advanced Cloudflare Cache: The Cloudflare SDK is missing. Run "composer install" in the plugin folder or use the release version.' );
+		}
+
+		return $is_ready;
+	}
 
 	/**
 	 * Queue tags to be purged once at the end of the request.
@@ -152,7 +169,7 @@ class Cloudflare_Client {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purgeByTags( array $tags ) {
-		if ( empty( $tags ) ) {
+		if ( empty( $tags ) || ! self::is_ready() ) {
 			return false;
 		}
 
@@ -190,7 +207,7 @@ class Cloudflare_Client {
 					error_log( 'Advanced Cloudflare Cache: Failed to purge by tags: ' . implode( ', ', $batch ) );
 					$success = false;
 				}
-			} catch ( Exception $e ) {
+			} catch ( \Throwable $e ) {
 				error_log( 'Advanced Cloudflare Cache: Exception when purging by tags: ' . $e->getMessage() );
 				$success = false;
 			}
@@ -205,6 +222,10 @@ class Cloudflare_Client {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purgeEverything() {
+		if ( ! self::is_ready() ) {
+			return false;
+		}
+
 		global $nginx_helper_admin;
 
 		$options = $nginx_helper_admin->get_cloudflare_settings();
@@ -237,7 +258,7 @@ class Cloudflare_Client {
 
 				return false;
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Throwable $e ) {
 			error_log( 'Advanced Cloudflare Cache: Exception when purging everything: ' . $e->getMessage() );
 
 			return false;
@@ -253,7 +274,7 @@ class Cloudflare_Client {
 	 */
 	public static function purgeByUrls( array $urls ) {
 
-		if ( empty( $urls ) ) {
+		if ( empty( $urls ) || ! self::is_ready() ) {
 			return false;
 		}
 
@@ -297,7 +318,7 @@ class Cloudflare_Client {
 					error_log( 'Advanced Cloudflare Cache: Failed to purge by URLs: ' . implode( ', ', $batch ) );
 					$success = false;
 				}
-			} catch ( Exception $e ) {
+			} catch ( \Throwable $e ) {
 				error_log( 'Advanced Cloudflare Cache: Exception when purging by URLs: ' . $e->getMessage() );
 				$success = false;
 			}
@@ -338,7 +359,7 @@ class Cloudflare_Client {
 	public static function setupCacheRule() {
 		global $nginx_helper_admin;
 
-		if ( ! $nginx_helper_admin ) {
+		if ( ! $nginx_helper_admin || ! self::is_ready() ) {
 			return 'failed';
 		}
 
@@ -363,7 +384,7 @@ class Cloudflare_Client {
 				error_log( 'Advanced Cloudflare Cache: Invalid response when fetching rulesets.' );
 				return 'failed';
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Throwable $e ) {
 			error_log( 'Advanced Cloudflare Cache: Exception when fetching rulesets: ' . esc_html( $e->getMessage() ) );
 			return 'failed';
 		}
@@ -407,7 +428,7 @@ class Cloudflare_Client {
 
 				error_log( 'Advanced Cloudflare Cache: Failed to create cache rule. Response: ' . wp_json_encode( $ruleset_body ) );
 				return 'failed';
-			} catch ( Exception $e ) {
+			} catch ( \Throwable $e ) {
 				error_log( 'Advanced Cloudflare Cache: Exception when creating cache ruleset: ' . esc_html( $e->getMessage() ) );
 				return 'failed';
 			}
@@ -421,7 +442,7 @@ class Cloudflare_Client {
 				error_log( 'Advanced Cloudflare Cache: Failed to fetch existing cache rule. Ruleset ID: ' . wp_json_encode( $cache_ruleset_id ) );
 				return 'failed';
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Throwable $e ) {
 			error_log( 'Advanced Cloudflare Cache: Exception when fetching existing ruleset: ' . esc_html( $e->getMessage() ) );
 			return 'failed';
 		}
@@ -538,7 +559,7 @@ class Cloudflare_Client {
 
 			error_log( 'Advanced Cloudflare Cache: Failed to save cache rule. Response: ' . wp_json_encode( $body ) );
 			return 'failed';
-		} catch ( Exception $e ) {
+		} catch ( \Throwable $e ) {
 			error_log( 'Advanced Cloudflare Cache: Exception when saving cache rule: ' . esc_html( $e->getMessage() ) );
 			return 'failed';
 		}

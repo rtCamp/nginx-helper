@@ -388,7 +388,8 @@ class Nginx_Helper_Admin {
 
 		$diff_options = wp_parse_args( $stored_options, $default_settings );
 
-		$diff_options['is_enabled'] = ! empty( $diff_options['api_token'] ) && ! empty( $diff_options['zone_id'] );
+		// Cloudflare needs the credentials and its SDK (the vendor folder is missing in non-release installs).
+		$diff_options['is_enabled'] = ! empty( $diff_options['api_token'] ) && ! empty( $diff_options['zone_id'] ) && ec_cf_maybe_load_vendor_autoloader();
 
 		return $diff_options;
 	}
@@ -1253,6 +1254,27 @@ class Nginx_Helper_Admin {
 
 			set_transient( 'ec_page_rule_save_state_admin_notice', $result, 60 );
 		}
+	}
+
+	/**
+	 * Warn on the plugin's settings page when Cloudflare is configured but its SDK is missing.
+	 */
+	public function cf_missing_sdk_notice() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || 'nginx' !== $_GET['page'] || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$options = $this->get_cloudflare_settings();
+
+		if ( empty( $options['api_token'] ) || empty( $options['zone_id'] ) || ec_cf_maybe_load_vendor_autoloader() ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-error"><p>%s</p></div>',
+			esc_html__( 'Cloudflare purging is turned off because the plugin\'s dependencies are missing (the vendor folder). Use the release version of the plugin, or run "composer install" in the plugin folder.', 'nginx-helper' )
+		);
 	}
 
 	/**
