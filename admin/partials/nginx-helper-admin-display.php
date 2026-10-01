@@ -18,7 +18,7 @@ global $pagenow;
 
 <div class="wrap rt-nginx-wrapper">
 	<h2 class="rt_option_title">
-		<?php esc_html_e( 'Nginx Settings', 'nginx-helper' ); ?>
+		<?php esc_html_e( 'EasyEngine Cache Helper for Nginx & Cloudflare Settings', 'nginx-helper' ); ?>
 	</h2>
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-2">
@@ -28,8 +28,20 @@ global $pagenow;
 				$current_tab         = ( isset( $_GET['tab'] ) ? wp_strip_all_tags( $_GET['tab'] ) : '' );
 				$current_setting_tab = ( ! empty( $current_tab ) ) ? $current_tab : 'general';
 
+				// The Cloudflare tab is not clickable without its SDK (the vendor folder is missing in non-release installs).
+				$cf_sdk_missing = ! ec_cf_maybe_load_vendor_autoloader();
+
 				echo '<h2 class="nav-tab-wrapper">';
 				foreach ( $this->settings_tabs as $setting_tab => $setting_name ) {
+
+					if ( $cf_sdk_missing && 'cloudflare' === $setting_tab ) {
+						printf(
+							'<span class="nav-tab" style="opacity:.5;cursor:not-allowed;" aria-disabled="true" title="%s">%s</span>',
+							esc_attr__( 'Unavailable: the Cloudflare SDK (vendor folder) is missing. Use the release version of the plugin or run "composer install".', 'nginx-helper' ),
+							esc_html( $setting_name['menu_title'] )
+						);
+						continue;
+					}
 
 					$class = ( $setting_tab === $current_setting_tab ) ? ' nav-tab-active' : '';
 					printf(
@@ -46,8 +58,8 @@ global $pagenow;
 					case 'general':
 						include plugin_dir_path( __FILE__ ) . 'nginx-helper-general-options.php';
 						break;
-					case 'support':
-						include plugin_dir_path( __FILE__ ) . 'nginx-helper-support-options.php';
+					case 'cloudflare':
+						include plugin_dir_path( __FILE__ ) . 'easyengine-cache-manager-cloudflare-options.php';
 						break;
 
 				}
