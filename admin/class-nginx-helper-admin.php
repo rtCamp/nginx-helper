@@ -24,6 +24,27 @@ use EECacheHelper\Cloudflare_Client;
 class Nginx_Helper_Admin {
 
 	/**
+	 * Query parameter set after the Cloudflare admin-bar purge button is used.
+	 *
+	 * @var string
+	 */
+	const CF_MESSAGE_PARAM = 'ec_cf_message';
+
+	/**
+	 * Value of the query parameter once the URL cache is cleared.
+	 *
+	 * @var string
+	 */
+	const CF_MESSAGE_CLEARED = 'ec-cleared-url-cache';
+
+	/**
+	 * Milliseconds before the cleared message is removed from the URL and the button label is restored.
+	 *
+	 * @var integer
+	 */
+	const CF_MESSAGE_TIMEOUT = 1500;
+
+	/**
 	 * The ID of this plugin.
 	 *
 	 * @since    2.0.0
@@ -1263,6 +1284,39 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
+	 * Whether the current request is the redirect after a Cloudflare URL purge.
+	 *
+	 * @return bool
+	 */
+	private static function has_cloudflare_cleared_message() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( $_GET[ self::CF_MESSAGE_PARAM ] ) && self::CF_MESSAGE_CLEARED === $_GET[ self::CF_MESSAGE_PARAM ];
+	}
+
+	/**
+	 * Load the script that removes the cleared message from the URL and restores the button label.
+	 */
+	public function enqueue_cloudflare_admin_bar_script() {
+		if ( ! is_admin_bar_showing() || ! current_user_can( 'manage_options' ) || ! self::has_cloudflare_cleared_message() ) {
+			return;
+		}
+
+		$handle = 'ec-cf-admin-bar';
+		$file   = 'assets/js/cloudflare-admin-bar.js';
+
+		wp_enqueue_script( $handle, NGINX_HELPER_BASEURL . $file, array(), (string) filemtime( NGINX_HELPER_BASEPATH . $file ), true );
+		wp_localize_script(
+			$handle,
+			'ecCfAdminBar',
+			array(
+				'param'   => self::CF_MESSAGE_PARAM,
+				'label'   => __( 'Clear Cloudflare Edge Cache', 'nginx-helper' ),
+				'timeout' => self::CF_MESSAGE_TIMEOUT,
+			)
+		);
+	}
+
+	/**
 	 * Register a toolbar button to purge the cache for the current page.
 	 *
 	 * @param object $wp_admin_bar Instance of WP_Admin_Bar.
@@ -1274,7 +1328,7 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
-		if ( ! empty( $_GET['ec_cf_message'] ) && 'ec-cleared-url-cache' === $_GET['ec_cf_message'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( self::has_cloudflare_cleared_message() ) {
 			$title = esc_html__( 'URL Cache Cleared', 'nginx-helper' );
 		} else {
 			$title = esc_html__( 'Clear Cloudflare Edge Cache', 'nginx-helper' );
@@ -1284,7 +1338,7 @@ class Nginx_Helper_Admin {
 		$current_url = ( '' === $wp->request ) ? trailingslashit( $current_url ) : user_trailingslashit( $current_url );
 
 		$query = wp_unslash( $_GET ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		unset( $query['ec_cf_message'] );
+		unset( $query[ self::CF_MESSAGE_PARAM ] );
 		if ( ! empty( $query ) ) {
 			$current_url = add_query_arg( urlencode_deep( $query ), $current_url );
 		}
@@ -1322,7 +1376,7 @@ class Nginx_Helper_Admin {
 			wp_die( esc_html__( 'Failed to clear URL cache.', 'nginx-helper' ) );
 		}
 
-		wp_safe_redirect( add_query_arg( 'ec_cf_message', 'ec-cleared-url-cache', $path ) );
+		wp_safe_redirect( add_query_arg( self::CF_MESSAGE_PARAM, self::CF_MESSAGE_CLEARED, $path ) );
 		exit;
 	}
 }

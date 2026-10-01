@@ -260,6 +260,7 @@ class Nginx_Helper {
 		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
 			$this->loader->add_filter( 'wp_headers', $this, 'handle_cloudflare_headers', 999 );
 			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_purge', 100 );
+			$this->loader->add_action( 'wp_enqueue_scripts', $nginx_helper_admin, 'enqueue_cloudflare_admin_bar_script' );
 			$this->loader->add_action( 'wp_ajax_ec_clear_url_cache', $nginx_helper_admin, 'handle_cloudflare_clear_cache_ajax' );
 
 			// Add the cache tags.
