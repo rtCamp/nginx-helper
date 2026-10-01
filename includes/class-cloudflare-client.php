@@ -27,6 +27,13 @@ class Cloudflare_Client {
 	const PURGE_BATCH_SIZE = 100;
 
 	/**
+	 * Description of the plugin's cache rule, shared by every site on a zone.
+	 *
+	 * @var string
+	 */
+	const RULE_DESCRIPTION = 'EasyEngine Cache Helper Ruleset';
+
+	/**
 	 * Tags waiting to be purged at shutdown.
 	 *
 	 * @var array
@@ -376,7 +383,7 @@ class Cloudflare_Client {
 			'action_parameters' => [
 				'cache' => true,
 			],
-			'description'       => 'EasyEngine Cache Helper Ruleset',
+			'description'       => self::RULE_DESCRIPTION,
 		];
 
 		// If no cache rule exist then we can directly create a new.
@@ -424,45 +431,115 @@ class Cloudflare_Client {
 		$ruleset_body   = json_decode( $raw_ruleset_body );
 		$existing_rules = ( isset( $ruleset_body->result->rules ) && is_array( $ruleset_body->result->rules ) ) ? $ruleset_body->result->rules : [];
 
-		// Only these fields are writable; id, version, last_updated etc. are read-only and rejected by the API.
-		$writable_fields = [ 'action', 'action_parameters', 'expression', 'description', 'enabled', 'ref' ];
-		$rules_to_save   = [];
-
+		// Find this site's rule, if it was set up before. The address without the scheme tells sites on one zone apart.
+		$site_address = str_replace( [ 'https://', 'http://' ], '', $site_url );
+		$site_rule    = null;
 		foreach ( $existing_rules as $existing_rule ) {
-			if ( isset( $existing_rule->description ) && 'EasyEngine Cache Helper Ruleset' === $existing_rule->description ) {
-				return 'exists';
+			if ( self::is_site_rule( $existing_rule, $site_address ) ) {
+				$site_rule = $existing_rule;
+				break;
 			}
-
-			$clean_rule = new \stdClass();
-			foreach ( $writable_fields as $field ) {
-				if ( isset( $existing_rule->$field ) ) {
-					$clean_rule->$field = $existing_rule->$field;
-				}
-			}
-
-			// An empty serve_stale is rejected by the API.
-			if ( isset( $clean_rule->action_parameters->serve_stale ) && empty( (array) $clean_rule->action_parameters->serve_stale ) ) {
-				unset( $clean_rule->action_parameters->serve_stale );
-			}
-
-			$rules_to_save[] = $clean_rule;
 		}
 
-		array_unshift( $rules_to_save, $rule );
+		$rules_uri = sprintf( 'zones/%s/rulesets/%s/rules', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) );
 
-		try {
-			$ruleset_resp     = $adapter->put( sprintf( 'zones/%s/rulesets/%s', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) ), [ 'rules' => $rules_to_save ] );
-			$raw_ruleset_body = $ruleset_resp->getBody();
-			$ruleset_body     = json_decode( $raw_ruleset_body );
-
-			if ( isset( $ruleset_body->success ) && true === $ruleset_body->success ) {
-				return 'created';
+		if ( null === $site_rule ) {
+			// Add only our rule, first in the list. The other rules in the ruleset are not touched.
+			$new_rule = $rule;
+			if ( ! empty( $existing_rules[0]->id ) ) {
+				$new_rule['position'] = [ 'before' => $existing_rules[0]->id ];
 			}
 
-			error_log( 'Advanced Cloudflare Cache: Failed to update cache rule. Response: ' . wp_json_encode( $ruleset_body ) );
+			return self::send_rule_request( $adapter, 'post', $rules_uri, $new_rule, 'created' );
+		}
+
+		if ( self::rule_matches( $site_rule, $rule ) ) {
+			return 'exists';
+		}
+
+		// The rule is outdated (changed expression, other host, or disabled). Replace just this rule, keeping its position.
+		if ( empty( $site_rule->id ) ) {
+			return 'failed';
+		}
+
+		$updated_rule = $rule + [ 'enabled' => true ];
+
+		return self::send_rule_request( $adapter, 'patch', $rules_uri . '/' . rawurlencode( $site_rule->id ), $updated_rule, 'updated' );
+	}
+
+	/**
+	 * Whether an existing rule is the plugin's rule for this site.
+	 *
+	 * Descriptions are not unique in Cloudflare, and all sites on a zone share ours, so the rule is
+	 * identified by the plugin's description plus this site's address in its expression.
+	 *
+	 * @param object $existing_rule Rule from the ruleset.
+	 * @param string $site_address  This site's address without the scheme (host, port and path).
+	 *
+	 * @return bool
+	 */
+	private static function is_site_rule( $existing_rule, $site_address ) {
+		return isset( $existing_rule->description, $existing_rule->expression )
+			&& self::RULE_DESCRIPTION === $existing_rule->description
+			&& false !== stripos( $existing_rule->expression, '://' . $site_address . '/*"' );
+	}
+
+	/**
+	 * Whether an existing rule is enabled and already does what the rule built for this site does.
+	 *
+	 * Only the settings we send are compared, so extra defaults added by Cloudflare do not count as a change.
+	 *
+	 * @param object $existing_rule Rule from the ruleset.
+	 * @param array  $rule          The rule built for this site.
+	 *
+	 * @return bool
+	 */
+	private static function rule_matches( $existing_rule, array $rule ) {
+		if ( isset( $existing_rule->enabled ) && true !== $existing_rule->enabled ) {
+			return false;
+		}
+
+		foreach ( [ 'expression', 'action' ] as $field ) {
+			if ( ! isset( $existing_rule->$field ) || $rule[ $field ] !== $existing_rule->$field ) {
+				return false;
+			}
+		}
+
+		$existing_parameters = isset( $existing_rule->action_parameters ) ? json_decode( wp_json_encode( $existing_rule->action_parameters ), true ) : [];
+
+		foreach ( $rule['action_parameters'] as $name => $value ) {
+			if ( ! is_array( $existing_parameters ) || ! array_key_exists( $name, $existing_parameters ) || $value !== $existing_parameters[ $name ] ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Send a rule to Cloudflare and report the result.
+	 *
+	 * @param Guzzle $adapter Cloudflare API adapter.
+	 * @param string $method  'post' to add a rule or 'patch' to replace one.
+	 * @param string $uri     API path.
+	 * @param array  $payload Rule definition.
+	 * @param string $success Result to return on success.
+	 *
+	 * @return string The given success result, or 'failed'.
+	 */
+	private static function send_rule_request( $adapter, $method, $uri, array $payload, $success ) {
+		try {
+			$response = $adapter->$method( $uri, $payload );
+			$body     = json_decode( $response->getBody() );
+
+			if ( isset( $body->success ) && true === $body->success ) {
+				return $success;
+			}
+
+			error_log( 'Advanced Cloudflare Cache: Failed to save cache rule. Response: ' . wp_json_encode( $body ) );
 			return 'failed';
 		} catch ( Exception $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when updating cache ruleset: ' . esc_html( $e->getMessage() ) );
+			error_log( 'Advanced Cloudflare Cache: Exception when saving cache rule: ' . esc_html( $e->getMessage() ) );
 			return 'failed';
 		}
 	}

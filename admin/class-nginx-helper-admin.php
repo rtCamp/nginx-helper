@@ -1268,13 +1268,17 @@ class Nginx_Helper_Admin {
 					$class   .= ' notice-success';
 					$message = __( 'The Cloudflare Cache Rule was created successfully.', 'nginx-helper' );
 					break;
+				case 'updated':
+					$class   .= ' notice-success';
+					$message = __( 'The Cloudflare Cache Rule was out of date and has been updated.', 'nginx-helper' );
+					break;
 				case 'exists':
 					$class   .= ' notice-info';
 					$message = __( 'The Cache Rule already exists. No action was taken.', 'nginx-helper' );
 					break;
 				default:
 					$class   .= ' notice-error';
-					$message = __( 'Failed to create the Cache Rule. Please check that your API Token has Cache Rules Read/Write permissions.', 'nginx-helper' );
+					$message = __( 'Failed to set up the Cache Rule. Check the PHP error log for the reason from Cloudflare, and that your API Token has the Cache Rules Edit permission.', 'nginx-helper' );
 					break;
 			}
 
