@@ -241,6 +241,9 @@ class Nginx_Helper {
 
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );
+		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
+			$this->loader->add_action( 'rt_nginx_helper_purge_all', 'EECacheHelper\Cloudflare_Client', 'purgeEverything' );
+		}
 
 		// add action to preload the cache
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'preload_cache' );
@@ -416,17 +419,15 @@ class Nginx_Helper {
 	 */
 	public function handle_cloudflare_headers( $headers ) {
 
-		// Defensively remove any Cache-Control or Expires headers set by the server or other plugins.
-		// This ensures our plugin has the final say.
-		if ( isset( $headers['Cache-Control'] ) ) {
-			unset( $headers['Cache-Control'] );
+		// Respect restrictive headers from core or other plugins (password posts, moderation previews, WooCommerce).
+		if ( isset( $headers['Cache-Control'] ) && preg_match( '/no-store|no-cache|private|max-age/i', $headers['Cache-Control'] ) ) {
+			return $headers;
 		}
-		if ( isset( $headers['Expires'] ) ) {
-			unset( $headers['Expires'] );
-		}
+		unset( $headers['Cache-Control'], $headers['Expires'] );
 
 		// Conditions for NOT caching (logged-in, admin, search, etc.)
-		$do_not_cache = is_user_logged_in() || is_admin() || is_search() || is_404() || is_customize_preview();
+		// Before WP 6.1 wp_headers runs ahead of the main query, so also check the parsed query vars.
+		$do_not_cache = is_user_logged_in() || is_admin() || is_search() || is_404() || is_customize_preview() || ! empty( $GLOBALS['wp']->query_vars['s'] ) || ! empty( $GLOBALS['wp']->query_vars['error'] );
 
 		// Also check for common dynamic cookies
 		if ( ! $do_not_cache && ! empty( $_COOKIE ) ) {

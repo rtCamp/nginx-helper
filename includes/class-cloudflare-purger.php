@@ -337,6 +337,11 @@ class Cloudflare_Purger {
 	 * @param integer $comment_id Modified comment id.
 	 */
 	public function action_clean_comment_cache( $comment_id ) {
+		// Pending and spam comments were never public, so nothing cached can reference them.
+		if ( in_array( wp_get_comment_status( $comment_id ), [ 'unapproved', 'spam' ], true ) ) {
+			return;
+		}
+
 		$keys = [
 			'rest-comment-' . $comment_id,
 			'rest-comment-huge',
@@ -390,6 +395,8 @@ class Cloudflare_Purger {
 			'front',
 			'404',
 			'feed',
+			'date',
+			'graphql-collection',
 			'post-huge',
 			'rest-post-huge',
 		];
@@ -397,6 +404,8 @@ class Cloudflare_Purger {
 		if ( post_type_supports( $post->post_type, 'author' ) ) {
 			$keys[] = 'user-' . $post->post_author;
 			$keys[] = 'user-huge';
+			// The users endpoint lists only authors with published posts.
+			$keys[] = 'rest-user-collection';
 		}
 
 		if ( post_type_supports( $post->post_type, 'comments' ) ) {
@@ -414,6 +423,10 @@ class Cloudflare_Purger {
 			if ( $terms ) {
 				foreach ( $terms as $term ) {
 					$keys[] = 'term-' . $term->term_id;
+					// Parent term archives also list posts from child terms.
+					foreach ( get_ancestors( $term->term_id, $taxonomy->name, 'taxonomy' ) as $ancestor_id ) {
+						$keys[] = 'term-' . $ancestor_id;
+					}
 				}
 				$keys[] = 'term-huge';
 			}
@@ -548,7 +561,18 @@ class Cloudflare_Purger {
 			'post-user-' . $user_id,
 			'post-user-huge',
 		];
-		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+		if ( is_multisite() ) {
+			// Users are network-wide, so purge their tags on every site they belong to.
+			$base_keys = $keys;
+			$keys      = [];
+			foreach ( array_unique( array_merge( [ get_current_blog_id() ], array_keys( get_blogs_of_user( $user_id ) ) ) ) as $blog_id ) {
+				switch_to_blog( $blog_id );
+				$keys = array_merge( $keys, ec_cf_prefix_cache_tags_with_blog_id( $base_keys ) );
+				restore_current_blog();
+			}
+		} else {
+			$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+		}
 		/**
 		 * cache tags purged when an author's public profile changes.
 		 *

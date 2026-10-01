@@ -84,8 +84,9 @@ class CloudFlare_Tag_Emitter {
 	public function action_rest_api_init() {
 		foreach ( get_post_types( [ 'show_in_rest' => true ], 'objects' ) as $post_type ) {
 			add_filter( "rest_prepare_{$post_type->name}", [ $this, 'filter_rest_prepare_post' ], 10, 3 );
-			$base                                                                    = ! empty( $post_type->rest_base ) ? $post_type->rest_base : $post_type->name;
-			self::get_instance()->rest_api_collection_endpoints[ '/wp/v2/' . $base ] = $post_type->name;
+			$base      = ! empty( $post_type->rest_base ) ? $post_type->rest_base : $post_type->name;
+			$namespace = ! empty( $post_type->rest_namespace ) ? trim( $post_type->rest_namespace, '/' ) : 'wp/v2';
+			self::get_instance()->rest_api_collection_endpoints[ '/' . $namespace . '/' . $base ] = $post_type->name;
 		}
 		foreach ( get_taxonomies( [ 'show_in_rest' => true ], 'objects' ) as $taxonomy ) {
 			add_filter( "rest_prepare_{$taxonomy->name}", [ $this, 'filter_rest_prepare_term' ], 10, 3 );
@@ -237,10 +238,11 @@ class CloudFlare_Tag_Emitter {
 		if ( ! empty( $wp_query->posts ) ) {
 			foreach ( $wp_query->posts as $p ) {
 				$keys[] = 'post-' . $p->ID;
+				// Listings and feeds print the author name too.
+				if ( post_type_supports( $p->post_type, 'author' ) ) {
+					$keys[] = 'post-user-' . $p->post_author;
+				}
 				if ( $wp_query->is_singular() ) {
-					if ( post_type_supports( $p->post_type, 'author' ) ) {
-						$keys[] = 'post-user-' . $p->post_author;
-					}
 
 					/**
 					 * Filter ec_should_add_terms

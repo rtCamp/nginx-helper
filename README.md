@@ -92,7 +92,7 @@ The plugin adds cache tags to cacheable responses and requests tag purges when r
 
 #### Can I purge one page manually?
 
-Yes. An administrator can visit the page while logged in and use **Clear Cloudflare Edge Cache** in the toolbar to purge that URL from Cloudflare. When Nginx purging is enabled, **Purge Current Page** handles the configured Nginx or Redis cache. The Cloudflare single-page behavior must be confirmed after the release fix noted below.
+Yes. An administrator can visit the page while logged in and use **Clear Cloudflare Edge Cache** in the toolbar to purge that URL from Cloudflare. When Nginx purging is enabled, **Purge Current Page** handles the configured Nginx or Redis cache.
 
 #### What does Purge Entire Cache clear?
 
@@ -108,7 +108,7 @@ Yes. Define `EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN` in `wp-config.php`, 
 
 #### Are there Cloudflare WP-CLI commands?
 
-Version 3.0.0 adds `wp cloudflare cache purge-tag <tag>`, `wp cloudflare cache purge-path <url>`, and `wp cloudflare cache purge-all`. The full purge prompts for confirmation unless `--yes` is passed. Publish this answer after the URL command is validated against Cloudflare's API.
+Version 3.0.0 adds `wp cloudflare cache purge-tag <tag>`, `wp cloudflare cache purge-path <url>`, and `wp cloudflare cache purge-all`. The full purge prompts for confirmation unless `--yes` is passed.
 
 #### Where can I get help?
 

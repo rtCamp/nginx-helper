@@ -369,7 +369,7 @@ class Cloudflare_Client {
 			}
 		}
 
-		$site_url = esc_url( get_site_url() );
+		$site_url = esc_url( home_url() );
 		$rule     = [
 			'expression'        => '(http.request.full_uri wildcard "' . $site_url . '/*" and not http.cookie contains "wordpress_logged" and not http.cookie contains "NO_CACHE" and not http.cookie contains "S+ESS" and not http.cookie contains "fbs" and not http.cookie contains "SimpleSAML" and not http.cookie contains "PHPSESSID" and not http.cookie contains "wordpress" and not http.cookie contains "wp-" and not http.cookie contains "comment_author_" and not http.cookie contains "duo_wordpress_auth_cookie" and not http.cookie contains "duo_secure_wordpress_auth_cookie" and not http.cookie contains "bp_completed_create_steps" and not http.cookie contains "bp_new_group_id" and not http.cookie contains "wp-resetpass-" and not http.cookie contains "woocommerce" and not http.cookie contains "amazon_Login_")',
 			'action'            => 'set_cache_settings',
@@ -448,7 +448,7 @@ class Cloudflare_Client {
 			$rules_to_save[] = $clean_rule;
 		}
 
-		$rules_to_save[] = $rule;
+		array_unshift( $rules_to_save, $rule );
 
 		try {
 			$ruleset_resp     = $adapter->put( sprintf( 'zones/%s/rulesets/%s', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) ), [ 'rules' => $rules_to_save ] );
