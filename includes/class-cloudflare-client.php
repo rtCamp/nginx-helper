@@ -10,7 +10,6 @@ namespace EECacheHelper;
 \ec_cf_maybe_load_vendor_autoloader();
 
 use Cloudflare\API\Auth\APIToken;
-use Cloudflare\API\Adapter\Guzzle;
 use Cloudflare\API\Endpoints\Zones;
 
 /**
@@ -196,7 +195,7 @@ class Cloudflare_Client {
 		foreach ( array_chunk( array_values( array_unique( $tags ) ), self::PURGE_BATCH_SIZE ) as $batch ) {
 			try {
 				$key     = new APIToken( $token );
-				$adapter = new Guzzle( $key );
+				$adapter = new Cloudflare_Adapter( $key );
 				$zones   = new Zones( $adapter );
 
 				$result = $zones->cachePurge( $zone_id, null, $batch, null );
@@ -240,7 +239,7 @@ class Cloudflare_Client {
 
 		try {
 			$key     = new APIToken( $token );
-			$adapter = new Guzzle( $key );
+			$adapter = new Cloudflare_Adapter( $key );
 			$zones   = new Zones( $adapter );
 
 			$result = $zones->cachePurgeEverything( $zone_id );
@@ -307,7 +306,7 @@ class Cloudflare_Client {
 		foreach ( array_chunk( $urls, self::PURGE_BATCH_SIZE ) as $batch ) {
 			try {
 				$key     = new APIToken( $token );
-				$adapter = new Guzzle( $key );
+				$adapter = new Cloudflare_Adapter( $key );
 				$zones   = new Zones( $adapter );
 
 				$result = $zones->cachePurge( $zone_id, $batch, null, null );
@@ -373,7 +372,7 @@ class Cloudflare_Client {
 		}
 
 		$key     = new APIToken( $token );
-		$adapter = new Guzzle( $key );
+		$adapter = new Cloudflare_Adapter( $key );
 
 		try {
 			$rulesets_response = $adapter->get( sprintf( 'zones/%s/rulesets', esc_attr( $zone_id ) ) );
@@ -540,7 +539,7 @@ class Cloudflare_Client {
 	/**
 	 * Send a rule to Cloudflare and report the result.
 	 *
-	 * @param Guzzle $adapter Cloudflare API adapter.
+	 * @param Cloudflare_Adapter $adapter Cloudflare API adapter.
 	 * @param string $method  'post' to add a rule or 'patch' to replace one.
 	 * @param string $uri     API path.
 	 * @param array  $payload Rule definition.
