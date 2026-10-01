@@ -470,29 +470,6 @@ class Cloudflare_Purger {
 
 
 	/**
-	 * Purge a variety of cache tags when a user is modified.
-	 *
-	 * @param integer $user_id ID for the modified user.
-	 */
-	public function action_clean_user_cache( $user_id ) {
-		$keys = [
-			'user-' . $user_id,
-			'rest-user-' . $user_id,
-			'user-huge',
-			'rest-user-huge',
-		];
-		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
-		/**
-		 * cache tags purged when clearing user cache.
-		 *
-		 * @param array $keys    cache tags.
-		 * @param array $user_id ID for purged user.
-		 */
-		$keys = apply_filters( 'ec_purge_clean_user_cache', $keys, $user_id );
-		Cloudflare_Client::queueTags( $keys );
-	}
-
-	/**
 	 * Purge post pages that show an author when the author's public profile changes.
 	 *
 	 * @param integer $user_id       ID for the updated user.
@@ -591,6 +568,10 @@ class Cloudflare_Purger {
 	 */
 	public function action_deleted_user( $user_id, $reassign ) {
 		$keys = [
+			'user-' . $user_id,
+			'rest-user-' . $user_id,
+			'user-huge',
+			'rest-user-huge',
 			'post-user-' . $user_id,
 			'post-user-huge',
 		];

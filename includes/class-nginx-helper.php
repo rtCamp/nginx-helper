@@ -289,7 +289,6 @@ class Nginx_Helper {
 			$this->loader->add_action( 'wp_insert_comment', Cloudflare_Purger::get_instance(), 'action_wp_insert_comment', 10, 2 );
 			$this->loader->add_action( 'transition_comment_status', Cloudflare_Purger::get_instance(), 'action_transition_comment_status', 10, 3 );
 			$this->loader->add_action( 'clean_comment_cache', Cloudflare_Purger::get_instance(), 'action_clean_comment_cache' );
-			$this->loader->add_action( 'clean_user_cache', Cloudflare_Purger::get_instance(), 'action_clean_user_cache' );
 			$this->loader->add_action( 'profile_update', Cloudflare_Purger::get_instance(), 'action_profile_update', 10, 2 );
 			$this->loader->add_action( 'added_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
 			$this->loader->add_action( 'updated_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
