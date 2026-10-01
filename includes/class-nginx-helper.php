@@ -277,6 +277,7 @@ class Nginx_Helper {
 			$this->loader->add_action( 'wp_after_insert_post', Cloudflare_Purger::get_instance(), 'action_wp_after_insert_post', 10, 4 );
 			$this->loader->add_action( 'before_delete_post', Cloudflare_Purger::get_instance(), 'action_before_delete_post' );
 			$this->loader->add_action( 'delete_attachment', Cloudflare_Purger::get_instance(), 'action_delete_attachment' );
+			$this->loader->add_action( 'clean_post_cache', Cloudflare_Purger::get_instance(), 'action_clean_post_cache' );
 			$this->loader->add_action( 'edit_attachment', Cloudflare_Purger::get_instance(), 'action_edit_attachment' );
 			$this->loader->add_action( 'created_term', Cloudflare_Purger::get_instance(), 'action_created_term', 10, 3 );
 			$this->loader->add_action( 'edited_term', Cloudflare_Purger::get_instance(), 'action_edited_term' );

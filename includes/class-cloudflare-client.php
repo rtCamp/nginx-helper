@@ -27,6 +27,117 @@ class Cloudflare_Client {
 	const PURGE_BATCH_SIZE = 100;
 
 	/**
+	 * Tags waiting to be purged at shutdown.
+	 *
+	 * @var array
+	 */
+	private static $queued_tags = [];
+
+	/**
+	 * URLs waiting to be purged at shutdown.
+	 *
+	 * @var array
+	 */
+	private static $queued_urls = [];
+
+	/**
+	 * Whether the shutdown flush has been registered.
+	 *
+	 * @var bool
+	 */
+	private static $shutdown_hooked = false;
+
+	/**
+	 * Queue tags to be purged once at the end of the request.
+	 *
+	 * @param array $tags The tags to purge.
+	 */
+	public static function queueTags( array $tags ) {
+		if ( empty( $tags ) ) {
+			return;
+		}
+
+		self::$queued_tags = array_merge( self::$queued_tags, $tags );
+		self::hook_shutdown();
+	}
+
+	/**
+	 * Queue URLs to be purged once at the end of the request.
+	 *
+	 * Paths are converted to full URLs now, so the right site is used on multisite.
+	 *
+	 * @param array $urls The URLs or paths to purge.
+	 */
+	public static function queueUrls( array $urls ) {
+		$urls = array_filter( array_map( array( self::class, 'to_full_url' ), $urls ) );
+
+		if ( empty( $urls ) ) {
+			return;
+		}
+
+		self::$queued_urls = array_merge( self::$queued_urls, $urls );
+		self::hook_shutdown();
+	}
+
+	/**
+	 * Register the shutdown flush once.
+	 */
+	private static function hook_shutdown() {
+		if ( self::$shutdown_hooked ) {
+			return;
+		}
+
+		self::$shutdown_hooked = true;
+		add_action( 'shutdown', array( self::class, 'flush_queue' ), 100 );
+	}
+
+	/**
+	 * Send everything queued during the request, after the response has been delivered where possible.
+	 */
+	public static function flush_queue() {
+		$tags = array_values( array_unique( self::$queued_tags ) );
+		$urls = array_values( array_unique( self::$queued_urls ) );
+
+		self::$queued_tags = [];
+		self::$queued_urls = [];
+
+		/**
+		 * Filters the cache tags about to be purged at the end of the request.
+		 *
+		 * Runs once per request, so it can add, change or remove tags. Return an empty array to skip the purge.
+		 *
+		 * @param string[] $tags Cache tags collected during the request.
+		 */
+		$tags = array_values( array_unique( array_filter( (array) apply_filters( 'ec_cf_flush_tags', $tags ) ) ) );
+
+		/**
+		 * Filters the URLs about to be purged at the end of the request.
+		 *
+		 * Runs once per request. Paths are converted to full URLs before they are sent.
+		 *
+		 * @param string[] $urls URLs collected during the request.
+		 */
+		$urls = array_values( array_unique( array_filter( (array) apply_filters( 'ec_cf_flush_urls', $urls ) ) ) );
+
+		if ( empty( $tags ) && empty( $urls ) ) {
+			return;
+		}
+
+		// Let the visitor's response finish first so they do not wait for the API calls.
+		if ( function_exists( 'fastcgi_finish_request' ) ) {
+			fastcgi_finish_request();
+		}
+
+		if ( ! empty( $tags ) ) {
+			self::purgeByTags( $tags );
+		}
+
+		if ( ! empty( $urls ) ) {
+			self::purgeByUrls( $urls );
+		}
+	}
+
+	/**
 	 * Purge the cache for a given set of tags.
 	 *
 	 * @param array $tags The tags to purge.
@@ -108,6 +219,10 @@ class Cloudflare_Client {
 
 			if ( $result ) {
 				error_log( 'Advanced Cloudflare Cache: Successfully purged everything.' );
+
+				// Everything was purged, so anything still queued is redundant.
+				self::$queued_tags = [];
+				self::$queued_urls = [];
 
 				return true;
 			} else {

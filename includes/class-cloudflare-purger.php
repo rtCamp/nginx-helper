@@ -93,7 +93,7 @@ class Cloudflare_Purger {
 		 * @param array $paths Full URLs to clear.
 		 */
 		$paths = apply_filters( 'ec_clear_post_path', $paths );
-		Cloudflare_Client::purgeByUrls( $paths );
+		Cloudflare_Client::queueUrls( $paths );
 	}
 
 	/**
@@ -122,6 +122,54 @@ class Cloudflare_Purger {
 	}
 
 	/**
+	 * Purge the post's own cache tags when its cache is cleared.
+	 *
+	 * Catches changes that do not go through wp_insert_post, such as WooCommerce price and stock
+	 * updates or a comment edit changing the comment count. Tags are queued and sent once at
+	 * shutdown, so saves that also reach action_wp_after_insert_post do not cost an extra call.
+	 *
+	 * @param integer $post_id ID for the modified post.
+	 */
+	public function action_clean_post_cache( $post_id ) {
+		$post = get_post( $post_id );
+		$type = $post ? $post->post_type : get_post_type( $post_id );
+
+		if ( $type && in_array( $type, self::get_ignored_post_types(), true ) ) {
+			return;
+		}
+
+		// Do not purge for drafts, pending or private posts. Attachments use the 'inherit' status.
+		// A deleted post has no status and is still purged.
+		$status = get_post_status( $post_id );
+		if ( $status && ! in_array( $status, [ 'publish', 'future', 'inherit' ], true ) ) {
+			return;
+		}
+
+		$ids = [ $post_id ];
+
+		// Posts without a page of their own (e.g. product variations) show up on their parent's page.
+		if ( $post && $post->post_parent && ! is_post_type_viewable( $post->post_type ) ) {
+			$ids[] = $post->post_parent;
+		}
+
+		$keys = [];
+		foreach ( $ids as $id ) {
+			$keys[] = 'post-' . $id;
+			$keys[] = 'rest-post-' . $id;
+		}
+
+		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+		/**
+		 * cache tags purged when clearing post cache.
+		 *
+		 * @param array $keys      cache tags.
+		 * @param integer $post_id ID for purged post.
+		 */
+		$keys = apply_filters( 'ec_purge_clean_post_cache', $keys, $post_id );
+		Cloudflare_Client::queueTags( $keys );
+	}
+
+	/**
 	 * Purge the cache tags of an attachment being edited.
 	 *
 	 * @param integer $post_id ID for the edited attachment.
@@ -139,7 +187,7 @@ class Cloudflare_Purger {
 		 * @param integer $post_id ID for the edited attachment.
 		 */
 		$keys = apply_filters( 'ec_purge_edit_attachment', $keys, $post_id );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -162,7 +210,7 @@ class Cloudflare_Purger {
 		 * @param string $taxonomy Taxonomy for the new term.
 		 */
 		$keys = apply_filters( 'ec_purge_create_term', $keys, $term_id, $tt_id, $taxonomy );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -205,7 +253,7 @@ class Cloudflare_Purger {
 		 * @param array $term_ids IDs for purged terms.
 		 */
 		$keys = apply_filters( 'ec_purge_clean_term_cache', $keys, $term_ids );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -234,7 +282,7 @@ class Cloudflare_Purger {
 		 * @param WP_Comment $comment Comment to be inserted.
 		 */
 		$keys = apply_filters( 'ec_purge_insert_comment', $keys, $id, $comment );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -265,7 +313,7 @@ class Cloudflare_Purger {
 		 * @param WP_Comment $comment Comment being transitioned.
 		 */
 		$keys = apply_filters( 'ec_purge_transition_comment_status', $keys, $new_status, $old_status, $comment );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -286,7 +334,7 @@ class Cloudflare_Purger {
 		 * @param integer $id Comment ID.
 		 */
 		$keys = apply_filters( 'ec_purge_clean_comment_cache', $keys, $comment_id );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -305,7 +353,7 @@ class Cloudflare_Purger {
 		 * @return array
 		 * @since 1.0.0
 		 */
-		return (array) apply_filters( 'ec_purge_post_type_ignored', [ 'revision', 'oembed_cache', 'scheduled-action', 'customize_changeset' ] );
+		return (array) apply_filters( 'ec_purge_post_type_ignored', [ 'revision', 'oembed_cache', 'scheduled-action' ] );
 	}
 
 	/**
@@ -364,7 +412,7 @@ class Cloudflare_Purger {
 		 * @param WP_Post $post Post object.
 		 */
 		$keys = apply_filters( 'ec_purge_post_with_related', $keys, $post );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -389,7 +437,7 @@ class Cloudflare_Purger {
 		 * @param integer $term_id Term ID.
 		 */
 		$keys = apply_filters( 'ec_purge_term', $keys, $term_id );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 
@@ -413,7 +461,7 @@ class Cloudflare_Purger {
 		 * @param array $user_id ID for purged user.
 		 */
 		$keys = apply_filters( 'ec_purge_clean_user_cache', $keys, $user_id );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -452,7 +500,7 @@ class Cloudflare_Purger {
 		 * @param integer $user_id ID for the updated user.
 		 */
 		$keys = apply_filters( 'ec_purge_profile_update', $keys, $user_id );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -480,7 +528,7 @@ class Cloudflare_Purger {
 		 * @param integer|null $reassign ID the posts were reassigned to.
 		 */
 		$keys = apply_filters( 'ec_purge_deleted_user', $keys, $user_id, $reassign );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 
 	/**
@@ -509,6 +557,6 @@ class Cloudflare_Purger {
 		 * @param string $option Option name.
 		 */
 		$keys = apply_filters( 'ec_purge_updated_option', $keys, $option );
-		Cloudflare_Client::purgeByTags( $keys );
+		Cloudflare_Client::queueTags( $keys );
 	}
 }
