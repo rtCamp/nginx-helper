@@ -94,8 +94,9 @@ class CloudFlare_Tag_Emitter {
 
 		foreach ( get_taxonomies( [ 'show_in_rest' => true ], 'objects' ) as $taxonomy ) {
 			add_filter( "rest_prepare_{$taxonomy->name}", [ $this, 'filter_rest_prepare_term' ], 10, 3 );
-			$base                                                                    = ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : $taxonomy->name;
-			self::get_instance()->rest_api_collection_endpoints[ '/wp/v2/' . $base ] = $taxonomy->name;
+			$base      = ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : $taxonomy->name;
+			$namespace = ! empty( $taxonomy->rest_namespace ) ? trim( $taxonomy->rest_namespace, '/' ) : 'wp/v2';
+			self::get_instance()->rest_api_collection_endpoints[ '/' . $namespace . '/' . $base ] = $taxonomy->name;
 		}
 		add_filter( 'rest_prepare_comment', [ $this, 'filter_rest_prepare_comment' ], 10, 3 );
 		self::get_instance()->rest_api_collection_endpoints['/wp/v2/comments'] = 'comment';
