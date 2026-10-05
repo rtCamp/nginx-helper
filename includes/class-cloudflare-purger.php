@@ -179,9 +179,8 @@ class Cloudflare_Purger {
 	 * @param integer $post_id ID for the modified post.
 	 */
 	public function action_clean_post_cache( $post_id, $post = null ) {
-		// The action passes the post. It is still there when the cache of a row that was just deleted is cleared
-		// (revisions that are pruned, auto-drafts), where get_post() finds nothing.
-		$post = $post instanceof \WP_Post ? $post : get_post( $post_id );
+		// The passed post can be the cached copy from before an update, so read it again. It is only needed once the row is deleted.
+		$post = get_post( $post_id ) ?: ( $post instanceof \WP_Post ? $post : null );
 		$type = $post ? $post->post_type : get_post_type( $post_id );
 
 		if ( $type && in_array( $type, self::get_ignored_post_types(), true ) ) {
@@ -302,7 +301,8 @@ class Cloudflare_Purger {
 		$term = get_term_by( 'term_taxonomy_id', $tt_id, $taxonomy );
 
 		if ( $term && ! is_wp_error( $term ) ) {
-			$this->term_counts[ $tt_id ] = [
+			// Keyed by term ID, which is what the clean_term_cache action passes (it differs from the tt_id on many sites).
+			$this->term_counts[ get_current_blog_id() . ':' . $term->term_id ] = [
 				'taxonomy' => $taxonomy,
 				'count'    => (int) $term->count,
 			];
@@ -312,19 +312,21 @@ class Cloudflare_Purger {
 	/**
 	 * Whether a term was recounted without its count changing. Only counts the term was seen with beforehand.
 	 *
-	 * @param integer $term_id Term ID, as passed to clean_term_cache() by a term count update.
+	 * @param integer $term_id Term ID, as passed by the clean_term_cache action.
 	 *
 	 * @return bool
 	 */
 	private function term_count_unchanged( $term_id ) {
-		if ( ! isset( $this->term_counts[ $term_id ] ) ) {
+		$key = get_current_blog_id() . ':' . $term_id;
+
+		if ( ! isset( $this->term_counts[ $key ] ) ) {
 			return false;
 		}
 
-		$before = $this->term_counts[ $term_id ];
-		unset( $this->term_counts[ $term_id ] );
+		$before = $this->term_counts[ $key ];
+		unset( $this->term_counts[ $key ] );
 
-		$term = get_term_by( 'term_taxonomy_id', $term_id, $before['taxonomy'] );
+		$term = get_term( (int) $term_id, $before['taxonomy'] );
 
 		return $term && ! is_wp_error( $term ) && (int) $term->count === $before['count'];
 	}
@@ -442,10 +444,15 @@ class Cloudflare_Purger {
 			return;
 		}
 
-		$keys = [
+		$comment = get_comment( $comment_id );
+		$keys    = [
 			'rest-comment-' . $comment_id,
 			'rest-comment-huge',
 		];
+		if ( $comment ) {
+			$keys[] = 'post-' . $comment->comment_post_ID;
+			$keys[] = 'rest-comment-post-' . $comment->comment_post_ID;
+		}
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
 		 * cache tags purged when cleaning comment cache.

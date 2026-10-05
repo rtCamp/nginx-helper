@@ -364,17 +364,19 @@ class Cloudflare_Client {
 		$backlog  = $backlogs[ $key ] ?? [
 			'tags' => [],
 			'urls' => [],
-			'time' => time(),
 		];
 
 		$merged = array_values( array_unique( array_merge( $backlog[ $field ], $items ) ) );
 
 		if ( count( $merged ) > self::BACKLOG_LIMIT ) {
 			error_log( 'Advanced Cloudflare Cache: Backlog is full, dropping ' . ( count( $merged ) - self::BACKLOG_LIMIT ) . ' ' . ( 'tags' === $field ? 'tags' : 'URLs' ) . ' that could not be purged.' );
-			$merged = array_slice( $merged, 0, self::BACKLOG_LIMIT );
+			// Keep the newest, which are the most likely to still be cached.
+			$merged = array_slice( $merged, -self::BACKLOG_LIMIT );
 		}
 
 		$backlog[ $field ] = $merged;
+		// Expire from the latest addition, so new purges are not dropped along with old ones.
+		$backlog['time']   = time();
 		$backlogs[ $key ]  = $backlog;
 
 		set_site_transient( self::BACKLOG_TRANSIENT, $backlogs, self::BACKLOG_TTL );
@@ -1124,7 +1126,7 @@ class Cloudflare_Client {
 				'name'        => 'default',
 				'kind'        => 'zone',
 				'phase'       => 'http_request_cache_settings',
-				'description' => 'Set\'s the edge cache rules by EasyEngine Cache Helper.',
+				'description' => 'Sets the edge cache rules for EasyEngine Cache Helper.',
 				'rules'       => [ $rule ],
 			];
 

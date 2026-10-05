@@ -34,7 +34,7 @@ class CLI {
 	 * @subcommand purge-tag
 	 */
 	public function purge_tag( $args ) {
-		$ret = Cloudflare_Client::purge_by_tags( $args );
+		$ret = Cloudflare_Client::purge_by_tags( ec_cf_prefix_cache_tags_with_blog_id( $args ) );
 		if ( ! $ret ) {
 			WP_CLI::error( 'Failed to purge tags.' );
 		} else {
