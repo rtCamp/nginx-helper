@@ -10,17 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          tools: composer
-      - name: Install production dependencies
-        run: composer install --no-dev --optimize-autoloader --no-interaction
       - name: WordPress Plugin Deploy
-        uses: 10up/action-wordpress-plugin-deploy@stable
+        uses: rtCamp/action-wordpress-org-plugin-deploy@master
         env:
           ASSETS_DIR: wpassets
+          EXCLUDE_LIST: .gitattributes .gitignore .travis.yml README.md deploy.sh readme.sh
+            tests map.conf nginx.log wercker.yml vendor
           SLUG: nginx-helper
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          WORDPRESS_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          WORDPRESS_USERNAME: ${{ secrets.SVN_USERNAME }}

@@ -263,7 +263,20 @@ class Nginx_Helper {
 		// WooCommerce integration.
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
 
-		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
+		$this->define_cloudflare_hooks( $nginx_helper_admin );
+
+	}
+
+	/**
+	 * Register the Cloudflare hooks.
+	 *
+	 * @param Nginx_Helper_Admin $nginx_helper_admin Admin class instance.
+	 */
+	private function define_cloudflare_hooks( $nginx_helper_admin ) {
+		$cf_enabled = $nginx_helper_admin->is_cloudflare_enabled();
+
+		// What belongs to this site only needs to run where this site has Cloudflare credentials.
+		if ( $cf_enabled ) {
 			$this->loader->add_filter( 'wp_headers', $this, 'handle_cloudflare_headers', 999 );
 			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_purge', 100 );
 			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_failure', 101 );
@@ -286,23 +299,33 @@ class Nginx_Helper {
 			$this->loader->add_action( 'wp_after_insert_post', Cloudflare_Purger::get_instance(), 'action_wp_after_insert_post', 10, 4 );
 			$this->loader->add_action( 'before_delete_post', Cloudflare_Purger::get_instance(), 'action_before_delete_post' );
 			$this->loader->add_action( 'delete_attachment', Cloudflare_Purger::get_instance(), 'action_delete_attachment' );
-			$this->loader->add_action( 'clean_post_cache', Cloudflare_Purger::get_instance(), 'action_clean_post_cache' );
+			$this->loader->add_action( 'clean_post_cache', Cloudflare_Purger::get_instance(), 'action_clean_post_cache', 10, 2 );
 			$this->loader->add_action( 'edit_attachment', Cloudflare_Purger::get_instance(), 'action_edit_attachment' );
 			$this->loader->add_action( 'created_term', Cloudflare_Purger::get_instance(), 'action_created_term', 10, 3 );
 			$this->loader->add_action( 'edited_term', Cloudflare_Purger::get_instance(), 'action_edited_term' );
 			$this->loader->add_action( 'delete_term', Cloudflare_Purger::get_instance(), 'action_delete_term' );
+			$this->loader->add_action( 'edit_term_taxonomy', Cloudflare_Purger::get_instance(), 'action_edit_term_taxonomy', 10, 2 );
 			$this->loader->add_action( 'clean_term_cache', Cloudflare_Purger::get_instance(), 'action_clean_term_cache' );
 			$this->loader->add_action( 'wp_insert_comment', Cloudflare_Purger::get_instance(), 'action_wp_insert_comment', 10, 2 );
 			$this->loader->add_action( 'transition_comment_status', Cloudflare_Purger::get_instance(), 'action_transition_comment_status', 10, 3 );
 			$this->loader->add_action( 'clean_comment_cache', Cloudflare_Purger::get_instance(), 'action_clean_comment_cache' );
-			$this->loader->add_action( 'profile_update', Cloudflare_Purger::get_instance(), 'action_profile_update', 10, 2 );
-			$this->loader->add_action( 'added_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
-			$this->loader->add_action( 'updated_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
-			$this->loader->add_action( 'deleted_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
 			$this->loader->add_action( 'deleted_user', Cloudflare_Purger::get_instance(), 'action_deleted_user', 10, 2 );
 			$this->loader->add_action( 'updated_option', Cloudflare_Purger::get_instance(), 'action_updated_option' );
 		}
 
+		/**
+		 * Users belong to the whole network, so changing one purges the author pages of every site the user is on,
+		 * each with its own credentials. On multisite these run on any site, such as the main site in the network
+		 * admin, even if that one has no Cloudflare credentials. Sites without credentials are skipped when queueing.
+		 */
+		if ( $cf_enabled || is_multisite() ) {
+			$this->loader->add_filter( 'insert_user_meta', Cloudflare_Purger::get_instance(), 'filter_insert_user_meta', 10, 3 );
+			$this->loader->add_action( 'user_register', Cloudflare_Purger::get_instance(), 'action_user_register' );
+			$this->loader->add_action( 'profile_update', Cloudflare_Purger::get_instance(), 'action_profile_update', 10, 2 );
+			$this->loader->add_action( 'added_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_added', 10, 4 );
+			$this->loader->add_action( 'updated_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
+			$this->loader->add_action( 'deleted_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
+		}
 	}
 
 	/**

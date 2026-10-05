@@ -31,6 +31,8 @@ class Nginx_Helper_Deactivator {
 
 		// Last Cloudflare purge failure shown to the user.
 		delete_site_transient( 'ec_cf_purge_failure' );
+		delete_site_transient( 'ec_cf_purge_backlog' );
+		delete_site_option( 'ec_cf_backlog_lock' );
 
 		$purge_cap = 'Nginx Helper | Purge cache';
 		$all_roles = wp_roles()->get_names();

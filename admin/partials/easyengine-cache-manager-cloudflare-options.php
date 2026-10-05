@@ -36,7 +36,10 @@ if ( isset( $all_inputs['easyengine_cache_manager_settings_save'] ) && isset( $a
 
 	$default_args = $nginx_helper_admin->get_cloudflare_default_settings();
 
-	$args = wp_parse_args( $all_inputs, $default_args );
+	// Fields that were not submitted keep their saved value. The token input is disabled when the token comes
+	// from the constant, so it is missing from the request. The saved options are read as they are, without the
+	// constant, so the constant's token is never written to the database.
+	$args = wp_parse_args( $all_inputs, wp_parse_args( get_site_option( 'easyengine_cache_manager_cf_settings', array() ), $default_args ) );
 
 	update_site_option( 'easyengine_cache_manager_cf_settings', $args );
 

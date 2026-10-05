@@ -412,9 +412,11 @@ class Nginx_Helper_Admin {
 	 * On multisite a site can override the network's token, zone and TTL with its own, for example when
 	 * it lives in another Cloudflare zone. On a single site this is the same as the network settings.
 	 *
+	 * @param int $blog_id Site to get the settings of, the current site if not given.
+	 *
 	 * @return array The settings, with `is_site_override` listing which ones come from the site.
 	 */
-	public function get_cloudflare_settings() {
+	public function get_cloudflare_settings( $blog_id = 0 ) {
 		$settings = $this->get_network_cloudflare_settings();
 
 		$settings['is_site_override'] = [
@@ -427,7 +429,7 @@ class Nginx_Helper_Admin {
 			return $settings;
 		}
 
-		$site = (array) get_option( self::CF_SITE_OPTION, array() );
+		$site = (array) get_blog_option( $blog_id ? (int) $blog_id : get_current_blog_id(), self::CF_SITE_OPTION, array() );
 
 		// A token set by the constant is a deliberate network-wide lock, so a site cannot replace it.
 		if ( ! empty( $site['api_token'] ) && empty( $settings['api_token_enabled_by_constant'] ) ) {
@@ -448,6 +450,19 @@ class Nginx_Helper_Admin {
 		$settings['is_enabled'] = ! empty( $settings['api_token'] ) && ! empty( $settings['zone_id'] );
 
 		return $settings;
+	}
+
+	/**
+	 * Whether Cloudflare is set up for a site: it has an API token and a zone ID, from the network or its own.
+	 *
+	 * @param int $blog_id Site to check, the current site if not given.
+	 *
+	 * @return bool
+	 */
+	public function is_cloudflare_enabled( $blog_id = 0 ) {
+		$settings = $this->get_cloudflare_settings( $blog_id );
+
+		return ! empty( $settings['is_enabled'] );
 	}
 
 	/**
@@ -1347,7 +1362,7 @@ class Nginx_Helper_Admin {
 
 		$options = $this->get_cloudflare_settings();
 
-		if ( empty( $options['is_enabled'] ) || ! _wp_http_get_object()->block_request( Cloudflare_Client::API_BASE ) ) {
+		if ( empty( $options['is_enabled'] ) || ! ( new WP_Http() )->block_request( Cloudflare_Client::API_BASE ) ) {
 			return;
 		}
 

@@ -31,11 +31,32 @@ class Cloudflare_Purger {
 	const PUBLIC_USER_META_KEYS = [ 'description', 'first_name', 'last_name', 'nickname' ];
 
 	/**
+	 * Most sites an author change is purged on. See the ec_purge_author_blogs_limit filter.
+	 *
+	 * @var integer
+	 */
+	const AUTHOR_BLOGS_LIMIT = 100;
+
+	/**
 	 * Current instance when set.
 	 *
 	 * @var Emitter
 	 */
 	private static $instance;
+
+	/**
+	 * Term counts seen just before a recount, by term taxonomy ID. See action_edit_term_taxonomy().
+	 *
+	 * @var array
+	 */
+	private $term_counts = [];
+
+	/**
+	 * IDs of users that are being created right now. See filter_insert_user_meta().
+	 *
+	 * @var array
+	 */
+	private $new_users = [];
 
 	/**
 	 * Get a copy of the current instance.
@@ -90,7 +111,7 @@ class Cloudflare_Purger {
 	 * @since 1.0.0
 	 */
 	public function clear_post_path( $post ) {
-		if ( in_array( $post->post_type, self::get_ignored_post_types(), true ) ) {
+		if ( in_array( $post->post_type, self::get_ignored_post_types(), true ) || ! self::is_purgeable_post_type( $post->post_type ) ) {
 			return;
 		}
 
@@ -126,7 +147,10 @@ class Cloudflare_Purger {
 	 */
 	public function action_before_delete_post( $post_id ) {
 		$post = get_post( $post_id );
-		if ( ! $post instanceof \WP_Post || 'trash' === $post->post_status ) {
+
+		// Only a post that was public has pages to purge. One in trash was purged when it was trashed, and
+		// drafts, auto-drafts (WordPress deletes old ones daily), pending and private posts never had any.
+		if ( ! $post instanceof \WP_Post || 'publish' !== $post->post_status ) {
 			return;
 		}
 		self::purge_post_with_related( $post );
@@ -154,26 +178,37 @@ class Cloudflare_Purger {
 	 *
 	 * @param integer $post_id ID for the modified post.
 	 */
-	public function action_clean_post_cache( $post_id ) {
-		$post = get_post( $post_id );
+	public function action_clean_post_cache( $post_id, $post = null ) {
+		// The action passes the post. It is still there when the cache of a row that was just deleted is cleared
+		// (revisions that are pruned, auto-drafts), where get_post() finds nothing.
+		$post = $post instanceof \WP_Post ? $post : get_post( $post_id );
 		$type = $post ? $post->post_type : get_post_type( $post_id );
 
 		if ( $type && in_array( $type, self::get_ignored_post_types(), true ) ) {
 			return;
 		}
 
-		// Do not purge for drafts, pending or private posts. Attachments use the 'inherit' status.
-		// A deleted post has no status and is still purged.
-		$status = get_post_status( $post_id );
-		if ( $status && ! in_array( $status, [ 'publish', 'future', 'inherit' ], true ) ) {
+		// Attachments have their own edit and delete handlers, and a new upload has no page to purge yet.
+		if ( 'attachment' === $type ) {
 			return;
 		}
 
-		$ids = [ $post_id ];
+		// Do not purge for drafts, pending or private posts.
+		if ( $post && ! in_array( $post->post_status, [ 'publish', 'future' ], true ) ) {
+			return;
+		}
 
-		// Posts without a page of their own (e.g. product variations) show up on their parent's page.
-		if ( $post && $post->post_parent && ! is_post_type_viewable( $post->post_type ) ) {
+		$ids = [];
+
+		if ( ! $type || self::is_purgeable_post_type( $type ) ) {
+			$ids[] = $post_id;
+		} elseif ( $post && $post->post_parent ) {
+			// Posts without a page of their own (e.g. product variations) show up on their parent's page.
 			$ids[] = $post->post_parent;
+		}
+
+		if ( empty( $ids ) ) {
+			return;
 		}
 
 		$keys = [];
@@ -256,6 +291,45 @@ class Cloudflare_Purger {
 	}
 
 	/**
+	 * Remember the count of a term before WordPress recounts it.
+	 *
+	 * Runs on edit_term_taxonomy, just before a term count update, which is when clean_term_cache() follows.
+	 *
+	 * @param integer $tt_id    Term taxonomy ID.
+	 * @param string  $taxonomy Taxonomy name.
+	 */
+	public function action_edit_term_taxonomy( $tt_id, $taxonomy ) {
+		$term = get_term_by( 'term_taxonomy_id', $tt_id, $taxonomy );
+
+		if ( $term && ! is_wp_error( $term ) ) {
+			$this->term_counts[ $tt_id ] = [
+				'taxonomy' => $taxonomy,
+				'count'    => (int) $term->count,
+			];
+		}
+	}
+
+	/**
+	 * Whether a term was recounted without its count changing. Only counts the term was seen with beforehand.
+	 *
+	 * @param integer $term_id Term ID, as passed to clean_term_cache() by a term count update.
+	 *
+	 * @return bool
+	 */
+	private function term_count_unchanged( $term_id ) {
+		if ( ! isset( $this->term_counts[ $term_id ] ) ) {
+			return false;
+		}
+
+		$before = $this->term_counts[ $term_id ];
+		unset( $this->term_counts[ $term_id ] );
+
+		$term = get_term_by( 'term_taxonomy_id', $term_id, $before['taxonomy'] );
+
+		return $term && ! is_wp_error( $term ) && (int) $term->count === $before['count'];
+	}
+
+	/**
 	 * Purge the term's archive cache tag when the term is modified.
 	 *
 	 * @param integer $term_ids One or more IDs of modified terms.
@@ -264,9 +338,20 @@ class Cloudflare_Purger {
 		$keys     = [];
 		$term_ids = is_array( $term_ids ) ? $term_ids : [ $term_ids ];
 		foreach ( $term_ids as $term_id ) {
+			// WordPress clears the term cache after every term count update, which also happens when a draft
+			// is saved. If this term's count did not change, nothing public did, so there is nothing to purge.
+			if ( $this->term_count_unchanged( $term_id ) ) {
+				continue;
+			}
+
 			$keys[] = 'term-' . $term_id;
 			$keys[] = 'rest-term-' . $term_id;
 		}
+
+		if ( empty( $keys ) ) {
+			return;
+		}
+
 		$keys[] = 'term-huge';
 		$keys[] = 'rest-term-huge';
 		$keys   = ec_cf_prefix_cache_tags_with_blog_id( $keys );
@@ -317,16 +402,20 @@ class Cloudflare_Purger {
 	 * @param object $comment        The comment data.
 	 */
 	public function action_transition_comment_status( $new_status, $old_status, $comment ) {
+		// Only a comment that was or is approved can be on a cached page or in a cached REST response. Moving
+		// pending and spam comments around, or deleting them (Akismet clears old spam daily), changes nothing public.
+		// A deleted comment comes through here too, with the status it had as the old one.
+		if ( 'approved' !== $new_status && 'approved' !== $old_status ) {
+			return;
+		}
+
 		$keys = [
 			'rest-comment-' . $comment->comment_ID,
 			'rest-comment-collection',
 			'rest-comment-huge',
+			'post-' . $comment->comment_post_ID,
+			'rest-comment-post-' . $comment->comment_post_ID,
 		];
-		// Like the Nginx purger, the post page only changes when an approved comment is added or removed.
-		if ( 'approved' === $new_status || 'approved' === $old_status ) {
-			$keys[] = 'post-' . $comment->comment_post_ID;
-			$keys[] = 'rest-comment-post-' . $comment->comment_post_ID;
-		}
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
 		 * cache tags purged when transitioning a comment status.
@@ -346,8 +435,10 @@ class Cloudflare_Purger {
 	 * @param integer $comment_id Modified comment id.
 	 */
 	public function action_clean_comment_cache( $comment_id ) {
-		// Pending and spam comments were never public, so nothing cached can reference them.
-		if ( in_array( wp_get_comment_status( $comment_id ), [ 'unapproved', 'spam' ], true ) ) {
+		// Only an approved comment can be in a cached page. One that is pending, spam, trashed or already
+		// deleted (its status is then false) is not, and a comment that left the approved state or was
+		// deleted is purged by action_transition_comment_status().
+		if ( 'approved' !== wp_get_comment_status( $comment_id ) ) {
 			return;
 		}
 
@@ -364,6 +455,37 @@ class Cloudflare_Purger {
 		 */
 		$keys = apply_filters( 'ec_purge_clean_comment_cache', $keys, $comment_id );
 		Cloudflare_Client::queue_tags( $keys );
+	}
+
+	/**
+	 * Post types that have no page of their own but are shown on pages, so changing them still changes the site.
+	 *
+	 * @return string[]
+	 */
+	private static function get_rendered_everywhere_post_types() {
+		/**
+		 * Filters the post types that are not viewable on their own but whose changes are still purged.
+		 *
+		 * Posts of other types that are not viewable (form submissions saved as posts, orders and so on) are
+		 * never shown to visitors, so changing them purges nothing.
+		 *
+		 * @param string[] $post_types Post types.
+		 */
+		return (array) apply_filters(
+			'ec_purge_rendered_post_types',
+			[ 'wp_template', 'wp_template_part', 'wp_navigation', 'wp_block', 'wp_global_styles', 'nav_menu_item', 'customize_changeset' ]
+		);
+	}
+
+	/**
+	 * Whether changes to posts of a type can change what visitors see.
+	 *
+	 * @param string $post_type Post type name.
+	 *
+	 * @return bool
+	 */
+	private static function is_purgeable_post_type( $post_type ) {
+		return is_post_type_viewable( $post_type ) || in_array( $post_type, self::get_rendered_everywhere_post_types(), true );
 	}
 
 	/**
@@ -415,7 +537,7 @@ class Cloudflare_Purger {
 	 * @param object|null $post_before The post before the update, to purge the date archives it left.
 	 */
 	private function purge_post_with_related( $post, $post_before = null ) {
-		if ( in_array( $post->post_type, self::get_ignored_post_types(), true ) ) {
+		if ( in_array( $post->post_type, self::get_ignored_post_types(), true ) || ! self::is_purgeable_post_type( $post->post_type ) ) {
 			return;
 		}
 
@@ -531,8 +653,8 @@ class Cloudflare_Purger {
 	/**
 	 * Purge the author tags when a public user meta value changes.
 	 *
-	 * Runs on added_user_meta, updated_user_meta and deleted_user_meta. WordPress only fires the
-	 * updated hook when the stored value really changed.
+	 * Runs on updated_user_meta and deleted_user_meta. WordPress only fires the updated hook when the
+	 * stored value really changed. Added meta goes through action_user_meta_added().
 	 *
 	 * @param int|int[] $meta_id    Meta ID (or IDs when deleted).
 	 * @param integer   $user_id    ID of the user the meta belongs to.
@@ -540,6 +662,40 @@ class Cloudflare_Purger {
 	 * @param mixed     $meta_value Meta value.
 	 */
 	public function action_user_meta_changed( $meta_id, $user_id, $meta_key, $meta_value = null ) {
+		$this->purge_for_user_meta( $user_id, $meta_key );
+	}
+
+	/**
+	 * Purge the author tags when public user meta is added.
+	 *
+	 * Adding an empty value (new accounts get empty name and bio rows) changes nothing public.
+	 * Clearing an existing value still purges, as that goes through updated_user_meta.
+	 *
+	 * @param int     $meta_id    Meta ID.
+	 * @param integer $user_id    ID of the user the meta belongs to.
+	 * @param string  $meta_key   Meta key.
+	 * @param mixed   $meta_value Meta value.
+	 */
+	public function action_user_meta_added( $meta_id, $user_id, $meta_key, $meta_value = null ) {
+		if ( '' === $meta_value ) {
+			return;
+		}
+
+		$this->purge_for_user_meta( $user_id, $meta_key );
+	}
+
+	/**
+	 * Queue the author tags if the meta key is a public one and the user is not being created.
+	 *
+	 * @param integer $user_id  User ID.
+	 * @param string  $meta_key Meta key.
+	 */
+	private function purge_for_user_meta( $user_id, $meta_key ) {
+		// A user that is being created has no pages yet. WordPress adds its name rows (nickname is the login) now.
+		if ( isset( $this->new_users[ $user_id ] ) ) {
+			return;
+		}
+
 		/**
 		 * Filters the user meta keys that are shown publicly, so a change purges the author's pages.
 		 *
@@ -553,13 +709,35 @@ class Cloudflare_Purger {
 			return;
 		}
 
-		// Adding an empty value (new accounts get empty name and bio rows) changes nothing public.
-		// Clearing an existing value still purges, as that goes through updated_user_meta.
-		if ( 'added_user_meta' === current_filter() && '' === $meta_value ) {
-			return;
+		$this->queue_author_tags( $user_id );
+	}
+
+	/**
+	 * Note that a user is being created, so the meta rows WordPress adds for it do not purge anything.
+	 *
+	 * Runs on insert_user_meta, before those rows are added. It only reads the arguments.
+	 *
+	 * @param array   $meta   Meta about to be added.
+	 * @param WP_User $user   The user.
+	 * @param bool    $update Whether the user is being updated and not created.
+	 *
+	 * @return array The meta, unchanged.
+	 */
+	public function filter_insert_user_meta( $meta, $user, $update ) {
+		if ( ! $update && $user instanceof \WP_User ) {
+			$this->new_users[ $user->ID ] = true;
 		}
 
-		$this->queue_author_tags( $user_id );
+		return $meta;
+	}
+
+	/**
+	 * The user is created, so changes to it are real changes from now on.
+	 *
+	 * @param integer $user_id User ID.
+	 */
+	public function action_user_register( $user_id ) {
+		unset( $this->new_users[ $user_id ] );
 	}
 
 	/**
@@ -577,7 +755,7 @@ class Cloudflare_Purger {
 			'post-user-huge',
 		];
 		if ( ! is_multisite() ) {
-			$this->queue_author_tag_keys( $keys, $user_id );
+			$this->queue_author_tag_keys( $keys, $user_id, get_current_blog_id() );
 
 			return;
 		}
@@ -586,26 +764,36 @@ class Cloudflare_Purger {
 		// under that site, as it can use its own Cloudflare credentials.
 		$blog_ids = array_unique( array_merge( [ get_current_blog_id() ], array_keys( get_blogs_of_user( $user_id ) ) ) );
 
-		foreach ( $blog_ids as $blog_id ) {
-			if ( get_current_blog_id() === (int) $blog_id ) {
-				$this->queue_author_tag_keys( $keys, $user_id );
-				continue;
-			}
+		/**
+		 * Filters how many sites an author change is purged on.
+		 *
+		 * A user on hundreds of sites would otherwise queue thousands of tags at once, more than the purge rate
+		 * limits allow. Sites beyond the limit keep their cached author pages until those expire.
+		 *
+		 * @param integer $limit   Most sites to purge.
+		 * @param integer $user_id ID of the user.
+		 */
+		$limit = (int) apply_filters( 'ec_purge_author_blogs_limit', self::AUTHOR_BLOGS_LIMIT, $user_id );
 
-			switch_to_blog( $blog_id );
-			$this->queue_author_tag_keys( $keys, $user_id );
-			restore_current_blog();
+		if ( $limit > 0 && count( $blog_ids ) > $limit ) {
+			error_log( 'Advanced Cloudflare Cache: User ' . $user_id . ' is on ' . count( $blog_ids ) . ' sites, purging the author pages of the first ' . $limit . ' only.' );
+			$blog_ids = array_slice( $blog_ids, 0, $limit );
+		}
+
+		foreach ( $blog_ids as $blog_id ) {
+			$this->queue_author_tag_keys( $keys, $user_id, (int) $blog_id );
 		}
 	}
 
 	/**
-	 * Prefix an author's cache tags for the current site and queue them.
+	 * Prefix an author's cache tags for a site and queue them for it.
 	 *
 	 * @param array   $keys    Cache tags, not prefixed yet.
 	 * @param integer $user_id ID for the updated user.
+	 * @param integer $blog_id Site the tags are for.
 	 */
-	private function queue_author_tag_keys( array $keys, $user_id ) {
-		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+	private function queue_author_tag_keys( array $keys, $user_id, $blog_id ) {
+		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys, $blog_id );
 		/**
 		 * cache tags purged when an author's public profile changes.
 		 *
@@ -613,9 +801,10 @@ class Cloudflare_Purger {
 		 *
 		 * @param array $keys      cache tags.
 		 * @param integer $user_id ID for the updated user.
+		 * @param integer $blog_id Site the tags are for.
 		 */
-		$keys = apply_filters( 'ec_purge_profile_update', $keys, $user_id );
-		Cloudflare_Client::queue_tags( $keys );
+		$keys = apply_filters( 'ec_purge_profile_update', $keys, $user_id, $blog_id );
+		Cloudflare_Client::queue_tags( $keys, $blog_id );
 	}
 
 	/**

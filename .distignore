@@ -11,3 +11,4 @@ map.conf
 nginx.log
 wercker.yml
 wpassets
+vendor
