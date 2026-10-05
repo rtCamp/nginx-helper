@@ -366,7 +366,7 @@ class Cloudflare_Client {
 			'urls' => [],
 		];
 
-		$merged = array_values( array_unique( array_merge( $backlog[ $field ], $items ) ) );
+		$merged = array_values( array_unique( array_merge( array_diff( $backlog[ $field ], $items ), $items ) ) );
 
 		if ( count( $merged ) > self::BACKLOG_LIMIT ) {
 			error_log( 'Advanced Cloudflare Cache: Backlog is full, dropping ' . ( count( $merged ) - self::BACKLOG_LIMIT ) . ' ' . ( 'tags' === $field ? 'tags' : 'URLs' ) . ' that could not be purged.' );

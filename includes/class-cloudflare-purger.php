@@ -52,6 +52,14 @@ class Cloudflare_Purger {
 	private $term_counts = [];
 
 	/**
+	 * Ancestor term IDs of terms that are being updated, from before the update, by blog and term ID.
+	 * See action_edit_terms().
+	 *
+	 * @var array
+	 */
+	private $term_ancestors = [];
+
+	/**
 	 * IDs of users that are being created right now. See filter_insert_user_meta().
 	 *
 	 * @var array
@@ -272,30 +280,79 @@ class Cloudflare_Purger {
 	}
 
 	/**
+	 * Remember the ancestors of a term just before it is updated, to tell afterwards whether it was moved.
+	 *
+	 * Runs on edit_terms, which passes the term ID and the taxonomy and fires before anything is saved, so the term
+	 * still has its old parent. A term archive lists the posts of the term's descendants too, so moving a term
+	 * changes the archives of its old and new ancestors.
+	 *
+	 * @param integer $term_id  ID of the term about to be updated.
+	 * @param string  $taxonomy Taxonomy slug.
+	 */
+	public function action_edit_terms( $term_id, $taxonomy ) {
+		if ( is_taxonomy_hierarchical( $taxonomy ) ) {
+			$this->term_ancestors[ get_current_blog_id() . ':' . $term_id ] = $this->get_term_ancestors( $term_id, $taxonomy );
+		}
+	}
+
+	/**
 	 * Purge cache tags associated with a term being edited.
 	 *
-	 * Runs on edited_term, which passes the term ID, the term taxonomy ID and the taxonomy.
+	 * Runs on edited_term, which passes the term ID, the term taxonomy ID and the taxonomy. If the term was moved
+	 * to another parent, the archives of its old and new ancestors are purged too.
 	 *
 	 * @param integer $term_id  ID for the edited term.
 	 * @param integer $tt_id    Term taxonomy ID. Not used.
 	 * @param string  $taxonomy Taxonomy slug.
 	 */
 	public function action_edited_term( $term_id, $tt_id = 0, $taxonomy = '' ) {
-		self::purge_term( $term_id, $taxonomy );
+		$key = get_current_blog_id() . ':' . $term_id;
+		$old = $this->term_ancestors[ $key ] ?? null;
+		$new = $this->get_term_ancestors( $term_id, $taxonomy );
+		unset( $this->term_ancestors[ $key ] );
+
+		// Only a move changes what the ancestors list. Without a snapshot there is no telling, so purge the current ones.
+		$ancestors = ( null === $old || $old !== $new ) ? array_merge( (array) $old, $new ) : [];
+
+		self::purge_term( $term_id, $taxonomy, $ancestors );
 	}
 
 	/**
-	 * Purge cache tags associated with a term being deleted.
+	 * Purge cache tags associated with a term being deleted, and the archives of its ancestors, which list its posts.
 	 *
-	 * Runs on delete_term, which passes the term ID (named $term there), the term taxonomy ID and the taxonomy,
-	 * followed by the deleted term and its object IDs, which are not used.
+	 * Runs on delete_term, which passes the term ID (named $term there), the term taxonomy ID, the taxonomy and a
+	 * copy of the deleted term, followed by its object IDs, which are not used.
 	 *
-	 * @param integer $term_id  ID for the deleted term.
-	 * @param integer $tt_id    Term taxonomy ID. Not used.
-	 * @param string  $taxonomy Taxonomy slug.
+	 * @param integer      $term_id      ID for the deleted term.
+	 * @param integer      $tt_id        Term taxonomy ID. Not used.
+	 * @param string       $taxonomy     Taxonomy slug.
+	 * @param WP_Term|null $deleted_term Copy of the deleted term, which still knows its parent.
 	 */
-	public function action_delete_term( $term_id, $tt_id = 0, $taxonomy = '' ) {
-		self::purge_term( $term_id, $taxonomy );
+	public function action_delete_term( $term_id, $tt_id = 0, $taxonomy = '', $deleted_term = null ) {
+		$ancestors = [];
+
+		// The term is gone, so its parent comes from the copy. The parent itself is still there.
+		if ( $deleted_term instanceof \WP_Term && $deleted_term->parent ) {
+			$ancestors = array_merge( [ (int) $deleted_term->parent ], $this->get_term_ancestors( $deleted_term->parent, $taxonomy ) );
+		}
+
+		self::purge_term( $term_id, $taxonomy, $ancestors );
+	}
+
+	/**
+	 * Get the IDs of a term's ancestors, nearest first. Empty for taxonomies that have no hierarchy.
+	 *
+	 * @param integer $term_id  Term ID.
+	 * @param string  $taxonomy Taxonomy slug.
+	 *
+	 * @return integer[]
+	 */
+	private function get_term_ancestors( $term_id, $taxonomy ) {
+		if ( '' === $taxonomy || ! is_taxonomy_hierarchical( $taxonomy ) ) {
+			return [];
+		}
+
+		return get_ancestors( (int) $term_id, $taxonomy, 'taxonomy' );
 	}
 
 	/**
@@ -632,10 +689,11 @@ class Cloudflare_Purger {
 	/**
 	 * Purge the cache tags associated with a term being modified.
 	 *
-	 * @param integer $term_id  ID for the modified term.
-	 * @param string  $taxonomy Taxonomy slug, to purge its REST collection too. Empty to leave it out.
+	 * @param integer   $term_id   ID for the modified term.
+	 * @param string    $taxonomy  Taxonomy slug, to purge its REST collection too. Empty to leave it out.
+	 * @param integer[] $ancestors IDs of ancestor terms whose archives list this term's posts and changed too.
 	 */
-	private function purge_term( $term_id, $taxonomy = '' ) {
+	private function purge_term( $term_id, $taxonomy = '', array $ancestors = [] ) {
 		$keys = [
 			'term-' . $term_id,
 			'rest-term-' . $term_id,
@@ -650,6 +708,12 @@ class Cloudflare_Purger {
 		if ( '' !== $taxonomy ) {
 			$keys[] = 'rest-' . $taxonomy . '-collection';
 		}
+
+		// An archive lists the posts of the term's descendants as well.
+		foreach ( array_unique( array_map( 'intval', $ancestors ) ) as $ancestor_id ) {
+			$keys[] = 'term-' . $ancestor_id;
+		}
+
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
 		 * cache tags purged when purging a term.

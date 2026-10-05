@@ -302,8 +302,9 @@ class Nginx_Helper {
 			$this->loader->add_action( 'clean_post_cache', Cloudflare_Purger::get_instance(), 'action_clean_post_cache', 10, 2 );
 			$this->loader->add_action( 'edit_attachment', Cloudflare_Purger::get_instance(), 'action_edit_attachment' );
 			$this->loader->add_action( 'created_term', Cloudflare_Purger::get_instance(), 'action_created_term', 10, 3 );
+			$this->loader->add_action( 'edit_terms', Cloudflare_Purger::get_instance(), 'action_edit_terms', 10, 2 );
 			$this->loader->add_action( 'edited_term', Cloudflare_Purger::get_instance(), 'action_edited_term', 10, 3 );
-			$this->loader->add_action( 'delete_term', Cloudflare_Purger::get_instance(), 'action_delete_term', 10, 3 );
+			$this->loader->add_action( 'delete_term', Cloudflare_Purger::get_instance(), 'action_delete_term', 10, 4 );
 			$this->loader->add_action( 'edit_term_taxonomy', Cloudflare_Purger::get_instance(), 'action_edit_term_taxonomy', 10, 2 );
 			$this->loader->add_action( 'clean_term_cache', Cloudflare_Purger::get_instance(), 'action_clean_term_cache', 10, 2 );
 			$this->loader->add_action( 'wp_insert_comment', Cloudflare_Purger::get_instance(), 'action_wp_insert_comment', 10, 2 );
