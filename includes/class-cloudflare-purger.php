@@ -274,19 +274,28 @@ class Cloudflare_Purger {
 	/**
 	 * Purge cache tags associated with a term being edited.
 	 *
-	 * @param integer $term_id ID for the edited term.
+	 * Runs on edited_term, which passes the term ID, the term taxonomy ID and the taxonomy.
+	 *
+	 * @param integer $term_id  ID for the edited term.
+	 * @param integer $tt_id    Term taxonomy ID. Not used.
+	 * @param string  $taxonomy Taxonomy slug.
 	 */
-	public function action_edited_term( $term_id ) {
-		self::purge_term( $term_id );
+	public function action_edited_term( $term_id, $tt_id = 0, $taxonomy = '' ) {
+		self::purge_term( $term_id, $taxonomy );
 	}
 
 	/**
 	 * Purge cache tags associated with a term being deleted.
 	 *
-	 * @param integer $term_id ID for the deleted term.
+	 * Runs on delete_term, which passes the term ID (named $term there), the term taxonomy ID and the taxonomy,
+	 * followed by the deleted term and its object IDs, which are not used.
+	 *
+	 * @param integer $term_id  ID for the deleted term.
+	 * @param integer $tt_id    Term taxonomy ID. Not used.
+	 * @param string  $taxonomy Taxonomy slug.
 	 */
-	public function action_delete_term( $term_id ) {
-		self::purge_term( $term_id );
+	public function action_delete_term( $term_id, $tt_id = 0, $taxonomy = '' ) {
+		self::purge_term( $term_id, $taxonomy );
 	}
 
 	/**
@@ -334,9 +343,12 @@ class Cloudflare_Purger {
 	/**
 	 * Purge the term's archive cache tag when the term is modified.
 	 *
-	 * @param integer $term_ids One or more IDs of modified terms.
+	 * Runs on clean_term_cache, which passes term IDs (not term taxonomy IDs) and the taxonomy they belong to.
+	 *
+	 * @param integer|integer[] $term_ids One or more IDs of modified terms.
+	 * @param string            $taxonomy Taxonomy slug.
 	 */
-	public function action_clean_term_cache( $term_ids ) {
+	public function action_clean_term_cache( $term_ids, $taxonomy = '' ) {
 		$keys     = [];
 		$term_ids = is_array( $term_ids ) ? $term_ids : [ $term_ids ];
 		foreach ( $term_ids as $term_id ) {
@@ -356,7 +368,14 @@ class Cloudflare_Purger {
 
 		$keys[] = 'term-huge';
 		$keys[] = 'rest-term-huge';
-		$keys   = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+
+		// A term count that changed can reorder the REST collection (orderby=count) or add/remove terms in it
+		// (hide_empty), so its pages are purged, not just the ones the term is on.
+		if ( '' !== $taxonomy ) {
+			$keys[] = 'rest-' . $taxonomy . '-collection';
+		}
+
+		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
 		 * cache tags purged when clearing term cache.
 		 *
@@ -613,9 +632,10 @@ class Cloudflare_Purger {
 	/**
 	 * Purge the cache tags associated with a term being modified.
 	 *
-	 * @param integer $term_id ID for the modified term.
+	 * @param integer $term_id  ID for the modified term.
+	 * @param string  $taxonomy Taxonomy slug, to purge its REST collection too. Empty to leave it out.
 	 */
-	private function purge_term( $term_id ) {
+	private function purge_term( $term_id, $taxonomy = '' ) {
 		$keys = [
 			'term-' . $term_id,
 			'rest-term-' . $term_id,
@@ -624,14 +644,21 @@ class Cloudflare_Purger {
 			'rest-term-huge',
 			'post-term-huge',
 		];
+
+		// Renaming or deleting a term moves terms between the pages of the REST collection (/wp/v2/categories) and
+		// changes its totals, so the collection is purged as well, not just the pages the term is on.
+		if ( '' !== $taxonomy ) {
+			$keys[] = 'rest-' . $taxonomy . '-collection';
+		}
 		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
 		 * cache tags purged when purging a term.
 		 *
-		 * @param array $keys      cache tags.
-		 * @param integer $term_id Term ID.
+		 * @param array   $keys     cache tags.
+		 * @param integer $term_id  Term ID.
+		 * @param string  $taxonomy Taxonomy slug, empty if not known.
 		 */
-		$keys = apply_filters( 'ec_purge_term', $keys, $term_id );
+		$keys = apply_filters( 'ec_purge_term', $keys, $term_id, $taxonomy );
 		Cloudflare_Client::queue_tags( $keys );
 	}
 
