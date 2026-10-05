@@ -209,6 +209,7 @@ class Nginx_Helper {
 
 		if ( is_multisite() ) {
 			$this->loader->add_action( 'network_admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );
+			$this->loader->add_action( 'admin_menu', $nginx_helper_admin, 'cf_site_admin_menu' );
 			$this->loader->add_filter( 'network_admin_plugin_action_links_' . NGINX_HELPER_BASENAME, $nginx_helper_admin, 'nginx_helper_settings_link' );
 		} else {
 			$this->loader->add_action( 'admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );

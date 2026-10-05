@@ -547,20 +547,40 @@ class Cloudflare_Purger {
 			'post-user-' . $user_id,
 			'post-user-huge',
 		];
-		if ( is_multisite() ) {
-			// Users are network-wide, so purge their tags on every site they belong to.
-			$base_keys = $keys;
-			$keys      = [];
-			foreach ( array_unique( array_merge( [ get_current_blog_id() ], array_keys( get_blogs_of_user( $user_id ) ) ) ) as $blog_id ) {
-				switch_to_blog( $blog_id );
-				$keys = array_merge( $keys, ec_cf_prefix_cache_tags_with_blog_id( $base_keys ) );
-				restore_current_blog();
-			}
-		} else {
-			$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
+		if ( ! is_multisite() ) {
+			$this->queue_author_tag_keys( $keys, $user_id );
+
+			return;
 		}
+
+		// Users are network-wide, so purge their tags on every site they belong to. Each site's tags are queued
+		// under that site, as it can use its own Cloudflare credentials.
+		$blog_ids = array_unique( array_merge( [ get_current_blog_id() ], array_keys( get_blogs_of_user( $user_id ) ) ) );
+
+		foreach ( $blog_ids as $blog_id ) {
+			if ( get_current_blog_id() === (int) $blog_id ) {
+				$this->queue_author_tag_keys( $keys, $user_id );
+				continue;
+			}
+
+			switch_to_blog( $blog_id );
+			$this->queue_author_tag_keys( $keys, $user_id );
+			restore_current_blog();
+		}
+	}
+
+	/**
+	 * Prefix an author's cache tags for the current site and queue them.
+	 *
+	 * @param array   $keys    Cache tags, not prefixed yet.
+	 * @param integer $user_id ID for the updated user.
+	 */
+	private function queue_author_tag_keys( array $keys, $user_id ) {
+		$keys = ec_cf_prefix_cache_tags_with_blog_id( $keys );
 		/**
 		 * cache tags purged when an author's public profile changes.
+		 *
+		 * On multisite this runs once per site the user belongs to.
 		 *
 		 * @param array $keys      cache tags.
 		 * @param integer $user_id ID for the updated user.

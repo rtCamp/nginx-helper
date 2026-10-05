@@ -56,7 +56,7 @@ class Cloudflare_Client {
 
 	/**
 	 * Site transient holding the last failure, shown to the user until a purge succeeds.
-	 * It is shared across a network because the API token and Cloudflare's limits are.
+	 * It holds one record per API token (as a hash), as Cloudflare's limits are per account.
 	 *
 	 * @var string
 	 */
@@ -84,18 +84,13 @@ class Cloudflare_Client {
 	const MAX_WAIT = 3600;
 
 	/**
-	 * Tags waiting to be purged at shutdown.
+	 * Tags and URLs waiting to be purged at shutdown, per blog: [ blog ID => [ 'tags' => [], 'urls' => [] ] ].
+	 *
+	 * Kept per blog because each blog can use its own Cloudflare credentials on multisite.
 	 *
 	 * @var array
 	 */
-	private static $queued_tags = [];
-
-	/**
-	 * URLs waiting to be purged at shutdown.
-	 *
-	 * @var array
-	 */
-	private static $queued_urls = [];
+	private static $queue = [];
 
 	/**
 	 * Whether the shutdown flush has been registered.
@@ -114,7 +109,10 @@ class Cloudflare_Client {
 			return;
 		}
 
-		self::$queued_tags = array_merge( self::$queued_tags, $tags );
+		$blog_id = get_current_blog_id();
+
+		self::$queue[ $blog_id ] = self::$queue[ $blog_id ] ?? [ 'tags' => [], 'urls' => [] ];
+		self::$queue[ $blog_id ]['tags'] = array_merge( self::$queue[ $blog_id ]['tags'], $tags );
 		self::hook_shutdown();
 	}
 
@@ -132,7 +130,10 @@ class Cloudflare_Client {
 			return;
 		}
 
-		self::$queued_urls = array_merge( self::$queued_urls, $urls );
+		$blog_id = get_current_blog_id();
+
+		self::$queue[ $blog_id ] = self::$queue[ $blog_id ] ?? [ 'tags' => [], 'urls' => [] ];
+		self::$queue[ $blog_id ]['urls'] = array_merge( self::$queue[ $blog_id ]['urls'], $urls );
 		self::hook_shutdown();
 	}
 
@@ -152,45 +153,118 @@ class Cloudflare_Client {
 	 * Send everything queued during the request, after the response has been delivered where possible.
 	 */
 	public static function flush_queue() {
-		$tags = array_values( array_unique( self::$queued_tags ) );
-		$urls = array_values( array_unique( self::$queued_urls ) );
+		$queue       = self::$queue;
+		self::$queue = [];
 
-		self::$queued_tags = [];
-		self::$queued_urls = [];
+		// Blogs that use the same Cloudflare credentials are sent together, so they cost one request, not one per blog.
+		$groups = [];
 
-		/**
-		 * Filters the cache tags about to be purged at the end of the request.
-		 *
-		 * Runs once per request, so it can add, change or remove tags. Return an empty array to skip the purge.
-		 *
-		 * @param string[] $tags Cache tags collected during the request.
-		 */
-		$tags = array_values( array_unique( array_filter( (array) apply_filters( 'ec_cf_flush_tags', $tags ) ) ) );
+		foreach ( $queue as $blog_id => $items ) {
+			$credentials = self::credentials_for_blog( $blog_id );
 
-		/**
-		 * Filters the URLs about to be purged at the end of the request.
-		 *
-		 * Runs once per request. Paths are converted to full URLs before they are sent.
-		 *
-		 * @param string[] $urls URLs collected during the request.
-		 */
-		$urls = array_values( array_unique( array_filter( (array) apply_filters( 'ec_cf_flush_urls', $urls ) ) ) );
+			if ( ! $credentials ) {
+				continue;
+			}
 
-		if ( empty( $tags ) && empty( $urls ) ) {
-			return;
+			$key = md5( $credentials[0] . '|' . $credentials[1] ); // Only used to group in memory, never stored.
+
+			$groups[ $key ] = $groups[ $key ] ?? [
+				'credentials' => $credentials,
+				'blogs'       => [],
+				'tags'        => [],
+				'urls'        => [],
+			];
+
+			$groups[ $key ]['blogs'][] = (int) $blog_id;
+			$groups[ $key ]['tags']    = array_merge( $groups[ $key ]['tags'], $items['tags'] );
+			$groups[ $key ]['urls']    = array_merge( $groups[ $key ]['urls'], $items['urls'] );
 		}
 
-		// Let the visitor's response finish first so they do not wait for the API calls.
-		if ( function_exists( 'fastcgi_finish_request' ) ) {
-			fastcgi_finish_request();
+		$response_finished = false;
+
+		foreach ( $groups as $group ) {
+			/**
+			 * Filters the cache tags about to be purged at the end of the request.
+			 *
+			 * Runs once per request (once per set of Cloudflare credentials on multisite), so it can add,
+			 * change or remove tags. Return an empty array to skip the purge.
+			 *
+			 * @param string[] $tags     Cache tags collected during the request.
+			 * @param int[]    $blog_ids Blogs the tags were collected for.
+			 */
+			$tags = array_values( array_unique( array_filter( (array) apply_filters( 'ec_cf_flush_tags', array_values( array_unique( $group['tags'] ) ), $group['blogs'] ) ) ) );
+
+			/**
+			 * Filters the URLs about to be purged at the end of the request.
+			 *
+			 * Runs once per request (once per set of Cloudflare credentials on multisite). Paths are converted
+			 * to full URLs before they are sent.
+			 *
+			 * @param string[] $urls     URLs collected during the request.
+			 * @param int[]    $blog_ids Blogs the URLs were collected for.
+			 */
+			$urls = array_values( array_unique( array_filter( (array) apply_filters( 'ec_cf_flush_urls', array_values( array_unique( $group['urls'] ) ), $group['blogs'] ) ) ) );
+
+			if ( empty( $tags ) && empty( $urls ) ) {
+				continue;
+			}
+
+			// Let the visitor's response finish first so they do not wait for the API calls.
+			if ( ! $response_finished && function_exists( 'fastcgi_finish_request' ) ) {
+				fastcgi_finish_request();
+				$response_finished = true;
+			}
+
+			if ( ! empty( $tags ) ) {
+				self::send_purge( 'tags', $tags, $group['credentials'] );
+			}
+
+			if ( ! empty( $urls ) ) {
+				self::send_purge( 'files', $urls, $group['credentials'] );
+			}
+		}
+	}
+
+	/**
+	 * Get the Cloudflare credentials a blog uses. On multisite this looks at that blog's own settings.
+	 *
+	 * @param int  $blog_id Blog ID.
+	 * @param bool $log     Whether to log when Cloudflare is not configured for the blog.
+	 *
+	 * @return array|null [ token, zone ID ], or null if the blog was deleted or has no credentials.
+	 */
+	private static function credentials_for_blog( $blog_id, $log = true ) {
+		$switched = false;
+
+		if ( is_multisite() && get_current_blog_id() !== (int) $blog_id ) {
+			// The blog may have been deleted since the purge was queued.
+			if ( ! get_site( $blog_id ) ) {
+				return null;
+			}
+
+			switch_to_blog( $blog_id );
+			$switched = true;
 		}
 
-		if ( ! empty( $tags ) ) {
-			self::purge_by_tags( $tags );
+		$credentials = self::get_credentials( $log );
+
+		if ( $switched ) {
+			restore_current_blog();
 		}
 
-		if ( ! empty( $urls ) ) {
-			self::purge_by_urls( $urls );
+		return $credentials;
+	}
+
+	/**
+	 * Drop what is queued for blogs that use the given credentials, after everything was purged for them.
+	 *
+	 * @param array $credentials [ token, zone ID ].
+	 */
+	private static function forget_queued( array $credentials ) {
+		foreach ( array_keys( self::$queue ) as $blog_id ) {
+			if ( self::credentials_for_blog( $blog_id, false ) === $credentials ) {
+				unset( self::$queue[ $blog_id ] );
+			}
 		}
 	}
 
@@ -235,17 +309,16 @@ class Cloudflare_Client {
 		$result = self::api_request( $token, 'POST', 'zones/' . rawurlencode( $zone_id ) . '/purge_cache', [ 'purge_everything' => true ] );
 
 		if ( ! $result['ok'] ) {
-			self::record_failure( $result );
+			self::record_failure( $result, $token );
 
 			return false;
 		}
 
 		error_log( 'Advanced Cloudflare Cache: Successfully purged everything.' );
 
-		// Everything was purged, so anything still queued is redundant.
-		self::$queued_tags = [];
-		self::$queued_urls = [];
-		self::clear_failure();
+		// Everything was purged, so anything still queued for the same zone is redundant.
+		self::forget_queued( $credentials );
+		self::clear_failure( $token );
 
 		return true;
 	}
@@ -255,12 +328,13 @@ class Cloudflare_Client {
 	 *
 	 * Stops at the first batch that fails, as the rest would hit the same limit or outage.
 	 *
-	 * @param string $type  'tags' or 'files' (URLs).
-	 * @param array  $items The tags or URLs.
+	 * @param string     $type        'tags' or 'files' (URLs).
+	 * @param array      $items       The tags or URLs.
+	 * @param array|null $credentials [ token, zone ID ] to use, or null for the current blog's.
 	 *
 	 * @return bool True if everything was sent.
 	 */
-	private static function send_purge( $type, array $items ) {
+	private static function send_purge( $type, array $items, ?array $credentials = null ) {
 		if ( empty( $items ) ) {
 			return false;
 		}
@@ -272,7 +346,7 @@ class Cloudflare_Client {
 			return false;
 		}
 
-		$credentials = self::get_credentials();
+		$credentials = $credentials ?? self::get_credentials();
 
 		if ( ! $credentials ) {
 			return false;
@@ -288,7 +362,7 @@ class Cloudflare_Client {
 			$result = self::api_request( $token, 'POST', $path, [ $type => $batch ] );
 
 			if ( ! $result['ok'] ) {
-				self::record_failure( $result );
+				self::record_failure( $result, $token );
 
 				return false;
 			}
@@ -296,17 +370,19 @@ class Cloudflare_Client {
 			error_log( 'Advanced Cloudflare Cache: Successfully purged by ' . $label . ': ' . implode( ', ', $batch ) );
 		}
 
-		self::clear_failure();
+		self::clear_failure( $token );
 
 		return true;
 	}
 
 	/**
-	 * Get the API token and zone ID, or log why they are not available.
+	 * Get the API token and zone ID of the current blog, or log why they are not available.
+	 *
+	 * @param bool $log Whether to log when Cloudflare is not configured.
 	 *
 	 * @return array|null [ token, zone ID ], or null when Cloudflare is not configured.
 	 */
-	private static function get_credentials() {
+	private static function get_credentials( $log = true ) {
 		global $nginx_helper_admin;
 
 		if ( ! $nginx_helper_admin ) {
@@ -318,7 +394,9 @@ class Cloudflare_Client {
 		$zone_id = isset( $options['zone_id'] ) ? sanitize_text_field( $options['zone_id'] ) : '';
 
 		if ( empty( $token ) || empty( $zone_id ) ) {
-			error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
+			if ( $log ) {
+				error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
+			}
 
 			return null;
 		}
@@ -345,7 +423,7 @@ class Cloudflare_Client {
 	 * }
 	 */
 	private static function api_request( $token, $method, $path, ?array $body = null ) {
-		$failure = self::get_failure();
+		$failure = self::get_failure_for( $token );
 
 		if ( $failure && $failure['until'] > time() ) {
 			$wait = $failure['until'] - time();
@@ -454,38 +532,111 @@ class Cloudflare_Client {
 	}
 
 	/**
+	 * Key identifying an API token in the failure records. A hash, so the token itself is never stored there.
+	 *
+	 * Cloudflare's rate limits are per account, and a token belongs to one account, so the records are kept per token.
+	 *
+	 * @param string $token API token.
+	 *
+	 * @return string
+	 */
+	private static function failure_key( $token ) {
+		return substr( wp_hash( (string) $token ), 0, 20 );
+	}
+
+	/**
+	 * Get all remembered failures, keyed by token, without the ones that have expired.
+	 *
+	 * @return array
+	 */
+	private static function get_failures() {
+		$failures = get_site_transient( self::FAILURE_TRANSIENT );
+
+		if ( ! is_array( $failures ) ) {
+			return [];
+		}
+
+		foreach ( $failures as $key => $failure ) {
+			if ( ! is_array( $failure ) || ! isset( $failure['time'] ) || (int) $failure['time'] + self::FAILURE_TTL < time() ) {
+				unset( $failures[ $key ] );
+			}
+		}
+
+		return $failures;
+	}
+
+	/**
 	 * Remember that a request failed, so the user can be told. While rate limited no request is sent.
 	 *
-	 * @param array $result Result of api_request().
+	 * @param array  $result Result of api_request().
+	 * @param string $token  API token the request used.
 	 */
-	private static function record_failure( array $result ) {
+	private static function record_failure( array $result, $token ) {
 		// A request that was not even sent because of a rate limit already recorded must not extend that limit.
 		if ( ! empty( $result['skipped'] ) ) {
 			return;
 		}
 
-		set_site_transient(
-			self::FAILURE_TRANSIENT,
-			[
-				'time'         => time(),
-				'rate_limited' => $result['rate_limited'],
-				'until'        => $result['rate_limited'] ? time() + $result['wait'] : 0,
-			],
-			self::FAILURE_TTL
-		);
+		$failures = self::get_failures();
+
+		$failures[ self::failure_key( $token ) ] = [
+			'time'         => time(),
+			'rate_limited' => $result['rate_limited'],
+			'until'        => $result['rate_limited'] ? time() + $result['wait'] : 0,
+		];
+
+		set_site_transient( self::FAILURE_TRANSIENT, $failures, self::FAILURE_TTL );
 	}
 
 	/**
-	 * Forget the last failure after a purge went through.
+	 * Forget the last failure of a token after a purge went through.
+	 *
+	 * @param string $token API token the purge used.
 	 */
-	private static function clear_failure() {
-		if ( false !== get_site_transient( self::FAILURE_TRANSIENT ) ) {
+	private static function clear_failure( $token ) {
+		$failures = self::get_failures();
+		$key      = self::failure_key( $token );
+
+		if ( ! isset( $failures[ $key ] ) ) {
+			return;
+		}
+
+		unset( $failures[ $key ] );
+
+		if ( empty( $failures ) ) {
 			delete_site_transient( self::FAILURE_TRANSIENT );
+		} else {
+			set_site_transient( self::FAILURE_TRANSIENT, $failures, self::FAILURE_TTL );
 		}
 	}
 
 	/**
-	 * Get the last failure, if any. Used to tell the user that a purge failed.
+	 * Get the last failure of a token, if any.
+	 *
+	 * @param string $token API token.
+	 *
+	 * @return array|false See get_failure().
+	 */
+	private static function get_failure_for( $token ) {
+		$failures = self::get_failures();
+		$key      = self::failure_key( $token );
+
+		if ( ! isset( $failures[ $key ] ) ) {
+			return false;
+		}
+
+		return wp_parse_args(
+			$failures[ $key ],
+			[
+				'time'         => 0,
+				'rate_limited' => false,
+				'until'        => 0,
+			]
+		);
+	}
+
+	/**
+	 * Get the last failure of the current blog's Cloudflare account, if any. Used to tell the user that a purge failed.
 	 *
 	 * @return array|false {
 	 *     @type int  $time         When it happened.
@@ -494,20 +645,12 @@ class Cloudflare_Client {
 	 * }
 	 */
 	public static function get_failure() {
-		$failure = get_site_transient( self::FAILURE_TRANSIENT );
+		global $nginx_helper_admin;
 
-		if ( ! is_array( $failure ) ) {
-			return false;
-		}
+		$options = $nginx_helper_admin ? $nginx_helper_admin->get_cloudflare_settings() : [];
+		$token   = isset( $options['api_token'] ) ? sanitize_text_field( $options['api_token'] ) : '';
 
-		return wp_parse_args(
-			$failure,
-			[
-				'time'         => 0,
-				'rate_limited' => false,
-				'until'        => 0,
-			]
-		);
+		return '' === $token ? false : self::get_failure_for( $token );
 	}
 
 	/**
@@ -560,7 +703,7 @@ class Cloudflare_Client {
 
 			if ( ! $rulesets['ok'] || ! isset( $rulesets['data']->result ) || ! is_array( $rulesets['data']->result ) ) {
 				error_log( 'Advanced Cloudflare Cache: Invalid response when fetching rulesets.' );
-				self::record_failure( $rulesets );
+				self::record_failure( $rulesets, $token );
 				return 'failed';
 			}
 
@@ -601,7 +744,7 @@ class Cloudflare_Client {
 			$created = self::api_request( $token, 'POST', $zone_path . '/rulesets', $ruleset );
 
 			if ( ! $created['ok'] ) {
-				self::record_failure( $created );
+				self::record_failure( $created, $token );
 			}
 
 			return $created['ok'] ? 'created' : 'failed';
@@ -613,7 +756,7 @@ class Cloudflare_Client {
 
 		if ( ! $existing['ok'] ) {
 			error_log( 'Advanced Cloudflare Cache: Failed to fetch existing cache rule. Ruleset ID: ' . wp_json_encode( $cache_ruleset_id ) );
-			self::record_failure( $existing );
+			self::record_failure( $existing, $token );
 			return 'failed';
 		}
 
@@ -641,7 +784,7 @@ class Cloudflare_Client {
 			$added = self::api_request( $token, 'POST', $rules_uri, $new_rule );
 
 			if ( ! $added['ok'] ) {
-				self::record_failure( $added );
+				self::record_failure( $added, $token );
 			}
 
 			return $added['ok'] ? 'created' : 'failed';
@@ -659,7 +802,7 @@ class Cloudflare_Client {
 		$updated = self::api_request( $token, 'PATCH', $rules_uri . '/' . rawurlencode( $site_rule->id ), $rule + [ 'enabled' => true ] );
 
 		if ( ! $updated['ok'] ) {
-			self::record_failure( $updated );
+			self::record_failure( $updated, $token );
 		}
 
 		return $updated['ok'] ? 'updated' : 'failed';

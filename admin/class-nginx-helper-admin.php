@@ -45,6 +45,13 @@ class Nginx_Helper_Admin {
 	const CF_MESSAGE_TIMEOUT = 1500;
 
 	/**
+	 * Option holding a site's own Cloudflare settings on multisite. They override the network settings.
+	 *
+	 * @var string
+	 */
+	const CF_SITE_OPTION = 'easyengine_cache_manager_cf_site_settings';
+
+	/**
 	 * The ID of this plugin.
 	 *
 	 * @since    2.0.0
@@ -287,6 +294,33 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
+	 * Add the per-site Cloudflare settings page on multisite.
+	 *
+	 * Only super admins get it, like the network settings, because the settings include an API token.
+	 */
+	public function cf_site_admin_menu() {
+		if ( ! is_multisite() ) {
+			return;
+		}
+
+		add_submenu_page(
+			'options-general.php',
+			__( 'Cloudflare Cache', 'nginx-helper' ),
+			__( 'Cloudflare Cache', 'nginx-helper' ),
+			'manage_network_options',
+			'nginx-cloudflare',
+			array( &$this, 'cf_site_settings_page' )
+		);
+	}
+
+	/**
+	 * Display the per-site Cloudflare settings.
+	 */
+	public function cf_site_settings_page() {
+		include plugin_dir_path( __FILE__ ) . 'partials/easyengine-cache-manager-cloudflare-site-options.php';
+	}
+
+	/**
 	 * Default settings.
 	 *
 	 * @since    2.0.0
@@ -372,11 +406,55 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
-	 * Gets the current cloudflare settings.
+	 * Gets the Cloudflare settings that apply to the current site.
+	 *
+	 * On multisite a site can override the network's token, zone and TTL with its own, for example when
+	 * it lives in another Cloudflare zone. On a single site this is the same as the network settings.
+	 *
+	 * @return array The settings, with `is_site_override` listing which ones come from the site.
+	 */
+	public function get_cloudflare_settings() {
+		$settings = $this->get_network_cloudflare_settings();
+
+		$settings['is_site_override'] = [
+			'api_token'         => false,
+			'zone_id'           => false,
+			'default_cache_ttl' => false,
+		];
+
+		if ( ! is_multisite() ) {
+			return $settings;
+		}
+
+		$site = (array) get_option( self::CF_SITE_OPTION, array() );
+
+		// A token set by the constant is a deliberate network-wide lock, so a site cannot replace it.
+		if ( ! empty( $site['api_token'] ) && empty( $settings['api_token_enabled_by_constant'] ) ) {
+			$settings['api_token']                       = $site['api_token'];
+			$settings['is_site_override']['api_token'] = true;
+		}
+
+		if ( ! empty( $site['zone_id'] ) ) {
+			$settings['zone_id']                       = $site['zone_id'];
+			$settings['is_site_override']['zone_id'] = true;
+		}
+
+		if ( isset( $site['default_cache_ttl'] ) && '' !== $site['default_cache_ttl'] ) {
+			$settings['default_cache_ttl']                       = (int) $site['default_cache_ttl'];
+			$settings['is_site_override']['default_cache_ttl'] = true;
+		}
+
+		$settings['is_enabled'] = ! empty( $settings['api_token'] ) && ! empty( $settings['zone_id'] );
+
+		return $settings;
+	}
+
+	/**
+	 * Gets the network-wide Cloudflare settings (the only ones on a single site).
 	 *
 	 * @return array The current settings.
 	 */
-	public function get_cloudflare_settings() {
+	public function get_network_cloudflare_settings() {
 		$default_settings = $this->get_cloudflare_default_settings();
 
 		$stored_options = get_site_option( 'easyengine_cache_manager_cf_settings', array() );
@@ -1262,7 +1340,7 @@ class Nginx_Helper_Admin {
 	 */
 	public function cf_blocked_requests_notice() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['page'] ) || 'nginx' !== $_GET['page'] || ! current_user_can( 'manage_options' ) ) {
+		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], [ 'nginx', 'nginx-cloudflare' ], true ) || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

@@ -53,7 +53,8 @@ if( isset( $nginx_helper_admin ) && method_exists( $nginx_helper_admin, 'cf_page
 }
 
 
-$ec_site_settings = $nginx_helper_admin->get_cloudflare_settings();
+// This screen edits the network settings, so it must not show a site's own overrides.
+$ec_site_settings = $nginx_helper_admin->get_network_cloudflare_settings();
 ?>
 
 	<div class="ec-cf-settings">

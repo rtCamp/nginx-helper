@@ -32,4 +32,13 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // Remove the Cloudflare settings (they include the API token) and the leftovers of the Cloudflare purge notices.
 delete_site_option( 'easyengine_cache_manager_cf_settings' );
 delete_site_transient( 'ec_cf_purge_failure' );
-delete_transient( 'ec_page_rule_save_state_admin_notice' );
+
+// On multisite every site can also have its own Cloudflare settings.
+$ec_blog_ids = is_multisite() ? get_sites( array( 'fields' => 'ids', 'number' => 0 ) ) : array( get_current_blog_id() );
+
+foreach ( $ec_blog_ids as $ec_blog_id ) {
+	switch_to_blog( $ec_blog_id );
+	delete_option( 'easyengine_cache_manager_cf_site_settings' );
+	delete_transient( 'ec_page_rule_save_state_admin_notice' );
+	restore_current_blog();
+}
