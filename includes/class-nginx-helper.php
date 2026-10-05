@@ -255,6 +255,8 @@ class Nginx_Helper {
 		// advance purge settings.
 		$this->loader->add_action( 'upgrader_process_complete', $nginx_helper_admin, 'nginx_helper_auto_purge_on_any_update', 10, 2 );
 		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'suggest_purge_after_update' );
+		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'cf_blocked_requests_notice' );
+		$this->loader->add_action( 'network_admin_notices', $nginx_helper_admin, 'cf_blocked_requests_notice' );
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'dismiss_suggest_purge_after_update' );
 
 		// WooCommerce integration.

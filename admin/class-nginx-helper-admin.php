@@ -1256,6 +1256,29 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
+	 * Warn on the plugin's settings page when Cloudflare is configured but WordPress blocks requests to its API.
+	 *
+	 * That happens when WP_HTTP_BLOCK_EXTERNAL is on and api.cloudflare.com is not in WP_ACCESSIBLE_HOSTS.
+	 */
+	public function cf_blocked_requests_notice() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || 'nginx' !== $_GET['page'] || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$options = $this->get_cloudflare_settings();
+
+		if ( empty( $options['is_enabled'] ) || ! _wp_http_get_object()->block_request( Cloudflare_Client::API_BASE ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-error"><p>%s</p></div>',
+			esc_html__( 'Cloudflare purging will not work because WordPress blocks requests to api.cloudflare.com. Add "api.cloudflare.com" to WP_ACCESSIBLE_HOSTS in wp-config.php.', 'nginx-helper' )
+		);
+	}
+
+	/**
 	 * Message for the last Cloudflare purge failure, or an empty string if there was none.
 	 *
 	 * @return string
