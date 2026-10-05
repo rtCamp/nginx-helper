@@ -44,10 +44,10 @@ global $pagenow;
 				switch ( $current_setting_tab ) {
 
 					case 'general':
-						include plugin_dir_path( __FILE__ ) . 'nginx-helper-general-options.php';
+						include NGINX_HELPER_BASEPATH . 'admin/partials/nginx-helper-general-options.php';
 						break;
 					case 'cloudflare':
-						include plugin_dir_path( __FILE__ ) . 'easyengine-cache-manager-cloudflare-options.php';
+						include NGINX_HELPER_BASEPATH . 'admin/partials/easyengine-cache-manager-cloudflare-options.php';
 						break;
 
 				}
@@ -55,7 +55,7 @@ global $pagenow;
 			</div> <!-- End of #post-body-content -->
 			<div id="postbox-container-1" class="postbox-container">
 				<?php
-					require plugin_dir_path( __FILE__ ) . 'nginx-helper-sidebar-display.php';
+					require NGINX_HELPER_BASEPATH . 'admin/partials/nginx-helper-sidebar-display.php';
 				?>
 			</div> <!-- End of #postbox-container-1 -->
 		</div> <!-- End of #post-body -->

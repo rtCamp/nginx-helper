@@ -127,23 +127,23 @@ class Nginx_Helper {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-nginx-helper-loader.php';
+		require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-nginx-helper-i18n.php';
+		require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that required for purging urls.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-purger.php';
+		require_once NGINX_HELPER_BASEPATH . 'admin/class-purger.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-nginx-helper-admin.php';
+		require_once NGINX_HELPER_BASEPATH . 'admin/class-nginx-helper-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -188,18 +188,18 @@ class Nginx_Helper {
 
 			if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis extension if installed.
 
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-phpredis-purger.php';
+				require_once NGINX_HELPER_BASEPATH . 'admin/class-phpredis-purger.php';
 				$nginx_purger = new PhpRedis_Purger();
 
 			} else {
 
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-predis-purger.php';
+				require_once NGINX_HELPER_BASEPATH . 'admin/class-predis-purger.php';
 				$nginx_purger = new Predis_Purger();
 
 			}
 		} else {
 
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';
+			require_once NGINX_HELPER_BASEPATH . 'admin/class-fastcgi-purger.php';
 			$nginx_purger = new FastCGI_Purger();
 
 		}

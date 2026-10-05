@@ -170,8 +170,8 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
-		wp_enqueue_style( $this->plugin_name . '-icons', plugin_dir_url( __FILE__ ) . 'icons/css/nginx-fontello.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/nginx-helper-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-icons', NGINX_HELPER_BASEURL . 'admin/icons/css/nginx-fontello.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, NGINX_HELPER_BASEURL . 'admin/css/nginx-helper-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -200,7 +200,7 @@ class Nginx_Helper_Admin {
 			return;
 		}
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, NGINX_HELPER_BASEURL . 'admin/js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
 
 		$do_localize = array(
 			'purge_confirm_string' => esc_html__( 'Purging entire cache is not recommended. Would you like to continue?', 'nginx-helper' ),
@@ -290,7 +290,7 @@ class Nginx_Helper_Admin {
 	 * @since    2.0.0
 	 */
 	public function nginx_helper_setting_page() {
-		include plugin_dir_path( __FILE__ ) . 'partials/nginx-helper-admin-display.php';
+		include NGINX_HELPER_BASEPATH . 'admin/partials/nginx-helper-admin-display.php';
 	}
 
 	/**
@@ -318,7 +318,7 @@ class Nginx_Helper_Admin {
 	 * Display the per-site Cloudflare settings.
 	 */
 	public function cf_site_settings_page() {
-		include plugin_dir_path( __FILE__ ) . 'partials/easyengine-cache-manager-cloudflare-site-options.php';
+		include NGINX_HELPER_BASEPATH . 'admin/partials/easyengine-cache-manager-cloudflare-site-options.php';
 	}
 
 	/**
