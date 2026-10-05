@@ -2,8 +2,9 @@
 /**
  * Display the Cloudflare settings of one site on multisite.
  *
- * A site uses the network's Cloudflare settings unless it sets its own here, for example because it is
- * in another Cloudflare zone. The saved API token is never shown again: an empty field keeps it.
+ * A site uses the network's Cloudflare settings unless a super admin sets its own here, for example because
+ * it is in another Cloudflare zone. The saved API token is never shown again: an empty field keeps it.
+ * Any site admin can set up the cache rule of their own site.
  *
  * @package    nginx-helper
  * @subpackage nginx-helper/admin/partials
@@ -11,13 +12,15 @@
 
 global $nginx_helper_admin;
 
-if ( ! $nginx_helper_admin || ! is_multisite() || ! current_user_can( 'manage_network_options' ) ) {
+if ( ! $nginx_helper_admin || ! is_multisite() || ! current_user_can( 'manage_options' ) ) {
 	wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'nginx-helper' ) );
 }
 
-$ec_option = Nginx_Helper_Admin::CF_SITE_OPTION;
+// Changing the credentials is for super admins only, as they include an API token.
+$ec_can_configure = current_user_can( 'manage_network_options' );
+$ec_option        = Nginx_Helper_Admin::CF_SITE_OPTION;
 
-if ( isset( $_POST['ec_cf_site_settings_save'], $_POST['ec_cf_site_settings_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ec_cf_site_settings_nonce'] ) ), 'ec_cf_site_settings_nonce' ) ) {
+if ( $ec_can_configure && isset( $_POST['ec_cf_site_settings_save'], $_POST['ec_cf_site_settings_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ec_cf_site_settings_nonce'] ) ), 'ec_cf_site_settings_nonce' ) ) {
 	if ( ! empty( $_POST['ec_cf_use_network'] ) ) {
 		delete_option( $ec_option );
 		$ec_saved_message = __( 'This site now uses the network settings.', 'nginx-helper' );
@@ -76,13 +79,23 @@ $ec_locked   = ! empty( $ec_network['api_token_enabled_by_constant'] );
 	<p>
 		<?php
 		if ( empty( $ec_own ) ) {
-			esc_html_e( 'This site uses the network Cloudflare settings. Set any of the fields below to use different ones for this site only.', 'nginx-helper' );
+			esc_html_e( 'This site uses the network Cloudflare settings.', 'nginx-helper' );
 		} else {
-			esc_html_e( 'This site has its own Cloudflare settings. Fields left empty use the network settings.', 'nginx-helper' );
+			esc_html_e( 'This site has its own Cloudflare settings. Anything it does not set uses the network settings.', 'nginx-helper' );
+		}
+
+		if ( $ec_can_configure ) {
+			echo ' ';
+			esc_html_e( 'Set any of the fields below to use different ones for this site only.', 'nginx-helper' );
 		}
 		?>
 	</p>
 
+	<?php if ( ! $ec_effective['is_enabled'] ) : ?>
+		<p><?php esc_html_e( 'Cloudflare is not set up for this site. A network administrator can add the API token and zone ID.', 'nginx-helper' ); ?></p>
+	<?php endif; ?>
+
+	<?php if ( $ec_can_configure ) : ?>
 	<form method="post" action="#" name="ec_cf_site_settings_form">
 		<?php wp_nonce_field( 'ec_cf_site_settings_nonce', 'ec_cf_site_settings_nonce' ); ?>
 		<input type="hidden" value="1" name="ec_cf_site_settings_save"/>
@@ -135,6 +148,7 @@ $ec_locked   = ! empty( $ec_network['api_token_enabled_by_constant'] );
 		</table>
 		<?php submit_button( __( 'Save Changes', 'nginx-helper' ), 'primary' ); ?>
 	</form>
+	<?php endif; ?>
 
 	<?php if ( $ec_effective['is_enabled'] ) : ?>
 		<form name="easyengine_cache_manager_add_cache_rule" method="POST">

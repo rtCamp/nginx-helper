@@ -72,7 +72,7 @@ class Cloudflare_Purger {
 			&& 'trash' !== $new_status ) {
 			return;
 		}
-		self::purge_post_with_related( $post );
+		self::purge_post_with_related( $post, $post_before );
 		if ( 'publish' !== $new_status || 'publish' === $old_status ) {
 			return;
 		}
@@ -386,11 +386,35 @@ class Cloudflare_Purger {
 	}
 
 	/**
+	 * Get the cache tags of the date archives a post appears on: its year, month and day.
+	 *
+	 * Built from the post's local date, as WordPress builds the archives. The tag emitter puts the matching
+	 * tag on each date archive (date-2026, date-2026-10, date-2026-10-05).
+	 *
+	 * @param object $post Post object.
+	 *
+	 * @return string[]
+	 */
+	private static function get_date_tags( $post ) {
+		// Drafts and auto-drafts can have the zero date, which is no archive.
+		if ( empty( $post->post_date ) || ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})/', $post->post_date, $parts ) || '0000' === $parts[1] ) {
+			return [];
+		}
+
+		return [
+			'date-' . $parts[1],
+			'date-' . $parts[1] . '-' . $parts[2],
+			'date-' . $parts[1] . '-' . $parts[2] . '-' . $parts[3],
+		];
+	}
+
+	/**
 	 * Purge the cache tags associated with a post being modified.
 	 *
-	 * @param object $post Object representing the modified post.
+	 * @param object      $post        Object representing the modified post.
+	 * @param object|null $post_before The post before the update, to purge the date archives it left.
 	 */
-	private function purge_post_with_related( $post ) {
+	private function purge_post_with_related( $post, $post_before = null ) {
 		if ( in_array( $post->post_type, self::get_ignored_post_types(), true ) ) {
 			return;
 		}
@@ -404,11 +428,16 @@ class Cloudflare_Purger {
 			'front',
 			'404',
 			'feed',
-			'date',
 			'graphql-collection',
 			'post-huge',
 			'rest-post-huge',
 		];
+
+		// Date archives: the post's own year, month and day, plus the ones it left when its date changed.
+		$keys   = array_merge( $keys, self::get_date_tags( $post ), [ 'date-misc' ] );
+		if ( $post_before ) {
+			$keys = array_merge( $keys, self::get_date_tags( $post_before ) );
+		}
 
 		if ( post_type_supports( $post->post_type, 'author' ) ) {
 			$keys[] = 'user-' . $post->post_author;

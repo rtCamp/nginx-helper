@@ -294,9 +294,10 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
-	 * Add the per-site Cloudflare settings page on multisite.
+	 * Add the per-site Cloudflare page on multisite.
 	 *
-	 * Only super admins get it, like the network settings, because the settings include an API token.
+	 * Every site admin gets it to set up the cache rule of their own site. Changing the Cloudflare
+	 * credentials on it is for super admins only, because they include an API token.
 	 */
 	public function cf_site_admin_menu() {
 		if ( ! is_multisite() ) {
@@ -307,7 +308,7 @@ class Nginx_Helper_Admin {
 			'options-general.php',
 			__( 'Cloudflare Cache', 'nginx-helper' ),
 			__( 'Cloudflare Cache', 'nginx-helper' ),
-			'manage_network_options',
+			'manage_options',
 			'nginx-cloudflare',
 			array( &$this, 'cf_site_settings_page' )
 		);

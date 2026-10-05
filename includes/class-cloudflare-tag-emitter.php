@@ -202,6 +202,38 @@ class CloudFlare_Tag_Emitter {
 	}
 
 	/**
+	 * Get the cache tag of a date archive: its year, month or day, whichever is the most specific.
+	 *
+	 * Matches the tags the purger builds from a post's date (date-2026, date-2026-10, date-2026-10-05).
+	 * Odd archives that have no year (e.g. only a month) get date-misc, which is purged on every post change.
+	 *
+	 * @param WP_Query $wp_query The main query.
+	 *
+	 * @return string
+	 */
+	private static function get_date_archive_tag( $wp_query ) {
+		$year = (int) $wp_query->get( 'year' );
+
+		if ( ! $year ) {
+			return 'date-misc';
+		}
+
+		$month = (int) $wp_query->get( 'monthnum' );
+
+		if ( ! $month ) {
+			return sprintf( 'date-%04d', $year );
+		}
+
+		$day = (int) $wp_query->get( 'day' );
+
+		if ( ! $day ) {
+			return sprintf( 'date-%04d-%02d', $year, $month );
+		}
+
+		return sprintf( 'date-%04d-%02d-%02d', $year, $month, $day );
+	}
+
+	/**
 	 * Get the cache tags to be included in this view.
 	 *
 	 * cache tags are generated based on the main WP_Query.
@@ -226,6 +258,8 @@ class CloudFlare_Tag_Emitter {
 		}
 		if ( is_date() ) {
 			$keys[] = 'date';
+			// The tag of this archive's own period, so a post change only purges the archives it appears on.
+			$keys[] = self::get_date_archive_tag( $wp_query );
 		}
 		if ( is_paged() ) {
 			$keys[] = 'paged';
