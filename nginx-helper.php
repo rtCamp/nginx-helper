@@ -58,10 +58,12 @@ function activate_nginx_helper() {
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-nginx-helper-deactivator.php
+ *
+ * @param bool $network_deactivating Whether the plugin is being deactivated for the whole network.
  */
-function deactivate_nginx_helper() {
+function deactivate_nginx_helper( $network_deactivating = false ) {
 	require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-deactivator.php';
-	Nginx_Helper_Deactivator::deactivate();
+	Nginx_Helper_Deactivator::deactivate( $network_deactivating );
 }
 
 register_activation_hook( __FILE__, 'activate_nginx_helper' );

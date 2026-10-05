@@ -38,10 +38,7 @@ delete_site_option( 'ec_cf_backlog_lock' );
 // On multisite every site can also have its own Cloudflare settings.
 if ( is_multisite() ) {
 	foreach ( get_sites( array( 'fields' => 'ids', 'number' => 0 ) ) as $ec_blog_id ) {
-		switch_to_blog( $ec_blog_id );
-		delete_option( 'easyengine_cache_manager_cf_site_settings' );
-		delete_transient( 'ec_page_rule_save_state_admin_notice' );
-		restore_current_blog();
+		delete_blog_option( $ec_blog_id, 'easyengine_cache_manager_cf_site_settings' );
 	}
 } else {
 	delete_option( 'easyengine_cache_manager_cf_site_settings' );
