@@ -34,7 +34,7 @@ class CLI {
 	 * @subcommand purge-tag
 	 */
 	public function purge_tag( $args ) {
-		$ret = Cloudflare_Client::purgeByTags( $args );
+		$ret = Cloudflare_Client::purge_by_tags( $args );
 		if ( ! $ret ) {
 			WP_CLI::error( 'Failed to purge tags.' );
 		} else {
@@ -60,7 +60,7 @@ class CLI {
 	 * @subcommand purge-path
 	 */
 	public function purge_path( $args ) {
-		$ret = Cloudflare_Client::purgeByUrls( $args );
+		$ret = Cloudflare_Client::purge_by_urls( $args );
 		if ( ! $ret ) {
 			WP_CLI::error( 'Failed to purge paths.' );
 		} else {
@@ -92,7 +92,7 @@ class CLI {
 	 */
 	public function purge_all( $_, $assoc_args ) {
 		WP_CLI::confirm( 'Are you sure you want to purge the entire page cache?', $assoc_args );
-		$ret = Cloudflare_Client::purgeEverything();
+		$ret = Cloudflare_Client::purge_everything();
 		if ( ! $ret ) {
 			WP_CLI::error( 'Failed to purge all.' );
 		} else {

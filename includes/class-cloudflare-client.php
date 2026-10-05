@@ -70,14 +70,14 @@ class Cloudflare_Client {
 	const FAILURE_TTL = 3600;
 
 	/**
-	 * Seconds to stay away from the API when Cloudflare does not say how long to wait.
+	 * Seconds to wait before reaching out the API when Cloudflare does not say how long to wait.
 	 *
 	 * @var integer
 	 */
 	const DEFAULT_WAIT = 60;
 
 	/**
-	 * Longest wait, in seconds, honoured after a rate limit.
+	 * Longest wait, in seconds, after a rate limit.
 	 *
 	 * @var integer
 	 */
@@ -109,7 +109,7 @@ class Cloudflare_Client {
 	 *
 	 * @param array $tags The tags to purge.
 	 */
-	public static function queueTags( array $tags ) {
+	public static function queue_tags( array $tags ) {
 		if ( empty( $tags ) ) {
 			return;
 		}
@@ -125,7 +125,7 @@ class Cloudflare_Client {
 	 *
 	 * @param array $urls The URLs or paths to purge.
 	 */
-	public static function queueUrls( array $urls ) {
+	public static function queue_urls( array $urls ) {
 		$urls = array_filter( array_map( array( self::class, 'to_full_url' ), $urls ) );
 
 		if ( empty( $urls ) ) {
@@ -186,11 +186,11 @@ class Cloudflare_Client {
 		}
 
 		if ( ! empty( $tags ) ) {
-			self::purgeByTags( $tags );
+			self::purge_by_tags( $tags );
 		}
 
 		if ( ! empty( $urls ) ) {
-			self::purgeByUrls( $urls );
+			self::purge_by_urls( $urls );
 		}
 	}
 
@@ -201,7 +201,7 @@ class Cloudflare_Client {
 	 *
 	 * @return bool True on success, false on failure.
 	 */
-	public static function purgeByTags( array $tags ) {
+	public static function purge_by_tags( array $tags ) {
 		return self::send_purge( 'tags', $tags );
 	}
 
@@ -212,7 +212,7 @@ class Cloudflare_Client {
 	 *
 	 * @return bool True on success, false on failure.
 	 */
-	public static function purgeByUrls( array $urls ) {
+	public static function purge_by_urls( array $urls ) {
 		$urls = array_values( array_unique( array_filter( array_map( array( self::class, 'to_full_url' ), $urls ) ) ) );
 
 		return self::send_purge( 'files', $urls );
@@ -223,7 +223,7 @@ class Cloudflare_Client {
 	 *
 	 * @return bool True on success, false on failure.
 	 */
-	public static function purgeEverything() {
+	public static function purge_everything() {
 		$credentials = self::get_credentials();
 
 		if ( ! $credentials ) {
@@ -268,7 +268,7 @@ class Cloudflare_Client {
 		global $nginx_helper_admin;
 
 		// Same as the Nginx purger: do not purge while an import is running.
-		if ( $nginx_helper_admin->is_import_request() ) {
+		if ( ! $nginx_helper_admin || $nginx_helper_admin->is_import_request() ) {
 			return false;
 		}
 
@@ -539,7 +539,7 @@ class Cloudflare_Client {
 	 *
 	 * @return string 'created', 'exists', 'updated' or 'failed'.
 	 */
-	public static function setupCacheRule() {
+	public static function setup_cache_rules() {
 		$credentials = self::get_credentials();
 
 		if ( ! $credentials ) {

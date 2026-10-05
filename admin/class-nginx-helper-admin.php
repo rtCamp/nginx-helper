@@ -893,7 +893,7 @@ class Nginx_Helper_Admin {
 				$nginx_purger->purge_all();
 
 				if( $this->cf_options['is_enabled'] ) {
-					Cloudflare_Client::purgeEverything();
+					Cloudflare_Client::purge_everything();
 				}
 
 				break;
@@ -1249,7 +1249,7 @@ class Nginx_Helper_Admin {
 				return;
 			}
 
-			$result = EECacheHelper\Cloudflare_Client::setupCacheRule();
+			$result = EECacheHelper\Cloudflare_Client::setup_cache_rules();
 
 			set_transient( 'ec_page_rule_save_state_admin_notice', $result, 60 );
 		}
@@ -1506,7 +1506,7 @@ class Nginx_Helper_Admin {
 			wp_die( esc_html__( 'No path provided.', 'nginx-helper' ) );
 		}
 
-		$ret = Cloudflare_Client::purgeByUrls( [ $path ] );
+		$ret = Cloudflare_Client::purge_by_urls( [ $path ] );
 		if ( ! $ret ) {
 			$failure = Cloudflare_Client::get_failure();
 

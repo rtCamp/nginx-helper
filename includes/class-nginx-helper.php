@@ -242,7 +242,7 @@ class Nginx_Helper {
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );
 		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
-			$this->loader->add_action( 'rt_nginx_helper_purge_all', 'EECacheHelper\Cloudflare_Client', 'purgeEverything' );
+			$this->loader->add_action( 'rt_nginx_helper_purge_all', 'EECacheHelper\Cloudflare_Client', 'purge_everything' );
 		}
 
 		// add action to preload the cache
@@ -450,7 +450,9 @@ class Nginx_Helper {
 			$headers['Expires']       = 'Wed, 11 Jan 1984 05:00:00 GMT'; // Date in the past
 		} else {
 			// Page is for an anonymous user and is cacheable.
-			$options = get_network_option( null, 'easyengine_cache_manager_cf_settings' );
+			// Read through the settings getter so the default TTL applies when the settings were never saved.
+			global $nginx_helper_admin;
+			$options = $nginx_helper_admin->get_cloudflare_settings();
 
 			$ttl     = isset( $options['default_cache_ttl'] ) ? (int) $options['default_cache_ttl'] : 0;
 

@@ -95,6 +95,12 @@ class Cloudflare_Purger {
 		}
 
 		$permalink = get_permalink( $post->ID );
+
+		// A post without a permalink (e.g. a type that is not public) has no page to purge.
+		if ( ! $permalink ) {
+			return;
+		}
+
 		$paths = [ $permalink ];
 
 		// If the permalink does not use query string, we standardize the url to both cases.
@@ -108,7 +114,7 @@ class Cloudflare_Purger {
 		 * @param array $paths Full URLs to clear.
 		 */
 		$paths = apply_filters( 'ec_clear_post_path', $paths );
-		Cloudflare_Client::queueUrls( $paths );
+		Cloudflare_Client::queue_urls( $paths );
 	}
 
 	/**
@@ -133,6 +139,9 @@ class Cloudflare_Purger {
 	 */
 	public function action_delete_attachment( $post_id ) {
 		$post = get_post( $post_id );
+		if ( ! $post instanceof \WP_Post ) {
+			return;
+		}
 		self::purge_post_with_related( $post );
 	}
 
@@ -181,7 +190,7 @@ class Cloudflare_Purger {
 		 * @param integer $post_id ID for purged post.
 		 */
 		$keys = apply_filters( 'ec_purge_clean_post_cache', $keys, $post_id );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -202,7 +211,7 @@ class Cloudflare_Purger {
 		 * @param integer $post_id ID for the edited attachment.
 		 */
 		$keys = apply_filters( 'ec_purge_edit_attachment', $keys, $post_id );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -225,7 +234,7 @@ class Cloudflare_Purger {
 		 * @param string $taxonomy Taxonomy for the new term.
 		 */
 		$keys = apply_filters( 'ec_purge_create_term', $keys, $term_id, $tt_id, $taxonomy );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -268,7 +277,7 @@ class Cloudflare_Purger {
 		 * @param array $term_ids IDs for purged terms.
 		 */
 		$keys = apply_filters( 'ec_purge_clean_term_cache', $keys, $term_ids );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -297,7 +306,7 @@ class Cloudflare_Purger {
 		 * @param WP_Comment $comment Comment to be inserted.
 		 */
 		$keys = apply_filters( 'ec_purge_insert_comment', $keys, $id, $comment );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -328,7 +337,7 @@ class Cloudflare_Purger {
 		 * @param WP_Comment $comment Comment being transitioned.
 		 */
 		$keys = apply_filters( 'ec_purge_transition_comment_status', $keys, $new_status, $old_status, $comment );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -354,7 +363,7 @@ class Cloudflare_Purger {
 		 * @param integer $id Comment ID.
 		 */
 		$keys = apply_filters( 'ec_purge_clean_comment_cache', $keys, $comment_id );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -420,7 +429,7 @@ class Cloudflare_Purger {
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = get_the_terms( $post, $taxonomy->name );
-			if ( $terms ) {
+			if ( $terms && ! is_wp_error( $terms ) ) {
 				foreach ( $terms as $term ) {
 					$keys[] = 'term-' . $term->term_id;
 					// Parent term archives also list posts from child terms.
@@ -440,7 +449,7 @@ class Cloudflare_Purger {
 		 * @param WP_Post $post Post object.
 		 */
 		$keys = apply_filters( 'ec_purge_post_with_related', $keys, $post );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -465,7 +474,7 @@ class Cloudflare_Purger {
 		 * @param integer $term_id Term ID.
 		 */
 		$keys = apply_filters( 'ec_purge_term', $keys, $term_id );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 
@@ -557,7 +566,7 @@ class Cloudflare_Purger {
 		 * @param integer $user_id ID for the updated user.
 		 */
 		$keys = apply_filters( 'ec_purge_profile_update', $keys, $user_id );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -589,7 +598,7 @@ class Cloudflare_Purger {
 		 * @param integer|null $reassign ID the posts were reassigned to.
 		 */
 		$keys = apply_filters( 'ec_purge_deleted_user', $keys, $user_id, $reassign );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 
 	/**
@@ -618,6 +627,6 @@ class Cloudflare_Purger {
 		 * @param string $option Option name.
 		 */
 		$keys = apply_filters( 'ec_purge_updated_option', $keys, $option );
-		Cloudflare_Client::queueTags( $keys );
+		Cloudflare_Client::queue_tags( $keys );
 	}
 }
