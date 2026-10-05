@@ -29,19 +29,3 @@ function ec_cf_prefix_cache_tags_with_blog_id( $keys ) {
 
 	return $prefixed_keys;
 }
-
-/**
- * Load the Composer dependencies and report whether the Cloudflare SDK is available.
- *
- * The vendor folder is missing in installs that are not built from a release (e.g. a git checkout).
- *
- * @return bool True if the Cloudflare SDK can be used.
- */
-function ec_cf_maybe_load_vendor_autoloader() {
-	// Load Composer dependencies.
-	if ( file_exists( NGINX_HELPER_BASEPATH . '/vendor/autoload.php' ) ) {
-		require_once NGINX_HELPER_BASEPATH . '/vendor/autoload.php';
-	}
-
-	return class_exists( 'Cloudflare\API\Adapter\Guzzle' );
-}

@@ -255,8 +255,6 @@ class Nginx_Helper {
 		// advance purge settings.
 		$this->loader->add_action( 'upgrader_process_complete', $nginx_helper_admin, 'nginx_helper_auto_purge_on_any_update', 10, 2 );
 		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'suggest_purge_after_update' );
-		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'cf_missing_sdk_notice' );
-		$this->loader->add_action( 'network_admin_notices', $nginx_helper_admin, 'cf_missing_sdk_notice' );
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'dismiss_suggest_purge_after_update' );
 
 		// WooCommerce integration.
@@ -265,6 +263,9 @@ class Nginx_Helper {
 		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
 			$this->loader->add_filter( 'wp_headers', $this, 'handle_cloudflare_headers', 999 );
 			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_purge', 100 );
+			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_failure', 101 );
+			$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'cf_purge_failure_notice' );
+			$this->loader->add_action( 'network_admin_notices', $nginx_helper_admin, 'cf_purge_failure_notice' );
 			$this->loader->add_action( 'wp_enqueue_scripts', $nginx_helper_admin, 'enqueue_cloudflare_admin_bar_script' );
 			$this->loader->add_action( 'wp_ajax_ec_clear_url_cache', $nginx_helper_admin, 'handle_cloudflare_clear_cache_ajax' );
 

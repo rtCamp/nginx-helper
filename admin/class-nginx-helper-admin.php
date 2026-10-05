@@ -388,8 +388,7 @@ class Nginx_Helper_Admin {
 
 		$diff_options = wp_parse_args( $stored_options, $default_settings );
 
-		// Cloudflare needs the credentials and its SDK (the vendor folder is missing in non-release installs).
-		$diff_options['is_enabled'] = ! empty( $diff_options['api_token'] ) && ! empty( $diff_options['zone_id'] ) && ec_cf_maybe_load_vendor_autoloader();
+		$diff_options['is_enabled'] = ! empty( $diff_options['api_token'] ) && ! empty( $diff_options['zone_id'] );
 
 		return $diff_options;
 	}
@@ -1257,23 +1256,82 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
-	 * Warn on the plugin's settings page when Cloudflare is configured but its SDK is missing.
+	 * Message for the last Cloudflare purge failure, or an empty string if there was none.
+	 *
+	 * @return string
 	 */
-	public function cf_missing_sdk_notice() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['page'] ) || 'nginx' !== $_GET['page'] || ! current_user_can( 'manage_options' ) ) {
+	private function get_cloudflare_failure_message() {
+		$failure = Cloudflare_Client::get_failure();
+
+		if ( ! $failure ) {
+			return '';
+		}
+
+		if ( ! $failure['rate_limited'] ) {
+			return __( 'A Cloudflare cache purge failed. Check the PHP error log for details.', 'nginx-helper' );
+		}
+
+		$wait = (int) $failure['until'] - time();
+
+		if ( $wait > 0 ) {
+			$minutes = max( 1, (int) ceil( $wait / 60 ) );
+
+			return sprintf(
+				/* translators: %d: number of minutes. */
+				_n(
+					'Cloudflare\'s rate limit was reached, so some cache purges did not go through. Please try again in about %d minute.',
+					'Cloudflare\'s rate limit was reached, so some cache purges did not go through. Please try again in about %d minutes.',
+					$minutes,
+					'nginx-helper'
+				),
+				$minutes
+			);
+		}
+
+		return __( 'Cloudflare\'s rate limit was reached, so some cache purges did not go through. Please try again later.', 'nginx-helper' );
+	}
+
+	/**
+	 * Tell the user when a Cloudflare purge failed or the rate limit was reached.
+	 */
+	public function cf_purge_failure_notice() {
+		if ( ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
 			return;
 		}
 
-		$options = $this->get_cloudflare_settings();
+		$message = $this->get_cloudflare_failure_message();
 
-		if ( empty( $options['api_token'] ) || empty( $options['zone_id'] ) || ec_cf_maybe_load_vendor_autoloader() ) {
+		if ( '' === $message ) {
 			return;
 		}
 
-		printf(
-			'<div class="notice notice-error"><p>%s</p></div>',
-			esc_html__( 'Cloudflare purging is turned off because the plugin\'s dependencies are missing (the vendor folder). Use the release version of the plugin, or run "composer install" in the plugin folder.', 'nginx-helper' )
+		printf( '<div class="notice notice-error"><p>%s</p></div>', esc_html( $message ) );
+	}
+
+	/**
+	 * Show "Purge failed" in the admin bar after a Cloudflare purge failed.
+	 *
+	 * @param object $wp_admin_bar Instance of WP_Admin_Bar.
+	 */
+	public function add_cloudflare_admin_bar_failure( $wp_admin_bar ) {
+		if ( ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
+			return;
+		}
+
+		$message = $this->get_cloudflare_failure_message();
+
+		if ( '' === $message ) {
+			return;
+		}
+
+		$wp_admin_bar->add_node(
+			[
+				'id'    => 'ec-cf-purge-failed',
+				'title' => esc_html__( 'Purge failed', 'nginx-helper' ),
+				'meta'  => [
+					'title' => $message,
+				],
+			]
 		);
 	}
 
@@ -1427,6 +1485,12 @@ class Nginx_Helper_Admin {
 
 		$ret = Cloudflare_Client::purgeByUrls( [ $path ] );
 		if ( ! $ret ) {
+			$failure = Cloudflare_Client::get_failure();
+
+			if ( $failure && $failure['rate_limited'] ) {
+				wp_die( esc_html__( 'Cloudflare\'s rate limit was reached. Please try again later.', 'nginx-helper' ) );
+			}
+
 			wp_die( esc_html__( 'Failed to clear URL cache.', 'nginx-helper' ) );
 		}
 

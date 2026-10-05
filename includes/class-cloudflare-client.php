@@ -1,16 +1,11 @@
 <?php
 /**
- * A wrapper for the Cloudflare API client.
+ * A client for the Cloudflare API, built on the WordPress HTTP API.
  *
  * @package nginx-helper
  */
 
 namespace EECacheHelper;
-
-\ec_cf_maybe_load_vendor_autoloader();
-
-use Cloudflare\API\Auth\APIToken;
-use Cloudflare\API\Endpoints\Zones;
 
 /**
  * Class Cloudflare_Client
@@ -32,6 +27,63 @@ class Cloudflare_Client {
 	const RULE_DESCRIPTION = 'EasyEngine Cache Helper Ruleset';
 
 	/**
+	 * Cloudflare API base URL.
+	 *
+	 * @var string
+	 */
+	const API_BASE = 'https://api.cloudflare.com/client/v4/';
+
+	/**
+	 * Seconds to wait for an API response. WordPress uses this for both connecting and the whole request.
+	 *
+	 * @var integer
+	 */
+	const API_TIMEOUT = 30;
+
+	/**
+	 * Rulesets requested per page (Cloudflare allows 1 to 50).
+	 *
+	 * @var integer
+	 */
+	const RULESETS_PER_PAGE = 50;
+
+	/**
+	 * Most pages of rulesets read while looking for the cache ruleset.
+	 *
+	 * @var integer
+	 */
+	const RULESETS_MAX_PAGES = 20;
+
+	/**
+	 * Site transient holding the last failure, shown to the user until a purge succeeds.
+	 * It is shared across a network because the API token and Cloudflare's limits are.
+	 *
+	 * @var string
+	 */
+	const FAILURE_TRANSIENT = 'ec_cf_purge_failure';
+
+	/**
+	 * Seconds the last failure is remembered.
+	 *
+	 * @var integer
+	 */
+	const FAILURE_TTL = 3600;
+
+	/**
+	 * Seconds to stay away from the API when Cloudflare does not say how long to wait.
+	 *
+	 * @var integer
+	 */
+	const DEFAULT_WAIT = 60;
+
+	/**
+	 * Longest wait, in seconds, honoured after a rate limit.
+	 *
+	 * @var integer
+	 */
+	const MAX_WAIT = 3600;
+
+	/**
 	 * Tags waiting to be purged at shutdown.
 	 *
 	 * @var array
@@ -51,24 +103,6 @@ class Cloudflare_Client {
 	 * @var bool
 	 */
 	private static $shutdown_hooked = false;
-
-	/**
-	 * Whether the Cloudflare SDK is available. Logs the reason when it is not.
-	 *
-	 * Callers such as the CLI commands do not check that Cloudflare is enabled, and constructing an
-	 * SDK class that was never loaded is a fatal error that cannot be caught as an Exception.
-	 *
-	 * @return bool
-	 */
-	private static function is_ready() {
-		$is_ready = ec_cf_maybe_load_vendor_autoloader();
-
-		if ( ! $is_ready ) {
-			error_log( 'Advanced Cloudflare Cache: The Cloudflare SDK is missing. Run "composer install" in the plugin folder or use the release version.' );
-		}
-
-		return $is_ready;
-	}
 
 	/**
 	 * Queue tags to be purged once at the end of the request.
@@ -168,100 +202,7 @@ class Cloudflare_Client {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purgeByTags( array $tags ) {
-		if ( empty( $tags ) || ! self::is_ready() ) {
-			return false;
-		}
-
-		global $nginx_helper_admin;
-
-		// Same as the Nginx purger: do not purge while an import is running.
-		if ( $nginx_helper_admin->is_import_request() ) {
-			return false;
-		}
-
-		$options = $nginx_helper_admin->get_cloudflare_settings();
-		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
-		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
-
-		if ( empty( $token ) || empty( $zone_id ) ) {
-			error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
-
-			return false;
-		}
-
-		$success = true;
-
-		// Cloudflare limits the number of tags accepted per purge request.
-		foreach ( array_chunk( array_values( array_unique( $tags ) ), self::PURGE_BATCH_SIZE ) as $batch ) {
-			try {
-				$key     = new APIToken( $token );
-				$adapter = new Cloudflare_Adapter( $key );
-				$zones   = new Zones( $adapter );
-
-				$result = $zones->cachePurge( $zone_id, null, $batch, null );
-
-				if ( $result ) {
-					error_log( 'Advanced Cloudflare Cache: Successfully purged by tags: ' . implode( ', ', $batch ) );
-				} else {
-					error_log( 'Advanced Cloudflare Cache: Failed to purge by tags: ' . implode( ', ', $batch ) );
-					$success = false;
-				}
-			} catch ( \Throwable $e ) {
-				error_log( 'Advanced Cloudflare Cache: Exception when purging by tags: ' . $e->getMessage() );
-				$success = false;
-			}
-		}
-
-		return $success;
-	}
-
-	/**
-	 * Purge the entire cache for the zone.
-	 *
-	 * @return bool True on success, false on failure.
-	 */
-	public static function purgeEverything() {
-		if ( ! self::is_ready() ) {
-			return false;
-		}
-
-		global $nginx_helper_admin;
-
-		$options = $nginx_helper_admin->get_cloudflare_settings();
-		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
-		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
-
-		if ( empty( $token ) || empty( $zone_id ) ) {
-			error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
-
-			return false;
-		}
-
-		try {
-			$key     = new APIToken( $token );
-			$adapter = new Cloudflare_Adapter( $key );
-			$zones   = new Zones( $adapter );
-
-			$result = $zones->cachePurgeEverything( $zone_id );
-
-			if ( $result ) {
-				error_log( 'Advanced Cloudflare Cache: Successfully purged everything.' );
-
-				// Everything was purged, so anything still queued is redundant.
-				self::$queued_tags = [];
-				self::$queued_urls = [];
-
-				return true;
-			} else {
-				error_log( 'Advanced Cloudflare Cache: Failed to purge everything.' );
-
-				return false;
-			}
-		} catch ( \Throwable $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when purging everything: ' . $e->getMessage() );
-
-			return false;
-		}
+		return self::send_purge( 'tags', $tags );
 	}
 
 	/**
@@ -272,14 +213,55 @@ class Cloudflare_Client {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purgeByUrls( array $urls ) {
+		$urls = array_values( array_unique( array_filter( array_map( array( self::class, 'to_full_url' ), $urls ) ) ) );
 
-		if ( empty( $urls ) || ! self::is_ready() ) {
+		return self::send_purge( 'files', $urls );
+	}
+
+	/**
+	 * Purge the entire cache for the zone.
+	 *
+	 * @return bool True on success, false on failure.
+	 */
+	public static function purgeEverything() {
+		$credentials = self::get_credentials();
+
+		if ( ! $credentials ) {
 			return false;
 		}
 
-		$urls = array_values( array_unique( array_filter( array_map( array( self::class , 'to_full_url' ), $urls ) ) ) );
+		list( $token, $zone_id ) = $credentials;
 
-		if ( empty( $urls ) ) {
+		$result = self::api_request( $token, 'POST', 'zones/' . rawurlencode( $zone_id ) . '/purge_cache', [ 'purge_everything' => true ] );
+
+		if ( ! $result['ok'] ) {
+			self::record_failure( $result );
+
+			return false;
+		}
+
+		error_log( 'Advanced Cloudflare Cache: Successfully purged everything.' );
+
+		// Everything was purged, so anything still queued is redundant.
+		self::$queued_tags = [];
+		self::$queued_urls = [];
+		self::clear_failure();
+
+		return true;
+	}
+
+	/**
+	 * Send tags or URLs to Cloudflare in batches.
+	 *
+	 * Stops at the first batch that fails, as the rest would hit the same limit or outage.
+	 *
+	 * @param string $type  'tags' or 'files' (URLs).
+	 * @param array  $items The tags or URLs.
+	 *
+	 * @return bool True if everything was sent.
+	 */
+	private static function send_purge( $type, array $items ) {
+		if ( empty( $items ) ) {
 			return false;
 		}
 
@@ -290,40 +272,242 @@ class Cloudflare_Client {
 			return false;
 		}
 
+		$credentials = self::get_credentials();
+
+		if ( ! $credentials ) {
+			return false;
+		}
+
+		list( $token, $zone_id ) = $credentials;
+
+		$label = 'tags' === $type ? 'tags' : 'URLs';
+		$path  = 'zones/' . rawurlencode( $zone_id ) . '/purge_cache';
+
+		// Cloudflare limits the number of tags or URLs accepted per purge request.
+		foreach ( array_chunk( array_values( array_unique( $items ) ), self::PURGE_BATCH_SIZE ) as $batch ) {
+			$result = self::api_request( $token, 'POST', $path, [ $type => $batch ] );
+
+			if ( ! $result['ok'] ) {
+				self::record_failure( $result );
+
+				return false;
+			}
+
+			error_log( 'Advanced Cloudflare Cache: Successfully purged by ' . $label . ': ' . implode( ', ', $batch ) );
+		}
+
+		self::clear_failure();
+
+		return true;
+	}
+
+	/**
+	 * Get the API token and zone ID, or log why they are not available.
+	 *
+	 * @return array|null [ token, zone ID ], or null when Cloudflare is not configured.
+	 */
+	private static function get_credentials() {
+		global $nginx_helper_admin;
+
+		if ( ! $nginx_helper_admin ) {
+			return null;
+		}
+
 		$options = $nginx_helper_admin->get_cloudflare_settings();
-		$token   = isset( $options['api_token'] ) ? $options['api_token'] : '';
-		$zone_id = isset( $options['zone_id'] ) ? $options['zone_id'] : '';
+		$token   = isset( $options['api_token'] ) ? sanitize_text_field( $options['api_token'] ) : '';
+		$zone_id = isset( $options['zone_id'] ) ? sanitize_text_field( $options['zone_id'] ) : '';
 
 		if ( empty( $token ) || empty( $zone_id ) ) {
 			error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
 
-			return false;
+			return null;
 		}
 
-		$success = true;
+		return [ $token, $zone_id ];
+	}
 
-		// Cloudflare limits the number of URLs accepted per purge request.
-		foreach ( array_chunk( $urls, self::PURGE_BATCH_SIZE ) as $batch ) {
-			try {
-				$key     = new APIToken( $token );
-				$adapter = new Cloudflare_Adapter( $key );
-				$zones   = new Zones( $adapter );
+	/**
+	 * Send a request to the Cloudflare API.
+	 *
+	 * Nothing is sent while Cloudflare is rate limiting us. The reason for every failure is logged.
+	 *
+	 * @param string     $token  API token.
+	 * @param string     $method GET, POST or PATCH.
+	 * @param string     $path   Path after the API base, e.g. zones/<id>/purge_cache.
+	 * @param array|null $body   JSON body.
+	 *
+	 * @return array {
+	 *     @type bool        $ok           Whether the request succeeded.
+	 *     @type object|null $data         Decoded response.
+	 *     @type bool        $rate_limited Whether Cloudflare's rate limit stopped the request.
+	 *     @type int         $wait         Seconds until the rate limit ends, 0 if not rate limited.
+	 *     @type bool        $skipped      Only set when the request was not sent because of a rate limit.
+	 * }
+	 */
+	private static function api_request( $token, $method, $path, ?array $body = null ) {
+		$failure = self::get_failure();
 
-				$result = $zones->cachePurge( $zone_id, $batch, null, null );
+		if ( $failure && $failure['until'] > time() ) {
+			$wait = $failure['until'] - time();
 
-				if ( $result ) {
-					error_log( 'Advanced Cloudflare Cache: Successfully purged by URLs: ' . implode( ', ', $batch ) );
-				} else {
-					error_log( 'Advanced Cloudflare Cache: Failed to purge by URLs: ' . implode( ', ', $batch ) );
-					$success = false;
-				}
-			} catch ( \Throwable $e ) {
-				error_log( 'Advanced Cloudflare Cache: Exception when purging by URLs: ' . $e->getMessage() );
-				$success = false;
+			error_log( 'Advanced Cloudflare Cache: ' . $method . ' ' . $path . ' not sent, Cloudflare is rate limiting this account for another ' . $wait . ' seconds.' );
+
+			return [
+				'ok'           => false,
+				'data'         => null,
+				'rate_limited' => true,
+				'wait'         => $wait,
+				'skipped'      => true,
+			];
+		}
+
+		$args = [
+			'method'  => $method,
+			'timeout' => self::API_TIMEOUT,
+			'headers' => [
+				'Authorization' => 'Bearer ' . $token,
+				'Content-Type'  => 'application/json',
+			],
+		];
+
+		if ( null !== $body ) {
+			$args['body'] = wp_json_encode( $body );
+		}
+
+		$response = wp_remote_request( self::API_BASE . $path, $args );
+
+		if ( is_wp_error( $response ) ) {
+			error_log( 'Advanced Cloudflare Cache: ' . $method . ' ' . $path . ' did not get through: ' . $response->get_error_message() );
+
+			return [
+				'ok'           => false,
+				'data'         => null,
+				'rate_limited' => false,
+				'wait'         => 0,
+			];
+		}
+
+		$status = (int) wp_remote_retrieve_response_code( $response );
+		$data   = json_decode( wp_remote_retrieve_body( $response ) );
+
+		if ( $status >= 200 && $status < 300 && isset( $data->success ) && true === $data->success ) {
+			return [
+				'ok'           => true,
+				'data'         => $data,
+				'rate_limited' => false,
+				'wait'         => 0,
+			];
+		}
+
+		$code         = isset( $data->errors[0]->code ) ? (int) $data->errors[0]->code : 0;
+		$message      = isset( $data->errors[0]->message ) ? $data->errors[0]->message : 'no error message';
+		$rate_limited = 429 === $status || 1134 === $code; // 1134: "Unable to purge, rate limit reached".
+		$wait         = $rate_limited ? self::rate_limit_wait( $response ) : 0;
+
+		error_log(
+			sprintf(
+				'Advanced Cloudflare Cache: %s %s failed with HTTP %d%s: %s%s',
+				$method,
+				$path,
+				$status,
+				$code ? ', error ' . $code : '',
+				$message,
+				$rate_limited ? ' (rate limited, waiting ' . $wait . ' seconds)' : ''
+			)
+		);
+
+		return [
+			'ok'           => false,
+			'data'         => $data,
+			'rate_limited' => $rate_limited,
+			'wait'         => $wait,
+		];
+	}
+
+	/**
+	 * Seconds Cloudflare asked us to wait, from the Retry-After header or the Ratelimit header.
+	 *
+	 * @param array $response HTTP API response.
+	 *
+	 * @return int
+	 */
+	private static function rate_limit_wait( $response ) {
+		$retry_after = wp_remote_retrieve_header( $response, 'retry-after' );
+		$retry_after = is_array( $retry_after ) ? reset( $retry_after ) : $retry_after;
+		$wait        = (int) $retry_after;
+
+		if ( $wait <= 0 ) {
+			// Example: "default";r=0;t=30 where t is the seconds until the limit resets.
+			$ratelimit = wp_remote_retrieve_header( $response, 'ratelimit' );
+			$ratelimit = is_array( $ratelimit ) ? reset( $ratelimit ) : $ratelimit;
+
+			if ( preg_match( '/;\s*t=(\d+)/', (string) $ratelimit, $matches ) ) {
+				$wait = (int) $matches[1];
 			}
 		}
 
-		return $success;
+		if ( $wait <= 0 ) {
+			$wait = self::DEFAULT_WAIT;
+		}
+
+		return min( self::MAX_WAIT, $wait );
+	}
+
+	/**
+	 * Remember that a request failed, so the user can be told. While rate limited no request is sent.
+	 *
+	 * @param array $result Result of api_request().
+	 */
+	private static function record_failure( array $result ) {
+		// A request that was not even sent because of a rate limit already recorded must not extend that limit.
+		if ( ! empty( $result['skipped'] ) ) {
+			return;
+		}
+
+		set_site_transient(
+			self::FAILURE_TRANSIENT,
+			[
+				'time'         => time(),
+				'rate_limited' => $result['rate_limited'],
+				'until'        => $result['rate_limited'] ? time() + $result['wait'] : 0,
+			],
+			self::FAILURE_TTL
+		);
+	}
+
+	/**
+	 * Forget the last failure after a purge went through.
+	 */
+	private static function clear_failure() {
+		if ( false !== get_site_transient( self::FAILURE_TRANSIENT ) ) {
+			delete_site_transient( self::FAILURE_TRANSIENT );
+		}
+	}
+
+	/**
+	 * Get the last failure, if any. Used to tell the user that a purge failed.
+	 *
+	 * @return array|false {
+	 *     @type int  $time         When it happened.
+	 *     @type bool $rate_limited Whether Cloudflare's rate limit was reached.
+	 *     @type int  $until        When the rate limit ends (a timestamp), 0 if not rate limited.
+	 * }
+	 */
+	public static function get_failure() {
+		$failure = get_site_transient( self::FAILURE_TRANSIENT );
+
+		if ( ! is_array( $failure ) ) {
+			return false;
+		}
+
+		return wp_parse_args(
+			$failure,
+			[
+				'time'         => 0,
+				'rate_limited' => false,
+				'until'        => 0,
+			]
+		);
 	}
 
 	/**
@@ -353,45 +537,43 @@ class Cloudflare_Client {
 	/**
 	 * Sets up the "Cache Rule" required to purge the edge cache.
 	 *
-	 * @return string 'created', 'exists', or 'failed'.
+	 * @return string 'created', 'exists', 'updated' or 'failed'.
 	 */
 	public static function setupCacheRule() {
-		global $nginx_helper_admin;
+		$credentials = self::get_credentials();
 
-		if ( ! $nginx_helper_admin || ! self::is_ready() ) {
+		if ( ! $credentials ) {
 			return 'failed';
 		}
 
-		$options = $nginx_helper_admin->get_cloudflare_settings();
-		$token   = isset( $options['api_token'] ) ? sanitize_text_field( $options['api_token'] ) : '';
-		$zone_id = isset( $options['zone_id'] ) ? sanitize_text_field( $options['zone_id'] ) : '';
+		list( $token, $zone_id ) = $credentials;
 
-		if ( empty( $token ) || empty( $zone_id ) ) {
-			error_log( 'Advanced Cloudflare Cache: API Token or Zone ID not configured.' );
-			return 'failed';
-		}
+		$zone_path = 'zones/' . rawurlencode( $zone_id );
 
-		$key     = new APIToken( $token );
-		$adapter = new Cloudflare_Adapter( $key );
+		// Find the zone's cache ruleset. Cloudflare returns rulesets a page at a time.
+		$cache_ruleset_id = null;
+		$cursor           = '';
 
-		try {
-			$rulesets_response = $adapter->get( sprintf( 'zones/%s/rulesets', esc_attr( $zone_id ) ) );
-			$raw_response      = $rulesets_response->getBody() ?? '';
-			$response_data     = json_decode( $raw_response, true );
+		for ( $page = 0; $page < self::RULESETS_MAX_PAGES; $page++ ) {
+			$path     = $zone_path . '/rulesets?per_page=' . self::RULESETS_PER_PAGE . ( '' !== $cursor ? '&cursor=' . rawurlencode( $cursor ) : '' );
+			$rulesets = self::api_request( $token, 'GET', $path );
 
-			if ( ! is_array( $response_data ) || ! array_key_exists( 'result', $response_data ) ) {
+			if ( ! $rulesets['ok'] || ! isset( $rulesets['data']->result ) || ! is_array( $rulesets['data']->result ) ) {
 				error_log( 'Advanced Cloudflare Cache: Invalid response when fetching rulesets.' );
+				self::record_failure( $rulesets );
 				return 'failed';
 			}
-		} catch ( \Throwable $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when fetching rulesets: ' . esc_html( $e->getMessage() ) );
-			return 'failed';
-		}
 
-		$cache_ruleset_id = null;
-		foreach ( $response_data['result'] as $ruleset ) {
-			if ( 'http_request_cache_settings' === $ruleset['phase'] ) {
-				$cache_ruleset_id = sanitize_text_field( $ruleset['id'] );
+			foreach ( $rulesets['data']->result as $ruleset ) {
+				if ( isset( $ruleset->phase, $ruleset->id ) && 'http_request_cache_settings' === $ruleset->phase ) {
+					$cache_ruleset_id = sanitize_text_field( $ruleset->id );
+					break 2;
+				}
+			}
+
+			$cursor = isset( $rulesets['data']->result_info->cursors->after ) ? (string) $rulesets['data']->result_info->cursors->after : '';
+
+			if ( '' === $cursor ) {
 				break;
 			}
 		}
@@ -416,40 +598,26 @@ class Cloudflare_Client {
 				'rules'       => [ $rule ],
 			];
 
-			try {
-				$ruleset_resp     = $adapter->post( sprintf( 'zones/%s/rulesets', esc_attr( $zone_id ) ), $ruleset );
-				$raw_ruleset_body = $ruleset_resp->getBody();
-				$ruleset_body     = json_decode( $raw_ruleset_body );
+			$created = self::api_request( $token, 'POST', $zone_path . '/rulesets', $ruleset );
 
-				if ( isset( $ruleset_body->success ) && true === $ruleset_body->success ) {
-					return 'created';
-				}
-
-				error_log( 'Advanced Cloudflare Cache: Failed to create cache rule. Response: ' . wp_json_encode( $ruleset_body ) );
-				return 'failed';
-			} catch ( \Throwable $e ) {
-				error_log( 'Advanced Cloudflare Cache: Exception when creating cache ruleset: ' . esc_html( $e->getMessage() ) );
-				return 'failed';
+			if ( ! $created['ok'] ) {
+				self::record_failure( $created );
 			}
+
+			return $created['ok'] ? 'created' : 'failed';
 		}
 
-		// Get the existing rule for cache and then update it to add our new rule.
-		try {
-			$ruleset_resp = $adapter->get( sprintf( 'zones/%s/rulesets/%s', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) ) );
+		// Get the existing rules of the cache ruleset.
+		$rules_uri = $zone_path . '/rulesets/' . rawurlencode( $cache_ruleset_id );
+		$existing  = self::api_request( $token, 'GET', $rules_uri );
 
-			if ( 200 !== $ruleset_resp->getStatusCode() ) {
-				error_log( 'Advanced Cloudflare Cache: Failed to fetch existing cache rule. Ruleset ID: ' . wp_json_encode( $cache_ruleset_id ) );
-				return 'failed';
-			}
-		} catch ( \Throwable $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when fetching existing ruleset: ' . esc_html( $e->getMessage() ) );
+		if ( ! $existing['ok'] ) {
+			error_log( 'Advanced Cloudflare Cache: Failed to fetch existing cache rule. Ruleset ID: ' . wp_json_encode( $cache_ruleset_id ) );
+			self::record_failure( $existing );
 			return 'failed';
 		}
 
-		$raw_ruleset_body = $ruleset_resp->getBody();
-		// Decode as objects so empty JSON objects ({}) are not turned into arrays ([]) on the way back.
-		$ruleset_body   = json_decode( $raw_ruleset_body );
-		$existing_rules = ( isset( $ruleset_body->result->rules ) && is_array( $ruleset_body->result->rules ) ) ? $ruleset_body->result->rules : [];
+		$existing_rules = ( isset( $existing['data']->result->rules ) && is_array( $existing['data']->result->rules ) ) ? $existing['data']->result->rules : [];
 
 		// Find this site's rule, if it was set up before. The address without the scheme tells sites on one zone apart.
 		$site_address = str_replace( [ 'https://', 'http://' ], '', $site_url );
@@ -461,7 +629,7 @@ class Cloudflare_Client {
 			}
 		}
 
-		$rules_uri = sprintf( 'zones/%s/rulesets/%s/rules', esc_attr( $zone_id ), esc_attr( $cache_ruleset_id ) );
+		$rules_uri .= '/rules';
 
 		if ( null === $site_rule ) {
 			// Add only our rule, first in the list. The other rules in the ruleset are not touched.
@@ -470,7 +638,13 @@ class Cloudflare_Client {
 				$new_rule['position'] = [ 'before' => $existing_rules[0]->id ];
 			}
 
-			return self::send_rule_request( $adapter, 'post', $rules_uri, $new_rule, 'created' );
+			$added = self::api_request( $token, 'POST', $rules_uri, $new_rule );
+
+			if ( ! $added['ok'] ) {
+				self::record_failure( $added );
+			}
+
+			return $added['ok'] ? 'created' : 'failed';
 		}
 
 		if ( self::rule_matches( $site_rule, $rule ) ) {
@@ -482,9 +656,13 @@ class Cloudflare_Client {
 			return 'failed';
 		}
 
-		$updated_rule = $rule + [ 'enabled' => true ];
+		$updated = self::api_request( $token, 'PATCH', $rules_uri . '/' . rawurlencode( $site_rule->id ), $rule + [ 'enabled' => true ] );
 
-		return self::send_rule_request( $adapter, 'patch', $rules_uri . '/' . rawurlencode( $site_rule->id ), $updated_rule, 'updated' );
+		if ( ! $updated['ok'] ) {
+			self::record_failure( $updated );
+		}
+
+		return $updated['ok'] ? 'updated' : 'failed';
 	}
 
 	/**
@@ -534,33 +712,5 @@ class Cloudflare_Client {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Send a rule to Cloudflare and report the result.
-	 *
-	 * @param Cloudflare_Adapter $adapter Cloudflare API adapter.
-	 * @param string $method  'post' to add a rule or 'patch' to replace one.
-	 * @param string $uri     API path.
-	 * @param array  $payload Rule definition.
-	 * @param string $success Result to return on success.
-	 *
-	 * @return string The given success result, or 'failed'.
-	 */
-	private static function send_rule_request( $adapter, $method, $uri, array $payload, $success ) {
-		try {
-			$response = $adapter->$method( $uri, $payload );
-			$body     = json_decode( $response->getBody() );
-
-			if ( isset( $body->success ) && true === $body->success ) {
-				return $success;
-			}
-
-			error_log( 'Advanced Cloudflare Cache: Failed to save cache rule. Response: ' . wp_json_encode( $body ) );
-			return 'failed';
-		} catch ( \Throwable $e ) {
-			error_log( 'Advanced Cloudflare Cache: Exception when saving cache rule: ' . esc_html( $e->getMessage() ) );
-			return 'failed';
-		}
 	}
 }

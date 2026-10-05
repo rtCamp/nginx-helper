@@ -29,6 +29,9 @@ class Nginx_Helper_Deactivator {
 
 		wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
 
+		// Last Cloudflare purge failure shown to the user.
+		delete_site_transient( 'ec_cf_purge_failure' );
+
 		$purge_cap = 'Nginx Helper | Purge cache';
 		$all_roles = wp_roles()->get_names();
 

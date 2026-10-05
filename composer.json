@@ -35,8 +35,7 @@
 	},
 	"require": {
     "php": ">=7.4",
-		"composer/installers": "^1.0",
-		"cloudflare/sdk": "^1.1"
+		"composer/installers": "^1.0"
 	},
 	"require-dev": {
 		"wpreadme2markdown/wpreadme2markdown": "*"
