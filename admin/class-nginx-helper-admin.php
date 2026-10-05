@@ -222,7 +222,7 @@ class Nginx_Helper_Admin {
 				'settings.php',
 				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
 				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
-				'manage_options',
+				'manage_network_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
 			);
