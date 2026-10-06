@@ -9,6 +9,8 @@
  * @subpackage nginx-helper/admin
  */
 
+use EECacheHelper\Cloudflare_Client;
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -20,7 +22,35 @@
  * @author     rtCamp
  */
 class Nginx_Helper_Admin {
-	
+
+	/**
+	 * Query parameter set after the Cloudflare admin-bar purge button is used.
+	 *
+	 * @var string
+	 */
+	const CF_MESSAGE_PARAM = 'ec_cf_message';
+
+	/**
+	 * Value of the query parameter once the URL cache is cleared.
+	 *
+	 * @var string
+	 */
+	const CF_MESSAGE_CLEARED = 'ec-cleared-url-cache';
+
+	/**
+	 * Milliseconds before the cleared message is removed from the URL and the button label is restored.
+	 *
+	 * @var integer
+	 */
+	const CF_MESSAGE_TIMEOUT = 1500;
+
+	/**
+	 * Option holding a site's own Cloudflare settings on multisite. They override the network settings.
+	 *
+	 * @var string
+	 */
+	const CF_SITE_OPTION = 'easyengine_cache_manager_cf_site_settings';
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -29,7 +59,7 @@ class Nginx_Helper_Admin {
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
 	private $plugin_name;
-	
+
 	/**
 	 * The version of this plugin.
 	 *
@@ -38,7 +68,7 @@ class Nginx_Helper_Admin {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
-	
+
 	/**
 	 * Various settings tabs.
 	 *
@@ -47,7 +77,7 @@ class Nginx_Helper_Admin {
 	 * @var      string    $settings_tabs    Various settings tabs.
 	 */
 	private $settings_tabs;
-	
+
 	/**
 	 * Purge options.
 	 *
@@ -56,7 +86,16 @@ class Nginx_Helper_Admin {
 	 * @var      string[]    $options    Purge options.
 	 */
 	public $options;
-	
+
+	/**
+	 * Purge options.
+	 *
+	 * @since    2.0.0
+	 * @access   public
+	 * @var      string[] $options Cloudflare options.
+	 */
+	public $cf_options;
+
 	/**
 	 * WP-CLI Command.
 	 *
@@ -65,7 +104,7 @@ class Nginx_Helper_Admin {
 	 * @var      string    $options    WP-CLI Command.
 	 */
 	const WP_CLI_COMMAND = 'nginx-helper';
-	
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -74,37 +113,38 @@ class Nginx_Helper_Admin {
 	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
-		
+
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
-		
-		$this->options = $this->nginx_helper_settings();
+
+		$this->options    = $this->nginx_helper_settings();
+		$this->cf_options = $this->get_cloudflare_settings();
 	}
-	
+
 	/**
 	 * Initialize the settings tab.
 	 * Required since i18n is used in the settings tab which can be invoked only after init hook since WordPress 6.7
 	 */
 	public function initialize_setting_tab() {
-		
+
 		/**
 		 * Define settings tabs
 		 */
 		$this->settings_tabs = apply_filters(
-			'rt_nginx_helper_settings_tabs',
-			array(
-				'general' => array(
-					'menu_title' => __( 'General', 'nginx-helper' ),
-					'menu_slug'  => 'general',
-				),
-				'support' => array(
-					'menu_title' => __( 'Support', 'nginx-helper' ),
-					'menu_slug'  => 'support',
-				),
-			)
+				'rt_nginx_helper_settings_tabs',
+				array(
+						'general'    => array(
+								'menu_title' => __( 'Nginx', 'nginx-helper' ),
+								'menu_slug'  => 'general',
+						),
+						'cloudflare' => array(
+								'menu_title' => __( 'Cloudflare', 'nginx-helper' ),
+								'menu_slug'  => 'cloudflare',
+						),
+				)
 		);
 	}
-	
+
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
@@ -113,7 +153,7 @@ class Nginx_Helper_Admin {
 	 * @param string $hook The current admin page.
 	 */
 	public function enqueue_styles( $hook ) {
-		
+
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -125,16 +165,16 @@ class Nginx_Helper_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		
+
 		if ( 'settings_page_nginx' !== $hook ) {
 			return;
 		}
-		
-		wp_enqueue_style( $this->plugin_name . '-icons', plugin_dir_url( __FILE__ ) . 'icons/css/nginx-fontello.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/nginx-helper-admin.css', array(), $this->version, 'all' );
-		
+
+		wp_enqueue_style( $this->plugin_name . '-icons', NGINX_HELPER_BASEURL . 'admin/icons/css/nginx-fontello.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, NGINX_HELPER_BASEURL . 'admin/css/nginx-helper-admin.css', array(), $this->version, 'all' );
+
 	}
-	
+
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
@@ -143,7 +183,7 @@ class Nginx_Helper_Admin {
 	 * @param string $hook The current admin page.
 	 */
 	public function enqueue_scripts( $hook ) {
-		
+
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -155,64 +195,64 @@ class Nginx_Helper_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		
+
 		if ( 'settings_page_nginx' !== $hook ) {
 			return;
 		}
-		
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
-		
+
+		wp_enqueue_script( $this->plugin_name, NGINX_HELPER_BASEURL . 'admin/js/nginx-helper-admin.js', array( 'jquery' ), $this->version, false );
+
 		$do_localize = array(
 			'purge_confirm_string' => esc_html__( 'Purging entire cache is not recommended. Would you like to continue?', 'nginx-helper' ),
 		);
 		wp_localize_script( $this->plugin_name, 'nginx_helper', $do_localize );
-		
+
 	}
-	
+
 	/**
 	 * Add admin menu.
 	 *
 	 * @since    2.0.0
 	 */
 	public function nginx_helper_admin_menu() {
-		
+
 		if ( is_multisite() ) {
-			
+
 			add_submenu_page(
 				'settings.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
-				'manage_options',
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+				'manage_network_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
 			);
-			
+
 		} else {
-			
+
 			add_submenu_page(
 				'options-general.php',
-				__( 'Nginx Helper', 'nginx-helper' ),
-				__( 'Nginx Helper', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+				__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
 				'manage_options',
 				'nginx',
 				array( &$this, 'nginx_helper_setting_page' )
 			);
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Function to add toolbar purge link.
 	 *
 	 * @param object $wp_admin_bar Admin bar object.
 	 */
 	public function nginx_helper_toolbar_purge_link( $wp_admin_bar ) {
-		
+
 		if ( ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
 			return;
 		}
-		
+
 		if ( is_admin() ) {
 			$nginx_helper_urls = 'all';
 			$link_title        = __( 'Purge Cache', 'nginx-helper' );
@@ -220,7 +260,7 @@ class Nginx_Helper_Admin {
 			$nginx_helper_urls = 'current-url';
 			$link_title        = __( 'Purge Current Page', 'nginx-helper' );
 		}
-		
+
 		$purge_url = add_query_arg(
 			array(
 				'nginx_helper_action'  => 'purge',
@@ -228,9 +268,9 @@ class Nginx_Helper_Admin {
 				'nginx_helper_dismiss' => get_transient( 'rt_wp_nginx_helper_suggest_purge_notice' ),
 			)
 		);
-		
+
 		$nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
-		
+
 		$wp_admin_bar->add_menu(
 			array(
 				'id'    => 'nginx-helper-purge-all',
@@ -239,9 +279,9 @@ class Nginx_Helper_Admin {
 				'meta'  => array( 'title' => $link_title ),
 			)
 		);
-		
+
 	}
-	
+
 	/**
 	 * Display settings.
 	 *
@@ -250,9 +290,37 @@ class Nginx_Helper_Admin {
 	 * @since    2.0.0
 	 */
 	public function nginx_helper_setting_page() {
-		include plugin_dir_path( __FILE__ ) . 'partials/nginx-helper-admin-display.php';
+		include NGINX_HELPER_BASEPATH . 'admin/partials/nginx-helper-admin-display.php';
 	}
-	
+
+	/**
+	 * Add the per-site Cloudflare page on multisite.
+	 *
+	 * Every site admin gets it to set up the cache rule of their own site. Changing the Cloudflare
+	 * credentials on it is for super admins only, because they include an API token.
+	 */
+	public function cf_site_admin_menu() {
+		if ( ! is_multisite() ) {
+			return;
+		}
+
+		add_submenu_page(
+			'options-general.php',
+			__( 'Cloudflare Cache', 'nginx-helper' ),
+			__( 'Cloudflare Cache', 'nginx-helper' ),
+			'manage_options',
+			'nginx-cloudflare',
+			array( &$this, 'cf_site_settings_page' )
+		);
+	}
+
+	/**
+	 * Display the per-site Cloudflare settings.
+	 */
+	public function cf_site_settings_page() {
+		include NGINX_HELPER_BASEPATH . 'admin/partials/easyengine-cache-manager-cloudflare-site-options.php';
+	}
+
 	/**
 	 * Default settings.
 	 *
@@ -260,7 +328,7 @@ class Nginx_Helper_Admin {
 	 * @return array
 	 */
 	public function nginx_helper_default_settings() {
-		
+
 		return array(
 			'enable_purge'                     => 0,
 			'cache_method'                     => 'enable_fastcgi',
@@ -297,30 +365,142 @@ class Nginx_Helper_Admin {
 			'roles_with_purge_cap'             => array(),
 			'purge_woo_products'               => 0,
 		);
-	
+
 	}
-    
-    public function store_default_options() {
-        $options = get_site_option( 'rt_wp_nginx_helper_options', array() );
-        $default_settings = $this->nginx_helper_default_settings();
-        
-        $removable_default_settings = array(
-            'redis_port',
-            'redis_prefix',
-            'redis_hostname',
-            'redis_database',
-            'redis_unix_socket'
-        );
-        
-        // Remove all the keys that are not to be stored by default.
-        foreach ( $removable_default_settings as $removable_key ) {
-            unset( $default_settings[ $removable_key ] );
-        }
-        
-        $diffed_options = wp_parse_args( $options, $default_settings );
-        
-        add_site_option( 'rt_wp_nginx_helper_options', $diffed_options );
-    }
+
+	public function store_default_options() {
+		$options = get_site_option( 'rt_wp_nginx_helper_options', array() );
+		$default_settings = $this->nginx_helper_default_settings();
+
+		$removable_default_settings = array(
+			'redis_port',
+			'redis_prefix',
+			'redis_hostname',
+			'redis_database',
+			'redis_unix_socket'
+		);
+
+		// Remove all the keys that are not to be stored by default.
+		foreach ( $removable_default_settings as $removable_key ) {
+			unset( $default_settings[ $removable_key ] );
+		}
+
+		$diffed_options = wp_parse_args( $options, $default_settings );
+
+		add_site_option( 'rt_wp_nginx_helper_options', $diffed_options );
+
+		$this->store_cloudflare_settings();
+	}
+
+	/**
+	 * Gets the default settings for cloudflare.
+	 *
+	 * @return array An array of settings.
+	 */
+	public function get_cloudflare_default_settings() {
+		return array(
+			'api_token'                     => '',
+			'zone_id'                       => '',
+			'default_cache_ttl'             => 604800,
+			'api_token_enabled_by_constant' => false,
+		);
+	}
+
+	/**
+	 * Gets the Cloudflare settings that apply to the current site.
+	 *
+	 * On multisite a site can override the network's token, zone and TTL with its own, for example when
+	 * it lives in another Cloudflare zone. On a single site this is the same as the network settings.
+	 *
+	 * @param int $blog_id Site to get the settings of, the current site if not given.
+	 *
+	 * @return array The settings, with `is_site_override` listing which ones come from the site.
+	 */
+	public function get_cloudflare_settings( $blog_id = 0 ) {
+		$settings = $this->get_network_cloudflare_settings();
+
+		$settings['is_site_override'] = [
+			'api_token'         => false,
+			'zone_id'           => false,
+			'default_cache_ttl' => false,
+		];
+
+		if ( ! is_multisite() ) {
+			return $settings;
+		}
+
+		$site = (array) get_blog_option( $blog_id ? (int) $blog_id : get_current_blog_id(), self::CF_SITE_OPTION, array() );
+
+		// A token set by the constant is a deliberate network-wide lock, so a site cannot replace it.
+		if ( ! empty( $site['api_token'] ) && empty( $settings['api_token_enabled_by_constant'] ) ) {
+			$settings['api_token']                       = $site['api_token'];
+			$settings['is_site_override']['api_token'] = true;
+		}
+
+		if ( ! empty( $site['zone_id'] ) ) {
+			$settings['zone_id']                       = $site['zone_id'];
+			$settings['is_site_override']['zone_id'] = true;
+		}
+
+		if ( isset( $site['default_cache_ttl'] ) && '' !== $site['default_cache_ttl'] ) {
+			$settings['default_cache_ttl']                       = (int) $site['default_cache_ttl'];
+			$settings['is_site_override']['default_cache_ttl'] = true;
+		}
+
+		$settings['is_enabled'] = ! empty( $settings['api_token'] ) && ! empty( $settings['zone_id'] );
+
+		return $settings;
+	}
+
+	/**
+	 * Whether Cloudflare is set up for a site: it has an API token and a zone ID, from the network or its own.
+	 *
+	 * @param int $blog_id Site to check, the current site if not given.
+	 *
+	 * @return bool
+	 */
+	public function is_cloudflare_enabled( $blog_id = 0 ) {
+		$settings = $this->get_cloudflare_settings( $blog_id );
+
+		return ! empty( $settings['is_enabled'] );
+	}
+
+	/**
+	 * Gets the network-wide Cloudflare settings (the only ones on a single site).
+	 *
+	 * @return array The current settings.
+	 */
+	public function get_network_cloudflare_settings() {
+		$default_settings = $this->get_cloudflare_default_settings();
+
+		$stored_options = get_site_option( 'easyengine_cache_manager_cf_settings', array() );
+
+		if ( defined( 'EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN' ) && !empty( EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN ) ) {
+			$stored_options['api_token']                     = EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN;
+			$stored_options['api_token_enabled_by_constant'] = true;
+		}
+
+		$diff_options = wp_parse_args( $stored_options, $default_settings );
+
+		$diff_options['is_enabled'] = ! empty( $diff_options['api_token'] ) && ! empty( $diff_options['zone_id'] );
+
+		return $diff_options;
+	}
+
+	/**
+	 * Stores the cloudflare settings.
+	 *
+	 * @return array The current settings.
+	 */
+	public function store_cloudflare_settings() {
+		$default_settings = $this->get_cloudflare_default_settings();
+
+		$stored_options = get_site_option( 'easyengine_cache_manager_cf_settings', array() );
+
+		$diff_options = wp_parse_args( $stored_options, $default_settings );
+
+		add_site_option( 'easyengine_cache_manager_cf_settings', $diff_options );
+	}
 
 	/**
 	 * Get settings.
@@ -328,7 +508,7 @@ class Nginx_Helper_Admin {
 	 * @since    2.0.0
 	 */
 	public function nginx_helper_settings() {
-		
+
 		$options = get_site_option(
 			'rt_wp_nginx_helper_options',
 			array(
@@ -338,18 +518,18 @@ class Nginx_Helper_Admin {
 				'redis_database' => 0,
 			)
 		);
-		
+
 		$data = wp_parse_args(
 			$options,
 			$this->nginx_helper_default_settings()
 		);
-		
+
 		$is_redis_enabled = (
 			defined( 'RT_WP_NGINX_HELPER_REDIS_HOSTNAME' ) &&
 			defined( 'RT_WP_NGINX_HELPER_REDIS_PORT' ) &&
 			defined( 'RT_WP_NGINX_HELPER_REDIS_PREFIX' )
 		);
-		
+
 		$data['redis_acl_enabled_by_constant']    = defined('RT_WP_NGINX_HELPER_REDIS_USERNAME') && defined('RT_WP_NGINX_HELPER_REDIS_PASSWORD');
 		$data['redis_socket_enabled_by_constant'] = defined('RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET');
 		$data['redis_unix_socket']                = $data['redis_socket_enabled_by_constant'] ? RT_WP_NGINX_HELPER_REDIS_UNIX_SOCKET : $data['redis_unix_socket'];
@@ -365,13 +545,13 @@ class Nginx_Helper_Admin {
 		$data['cache_method']                     = 'enable_redis';
 		$data['redis_hostname']                   = RT_WP_NGINX_HELPER_REDIS_HOSTNAME;
 		$data['redis_port']                       = RT_WP_NGINX_HELPER_REDIS_PORT;
-		$data['redis_prefix']                      = RT_WP_NGINX_HELPER_REDIS_PREFIX;
+		$data['redis_prefix']                     = RT_WP_NGINX_HELPER_REDIS_PREFIX;
 		$data['redis_database']                   = defined('RT_WP_NGINX_HELPER_REDIS_DATABASE') ? RT_WP_NGINX_HELPER_REDIS_DATABASE : 0;
 
 		return $data;
-		
+
 	}
-	
+
 	/**
 	 * Nginx helper setting link function.
 	 *
@@ -380,20 +560,20 @@ class Nginx_Helper_Admin {
 	 * @return mixed
 	 */
 	public function nginx_helper_settings_link( $links ) {
-		
+
 		if ( is_network_admin() ) {
 			$setting_page = 'settings.php';
 		} else {
 			$setting_page = 'options-general.php';
 		}
-		
+
 		$settings_link = '<a href="' . network_admin_url( $setting_page . '?page=nginx' ) . '">' . __( 'Settings', 'nginx-helper' ) . '</a>';
 		array_unshift( $links, $settings_link );
-		
+
 		return $links;
-		
+
 	}
-	
+
 	/**
 	 * Check if the nginx log is enabled.
 	 *
@@ -401,20 +581,20 @@ class Nginx_Helper_Admin {
 	 * @return    boolean
 	 */
 	public function is_nginx_log_enabled() {
-		
+
 		$options = get_site_option( 'rt_wp_nginx_helper_options', array() );
-		
+
 		if ( ! empty( $options['enable_log'] ) && 1 === (int) $options['enable_log'] ) {
 			return true;
 		}
-		
+
 		if ( defined( 'NGINX_HELPER_LOG' ) && true === NGINX_HELPER_LOG ) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Retrieve the asset path.
 	 *
@@ -422,13 +602,13 @@ class Nginx_Helper_Admin {
 	 * @return    string    asset path of the plugin.
 	 */
 	public function functional_asset_path() {
-		
+
 		$log_path = WP_CONTENT_DIR . '/uploads/nginx-helper/';
-		
+
 		return apply_filters( 'nginx_asset_path', $log_path );
-		
+
 	}
-	
+
 	/**
 	 * Retrieve the asset url.
 	 *
@@ -436,36 +616,36 @@ class Nginx_Helper_Admin {
 	 * @return    string    asset url of the plugin.
 	 */
 	public function functional_asset_url() {
-		
+
 		$log_url = WP_CONTENT_URL . '/uploads/nginx-helper/';
-		
+
 		return apply_filters( 'nginx_asset_url', $log_url );
-		
+
 	}
-	
+
 	/**
 	 * Get latest news.
 	 *
 	 * @since     2.0.0
 	 */
 	public function nginx_helper_get_feeds() {
-		
+
 		// Get RSS Feed(s).
 		require_once ABSPATH . WPINC . '/feed.php';
-		
+
 		$maxitems  = 0;
 		$rss_items = array();
-		
+
 		// Get a SimplePie feed object from the specified feed source.
-		$rss = fetch_feed( 'https://rtcamp.com/blog/feed/' );
-		
+		$rss = fetch_feed( 'https://easyengine.io/blog/feed/' );
+
 		if ( ! is_wp_error( $rss ) ) { // Checks that the object is created correctly.
-			
+
 			// Figure out how many total items there are, but limit it to 5.
 			$maxitems = $rss->get_item_quantity( 5 );
 			// Build an array of all the items, starting with element 0 (first element).
 			$rss_items = $rss->get_items( 0, $maxitems );
-			
+
 		}
 		?>
 		<ul role="list">
@@ -473,7 +653,7 @@ class Nginx_Helper_Admin {
 			if ( 0 === $maxitems ) {
 				echo '<li role="listitem">' . esc_html__( 'No items', 'nginx-helper' ) . '.</li>';
 			} else {
-				
+
 				// Loop through each feed item and display each item as a hyperlink.
 				foreach ( $rss_items as $item ) {
 					?>
@@ -500,24 +680,24 @@ class Nginx_Helper_Admin {
 		</ul>
 		<?php
 		die();
-		
+
 	}
-	
+
 	/**
 	 * Add time stamps in html.
 	 */
 	public function add_timestamps() {
-		
+
 		global $pagenow;
-		
+
 		if ( is_admin() || 1 !== (int) $this->options['enable_purge'] || 1 !== (int) $this->options['enable_stamp'] ) {
 			return;
 		}
-		
+
 		if ( ! empty( $pagenow ) && 'wp-login.php' === $pagenow ) {
 			return;
 		}
-		
+
 		foreach ( headers_list() as $header ) {
 			list( $key, $value ) = explode( ':', $header, 2 );
 			$key                 = strtolower( $key );
@@ -528,32 +708,32 @@ class Nginx_Helper_Admin {
 				break;
 			}
 		}
-		
+
 		/**
 		 * Don't add timestamp if run from ajax, cron or wpcli.
 		 */
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			return;
 		}
-		
+
 		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 			return;
 		}
-		
+
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			return;
 		}
-		
+
 		$timestamps = "\n<!--" .
-			'Cached using Nginx-Helper on ' . current_time( 'mysql' ) . '. ' .
+			'Cached using EasyEngine Cache Helper for Nginx & Cloudflare on ' . current_time( 'mysql' ) . '. ' .
 			'It took ' . get_num_queries() . ' queries executed in ' . timer_stop() . ' seconds.' .
 			"-->\n" .
 			'<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->';
-		
+
 		echo wp_kses( $timestamps, array() );
-		
+
 	}
-	
+
 	/**
 	 * Get map
 	 *
@@ -562,83 +742,83 @@ class Nginx_Helper_Admin {
 	 * @return string
 	 */
 	public function get_map() {
-		
+
 		if ( ! $this->options['enable_map'] ) {
 			return;
 		}
-		
+
 		if ( is_multisite() ) {
-			
+
 			global $wpdb;
-			
+
 			$rt_all_blogs = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT blog_id, domain, path FROM ' . $wpdb->blogs . " WHERE site_id = %d AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'",
 					$wpdb->siteid
 				)
 			);
-			
+
 			$wpdb->dmtable = $wpdb->base_prefix . 'domain_mapping';
-			
+
 			$rt_domain_map_sites = '';
-			
+
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->dmtable}'" ) === $wpdb->dmtable ) { // phpcs:ignore
 				$rt_domain_map_sites = $wpdb->get_results( "SELECT blog_id, domain FROM {$wpdb->dmtable} ORDER BY id DESC" );
 			}
-			
+
 			$rt_nginx_map       = '';
 			$rt_nginx_map_array = array();
-			
+
 			if ( $rt_all_blogs ) {
-				
+
 				foreach ( $rt_all_blogs as $blog ) {
-					
+
 					if ( true === SUBDOMAIN_INSTALL ) {
 						$rt_nginx_map_array[ $blog->domain ] = $blog->blog_id;
 					} else {
-						
+
 						if ( 1 !== $blog->blog_id ) {
 							$rt_nginx_map_array[ $blog->path ] = $blog->blog_id;
 						}
 					}
 				}
 			}
-			
+
 			if ( $rt_domain_map_sites ) {
-				
+
 				foreach ( $rt_domain_map_sites as $site ) {
 					$rt_nginx_map_array[ $site->domain ] = $site->blog_id;
 				}
 			}
-			
+
 			foreach ( $rt_nginx_map_array as $domain => $domain_id ) {
 				$rt_nginx_map .= "\t" . $domain . "\t" . $domain_id . ";\n";
 			}
-			
+
 			return $rt_nginx_map;
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Update map
 	 */
 	public function update_map() {
-		
+
 		if ( is_multisite() ) {
-			
+
 			$rt_nginx_map = $this->get_map();
-			
+
 			$fp = fopen( $this->functional_asset_path() . 'map.conf', 'w+' );
 			if ( $fp ) {
 				fwrite( $fp, $rt_nginx_map );
 				fclose( $fp );
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Purge url when post status is changed.
 	 *
@@ -650,7 +830,7 @@ class Nginx_Helper_Admin {
 	 * @param object $post Post object.
 	 */
 	public function set_future_post_option_on_future_status( $new_status, $old_status, $post ) {
-		
+
 		global $blog_id, $nginx_purger;
 
 		$exclude_post_types = apply_filters( 'rt_nginx_helper_exclude_post_types', array( 'nav_menu_item' ) );
@@ -658,20 +838,20 @@ class Nginx_Helper_Admin {
 		if ( in_array( $post->post_type, $exclude_post_types, true ) ) {
 			return;
 		}
-		
+
 		if ( ! $this->options['enable_purge'] || $this->is_import_request() ) {
 			return;
 		}
-		
+
 		$purge_status = array( 'publish', 'future' );
-		
+
 		if ( in_array( $old_status, $purge_status, true ) || in_array( $new_status, $purge_status, true ) ) {
-			
+
 			$nginx_purger->log( 'Purge post on transition post STATUS from ' . $old_status . ' to ' . $new_status );
 			$nginx_purger->purge_post( $post->ID );
-			
+
 		}
-		
+
 		if (
 			'future' === $new_status && $post && 'future' === $post->post_status &&
 			(
@@ -682,15 +862,15 @@ class Nginx_Helper_Admin {
 				)
 			)
 		) {
-			
+
 			$nginx_purger->log( 'Set/update future_posts option ( post id = ' . $post->ID . ' and blog id = ' . $blog_id . ' )' );
 			$this->options['future_posts'][ $blog_id ][ $post->ID ] = strtotime( $post->post_date_gmt ) + 60;
 			update_site_option( 'rt_wp_nginx_helper_options', $this->options );
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Unset future post option on delete
 	 *
@@ -700,30 +880,30 @@ class Nginx_Helper_Admin {
 	 * @param int $post_id Post id.
 	 */
 	public function unset_future_post_option_on_delete( $post_id ) {
-		
+
 		global $blog_id, $nginx_purger;
-		
+
 		if (
 			! $this->options['enable_purge'] ||
 			empty( $this->options['future_posts'] ) ||
 			empty( $this->options['future_posts'][ $blog_id ] ) ||
-			isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) ||
+			!isset( $this->options['future_posts'][ $blog_id ][ $post_id ] ) ||
 			wp_is_post_revision( $post_id )
 		) {
 			return;
 		}
-		
+
 		$nginx_purger->log( 'Unset future_posts option ( post id = ' . $post_id . ' and blog id = ' . $blog_id . ' )' );
-		
+
 		unset( $this->options['future_posts'][ $blog_id ][ $post_id ] );
-		
+
 		if ( ! count( $this->options['future_posts'][ $blog_id ] ) ) {
 			unset( $this->options['future_posts'][ $blog_id ] );
 		}
-		
+
 		update_site_option( 'rt_wp_nginx_helper_options', $this->options );
 	}
-	
+
 	/**
 	 * Update map when new blog added in multisite.
 	 *
@@ -732,18 +912,18 @@ class Nginx_Helper_Admin {
 	 * @param string $blog_id blog id.
 	 */
 	public function update_new_blog_options( $blog_id ) {
-		
+
 		global $nginx_purger;
-		
+
 		$nginx_purger->log( "New site added ( id $blog_id )" );
 		$this->update_map();
 		$nginx_purger->log( "New site added to nginx map ( id $blog_id )" );
 		$helper_options = $this->nginx_helper_default_settings();
 		update_blog_option( $blog_id, 'rt_wp_nginx_helper_options', $helper_options );
 		$nginx_purger->log( "Default options updated for the new blog ( id $blog_id )" );
-		
+
 	}
-	
+
 	/**
 	 * Purge all urls.
 	 * Purge current page cache when purging is requested from front
@@ -752,18 +932,18 @@ class Nginx_Helper_Admin {
 	 * @global object $nginx_purger
 	 */
 	public function purge_all() {
-		
+
 		if ( $this->is_import_request() ) {
 			return;
 		}
-		
+
 		global $nginx_purger, $wp;
-		
+
 		$method = null;
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) ) {
 			$method = wp_strip_all_tags( $_SERVER['REQUEST_METHOD'] );
 		}
-		
+
 		$action = '';
 		if ( 'POST' === $method ) {
 			if ( isset( $_POST['nginx_helper_action'] ) ) {
@@ -774,66 +954,81 @@ class Nginx_Helper_Admin {
 				$action = wp_strip_all_tags( $_GET['nginx_helper_action'] );
 			}
 		}
-		
+
 		if ( empty( $action ) ) {
 			return;
 		}
-		
+
 		if ( ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
 			wp_die( 'Sorry, you do not have the necessary privileges to edit these options.' );
 		}
-		
+
 		if ( 'done' === $action ) {
-			
+
 			add_action( 'admin_notices', array( &$this, 'display_notices' ) );
 			add_action( 'network_admin_notices', array( &$this, 'display_notices' ) );
 			return;
-			
+
 		}
-		
+
 		check_admin_referer( 'nginx_helper-purge_all' );
-		
+
 		$current_url = user_trailingslashit( home_url( $wp->request ) );
-		
+
 		if ( ! is_admin() ) {
 			$action       = 'purge_current_page';
 			$redirect_url = $current_url;
 		} else {
 			$redirect_url = add_query_arg( array( 'nginx_helper_action' => 'done' ) );
 		}
-		
+
 		switch ( $action ) {
 			case 'purge':
 				$nginx_purger->purge_all();
+
+				if( $this->cf_options['is_enabled'] ) {
+					Cloudflare_Client::purge_everything();
+				}
+
 				break;
 			case 'purge_current_page':
 				$nginx_purger->purge_url( $current_url );
 				break;
 		}
-		
+
 		if ( 'purge' === $action ) {
-			
+
+			if( $this->cf_options['is_enabled'] ) {
+
+				/**
+				 * Fire an action after the entire cache has been purged for cloudflare.
+				 *
+				 * @since 3.0.0
+				*/
+				do_action( 'rt_nginx_helper_after_cf_purge_all' );
+			}
+
 			/**
 			 * Fire an action after the entire cache has been purged whatever caching type is used.
 			 *
 			 * @since 2.2.2
 			 */
 			do_action( 'rt_nginx_helper_after_purge_all' );
-			
+
 		}
-		
+
 		wp_redirect( esc_url_raw( $redirect_url ) );
 		exit();
-		
+
 	}
-	
+
 	/**
 	 * Dispay plugin notices.
 	 */
 	public function display_notices() {
 		echo '<div class="updated"><p>' . esc_html__( 'Purge initiated', 'nginx-helper' ) . '</p></div>';
 	}
-	
+
 	/**
 	 * Preloads the cache for the website.
 	 *
@@ -842,42 +1037,42 @@ class Nginx_Helper_Admin {
 	public function preload_cache() {
 		$is_cache_preloaded    = $this->options['is_cache_preloaded'];
 		$preload_cache_enabled = $this->options['preload_cache'];
-		
+
 		if ( $preload_cache_enabled && false === boolval( $is_cache_preloaded ) ) {
 			$this->options['is_cache_preloaded'] = true;
-			
+
 			update_site_option( 'rt_wp_nginx_helper_options', $this->options );
 			$this->preload_cache_from_sitemap();
 		}
 	}
-	
+
 	/**
 	 * This function preloads the cache from sitemap url.
 	 *
 	 * @return void
 	 */
 	private function preload_cache_from_sitemap() {
-		
+
 		$sitemap_urls = $this->get_index_sitemap_urls();
 		$all_urls     = array();
-		
+
 		foreach ( $sitemap_urls as $sitemap_url ) {
 			$urls     = $this->extract_sitemap_urls( $sitemap_url );
 			$all_urls = array_merge( $all_urls, $urls );
 		}
-		
+
 		$args = array(
 			'timeout'   => 1,
 			'blocking'  => false,
 			'sslverify' => false,
 		);
-		
+
 		foreach ( $all_urls as $url ) {
 			wp_remote_get( esc_url_raw( $url ), $args );
 		}
-		
+
 	}
-	
+
 	/**
 	 * Fetches all the sitemap urls for the site.
 	 *
@@ -891,7 +1086,7 @@ class Nginx_Helper_Admin {
 		}
 		return $urls;
 	}
-	
+
 	/**
 	 * Parse sitemap content and extract all URLs.
 	 *
@@ -900,35 +1095,35 @@ class Nginx_Helper_Admin {
 	 */
 	private function extract_sitemap_urls( $sitemap_url ) {
 		$response = wp_remote_get( $sitemap_url );
-		
+
 		$urls = array();
-		
+
 		if ( is_wp_error( $response ) ) {
 			return $urls;
 		}
-		
+
 		$sitemap_content = wp_remote_retrieve_body( $response );
-		
+
 		libxml_use_internal_errors( true );
 		$xml = simplexml_load_string( $sitemap_content );
-		
+
 		if ( false === $xml ) {
 			return new WP_Error( 'sitemap_parse_error', esc_html__( 'Failed to parse the sitemap XML', 'nginx-helper' ) );
 		}
-		
+
 		$urls = array();
-		
+
 		if ( false === $xml ) {
 			return $urls;
 		}
-		
+
 		foreach ( $xml->url as $url ) {
 			$urls[] = (string) $url->loc;
 		}
-		
+
 		return $urls;
 	}
-	
+
 	/**
 	* Determines if the current request is for importing Posts/ WordPress content.
 	*
@@ -937,7 +1132,7 @@ class Nginx_Helper_Admin {
 	public function is_import_request() {
 		$import_query_var   = sanitize_text_field( wp_unslash( $_GET['import'] ?? '' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is already in the admin dashboard.
 		$has_import_started = did_action( 'import_start' );
-		
+
 		return ( defined( 'WP_IMPORTING' ) && true === WP_IMPORTING )
 			|| 0 !== $has_import_started
 			|| ! empty( $import_query_var );
@@ -1117,21 +1312,308 @@ class Nginx_Helper_Admin {
 	public function purge_product_cache_on_update( $product_id ) {
 		global $nginx_purger;
 
-		if ( empty( $nginx_purger ) ) { 
-			return; 
+		if ( empty( $nginx_purger ) ) {
+			return;
 		}
 
 		if ( ! $this->options['enable_purge'] ) {
 			return;
 		}
-	
+
 		$nginx_purger->log( 'WooCommerce product update - purging cache for product ID: ' . $product_id );
-	
+
 		$product_url = get_permalink( $product_id );
-	
+
 		if ( $product_url ) {
 			$nginx_purger->purge_url( $product_url );
 		}
 	}
-	
+
+	/**
+	 * Handles the cache rule update on Cloudflare tab.
+	 *
+	 * @return void
+	 */
+	public function handle_cf_cache_rule_update() {
+		$nonce = isset( $_POST['easyengine_cache_manager_add_cache_rule_nonce'] ) ? wp_unslash( $_POST['easyengine_cache_manager_add_cache_rule_nonce'] ) : '';
+
+		if ( wp_verify_nonce( $nonce, 'easyengine_cache_manager_add_cache_rule_nonce' ) ) {
+
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
+			$result = EECacheHelper\Cloudflare_Client::setup_cache_rules();
+
+			set_transient( 'ec_page_rule_save_state_admin_notice', $result, 60 );
+		}
+	}
+
+	/**
+	 * Warn on the plugin's settings page when Cloudflare is configured but WordPress blocks requests to its API.
+	 *
+	 * That happens when WP_HTTP_BLOCK_EXTERNAL is on and api.cloudflare.com is not in WP_ACCESSIBLE_HOSTS.
+	 */
+	public function cf_blocked_requests_notice() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], [ 'nginx', 'nginx-cloudflare' ], true ) || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$options = $this->get_cloudflare_settings();
+
+		if ( empty( $options['is_enabled'] ) || ! ( new WP_Http() )->block_request( Cloudflare_Client::API_BASE ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-error"><p>%s</p></div>',
+			esc_html__( 'Cloudflare purging will not work because WordPress blocks requests to api.cloudflare.com. Add "api.cloudflare.com" to WP_ACCESSIBLE_HOSTS in wp-config.php.', 'nginx-helper' )
+		);
+	}
+
+	/**
+	 * Message for the last Cloudflare purge failure, or an empty string if there was none.
+	 *
+	 * @return string
+	 */
+	private function get_cloudflare_failure_message() {
+		$failure = Cloudflare_Client::get_failure();
+
+		if ( ! $failure ) {
+			return '';
+		}
+
+		if ( ! $failure['rate_limited'] ) {
+			return __( 'A Cloudflare cache purge failed. Check the PHP error log for details.', 'nginx-helper' );
+		}
+
+		$wait = (int) $failure['until'] - time();
+
+		if ( $wait > 0 ) {
+			$minutes = max( 1, (int) ceil( $wait / 60 ) );
+
+			return sprintf(
+				/* translators: %d: number of minutes. */
+				_n(
+					'Cloudflare\'s rate limit was reached, so some cache purges did not go through. Please try again in about %d minute.',
+					'Cloudflare\'s rate limit was reached, so some cache purges did not go through. Please try again in about %d minutes.',
+					$minutes,
+					'nginx-helper'
+				),
+				$minutes
+			);
+		}
+
+		return __( 'Cloudflare\'s rate limit was reached, so some cache purges did not go through. Please try again later.', 'nginx-helper' );
+	}
+
+	/**
+	 * Tell the user when a Cloudflare purge failed or the rate limit was reached.
+	 */
+	public function cf_purge_failure_notice() {
+		if ( ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
+			return;
+		}
+
+		$message = $this->get_cloudflare_failure_message();
+
+		if ( '' === $message ) {
+			return;
+		}
+
+		printf( '<div class="notice notice-error"><p>%s</p></div>', esc_html( $message ) );
+	}
+
+	/**
+	 * Show "Purge failed" in the admin bar after a Cloudflare purge failed.
+	 *
+	 * @param object $wp_admin_bar Instance of WP_Admin_Bar.
+	 */
+	public function add_cloudflare_admin_bar_failure( $wp_admin_bar ) {
+		if ( ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
+			return;
+		}
+
+		$message = $this->get_cloudflare_failure_message();
+
+		if ( '' === $message ) {
+			return;
+		}
+
+		$wp_admin_bar->add_node(
+			[
+				'id'    => 'ec-cf-purge-failed',
+				'title' => esc_html__( 'Purge failed', 'nginx-helper' ),
+				'meta'  => [
+					'title' => $message,
+				],
+			]
+		);
+	}
+
+	/**
+	 * Display admin notices for cloudflare page save rules.
+	 */
+	public function cf_page_rule_save_display_admin_notices() {
+		if ( $result = get_transient( 'ec_page_rule_save_state_admin_notice' ) ) {
+			$class   = 'notice';
+			$message = '';
+
+			switch ( $result ) {
+				case 'created':
+					$class   .= ' notice-success';
+					$message = __( 'The Cloudflare Cache Rule was created successfully.', 'nginx-helper' );
+					break;
+				case 'updated':
+					$class   .= ' notice-success';
+					$message = __( 'The Cloudflare Cache Rule was out of date and has been updated.', 'nginx-helper' );
+					break;
+				case 'exists':
+					$class   .= ' notice-info';
+					$message = __( 'The Cache Rule already exists. No action was taken.', 'nginx-helper' );
+					break;
+				default:
+					$class   .= ' notice-error';
+					$message = __( 'Failed to set up the Cache Rule. Check the PHP error log for the reason from Cloudflare, and that your API Token has the Cache Rules Edit permission.', 'nginx-helper' );
+					break;
+			}
+
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+			delete_transient( 'ec_page_rule_save_state_admin_notice' );
+		}
+	}
+
+	/**
+	 * Whether the current request is the redirect after a Cloudflare URL purge.
+	 *
+	 * @return bool
+	 */
+	private static function has_cloudflare_cleared_message() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( $_GET[ self::CF_MESSAGE_PARAM ] ) && self::CF_MESSAGE_CLEARED === $_GET[ self::CF_MESSAGE_PARAM ];
+	}
+
+	/**
+	 * Load the script that removes the cleared message from the URL and restores the button label.
+	 */
+	public function enqueue_cloudflare_admin_bar_script() {
+		if ( ! is_admin_bar_showing() || ! current_user_can( 'Nginx Helper | Purge cache' ) || ! self::has_cloudflare_cleared_message() ) {
+			return;
+		}
+
+		$handle = 'ec-cf-admin-bar';
+		$file   = 'assets/js/cloudflare-admin-bar.js';
+
+		wp_enqueue_script( $handle, NGINX_HELPER_BASEURL . $file, array(), (string) filemtime( NGINX_HELPER_BASEPATH . $file ), true );
+		wp_localize_script(
+			$handle,
+			'ecCfAdminBar',
+			array(
+				'param'   => self::CF_MESSAGE_PARAM,
+				'label'   => __( 'Clear Cloudflare Edge Cache', 'nginx-helper' ),
+				'timeout' => self::CF_MESSAGE_TIMEOUT,
+			)
+		);
+	}
+
+	/**
+	 * Get the URL of the current request exactly as the visitor loaded it, without the cleared message.
+	 *
+	 * The path and query string come from the raw request URI. Rebuilding the query from $_GET would
+	 * change how it is encoded (e.g. "red,blue" becoming "red%2Cblue"), and Cloudflare purges by exact URL.
+	 *
+	 * @return string
+	 */
+	private static function get_current_request_url() {
+		global $wp;
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+
+		if ( 0 !== strpos( $request_uri, '/' ) ) {
+			return user_trailingslashit( home_url( $wp->request ) );
+		}
+
+		$home   = wp_parse_url( home_url() );
+		$origin = $home['scheme'] . '://' . $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+
+		list( $path, $query ) = array_pad( explode( '?', $request_uri, 2 ), 2, '' );
+
+		if ( '' !== $query ) {
+			$pairs = array_filter(
+				explode( '&', $query ),
+				function ( $pair ) {
+					return '' !== $pair && self::CF_MESSAGE_PARAM !== $pair && 0 !== strpos( $pair, self::CF_MESSAGE_PARAM . '=' );
+				}
+			);
+			$query = implode( '&', $pairs );
+		}
+
+		return $origin . $path . ( '' !== $query ? '?' . $query : '' );
+	}
+
+	/**
+	 * Register a toolbar button to purge the cache for the current page.
+	 *
+	 * @param object $wp_admin_bar Instance of WP_Admin_Bar.
+	 */
+	public static function add_cloudflare_admin_bar_purge( $wp_admin_bar ) {
+		global $wp;
+
+		if ( is_admin() || ! is_user_logged_in() || ! current_user_can( 'Nginx Helper | Purge cache' ) || !$wp ) {
+			return;
+		}
+
+		if ( self::has_cloudflare_cleared_message() ) {
+			$title = esc_html__( 'URL Cache Cleared', 'nginx-helper' );
+		} else {
+			$title = esc_html__( 'Clear Cloudflare Edge Cache', 'nginx-helper' );
+		}
+
+		$current_url = self::get_current_request_url();
+		$wp_admin_bar->add_menu( [
+			'parent' => '',
+			'id'     => 'clear-page-cache',
+			'title'  => $title,
+			'meta'   => [
+				'title' => __( 'Purge the current URL from Cloudflare cache.', 'nginx-helper' ),
+			],
+			'href'   => wp_nonce_url( admin_url( 'admin-ajax.php?action=ec_clear_url_cache&path=' . rawurlencode( $current_url ) ), 'ec-clear-url-cache' ),
+		] );
+	}
+
+	/**
+	 * Handle an admin-ajax request to clear the URL cache for Cloudflare.
+	 *
+	 * @return void
+	 */
+	public static function handle_cloudflare_clear_cache_ajax() {
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( $_GET['_wpnonce'] ) : '';
+		if ( empty( $nonce )
+			 || ! wp_verify_nonce( $nonce, 'ec-clear-url-cache' )
+			 || ! current_user_can( 'Nginx Helper | Purge cache' ) ) {
+			wp_die( esc_html__( "You shouldn't be doing this.", 'nginx-helper' ) );
+		}
+
+		$path = isset( $_GET['path'] ) ? esc_url_raw( $_GET['path'] ) : '';
+		if ( empty( $path ) ) {
+			wp_die( esc_html__( 'No path provided.', 'nginx-helper' ) );
+		}
+
+		$ret = Cloudflare_Client::purge_by_urls( [ $path ] );
+		if ( ! $ret ) {
+			$failure = Cloudflare_Client::get_failure();
+
+			if ( $failure && $failure['rate_limited'] ) {
+				wp_die( esc_html__( 'Cloudflare\'s rate limit was reached. Please try again later.', 'nginx-helper' ) );
+			}
+
+			wp_die( esc_html__( 'Failed to clear URL cache.', 'nginx-helper' ) );
+		}
+
+		// Append the flag as text; add_query_arg() would re-encode the existing query string.
+		$separator = false === strpos( $path, '?' ) ? '?' : '&';
+		wp_safe_redirect( $path . $separator . self::CF_MESSAGE_PARAM . '=' . self::CF_MESSAGE_CLEARED );
+		exit;
+	}
 }

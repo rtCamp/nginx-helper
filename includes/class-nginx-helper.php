@@ -12,6 +12,9 @@
  * @subpackage nginx-helper/includes
  */
 
+use EECacheHelper\Cloudflare_Purger;
+use EECacheHelper\CloudFlare_Tag_Emitter;
+
 /**
  * The core plugin class.
  *
@@ -77,8 +80,8 @@ class Nginx_Helper {
 	public function __construct() {
 
 		$this->plugin_name = 'nginx-helper';
-		$this->version     = '2.4.1';
-		$this->minimum_wp  = '3.0';
+		$this->version     = '3.0.0';
+		$this->minimum_wp  = '5.6';
 
 		if ( ! $this->required_wp_version() ) {
 			return;
@@ -124,23 +127,23 @@ class Nginx_Helper {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-nginx-helper-loader.php';
+		require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-nginx-helper-i18n.php';
+		require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that required for purging urls.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-purger.php';
+		require_once NGINX_HELPER_BASEPATH . 'admin/class-purger.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-nginx-helper-admin.php';
+		require_once NGINX_HELPER_BASEPATH . 'admin/class-nginx-helper-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -185,18 +188,18 @@ class Nginx_Helper {
 
 			if ( class_exists( 'Redis' ) ) { // Use PHP5-Redis extension if installed.
 
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-phpredis-purger.php';
+				require_once NGINX_HELPER_BASEPATH . 'admin/class-phpredis-purger.php';
 				$nginx_purger = new PhpRedis_Purger();
 
 			} else {
 
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-predis-purger.php';
+				require_once NGINX_HELPER_BASEPATH . 'admin/class-predis-purger.php';
 				$nginx_purger = new Predis_Purger();
 
 			}
 		} else {
 
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fastcgi-purger.php';
+			require_once NGINX_HELPER_BASEPATH . 'admin/class-fastcgi-purger.php';
 			$nginx_purger = new FastCGI_Purger();
 
 		}
@@ -206,6 +209,7 @@ class Nginx_Helper {
 
 		if ( is_multisite() ) {
 			$this->loader->add_action( 'network_admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );
+			$this->loader->add_action( 'admin_menu', $nginx_helper_admin, 'cf_site_admin_menu' );
 			$this->loader->add_filter( 'network_admin_plugin_action_links_' . NGINX_HELPER_BASENAME, $nginx_helper_admin, 'nginx_helper_settings_link' );
 		} else {
 			$this->loader->add_action( 'admin_menu', $nginx_helper_admin, 'nginx_helper_admin_menu' );
@@ -238,7 +242,10 @@ class Nginx_Helper {
 
 		// expose action to allow other plugins to purge the cache.
 		$this->loader->add_action( 'rt_nginx_helper_purge_all', $nginx_purger, 'purge_all' );
-		
+		if ( $nginx_helper_admin->cf_options['is_enabled'] ) {
+			$this->loader->add_action( 'rt_nginx_helper_purge_all', 'EECacheHelper\Cloudflare_Client', 'purge_everything' );
+		}
+
 		// add action to preload the cache
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'preload_cache' );
 		$this->loader->add_action( 'plugins_loaded', $this, 'handle_nginx_helper_upgrade' );
@@ -249,11 +256,77 @@ class Nginx_Helper {
 		// advance purge settings.
 		$this->loader->add_action( 'upgrader_process_complete', $nginx_helper_admin, 'nginx_helper_auto_purge_on_any_update', 10, 2 );
 		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'suggest_purge_after_update' );
+		$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'cf_blocked_requests_notice' );
+		$this->loader->add_action( 'network_admin_notices', $nginx_helper_admin, 'cf_blocked_requests_notice' );
 		$this->loader->add_action( 'admin_init', $nginx_helper_admin, 'dismiss_suggest_purge_after_update' );
 
 		// WooCommerce integration.
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
 
+		$this->define_cloudflare_hooks( $nginx_helper_admin );
+
+	}
+
+	/**
+	 * Register the Cloudflare hooks.
+	 *
+	 * @param Nginx_Helper_Admin $nginx_helper_admin Admin class instance.
+	 */
+	private function define_cloudflare_hooks( $nginx_helper_admin ) {
+		$cf_enabled = $nginx_helper_admin->is_cloudflare_enabled();
+
+		// What belongs to this site only needs to run where this site has Cloudflare credentials.
+		if ( $cf_enabled ) {
+			$this->loader->add_filter( 'wp_headers', $this, 'handle_cloudflare_headers', 999 );
+			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_purge', 100 );
+			$this->loader->add_action( 'admin_bar_menu', $nginx_helper_admin, 'add_cloudflare_admin_bar_failure', 101 );
+			$this->loader->add_action( 'admin_notices', $nginx_helper_admin, 'cf_purge_failure_notice' );
+			$this->loader->add_action( 'network_admin_notices', $nginx_helper_admin, 'cf_purge_failure_notice' );
+			$this->loader->add_action( 'wp_enqueue_scripts', $nginx_helper_admin, 'enqueue_cloudflare_admin_bar_script' );
+			$this->loader->add_action( 'wp_ajax_ec_clear_url_cache', $nginx_helper_admin, 'handle_cloudflare_clear_cache_ajax' );
+
+			// Add the cache tags.
+			$this->loader->add_filter( 'wp', CloudFlare_Tag_Emitter::get_instance(), 'action_wp' );
+			$this->loader->add_action( 'rest_api_init', CloudFlare_Tag_Emitter::get_instance(), 'action_rest_api_init' );
+			$this->loader->add_filter( 'rest_pre_dispatch', CloudFlare_Tag_Emitter::get_instance(), 'filter_rest_pre_dispatch', 10, 3 );
+			$this->loader->add_filter( 'rest_post_dispatch', CloudFlare_Tag_Emitter::get_instance(), 'filter_rest_post_dispatch', 10, 2 );
+			$this->loader->add_filter( 'graphql_dataloader_get_model', CloudFlare_Tag_Emitter::get_instance(), 'filter_graphql_dataloader_get_model' );
+			$this->loader->add_filter( 'graphql_response_headers_to_send', CloudFlare_Tag_Emitter::get_instance(), 'filter_graphql_response_headers_to_send' );
+
+			/**
+			 * Clears cache tags when various modification behaviors are performed.
+			 */
+			$this->loader->add_action( 'wp_after_insert_post', Cloudflare_Purger::get_instance(), 'action_wp_after_insert_post', 10, 4 );
+			$this->loader->add_action( 'before_delete_post', Cloudflare_Purger::get_instance(), 'action_before_delete_post' );
+			$this->loader->add_action( 'delete_attachment', Cloudflare_Purger::get_instance(), 'action_delete_attachment' );
+			$this->loader->add_action( 'clean_post_cache', Cloudflare_Purger::get_instance(), 'action_clean_post_cache', 10, 2 );
+			$this->loader->add_action( 'edit_attachment', Cloudflare_Purger::get_instance(), 'action_edit_attachment' );
+			$this->loader->add_action( 'created_term', Cloudflare_Purger::get_instance(), 'action_created_term', 10, 3 );
+			$this->loader->add_action( 'edit_terms', Cloudflare_Purger::get_instance(), 'action_edit_terms', 10, 2 );
+			$this->loader->add_action( 'edited_term', Cloudflare_Purger::get_instance(), 'action_edited_term', 10, 3 );
+			$this->loader->add_action( 'delete_term', Cloudflare_Purger::get_instance(), 'action_delete_term', 10, 4 );
+			$this->loader->add_action( 'edit_term_taxonomy', Cloudflare_Purger::get_instance(), 'action_edit_term_taxonomy', 10, 2 );
+			$this->loader->add_action( 'clean_term_cache', Cloudflare_Purger::get_instance(), 'action_clean_term_cache', 10, 2 );
+			$this->loader->add_action( 'wp_insert_comment', Cloudflare_Purger::get_instance(), 'action_wp_insert_comment', 10, 2 );
+			$this->loader->add_action( 'transition_comment_status', Cloudflare_Purger::get_instance(), 'action_transition_comment_status', 10, 3 );
+			$this->loader->add_action( 'clean_comment_cache', Cloudflare_Purger::get_instance(), 'action_clean_comment_cache' );
+			$this->loader->add_action( 'deleted_user', Cloudflare_Purger::get_instance(), 'action_deleted_user', 10, 2 );
+			$this->loader->add_action( 'updated_option', Cloudflare_Purger::get_instance(), 'action_updated_option' );
+		}
+
+		/**
+		 * Users belong to the whole network, so changing one purges the author pages of every site the user is on,
+		 * each with its own credentials. On multisite these run on any site, such as the main site in the network
+		 * admin, even if that one has no Cloudflare credentials. Sites without credentials are skipped when queueing.
+		 */
+		if ( $cf_enabled || is_multisite() ) {
+			$this->loader->add_filter( 'insert_user_meta', Cloudflare_Purger::get_instance(), 'filter_insert_user_meta', 10, 3 );
+			$this->loader->add_action( 'user_register', Cloudflare_Purger::get_instance(), 'action_user_register' );
+			$this->loader->add_action( 'profile_update', Cloudflare_Purger::get_instance(), 'action_profile_update', 10, 2 );
+			$this->loader->add_action( 'added_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_added', 10, 4 );
+			$this->loader->add_action( 'updated_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
+			$this->loader->add_action( 'deleted_user_meta', Cloudflare_Purger::get_instance(), 'action_user_meta_changed', 10, 4 );
+		}
 	}
 
 	/**
@@ -262,6 +335,11 @@ class Nginx_Helper {
 	 * @since    2.0.0
 	 */
 	public function run() {
+
+		if ( ! $this->required_wp_version() ) {
+			return;
+		}
+
 		$this->loader->run();
 	}
 
@@ -352,12 +430,64 @@ class Nginx_Helper {
 		$installed_version = get_option( 'nginx_helper_version', '0' );
 
 		if ( version_compare( $installed_version, $this->get_version(), '<' ) ) {
-			
-			require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
-			Nginx_Helper_Activator::set_user_caps();
 
-			update_option( 'nginx_helper_version', $this->get_version() );
+			require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-activator.php';
+
+			if ( Nginx_Helper_Activator::set_user_caps() ) {
+				update_option( 'nginx_helper_version', $this->get_version() );
+			}
 		}
+	}
+
+	/**
+	 * Manage the cache headers for Cloudflare.
+	 *
+	 * @param array $headers The headers of the site.
+	 *
+	 * @return array The modified headers for cache.
+	 */
+	public function handle_cloudflare_headers( $headers ) {
+
+		// Respect restrictive headers from core or other plugins (password posts, moderation previews, WooCommerce).
+		if ( isset( $headers['Cache-Control'] ) && preg_match( '/no-store|no-cache|private|max-age/i', $headers['Cache-Control'] ) ) {
+			return $headers;
+		}
+		unset( $headers['Cache-Control'], $headers['Expires'] );
+
+		// Conditions for NOT caching (logged-in, admin, search, etc.)
+		// Before WP 6.1 wp_headers runs ahead of the main query, so also check the parsed query vars.
+		$do_not_cache = is_user_logged_in() || is_admin() || is_search() || is_404() || is_customize_preview() || ! empty( $GLOBALS['wp']->query_vars['s'] ) || ! empty( $GLOBALS['wp']->query_vars['error'] );
+
+		// Also check for common dynamic cookies
+		if ( ! $do_not_cache && ! empty( $_COOKIE ) ) {
+			foreach ( array_keys( $_COOKIE ) as $cookie_key ) {
+				if ( strpos( $cookie_key, 'wordpress_logged_in' ) !== false || strpos( $cookie_key, 'woocommerce_items_in_cart' ) !== false ) {
+					$do_not_cache = true;
+					break;
+				}
+			}
+		}
+
+		if ( $do_not_cache ) {
+			// User is logged in or page is dynamic. Send explicit NO CACHE headers.
+			$headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0';
+			$headers['Pragma']        = 'no-cache'; // For legacy HTTP/1.0 compatibility
+			$headers['Expires']       = 'Wed, 11 Jan 1984 05:00:00 GMT'; // Date in the past
+		} else {
+			// Page is for an anonymous user and is cacheable.
+			// Read through the settings getter so the default TTL applies when the settings were never saved.
+			global $nginx_helper_admin;
+			$options = $nginx_helper_admin->get_cloudflare_settings();
+
+			$ttl     = isset( $options['default_cache_ttl'] ) ? (int) $options['default_cache_ttl'] : 0;
+
+			if ( $ttl > 0 ) {
+				// Send CDN-friendly caching headers.
+				$headers['Cache-Control'] = 'public, max-age=0, s-maxage=' . $ttl;
+			}
+		}
+
+		return $headers;
 
 	}
 }

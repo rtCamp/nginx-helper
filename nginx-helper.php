@@ -1,15 +1,16 @@
 <?php
 /**
- * Plugin Name:       Nginx Helper
+ * Plugin Name:       EasyEngine Cache Helper for Nginx & Cloudflare (formerly Nginx Helper)
  * Plugin URI:        https://rtcamp.com/nginx-helper/
- * Description:       Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does few more things.
- * Version:           2.4.1
+ * Description:       Purge Nginx and Redis page cache, plus Cloudflare edge cache with cache tags, when WordPress content changes.
+ * Version:           3.0.0
  * Author:            rtCamp
  * Author URI:        https://rtcamp.com
  * Text Domain:       nginx-helper
  * Domain Path:       /languages
- * Requires at least: 3.0
+ * Requires at least: 5.6
  * Tested up to:      7.1
+ * Requires PHP:      7.4
  *
  * @link              https://rtcamp.com/nginx-helper/
  * @since             2.0.0
@@ -42,6 +43,9 @@ if ( ! defined( 'NGINX_HELPER_BASEPATH' ) ) {
 	define( 'NGINX_HELPER_BASEPATH', plugin_dir_path( __FILE__ ) );
 }
 
+require_once NGINX_HELPER_BASEPATH . '/utils/functions.php';
+require_once NGINX_HELPER_BASEPATH . '/utils/autoloader.php';
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-nginx-helper-activator.php
@@ -54,10 +58,12 @@ function activate_nginx_helper() {
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-nginx-helper-deactivator.php
+ *
+ * @param bool $network_deactivating Whether the plugin is being deactivated for the whole network.
  */
-function deactivate_nginx_helper() {
+function deactivate_nginx_helper( $network_deactivating = false ) {
 	require_once NGINX_HELPER_BASEPATH . 'includes/class-nginx-helper-deactivator.php';
-	Nginx_Helper_Deactivator::deactivate();
+	Nginx_Helper_Deactivator::deactivate( $network_deactivating );
 }
 
 register_activation_hook( __FILE__, 'activate_nginx_helper' );
@@ -90,7 +96,7 @@ function run_nginx_helper() {
 
 		require_once NGINX_HELPER_BASEPATH . 'class-nginx-helper-wp-cli-command.php';
 		\WP_CLI::add_command( 'nginx-helper', 'Nginx_Helper_WP_CLI_Command' );
-
+		\WP_CLI::add_command( 'cloudflare cache', 'EECacheHelper\\CLI' );
 	}
 
 }

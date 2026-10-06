@@ -1,22 +1,29 @@
-=== Nginx Helper ===
-Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, ravanh, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, millionleave, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, sarthak8858, im3dabasia1, tores54, mcsr, sarthaknagoshe2002, smartyp
-Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47, thisismyurl, DAnn2012, gridpane, gutobenn, Titan21
+=== EasyEngine Cache Helper for Nginx & Cloudflare (formerly Nginx Helper) ===
+Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, sarthak8858, im3dabasia1, tores54, mcsr, sarthaknagoshe2002, smartyp
+Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47, thisismyurl, DAnn2012, gutobenn, Titan21, millionleave
 Donate Link: http://rt.cx/eedonate/
-Tags: nginx, cache-purge, fastcgi, permalinks, redis-cache
+Tags: nginx, cache-purge, fastcgi, cloudflare, redis-cache
 License: GPLv2 or later (of-course)
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 3.0
+Requires at least: 5.6
 Tested up to: 7.1
-Stable tag: 2.4.1
+Stable tag: 3.0.0
+Requires PHP: 7.4
 
-Cleans nginx's fastcgi/proxy cache or redis-cache whenever a post is edited/published. Also does a few more things.
+Purge Nginx and Redis page cache, plus Cloudflare edge cache with cache tags, when WordPress content changes.
 
 == Description ==
 
-1. Removes `index.php` from permalinks when using WordPress with nginx.
-1. Adds support for purging redis-cache when used as full-page cache created using [nginx-srcache-module](https://github.com/openresty/srcache-nginx-module#caching-with-redis)
-1. Adds support for nginx fastcgi_cache_purge & proxy_cache_purge directive from [module](https://github.com/FRiCKLE/ngx_cache_purge "ngx_cache_purge module"). Provides settings so you can customize purging rules.
-1. Adds support for nginx `map{..}` on a WordPress-multisite network installation. Using it, Nginx can serve PHP file uploads even if PHP/MySQL crashes. Please check the tutorial list below for related Nginx configurations.
+EasyEngine Cache Helper (formerly Nginx Helper) helps keep cached WordPress content fresh across Nginx FastCGI or Redis page caching and Cloudflare's edge cache.
+
+* Purge configured Nginx FastCGI or Redis page cache when posts and related content change.
+* Purge Cloudflare edge content using cache tags for related pages, with manual URL and full-zone purge controls.
+* Manage Nginx and Cloudflare settings in separate tabs. The Cloudflare integration can be configured independently of Nginx page-cache purging.
+* Use WP-CLI for cache administration. Cloudflare commands are new in 3.0.0.
+
+The plugin coordinates purging; it does not install or configure Nginx, Redis, or Cloudflare for you. For Nginx setup, see the [configuration tutorials](https://easyengine.io/wordpress-nginx/tutorials/). For Cloudflare, proxy the site through Cloudflare, provide a scoped API token and Zone ID, and set up the cache rule in the Cloudflare tab.
+
+Existing Nginx features, including permalink handling and multisite map support, remain available.
 
 = Tutorials =
 
@@ -27,6 +34,13 @@ You will need to follow one or more tutorials below to get desired functionality
 * [Nginx + WordPress-Multisite (Subdirectories) + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/multisite/subdirectories/fastcgi-cache-with-purging/)
 * [Nginx + WordPress-Multisite (Subdomains/domain-mapping) + fastcgi_purge_cache](https://easyengine.io/wordpress-nginx/tutorials/multisite/subdomains/fastcgi-cache-with-purging/)
 * [Other WordPress-Nginx Tutorials](https://easyengine.io/wordpress-nginx/tutorials/)
+
+
+== Credits ==
+
+The Cloudflare cache purge feature is adapted from the [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache) plugin, Copyright Pantheon Systems, licensed under GPLv2 or later.
+
+The derived code has been modified to emit Cloudflare Cache-Tag headers instead of Surrogate-Key headers.
 
 
 == Installation ==
@@ -46,7 +60,49 @@ For proper configuration, check out our **tutorial list** in the [Description ta
 
 == Frequently Asked Questions ==
 
-**Important** - Please refer to [https://github.com/rtcamp/nginx-helper#frequently-asked-questions](https://github.com/rtcamp/nginx-helper#frequently-asked-questions) for up-to-date FAQs.
+= Will it work immediately after activation? =
+
+The plugin needs a working cache configuration. Nginx or Redis purging requires matching server settings. Cloudflare purging requires a proxied site, a Cloudflare Zone ID, an API token, and an appropriate cache rule. See the Installation section.
+
+= Can I use Cloudflare purging without Nginx page-cache purging? =
+
+Yes. Configure the Cloudflare tab even if Nginx page-cache purging is disabled. The two settings areas are separate.
+
+= How do I enable Cloudflare edge caching? =
+
+In the Cloudflare tab, save the Zone ID and an API token with the permissions shown in the settings screen. Then select **Setup Cache Rules**. The rule enables edge caching for matching requests; check its effect alongside any Cloudflare rules you already use.
+
+= What happens if I already have Cloudflare cache rules? =
+
+The setup action adds the plugin's rule to the existing cache ruleset if a matching plugin rule is not already present. Review the rule order and the combined behavior in Cloudflare after setup.
+
+= How is Cloudflare cache purged when content changes? =
+
+The plugin adds cache tags to cacheable responses and requests tag purges when relevant WordPress posts, terms, comments, or other supported content changes. Cloudflare must cache the response with those tags for this to work.
+
+= Can I purge one page manually? =
+
+Yes. An administrator can visit the page while logged in and use **Clear Cloudflare Edge Cache** in the toolbar to purge that URL from Cloudflare. When Nginx purging is enabled, **Purge Current Page** handles the configured Nginx or Redis cache.
+
+= What does Purge Entire Cache clear? =
+
+It requests a full purge of the configured Nginx or Redis cache and, when Cloudflare is configured, the entire Cloudflare zone cache. A full-zone purge also affects other cached content in that zone. Use it when a narrower purge is insufficient.
+
+= Does the plugin purge after WordPress, plugin, or theme updates? =
+
+Nginx page-cache purging on those updates is off by default. To enable it, add `add_filter( 'rt_wp_nginx_helper_enable_auto_purge_on_any_update', '__return_true' );` in site code. Otherwise the plugin shows an admin reminder to purge manually.
+
+= Can I set the Cloudflare token in wp-config.php? =
+
+Yes. Define `EASYENGINE_CACHE_MANAGER_CLOUDFLARE_API_TOKEN` in wp-config.php, then save the Zone ID in the Cloudflare tab. The token field is disabled when the constant is present.
+
+= Are there Cloudflare WP-CLI commands? =
+
+Version 3.0.0 adds `wp cloudflare cache purge-tag <tag>`, `wp cloudflare cache purge-path <url>`, and `wp cloudflare cache purge-all`. The full purge prompts for confirmation unless `--yes` is passed.
+
+= Where can I get help? =
+
+Use the [WordPress.org support forum](https://wordpress.org/support/plugin/nginx-helper/) for plugin support, or [GitHub issues](https://github.com/rtCamp/nginx-helper/issues) for reproducible bugs.
 
 = FAQ - Installation/Comptability =
 
@@ -171,10 +227,15 @@ wp option patch update rt_wp_nginx_helper_options <option_name> <option_value>
 Please post your problem in [our free support forum](https://github.com/rtCamp/nginx-helper/issues).
 
 == Screenshots ==
-1. Nginx plugin settings
-2. Remaining settings
+1. Nginx caching and purge settings
+2. Cloudflare API token, Zone ID, cache TTL, and cache rule setup
 
 == Changelog ==
+
+= 3.0.0 =
+* Added Cloudflare edge-cache management and cache-tag-based purging adapted from [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache). [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
+* Added Cloudflare cache-rule setup, per-URL and full-zone purge controls, and WP-CLI commands. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
+* Reorganized settings into Nginx and Cloudflare tabs and updated the plugin name to EasyEngine Cache Helper. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 
 = 2.4.1 =
 * Call to undefined function is_plugin_active() [#Issue](https://github.com/rtCamp/nginx-helper/issues/510) - by [Titan21](https://github.com/Titan21), [smartyp](https://profiles.wordpress.org/smartyp/), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
