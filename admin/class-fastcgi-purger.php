@@ -199,6 +199,12 @@ class FastCGI_Purger extends Purger {
 
 		global $nginx_helper_admin;
 
+		// A purge all triggered from inside the filter below is already being handled by its callback.
+		// Falling through to the default purge would empty the shared cache path the filter protects.
+		if ( doing_filter( 'rt_nginx_helper_pre_fastcgi_purge_all' ) ) {
+			return;
+		}
+
 		/**
 		 * Short-circuit the FastCGI "purge all".
 		 *
