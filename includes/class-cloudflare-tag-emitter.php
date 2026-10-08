@@ -309,7 +309,7 @@ class CloudFlare_Tag_Emitter {
 					}
 
 					// Without a post type there is no telling which taxonomies apply.
-					foreach ( '' !== $post_type ? get_object_taxonomies( $post_type ) : [] as $tax ) {
+					foreach ( '' !== $post_type ? get_object_taxonomies( $p instanceof \WP_Post ? $p : $post_type ) : [] as $tax ) {
 						$terms = get_the_terms( $post_id, $tax );
 						if ( $terms && ! is_wp_error( $terms ) ) {
 							foreach ( $terms as $t ) {

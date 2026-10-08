@@ -969,7 +969,9 @@ class Cloudflare_Client {
 		foreach ( self::FAILURE_BUCKETS as $kind ) {
 			$key = self::failure_key( $token, $kind );
 
-			if ( isset( $failures[ $key ] ) && ( $kind === $bucket || empty( $failures[ $key ]['rate_limited'] ) ) ) {
+			$same_permission = $kind === $bucket || ( 'api' !== $kind && 'api' !== $bucket );
+
+			if ( isset( $failures[ $key ] ) && $same_permission && ( $kind === $bucket || empty( $failures[ $key ]['rate_limited'] ) ) ) {
 				unset( $failures[ $key ] );
 				$changed = true;
 			}
@@ -985,6 +987,7 @@ class Cloudflare_Client {
 			set_site_transient( self::FAILURE_TRANSIENT, $failures, self::FAILURE_TTL );
 		}
 	}
+
 	/**
 	 * Get the last failure of a token and limit, if any.
 	 *
