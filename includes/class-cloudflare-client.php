@@ -949,7 +949,7 @@ class Cloudflare_Client {
 	 * Forget the failures of a token after a request went through, so the user is no longer told about them.
 	 *
 	 * The failure of the kind of request that just worked goes, and so do the ones of other kinds that were not rate
-	 * limits: whatever was wrong is evidently fixed (a token that now has the permission, a zone that was corrected).
+	 * limits: whatever was wrong is evidently fixed (for that endpoint).
 	 * Rate limit records stay until a request of their own kind works, as they hold back requests of that kind and each
 	 * limit is lifted separately.
 	 *
