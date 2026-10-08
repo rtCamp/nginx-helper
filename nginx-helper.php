@@ -43,8 +43,8 @@ if ( ! defined( 'NGINX_HELPER_BASEPATH' ) ) {
 	define( 'NGINX_HELPER_BASEPATH', plugin_dir_path( __FILE__ ) );
 }
 
-require_once NGINX_HELPER_BASEPATH . '/utils/functions.php';
-require_once NGINX_HELPER_BASEPATH . '/utils/autoloader.php';
+require_once NGINX_HELPER_BASEPATH . 'utils/functions.php';
+require_once NGINX_HELPER_BASEPATH . 'utils/autoloader.php';
 
 /**
  * The code that runs during plugin activation.

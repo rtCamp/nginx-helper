@@ -68,7 +68,7 @@ $ec_own      = (array) get_option( $ec_option, array() );
 $ec_locked   = ! empty( $ec_network['api_token_enabled_by_constant'] );
 ?>
 <div class="wrap">
-	<h1><?php esc_html_e( 'Cloudflare Cache for this site', 'nginx-helper' ); ?></h1>
+	<h1><?php esc_html_e( 'EasyEngine Cache Helper for Nginx & Cloudflare Settings', 'nginx-helper' ); ?></h1>
 
 	<?php if ( ! empty( $ec_saved_message ) ) : ?>
 		<div class="updated"><p><?php echo esc_html( $ec_saved_message ); ?></p></div>

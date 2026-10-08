@@ -70,6 +70,14 @@ class Cloudflare_Client {
 	const FAILURE_TRANSIENT = 'ec_cf_purge_failure';
 
 	/**
+	 * The kinds of request Cloudflare limits separately, and so the kinds of failure that are remembered separately.
+	 * See api_request() for what each one covers.
+	 *
+	 * @var string[]
+	 */
+	const FAILURE_BUCKETS = [ 'tags', 'files', 'api' ];
+
+	/**
 	 * Seconds the last failure is remembered.
 	 *
 	 * @var integer
@@ -576,8 +584,6 @@ class Cloudflare_Client {
 		$result = self::api_request( $token, 'POST', 'zones/' . rawurlencode( $zone_id ) . '/purge_cache', [ 'purge_everything' => true ], 'tags' );
 
 		if ( ! $result['ok'] ) {
-			self::record_failure( $result, $token );
-
 			return false;
 		}
 
@@ -586,7 +592,6 @@ class Cloudflare_Client {
 		// Everything was purged, so anything still queued or waiting in the backlog for the same zone is redundant.
 		self::forget_queued( $credentials );
 		self::clear_backlog( $credentials );
-		self::clear_failure( $token, $result['bucket'] );
 
 		return true;
 	}
@@ -633,8 +638,6 @@ class Cloudflare_Client {
 			$result = self::api_request( $token, 'POST', $path, [ $type => $batch ], 'tags' === $type ? 'tags' : 'files' );
 
 			if ( ! $result['ok'] ) {
-				self::record_failure( $result, $token );
-
 				// A rate limit is temporary, so the caller can keep what was not sent for later.
 				if ( null !== $unsent && $result['rate_limited'] ) {
 					foreach ( array_slice( $batches, $index ) as $remaining ) {
@@ -647,8 +650,6 @@ class Cloudflare_Client {
 
 			error_log( 'Advanced Cloudflare Cache: Successfully purged by ' . $label . ': ' . implode( ', ', array_slice( $batch, 0, self::LOG_ITEMS_LIMIT ) ) . ( count( $batch ) > self::LOG_ITEMS_LIMIT ? ' and ' . ( count( $batch ) - self::LOG_ITEMS_LIMIT ) . ' more' : '' ) );
 		}
-
-		self::clear_failure( $token, $result['bucket'] );
 
 		return true;
 	}
@@ -764,14 +765,16 @@ class Cloudflare_Client {
 
 		$result = self::dispatch_request( $token, $method, $path, $body );
 
-		if ( '' !== $probe ) {
-			// Update the failure before giving the lock back, so the next request does not start another check.
-			if ( $result['ok'] ) {
-				self::clear_failure( $token, $bucket );
-			} else {
-				self::record_failure( $result + [ 'bucket' => $bucket ], $token );
-			}
+		// Every request to the API goes through here, so this is the one place that remembers what went wrong and
+		// forgets it once something goes right. Callers do not have to, and new ones cannot forget. This happens before
+		// the check lock is given back, so the next request does not start another check.
+		if ( $result['ok'] ) {
+			self::clear_resolved_failures( $token, $bucket );
+		} else {
+			self::record_failure( $result + [ 'bucket' => $bucket ], $token );
+		}
 
+		if ( '' !== $probe ) {
 			self::release_lock( $probe );
 		}
 
@@ -920,6 +923,8 @@ class Cloudflare_Client {
 	/**
 	 * Remember that a request failed, so the user can be told. While rate limited no request of that kind is sent.
 	 *
+	 * Only send_request() calls this, for every request that fails.
+	 *
 	 * @param array  $result Result of api_request().
 	 * @param string $token  API token the request used.
 	 */
@@ -941,20 +946,40 @@ class Cloudflare_Client {
 	}
 
 	/**
-	 * Forget the last failure of a token and limit after a request of that kind went through.
+	 * Forget the failures of a token after a request went through, so the user is no longer told about them.
+	 *
+	 * The failure of the kind of request that just worked goes, and so do the ones of other kinds that were not rate
+	 * limits: whatever was wrong is evidently fixed (for that endpoint).
+	 * Rate limit records stay until a request of their own kind works, as they hold back requests of that kind and each
+	 * limit is lifted separately.
 	 *
 	 * @param string $token  API token the request used.
 	 * @param string $bucket 'tags', 'files' or 'api'.
 	 */
-	private static function clear_failure( $token, $bucket ) {
+	private static function clear_resolved_failures( $token, $bucket ) {
 		$failures = self::get_failures();
-		$key      = self::failure_key( $token, $bucket );
 
-		if ( ! isset( $failures[ $key ] ) ) {
+		// The usual case, so nothing is written.
+		if ( empty( $failures ) ) {
 			return;
 		}
 
-		unset( $failures[ $key ] );
+		$changed = false;
+
+		foreach ( self::FAILURE_BUCKETS as $kind ) {
+			$key = self::failure_key( $token, $kind );
+
+			$same_permission = $kind === $bucket || ( 'api' !== $kind && 'api' !== $bucket );
+
+			if ( isset( $failures[ $key ] ) && $same_permission && ( $kind === $bucket || empty( $failures[ $key ]['rate_limited'] ) ) ) {
+				unset( $failures[ $key ] );
+				$changed = true;
+			}
+		}
+
+		if ( ! $changed ) {
+			return;
+		}
 
 		if ( empty( $failures ) ) {
 			delete_site_transient( self::FAILURE_TRANSIENT );
@@ -1026,7 +1051,7 @@ class Cloudflare_Client {
 
 		$latest = false;
 
-		foreach ( [ 'tags', 'files', 'api' ] as $bucket ) {
+		foreach ( self::FAILURE_BUCKETS as $bucket ) {
 			$failure = self::get_failure_for( $token, $bucket );
 
 			if ( ! $failure ) {
@@ -1091,7 +1116,12 @@ class Cloudflare_Client {
 
 			if ( ! $rulesets['ok'] || ! isset( $rulesets['data']->result ) || ! is_array( $rulesets['data']->result ) ) {
 				error_log( 'Advanced Cloudflare Cache: Invalid response when fetching rulesets.' );
-				self::record_failure( $rulesets, $token );
+
+				// A failed request is recorded already. One that went through but came back unusable is not.
+				if ( $rulesets['ok'] ) {
+					self::record_failure( $rulesets, $token );
+				}
+
 				return 'failed';
 			}
 
@@ -1132,10 +1162,6 @@ class Cloudflare_Client {
 
 			$created = self::api_request( $token, 'POST', $zone_path . '/rulesets', $ruleset );
 
-			if ( ! $created['ok'] ) {
-				self::record_failure( $created, $token );
-			}
-
 			return $created['ok'] ? 'created' : 'failed';
 		}
 
@@ -1145,7 +1171,6 @@ class Cloudflare_Client {
 
 		if ( ! $existing['ok'] ) {
 			error_log( 'Advanced Cloudflare Cache: Failed to fetch existing cache rule. Ruleset ID: ' . wp_json_encode( $cache_ruleset_id ) );
-			self::record_failure( $existing, $token );
 			return 'failed';
 		}
 
@@ -1172,10 +1197,6 @@ class Cloudflare_Client {
 
 			$added = self::api_request( $token, 'POST', $rules_uri, $new_rule );
 
-			if ( ! $added['ok'] ) {
-				self::record_failure( $added, $token );
-			}
-
 			return $added['ok'] ? 'created' : 'failed';
 		}
 
@@ -1189,10 +1210,6 @@ class Cloudflare_Client {
 		}
 
 		$updated = self::api_request( $token, 'PATCH', $rules_uri . '/' . rawurlencode( $site_rule->id ), $rule + [ 'enabled' => true ] );
-
-		if ( ! $updated['ok'] ) {
-			self::record_failure( $updated, $token );
-		}
 
 		return $updated['ok'] ? 'updated' : 'failed';
 	}

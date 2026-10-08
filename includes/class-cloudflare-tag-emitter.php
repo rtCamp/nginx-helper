@@ -276,9 +276,19 @@ class CloudFlare_Tag_Emitter {
 
 		if ( ! empty( $wp_query->posts ) ) {
 			foreach ( $wp_query->posts as $p ) {
-				$keys[] = 'post-' . $p->ID;
+				// The main query does not always hold full posts. Queries with 'fields' set hold IDs or partial objects,
+				// and plugins and themes put placeholder objects in it (virtual pages, "no results" screens) that have no
+				// ID or post type. An entry without an ID is not a post, so it gets no tags.
+				$post_id = is_object( $p ) ? (int) ( $p->ID ?? 0 ) : (int) $p;
+				if ( $post_id <= 0 ) {
+					continue;
+				}
+
+				$post_type = is_object( $p ) ? (string) ( $p->post_type ?? '' ) : '';
+
+				$keys[] = 'post-' . $post_id;
 				// Listings and feeds print the author name too.
-				if ( post_type_supports( $p->post_type, 'author' ) ) {
+				if ( '' !== $post_type && isset( $p->post_author ) && post_type_supports( $post_type, 'author' ) ) {
 					$keys[] = 'post-user-' . $p->post_author;
 				}
 				if ( $wp_query->is_singular() ) {
@@ -298,8 +308,9 @@ class CloudFlare_Tag_Emitter {
 						continue;
 					}
 
-					foreach ( get_object_taxonomies( $p ) as $tax ) {
-						$terms = get_the_terms( $p->ID, $tax );
+					// Without a post type there is no telling which taxonomies apply.
+					foreach ( '' !== $post_type ? get_object_taxonomies( $p instanceof \WP_Post ? $p : $post_type ) : [] as $tax ) {
+						$terms = get_the_terms( $post_id, $tax );
 						if ( $terms && ! is_wp_error( $terms ) ) {
 							foreach ( $terms as $t ) {
 								$keys[] = 'post-term-' . $t->term_id;
