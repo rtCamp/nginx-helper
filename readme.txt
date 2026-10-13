@@ -1,6 +1,6 @@
 === EasyEngine Cache Helper for Nginx & Cloudflare (formerly Nginx Helper) ===
 Contributors: rtcamp, rahul286, saurabhshukla, manishsongirkar36, faishal, desaiuditd, darren-slatten, jk3us, daankortenbach, telofy, pjv, llonchj, jinnko, weskoop, bcole808, gungeekatx, rohanveer, chandrapatel, gagan0123, ravanh, michaelbeil, samedwards, niwreg, entr, nuvoPoint, iam404, rittesh.patel, vishalkakadiya, BhargavBhandari90, bryant1410, 1gor, matt-h, dotsam, nathanielks, rigagoogoo, dslatten, jinschoi, kelin1003, vaishuagola27, rahulsprajapati, utkarshpatel, gsayed786, shashwatmittal, sudhiryadav, thrijith, stayallive, jaredwsmith, abhijitrakas, umeshnevase, sid177, souptik, arafatkn, subscriptiongroup, akrocks, vedantgandhi28, GridPane, agvs, diepbui4157, pratiklondhe, tjalexander70, alexliii, joelmcdwebworks, bozzmedia, kubajosef, alexsina, tomeryatir, minzak, peterdowney01, rayeason, gnif, sarthak8858, im3dabasia1, tores54, mcsr, sarthaknagoshe2002, smartyp
-Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47, thisismyurl, DAnn2012, gutobenn, Titan21, millionleave
+Unlinked Contributors: stefanfisk, SGr33n, webdados, ghost, mrrobot47, thisismyurl, DAnn2012, gutobenn, Titan21, millionleave, kmille
 Donate Link: http://rt.cx/eedonate/
 Tags: nginx, cache-purge, fastcgi, cloudflare, redis-cache
 License: GPLv2 or later (of-course)
@@ -236,6 +236,7 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 * Added Cloudflare edge-cache management and cache-tag-based purging adapted from [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache). [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 * Added Cloudflare cache-rule setup, per-URL and full-zone purge controls, and WP-CLI commands. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 * Reorganized settings into Nginx and Cloudflare tabs and updated the plugin name to EasyEngine Cache Helper. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
+* nginx and fpm on seperate hosts: /purgeall is always sent to 127.0.0.1:80. by - [kmille](https://github.com/kmille), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 
 = 2.4.1 =
 * Call to undefined function is_plugin_active() [#Issue](https://github.com/rtCamp/nginx-helper/issues/510) - by [Titan21](https://github.com/Titan21), [smartyp](https://profiles.wordpress.org/smartyp/), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
