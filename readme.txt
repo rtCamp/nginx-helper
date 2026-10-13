@@ -236,6 +236,7 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 * Added Cloudflare edge-cache management and cache-tag-based purging adapted from [pantheon-systems/pantheon-advanced-page-cache](https://github.com/pantheon-systems/pantheon-advanced-page-cache). [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 * Added Cloudflare cache-rule setup, per-URL and full-zone purge controls, and WP-CLI commands. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 * Reorganized settings into Nginx and Cloudflare tabs and updated the plugin name to EasyEngine Cache Helper. [mrrobot47](https://github.com/mrrobot47), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
+* "Purge all" (FastCGI) empties the cache of every site sharing the cache path: add a filter to scope or replace it. - by [webdados](https://github.com/webdados)
 
 = 2.4.1 =
 * Call to undefined function is_plugin_active() [#Issue](https://github.com/rtCamp/nginx-helper/issues/510) - by [Titan21](https://github.com/Titan21), [smartyp](https://profiles.wordpress.org/smartyp/), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
