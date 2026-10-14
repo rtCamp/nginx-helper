@@ -176,7 +176,7 @@ abstract class Purger {
 		$this->log( 'Function purge_post BEGIN ===' );
 
 		if ( 1 === (int) $nginx_helper_admin->options['purge_homepage_on_edit'] ) {
-			$this->_purge_homepage();
+			$this->_purge_homepage( $post_id );
 		}
 
 		if ( 'comment_post' === current_filter() || 'wp_set_comment_status' === current_filter() ) {
@@ -665,7 +665,7 @@ abstract class Purger {
 			$this->log( 'Function purge_on_post_moved_to_trash ( post id ' . $post->ID . ' ) BEGIN ===' );
 
 			if ( 1 === (int) $nginx_helper_admin->options['purge_homepage_on_del'] ) {
-				$this->_purge_homepage();
+				$this->_purge_homepage( $post->ID );
 			}
 
 			$this->_purge_by_options(
@@ -686,26 +686,63 @@ abstract class Purger {
 	/**
 	 * Purge cache of homepage.
 	 *
+	 * On multilingual sites (Polylang or WPML) the homepage of the post's language is purged.
+	 * When the post's language is unknown, the homepages of all languages are purged.
+	 *
+	 * @param int $post_id Optional. Post id the purge relates to.
+	 *
 	 * @return bool
 	 */
-	private function _purge_homepage() {
+	private function _purge_homepage( $post_id = 0 ) {
 
-		// WPML installetd?.
-		if ( function_exists( 'icl_get_home_url' ) ) {
+		$homepage_urls = array( trailingslashit( home_url() ) );
 
-			$homepage_url = trailingslashit( icl_get_home_url() );
+		// Polylang has to be checked first because it also provides the WPML API functions.
+		if ( function_exists( 'pll_home_url' ) && function_exists( 'pll_languages_list' ) ) {
+
+			$languages = $post_id ? array_filter( array( pll_get_post_language( $post_id ) ) ) : array();
+
+			if ( empty( $languages ) ) {
+				$languages = pll_languages_list();
+			}
+
+			foreach ( $languages as $language ) {
+				$homepage_urls[] = trailingslashit( pll_home_url( $language ) );
+			}
+		} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+
+			$languages = array();
+
+			if ( $post_id ) {
+				$language_details = apply_filters( 'wpml_post_language_details', null, $post_id );
+
+				if ( is_array( $language_details ) && ! empty( $language_details['language_code'] ) ) {
+					$languages[] = $language_details['language_code'];
+				}
+			}
+
+			if ( empty( $languages ) ) {
+				$languages = array_keys( (array) apply_filters( 'wpml_active_languages', null, array( 'skip_missing' => 0 ) ) );
+			}
+
+			foreach ( $languages as $language ) {
+				$homepage_urls[] = trailingslashit( apply_filters( 'wpml_permalink', home_url( '/' ), $language, true ) );
+			}
+		}
+
+		/**
+		 * Filters the homepage URLs to be purged.
+		 *
+		 * @since 3.0.1
+		 *
+		 * @param array $homepage_urls Homepage URLs to be purged.
+		 * @param int   $post_id       Post id the purge relates to, 0 if not related to a post.
+		 */
+		$homepage_urls = array_unique( (array) apply_filters( 'rt_nginx_helper_homepage_urls', $homepage_urls, $post_id ) );
+
+		foreach ( $homepage_urls as $homepage_url ) {
+
 			$this->log(
-				sprintf(
-					/* translators: %s homepage URL */
-					__( 'Purging homepage (WPML) %s', 'nginx-helper' ),
-					$homepage_url
-				)
-			);
-
-		} else {
-
-			$homepage_url = trailingslashit( home_url() );
-			$this->log( 
 				sprintf(
 					/* translators: %s homepage URL */
 					__( 'Purging homepage %s', 'nginx-helper' ),
@@ -713,9 +750,9 @@ abstract class Purger {
 				)
 			);
 
-		}
+			$this->purge_url( $homepage_url );
 
-		$this->purge_url( $homepage_url );
+		}
 
 		return true;
 
