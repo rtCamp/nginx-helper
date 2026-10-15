@@ -695,7 +695,7 @@ abstract class Purger {
 	 */
 	private function _purge_homepage( $post_id = 0 ) {
 
-		$homepage_urls = array( trailingslashit( home_url() ) );
+		$homepage_urls = array( $this->_trailingslashit_homepage_url( home_url() ) );
 
 		// Polylang has to be checked first because it also provides the WPML API functions.
 		if ( function_exists( 'pll_home_url' ) && function_exists( 'pll_languages_list' ) ) {
@@ -707,7 +707,7 @@ abstract class Purger {
 			}
 
 			foreach ( $languages as $language ) {
-				$homepage_urls[] = trailingslashit( pll_home_url( $language ) );
+				$homepage_urls[] = $this->_trailingslashit_homepage_url( pll_home_url( $language ) );
 			}
 		} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
 
@@ -726,7 +726,7 @@ abstract class Purger {
 			}
 
 			foreach ( $languages as $language ) {
-				$homepage_urls[] = trailingslashit( apply_filters( 'wpml_permalink', home_url( '/' ), $language, true ) );
+				$homepage_urls[] = $this->_trailingslashit_homepage_url( apply_filters( 'wpml_permalink', home_url( '/' ), $language, true ) );
 			}
 		}
 
@@ -755,6 +755,26 @@ abstract class Purger {
 		}
 
 		return true;
+
+	}
+
+	/**
+	 * Add a trailing slash to a homepage URL unless it has a query string.
+	 *
+	 * Language homepages may be query based (e.g. https://example.com/?lang=sv),
+	 * and appending a slash to them would not match the cached page.
+	 *
+	 * @param string $url Homepage URL.
+	 *
+	 * @return string
+	 */
+	private function _trailingslashit_homepage_url( $url ) {
+
+		if ( false !== strpos( $url, '?' ) ) {
+			return $url;
+		}
+
+		return trailingslashit( $url );
 
 	}
 
