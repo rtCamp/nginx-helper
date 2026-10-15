@@ -94,13 +94,13 @@ class FastCGI_Purger extends Purger {
 				break;
 
 		}
-		
+
 		if( ( is_page() || is_single() ) && $nginx_helper_admin->options['purge_amp_urls'] ) {
 			$this->purge_amp_version( $url );
 		}
 
 	}
-	
+
 	/**
 	 * Purge AMP version of a URL.
 	 *
@@ -110,9 +110,9 @@ class FastCGI_Purger extends Purger {
 		global $nginx_helper_admin;
 
 		$amp_url = sprintf( '%s/amp/', rtrim( $url_base, '/' ) );
-		
+
 		$this->log( '- Purging AMP URL | ' . $amp_url );
-		
+
 		if ( 'unlink_files' === $nginx_helper_admin->options['purge_method'] ) {
 			$this->delete_cache_file_for( $amp_url );
 		} else {
@@ -237,18 +237,34 @@ class FastCGI_Purger extends Purger {
 				$replace = '';
 				$host = str_replace( $find, $replace, $site);
 
+				// curl 7.49 and later can be told where to connect for the site's host and looks the name up itself,
+				// including names that only have an IPv6 address. Older versions can only be given an IP address.
+				$connect_to = defined( 'CURLOPT_CONNECT_TO' );
+
+				// Where nginx is, as seen from this server. It is the same machine unless nginx runs elsewhere.
+				$address = $this->purge_all_address( $host, is_ssl() && ! $connect_to );
+
 				if ( is_ssl() ) {
+
+					// Nothing to connect to, which is already logged.
+					if ( '' === $address ) {
+						return;
+					}
 
 					$purgeurl = $site . '/purgeall' ;
 					$curl = curl_init( $purgeurl );
 					curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PURGE" );
 					curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 					curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-					curl_setopt($curl, CURLOPT_RESOLVE, array( $host . ":443:127.0.0.1" ));
+					if ( $connect_to ) {
+						curl_setopt($curl, CURLOPT_CONNECT_TO, array( $host . ':443:' . $address . ':443' ));
+					} else {
+						curl_setopt($curl, CURLOPT_RESOLVE, array( $host . ':443:' . $address ));
+					}
 
 				} else {
 
-					$curl = curl_init( "http://127.0.0.1/purgeall" );
+					$curl = curl_init( 'http://' . $address . '/purgeall' );
 					curl_setopt($curl, CURLOPT_HTTPHEADER, array('Host:' . $host ));
 					curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PURGE" );
 					curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
@@ -279,6 +295,60 @@ class FastCGI_Purger extends Purger {
 		 * @since 2.1.0
 		 */
 		do_action( 'rt_nginx_helper_after_fastcgi_purge_all' );
+	}
+
+	/**
+	 * Gets where the "purge everything" request of the torden method is sent, ready to be used by curl.
+	 *
+	 * Applies the filter and checks what it returned, so the caller only has to use the result.
+	 *
+	 * @param string $host    Host of the site, which is also sent as the Host header.
+	 * @param bool   $resolve True when curl has to be given an IP address, so a hostname is looked up here. That only finds IPv4 addresses.
+	 *                        Otherwise curl looks the name up itself, which also finds IPv6 ones.
+	 *
+	 * @return string The address, with IPv6 addresses in square brackets. An empty string if it was needed as an IP address and the hostname could not be found (logged).
+	 */
+	private function purge_all_address( $host, $resolve ) {
+
+		$default = '127.0.0.1';
+
+		/**
+		 * Filters the address "purge everything" is sent to when using the torden purge method.
+		 *
+		 *
+		 * @since x.x.x
+		 *
+		 * @param string $address IP address or hostname of nginx. Default 127.0.0.1.
+		 * @param string $host    Host of the site, which is sent as the Host header.
+		 */
+		$address = apply_filters( 'rt_nginx_helper_fastcgi_purge_all_address', $default, $host );
+		$address = is_string( $address ) ? trim( $address ) : '';
+		$is_ip   = (bool) filter_var( $address, FILTER_VALIDATE_IP );
+
+		// Which name or IP address to use is up to the site, so only what cannot be a host at all is refused: nothing,
+		// a scheme, a path, a port (a colon is only for IPv6 addresses) or spaces. Names such as Docker service names
+		// with underscores are fine.
+		if ( '' === $address || false !== strpbrk( $address, " \t\r\n/\\@?#" ) || ( ! $is_ip && false !== strpos( $address, ':' ) ) ) {
+			$this->log( 'Ignoring the address from rt_nginx_helper_fastcgi_purge_all_address, it must be an IP address or a hostname without a scheme, port or path. Using ' . $default . '.', 'WARNING' );
+
+			$address = $default;
+			$is_ip   = true;
+		}
+
+		if ( $resolve && ! $is_ip ) {
+			// A name that cannot be looked up comes back unchanged.
+			$ip = gethostbyname( $address );
+
+			if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				$this->log( 'Purge everything failed: could not find the IP address of ' . $address . ' (rt_nginx_helper_fastcgi_purge_all_address).', 'ERROR' );
+
+				return '';
+			}
+
+			$address = $ip;
+		}
+
+		return false !== strpos( $address, ':' ) ? '[' . $address . ']' : $address;
 	}
 
 	/**
