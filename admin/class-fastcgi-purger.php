@@ -199,6 +199,36 @@ class FastCGI_Purger extends Purger {
 
 		global $nginx_helper_admin;
 
+		// A purge all triggered from inside the filter below is already being handled by its callback.
+		// Falling through to the default purge would empty the shared cache path the filter protects.
+		if ( doing_filter( 'rt_nginx_helper_pre_fastcgi_purge_all' ) ) {
+			return;
+		}
+
+		/**
+		 * Short-circuit the FastCGI "purge all".
+		 *
+		 * The default behaviour empties RT_WP_NGINX_HELPER_CACHE_PATH, which on a server where several
+		 * sites share one cache path empties the cache of all of them. Return true to skip it, for
+		 * example after purging only this site's entries with a partial key ("/purge/*").
+		 *
+		 * @since x.x.x
+		 *
+		 * @param bool           $skip   Whether to skip the default purge. Default false.
+		 * @param FastCGI_Purger $purger The purger instance.
+		 */
+		if ( true === apply_filters( 'rt_nginx_helper_pre_fastcgi_purge_all', false, $this ) ) {
+
+			$this->log( '* * * * *' );
+			$this->log( '* Purge everything handled by the rt_nginx_helper_pre_fastcgi_purge_all filter' );
+			$this->log( '* * * * *' );
+
+			/** This action is documented in admin/class-fastcgi-purger.php */
+			do_action( 'rt_nginx_helper_after_fastcgi_purge_all' );
+
+			return;
+		}
+
 		switch ( $nginx_helper_admin->options['purge_method'] ) {
 
 			case 'get_request_torden':
