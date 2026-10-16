@@ -1,16 +1,17 @@
 <?php
 /**
+ * Adapted from Pantheon Advanced Page Cache (GPLv2 or later), modified by rtCamp.
+ *
  * WP-CLI commands for managing the Advanced Cloudflare Cache.
  *
- * @package EasyCache
+ * @package nginx-helper
  *
  * @phpcs   :disable Squiz.Commenting.FunctionComment.MissingParamTag
  */
 
-namespace EasyCache;
+namespace EECacheHelper;
 
 use WP_CLI;
-use EasyCache\Cloudflare_Client;
 
 /**
  * Manage the Advanced Cloudflare Cache.
@@ -33,7 +34,7 @@ class CLI {
 	 * @subcommand purge-tag
 	 */
 	public function purge_tag( $args ) {
-		$ret = Cloudflare_Client::purgeByTags( $args );
+		$ret = Cloudflare_Client::purge_by_tags( ec_cf_prefix_cache_tags_with_blog_id( $args ) );
 		if ( ! $ret ) {
 			WP_CLI::error( 'Failed to purge tags.' );
 		} else {
@@ -59,7 +60,7 @@ class CLI {
 	 * @subcommand purge-path
 	 */
 	public function purge_path( $args ) {
-		$ret = Cloudflare_Client::purgeByUrls( $args );
+		$ret = Cloudflare_Client::purge_by_urls( $args );
 		if ( ! $ret ) {
 			WP_CLI::error( 'Failed to purge paths.' );
 		} else {
@@ -91,7 +92,7 @@ class CLI {
 	 */
 	public function purge_all( $_, $assoc_args ) {
 		WP_CLI::confirm( 'Are you sure you want to purge the entire page cache?', $assoc_args );
-		$ret = Cloudflare_Client::purgeEverything();
+		$ret = Cloudflare_Client::purge_everything();
 		if ( ! $ret ) {
 			WP_CLI::error( 'Failed to purge all.' );
 		} else {

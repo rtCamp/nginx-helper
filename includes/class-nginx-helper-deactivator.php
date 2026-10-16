@@ -24,10 +24,20 @@ class Nginx_Helper_Deactivator {
 	 * Schedule event to check log file size daily. Remove nginx helper capability.
 	 *
 	 * @since    2.0.0
+	 *
+	 * @param bool $network_deactivating Whether the plugin is being deactivated for the whole network.
 	 */
-	public static function deactivate() {
+	public static function deactivate( $network_deactivating = false ) {
 
 		wp_clear_scheduled_hook( 'rt_wp_nginx_helper_check_log_file_size_daily' );
+
+		// The Cloudflare purge failure shown to the user and the purges waiting to be sent are shared by every site
+		// of a network. Deactivating the plugin on one site must not wipe them for the others.
+		if ( ! is_multisite() || $network_deactivating ) {
+			delete_site_transient( 'ec_cf_purge_failure' );
+			delete_site_transient( 'ec_cf_purge_backlog' );
+			delete_site_option( 'ec_cf_backlog_lock' );
+		}
 
 		$purge_cap = 'Nginx Helper | Purge cache';
 		$all_roles = wp_roles()->get_names();

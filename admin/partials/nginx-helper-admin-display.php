@@ -18,7 +18,7 @@ global $pagenow;
 
 <div class="wrap rt-nginx-wrapper">
 	<h2 class="rt_option_title">
-		<?php esc_html_e( 'Nginx Settings', 'nginx-helper' ); ?>
+		<?php esc_html_e( 'EasyEngine Cache Helper for Nginx & Cloudflare Settings', 'nginx-helper' ); ?>
 	</h2>
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-2">
@@ -44,13 +44,10 @@ global $pagenow;
 				switch ( $current_setting_tab ) {
 
 					case 'general':
-						include plugin_dir_path( __FILE__ ) . 'nginx-helper-general-options.php';
-						break;
-					case 'support':
-						include plugin_dir_path( __FILE__ ) . 'nginx-helper-support-options.php';
+						include NGINX_HELPER_BASEPATH . 'admin/partials/nginx-helper-general-options.php';
 						break;
 					case 'cloudflare':
-						include plugin_dir_path( __FILE__ ) . 'easycache-cloudflare-options.php';
+						include NGINX_HELPER_BASEPATH . 'admin/partials/easyengine-cache-manager-cloudflare-options.php';
 						break;
 
 				}
@@ -58,7 +55,7 @@ global $pagenow;
 			</div> <!-- End of #post-body-content -->
 			<div id="postbox-container-1" class="postbox-container">
 				<?php
-					require plugin_dir_path( __FILE__ ) . 'nginx-helper-sidebar-display.php';
+					require NGINX_HELPER_BASEPATH . 'admin/partials/nginx-helper-sidebar-display.php';
 				?>
 			</div> <!-- End of #postbox-container-1 -->
 		</div> <!-- End of #post-body -->

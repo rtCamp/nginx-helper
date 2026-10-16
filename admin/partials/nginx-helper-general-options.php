@@ -54,8 +54,6 @@ $args = array(
 
 $all_inputs = array();
 
-global $wp_roles;
-$roles      = $wp_roles->roles;
 $role_names = wp_roles()->get_names();
 
 foreach ( $args as $val ) {
@@ -359,11 +357,11 @@ if ( is_multisite() ) {
 								?>
 								<?php
 								if ( $nginx_helper_settings['redis_unix_socket'] ) {
-									
+
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by unix socket path.', 'nginx-helper' );
 									echo '</p>';
-									
+
 								}
 								?>
 							</td>
@@ -374,11 +372,11 @@ if ( is_multisite() ) {
 								<input id="redis_unix_socket" class="medium-text" type="text" name="redis_unix_socket" value="<?php echo esc_attr( $nginx_helper_settings['redis_unix_socket'] ); ?>" <?php echo ( $nginx_helper_settings['redis_socket_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_socket_enabled_by_constant'] ) {
-									
+
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
-									
+
 								}
 								?>
 							</td>
@@ -404,11 +402,11 @@ if ( is_multisite() ) {
 								<input id="redis_database" class="medium-text" type="text" name="redis_database" value="<?php echo esc_attr( $nginx_helper_settings['redis_database'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
-									
+
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
-									
+
 								}
 								?>
 							</td>
@@ -420,11 +418,11 @@ if ( is_multisite() ) {
 								<input id="redis_username" class="medium-text" type="text" name="redis_username" value="<?php echo esc_attr( $nginx_helper_settings['redis_username'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
 								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
-									
+
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
-									
+
 								}
 								?>
 							</td>
@@ -442,7 +440,7 @@ if ( is_multisite() ) {
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
-									
+
 								}
 								?>
 							</td>
