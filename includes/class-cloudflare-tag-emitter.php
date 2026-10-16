@@ -1,11 +1,13 @@
 <?php
 /**
+ * Adapted from Pantheon Advanced Page Cache (GPLv2 or later), modified by rtCamp.
+ *
  * Generates and emits cache tags based on the current request.
  *
- * @package EasyCache
+ * @package nginx-helper
  */
 
-namespace EasyCache;
+namespace EECacheHelper;
 
 /**
  * Generates and emits cache tags based on the current request.
@@ -51,7 +53,7 @@ class CloudFlare_Tag_Emitter {
 	 *
 	 * @var integer
 	 */
-	const HEADER_MAX_LENGTH = 32512;  // 32k output buffer default on nginx, minus 256 for header name.
+	const HEADER_MAX_LENGTH = 16128; // 16 KB Cloudflare Cache-Tag limit, minus 256 for header name.
 
 	/**
 	 * Get a copy of the current instance.
@@ -72,7 +74,7 @@ class CloudFlare_Tag_Emitter {
 	public function action_wp() {
 		$keys = self::get_main_query_cache_tags();
 		if ( ! empty( $keys ) ) {
-			@header( self::HEADER_KEY . ': ' . implode( ' ', $keys ) ); // phpcs:ignore
+			@header( self::HEADER_KEY . ': ' . implode( ',', $keys ) ); // phpcs:ignore
 		}
 	}
 
@@ -82,13 +84,19 @@ class CloudFlare_Tag_Emitter {
 	public function action_rest_api_init() {
 		foreach ( get_post_types( [ 'show_in_rest' => true ], 'objects' ) as $post_type ) {
 			add_filter( "rest_prepare_{$post_type->name}", [ $this, 'filter_rest_prepare_post' ], 10, 3 );
-			$base                                                                    = ! empty( $post_type->rest_base ) ? $post_type->rest_base : $post_type->name;
-			self::get_instance()->rest_api_collection_endpoints[ '/wp/v2/' . $base ] = $post_type->name;
+
+			$base      = ! empty( $post_type->rest_base ) ? $post_type->rest_base : $post_type->name;
+ 			$namespace = ! empty( $post_type->rest_namespace ) ? trim( $post_type->rest_namespace, '/' ) : 'wp/v2';
+
+ 			self::get_instance()->rest_api_collection_endpoints[ '/' . $namespace . '/' . $base ] = $post_type->name;
 		}
+
+
 		foreach ( get_taxonomies( [ 'show_in_rest' => true ], 'objects' ) as $taxonomy ) {
 			add_filter( "rest_prepare_{$taxonomy->name}", [ $this, 'filter_rest_prepare_term' ], 10, 3 );
-			$base                                                                    = ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : $taxonomy->name;
-			self::get_instance()->rest_api_collection_endpoints[ '/wp/v2/' . $base ] = $taxonomy->name;
+			$base      = ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : $taxonomy->name;
+			$namespace = ! empty( $taxonomy->rest_namespace ) ? trim( $taxonomy->rest_namespace, '/' ) : 'wp/v2';
+			self::get_instance()->rest_api_collection_endpoints[ '/' . $namespace . '/' . $base ] = $taxonomy->name;
 		}
 		add_filter( 'rest_prepare_comment', [ $this, 'filter_rest_prepare_comment' ], 10, 3 );
 		self::get_instance()->rest_api_collection_endpoints['/wp/v2/comments'] = 'comment';
@@ -121,7 +129,7 @@ class CloudFlare_Tag_Emitter {
 	public function filter_rest_post_dispatch( $result, $server ) {
 		$keys = self::get_rest_api_cache_tags();
 		if ( ! empty( $keys ) && $result instanceof \WP_REST_Response ) {
-			$result->header( self::HEADER_KEY, implode( ' ', $keys ) );
+			$result->header( self::HEADER_KEY, implode( ',', $keys ) );
 		}
 
 		return $result;
@@ -195,6 +203,38 @@ class CloudFlare_Tag_Emitter {
 	}
 
 	/**
+	 * Get the cache tag of a date archive: its year, month or day, whichever is the most specific.
+	 *
+	 * Matches the tags the purger builds from a post's date (date-2026, date-2026-10, date-2026-10-05).
+	 * Odd archives that have no year (e.g. only a month) get date-misc, which is purged on every post change.
+	 *
+	 * @param WP_Query $wp_query The main query.
+	 *
+	 * @return string
+	 */
+	private static function get_date_archive_tag( $wp_query ) {
+		$year = (int) $wp_query->get( 'year' );
+
+		if ( ! $year ) {
+			return 'date-misc';
+		}
+
+		$month = (int) $wp_query->get( 'monthnum' );
+
+		if ( ! $month ) {
+			return sprintf( 'date-%04d', $year );
+		}
+
+		$day = (int) $wp_query->get( 'day' );
+
+		if ( ! $day ) {
+			return sprintf( 'date-%04d-%02d', $year, $month );
+		}
+
+		return sprintf( 'date-%04d-%02d-%02d', $year, $month, $day );
+	}
+
+	/**
 	 * Get the cache tags to be included in this view.
 	 *
 	 * cache tags are generated based on the main WP_Query.
@@ -219,6 +259,8 @@ class CloudFlare_Tag_Emitter {
 		}
 		if ( is_date() ) {
 			$keys[] = 'date';
+			// The tag of this archive's own period, so a post change only purges the archives it appears on.
+			$keys[] = self::get_date_archive_tag( $wp_query );
 		}
 		if ( is_paged() ) {
 			$keys[] = 'paged';
@@ -234,11 +276,22 @@ class CloudFlare_Tag_Emitter {
 
 		if ( ! empty( $wp_query->posts ) ) {
 			foreach ( $wp_query->posts as $p ) {
-				$keys[] = 'post-' . $p->ID;
+				// The main query does not always hold full posts. Queries with 'fields' set hold IDs or partial objects,
+				// and plugins and themes put placeholder objects in it (virtual pages, "no results" screens) that have no
+				// ID or post type. An entry without an ID is not a post, so it gets no tags.
+				$post_id = is_object( $p ) ? (int) ( $p->ID ?? 0 ) : (int) $p;
+				if ( $post_id <= 0 ) {
+					continue;
+				}
+
+				$post_type = is_object( $p ) ? (string) ( $p->post_type ?? '' ) : '';
+
+				$keys[] = 'post-' . $post_id;
+				// Listings and feeds print the author name too.
+				if ( '' !== $post_type && isset( $p->post_author ) && post_type_supports( $post_type, 'author' ) ) {
+					$keys[] = 'post-user-' . $p->post_author;
+				}
 				if ( $wp_query->is_singular() ) {
-					if ( post_type_supports( $p->post_type, 'author' ) ) {
-						$keys[] = 'post-user-' . $p->post_author;
-					}
 
 					/**
 					 * Filter ec_should_add_terms
@@ -255,8 +308,9 @@ class CloudFlare_Tag_Emitter {
 						continue;
 					}
 
-					foreach ( get_object_taxonomies( $p ) as $tax ) {
-						$terms = get_the_terms( $p->ID, $tax );
+					// Without a post type there is no telling which taxonomies apply.
+					foreach ( '' !== $post_type ? get_object_taxonomies( $p instanceof \WP_Post ? $p : $post_type ) : [] as $tax ) {
+						$terms = get_the_terms( $post_id, $tax );
 						if ( $terms && ! is_wp_error( $terms ) ) {
 							foreach ( $terms as $t ) {
 								$keys[] = 'post-term-' . $t->term_id;
@@ -454,7 +508,7 @@ class CloudFlare_Tag_Emitter {
 	public function filter_graphql_response_headers_to_send( $headers ) {
 		$keys = self::get_graphql_cache_tags();
 		if ( ! empty( $keys ) ) {
-			$headers[ self::HEADER_KEY ] = implode( ' ', $keys );
+			$headers[ self::HEADER_KEY ] = implode( ',', $keys );
 		}
 
 		return $headers;

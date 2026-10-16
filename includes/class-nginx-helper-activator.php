@@ -52,11 +52,13 @@ class Nginx_Helper_Activator {
 
 	/**
 	 * This function sets the user capabilites appropriately.
+	 *
+	 * @return bool True if the capabilities were applied, false if they could not be.
 	 */
 	public static function set_user_caps() {
 
 		if ( ! current_user_can( 'activate_plugins' ) ) {
-			return;
+			return false;
 		}
 
 		global $nginx_helper_admin;
@@ -70,16 +72,18 @@ class Nginx_Helper_Activator {
 				__( 'Sorry, you need to be an administrator to use Nginx Helper', 'nginx-helper' )
 			);
 
-			return;
+			return false;
 
 		}
 
 		$role->add_cap( 'Nginx Helper | Config' );
 		$role->add_cap( 'Nginx Helper | Purge cache' );
-		
+
 		if ( method_exists( $nginx_helper_admin, 'nginx_helper_update_role_caps' ) ) {
 			$nginx_helper_admin->nginx_helper_update_role_caps();
 		}
+
+		return true;
 
 	}
 

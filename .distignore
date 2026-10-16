@@ -1,0 +1,14 @@
+.git
+.github
+.gitattributes
+.gitignore
+.travis.yml
+README.md
+deploy.sh
+readme.sh
+tests
+map.conf
+nginx.log
+wercker.yml
+wpassets
+vendor

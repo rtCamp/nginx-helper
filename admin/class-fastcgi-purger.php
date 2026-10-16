@@ -303,12 +303,10 @@ class FastCGI_Purger extends Purger {
 	 * Applies the filter and checks what it returned, so the caller only has to use the result.
 	 *
 	 * @param string $host    Host of the site, which is also sent as the Host header.
-	 * @param bool   $resolve True when curl has to be given an IP address (https with a curl too old for
-	 *                        CURLOPT_CONNECT_TO), so a hostname is looked up here. That only finds IPv4 addresses.
+	 * @param bool   $resolve True when curl has to be given an IP address, so a hostname is looked up here. That only finds IPv4 addresses.
 	 *                        Otherwise curl looks the name up itself, which also finds IPv6 ones.
 	 *
-	 * @return string The address, with IPv6 addresses in square brackets. An empty string if it was needed as an IP
-	 *                address and the hostname could not be found (logged).
+	 * @return string The address, with IPv6 addresses in square brackets. An empty string if it was needed as an IP address and the hostname could not be found (logged).
 	 */
 	private function purge_all_address( $host, $resolve ) {
 
@@ -317,11 +315,6 @@ class FastCGI_Purger extends Purger {
 		/**
 		 * Filters the address "purge everything" is sent to when using the torden purge method.
 		 *
-		 * It is 127.0.0.1 because nginx and PHP usually run on the same machine, and the torden purge-all location
-		 * normally only accepts requests from there. Use this when nginx runs somewhere else, for example in another
-		 * container, and return its IP address or hostname, whichever suits the setup. Do not add a port or a scheme.
-		 * Nginx must also accept the request from this server: its `fastcgi_cache_purge PURGE purge_all from ...;`
-		 * line has to include this server's address.
 		 *
 		 * @since x.x.x
 		 *

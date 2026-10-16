@@ -1,5 +1,7 @@
 <?php
 /**
+ * Adapted from Pantheon Advanced Page Cache (GPLv2 or later), modified by rtCamp.
+ *
  * Autoloader to load the files.
  *
  * @package nginx-helper
@@ -12,12 +14,12 @@
 spl_autoload_register(
 	function ( $class ) {
 		$class = ltrim( $class, '\\' );
-		if ( 0 !== stripos( $class, 'EasyCache\\' ) ) {
+		if ( 0 !== stripos( $class, 'EECacheHelper\\' ) ) {
 			return;
 		}
 
 		$parts = explode( '\\', $class );
-		array_shift( $parts ); // Don't need "EasyCache".
+		array_shift( $parts ); // Don't need "EECacheHelper".
 		$last    = array_pop( $parts ); // File should be 'class-[...].php'.
 		$last    = 'class-' . $last . '.php';
 		$parts[] = $last;
