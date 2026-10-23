@@ -1046,7 +1046,7 @@ if ( is_multisite() ) {
 							</label>
 						</th>
 						<td>
-							<a target="_blank" href="<?php echo esc_url( $log_url . 'nginx.log' ); ?>">
+							<a target="_blank" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=nginx_helper_view_log' ), 'nginx_helper_view_log' ) ); ?>">
 								<?php esc_html_e( 'Log', 'nginx-helper' ); ?>
 							</a>
 						</td>

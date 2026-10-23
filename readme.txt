@@ -112,16 +112,15 @@ No. You need to make some changes at the Nginx end. Please check our [tutorial l
 
 **Q. Is the plugin log file publicly accessible?**
 
-When logging is enabled, the log is written to `wp-content/uploads/nginx-helper/nginx.log`. Nginx serves files in `uploads` directly, so WordPress cannot check who requests the log, and it contains post titles and URLs. Restrict access to it in your Nginx config, for example to your own IP address:
+When logging is enabled, the log is written to `wp-content/uploads/nginx-helper/nginx.log`. Nginx serves files in `uploads` directly, so WordPress cannot check who requests the log, and it contains post titles and URLs. Block direct access to it in your Nginx config:
 
 ```nginx
 location ^~ /wp-content/uploads/nginx-helper/ {
-    allow 203.0.113.10;
     deny all;
 }
 ```
 
-The `^~` stops regex `location` blocks, such as the ones that serve static files, from taking priority. Use `deny all;` alone to block it for everyone. The **View Log** link in the settings then stops working, and you can read the file on the server instead.
+The `^~` stops regex `location` blocks, such as the ones that serve static files, from taking priority.
 
 = FAQ - Nginx Fastcgi Cache Purge =
 

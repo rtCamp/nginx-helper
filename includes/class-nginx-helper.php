@@ -221,6 +221,7 @@ class Nginx_Helper {
 		}
 
 		$this->loader->add_action( 'wp_ajax_rt_get_feeds', $nginx_helper_admin, 'nginx_helper_get_feeds' );
+		$this->loader->add_action( 'admin_post_nginx_helper_view_log', $nginx_helper_admin, 'view_log' );
 
 		$this->loader->add_action( 'shutdown', $nginx_helper_admin, 'add_timestamps', 99999 );
 		$this->loader->add_action( 'add_init', $nginx_helper_admin, 'update_map' );

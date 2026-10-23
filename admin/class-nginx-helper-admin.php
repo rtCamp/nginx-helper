@@ -624,6 +624,32 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
+	 * Outputs the log file to users who can manage the settings, so that it can be viewed
+	 * even when the web server blocks direct access to it.
+	 */
+	public function view_log() {
+
+		check_admin_referer( 'nginx_helper_view_log' );
+
+		if ( ! current_user_can( is_multisite() ? 'manage_network_options' : 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to view the log.', 'nginx-helper' ), 403 );
+		}
+
+		$log_file = $this->functional_asset_path() . 'nginx.log';
+
+		if ( ! is_readable( $log_file ) ) {
+			wp_die( esc_html__( 'Log file not found.', 'nginx-helper' ), 404 );
+		}
+
+		nocache_headers();
+		header( 'Content-Type: text/plain; charset=utf-8' );
+		header( 'X-Content-Type-Options: nosniff' );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- Streams the log file without loading it into memory.
+		readfile( $log_file );
+		exit;
+	}
+
+	/**
 	 * Get latest news.
 	 *
 	 * @since     2.0.0
