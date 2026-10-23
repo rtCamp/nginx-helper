@@ -38,7 +38,12 @@ if ( isset( $all_inputs['easyengine_cache_manager_settings_save'] ) && isset( $a
 
 	// Fields that were not submitted keep their saved value. The token input is disabled when the token comes
 	// from the constant, so it is missing from the request. The saved options are read as they are, without the
-	// constant, so the constant's token is never written to the database.
+	// constant, so the constant's token is never written to the database. An empty token field also keeps the
+	// saved token, because the field is never filled in.
+	if ( isset( $all_inputs['api_token'] ) && '' === $all_inputs['api_token'] ) {
+		unset( $all_inputs['api_token'] );
+	}
+
 	$args = wp_parse_args( $all_inputs, wp_parse_args( get_site_option( 'easyengine_cache_manager_cf_settings', array() ), $default_args ) );
 
 	update_site_option( 'easyengine_cache_manager_cf_settings', $args );
@@ -80,14 +85,8 @@ $ec_site_settings = $nginx_helper_admin->get_network_cloudflare_settings();
 									</legend>
 								</fieldset>
 								<input <?php echo $ec_site_settings['api_token_enabled_by_constant'] ? "disabled" : "" ?>
-									name="api_token" id="cf_api_token" type="password" class="password-input"
-									value="<?php echo esc_attr( $ec_site_settings['api_token'] ) ?>"/>
-								<?php
-								if ( ! $ec_site_settings['api_token_enabled_by_constant'] ): ?>
-
-									<button type="button" class="password-show-hide-btn"><span
-											class="dashicons dashicons-hidden password-input-icon"></span></button>
-								<?php endif; ?>
+									name="api_token" id="cf_api_token" type="password" autocomplete="off" value=""
+									placeholder="<?php echo ! empty( $ec_site_settings['api_token'] ) ? esc_attr__( 'Saved', 'nginx-helper' ) : ''; ?>"/>
 								<p><?php
 									if ( $ec_site_settings['api_token_enabled_by_constant'] ) {
 										esc_html_e( 'Field enabled by constant.', 'nginx-helper' );

@@ -237,7 +237,7 @@ class Nginx_Helper {
 		$this->loader->add_action( 'before_delete_post', $nginx_purger, 'purge_on_before_delete_post', 20, 2 );
 		$this->loader->add_action( 'edit_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
 		$this->loader->add_action( 'delete_term', $nginx_purger, 'purge_on_term_taxonomy_edited', 20, 3 );
-		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20 );
+		$this->loader->add_action( 'check_ajax_referer', $nginx_purger, 'purge_on_check_ajax_referer', 20, 2 );
 		$this->loader->add_action( 'admin_bar_init', $nginx_helper_admin, 'purge_all' );
 
 		// expose action to allow other plugins to purge the cache.
@@ -458,10 +458,16 @@ class Nginx_Helper {
 		// Before WP 6.1 wp_headers runs ahead of the main query, so also check the parsed query vars.
 		$do_not_cache = is_user_logged_in() || is_admin() || is_search() || is_404() || is_customize_preview() || ! empty( $GLOBALS['wp']->query_vars['s'] ) || ! empty( $GLOBALS['wp']->query_vars['error'] );
 
-		// Also check for common dynamic cookies
+		// Also check for common dynamic cookies. Commenter cookies prefill the comment form,
+		// and the post password cookie means the visitor unlocked a protected post.
 		if ( ! $do_not_cache && ! empty( $_COOKIE ) ) {
 			foreach ( array_keys( $_COOKIE ) as $cookie_key ) {
-				if ( strpos( $cookie_key, 'wordpress_logged_in' ) !== false || strpos( $cookie_key, 'woocommerce_items_in_cart' ) !== false ) {
+				if (
+					strpos( $cookie_key, 'wordpress_logged_in' ) !== false ||
+					strpos( $cookie_key, 'woocommerce_items_in_cart' ) !== false ||
+					strpos( $cookie_key, 'comment_author_' ) !== false ||
+					strpos( $cookie_key, 'wp-postpass_' ) !== false
+				) {
 					$do_not_cache = true;
 					break;
 				}

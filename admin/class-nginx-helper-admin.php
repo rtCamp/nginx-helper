@@ -865,7 +865,7 @@ class Nginx_Helper_Admin {
 
 			$nginx_purger->log( 'Set/update future_posts option ( post id = ' . $post->ID . ' and blog id = ' . $blog_id . ' )' );
 			$this->options['future_posts'][ $blog_id ][ $post->ID ] = strtotime( $post->post_date_gmt ) + 60;
-			update_site_option( 'rt_wp_nginx_helper_options', $this->options );
+			$this->save_stored_options( array( 'future_posts' => $this->options['future_posts'] ) );
 
 		}
 
@@ -901,7 +901,7 @@ class Nginx_Helper_Admin {
 			unset( $this->options['future_posts'][ $blog_id ] );
 		}
 
-		update_site_option( 'rt_wp_nginx_helper_options', $this->options );
+		$this->save_stored_options( array( 'future_posts' => $this->options['future_posts'] ) );
 	}
 
 	/**
@@ -1030,6 +1030,21 @@ class Nginx_Helper_Admin {
 	}
 
 	/**
+	 * Saves values into the stored settings.
+	 *
+	 * $this->options has the constants applied, so saving it whole would copy them into the database.
+	 *
+	 * @param array $values Settings to change.
+	 */
+	private function save_stored_options( array $values ) {
+
+		update_site_option(
+			'rt_wp_nginx_helper_options',
+			array_merge( get_site_option( 'rt_wp_nginx_helper_options', array() ), $values )
+		);
+	}
+
+	/**
 	 * Preloads the cache for the website.
 	 *
 	 * @return void
@@ -1041,7 +1056,7 @@ class Nginx_Helper_Admin {
 		if ( $preload_cache_enabled && false === boolval( $is_cache_preloaded ) ) {
 			$this->options['is_cache_preloaded'] = true;
 
-			update_site_option( 'rt_wp_nginx_helper_options', $this->options );
+			$this->save_stored_options( array( 'is_cache_preloaded' => true ) );
 			$this->preload_cache_from_sitemap();
 		}
 	}

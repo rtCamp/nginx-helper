@@ -125,6 +125,12 @@ if ( isset( $all_inputs['smart_http_expire_save'] ) && wp_verify_nonce( $all_inp
 		$nginx_helper_admin->update_map();
 	}
 
+	// Credentials set by constants are not stored, so keep what was saved.
+	if ( ! empty( $nginx_helper_admin->nginx_helper_settings()['redis_acl_enabled_by_constant'] ) ) {
+		$nginx_settings['redis_username'] = $site_options['redis_username'] ?? '';
+		$nginx_settings['redis_password'] = $site_options['redis_password'] ?? '';
+	}
+
 	update_site_option( 'rt_wp_nginx_helper_options', $nginx_settings );
 
 	echo '<div class="updated"><p>' . esc_html__( 'Settings saved.', 'nginx-helper' ) . '</p></div>';
@@ -415,9 +421,9 @@ if ( is_multisite() ) {
 						<tr>
 							<th><label for="redis_username"><?php esc_html_e( 'Username', 'nginx-helper' ); ?></label></th>
 							<td>
-								<input id="redis_username" class="medium-text" type="text" name="redis_username" value="<?php echo esc_attr( $nginx_helper_settings['redis_username'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+								<input id="redis_username" class="medium-text" type="text" name="redis_username" value="<?php echo esc_attr( $nginx_helper_settings['redis_username'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] || $nginx_helper_settings['redis_acl_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
 								<?php
-								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] || $nginx_helper_settings['redis_acl_enabled_by_constant'] ) {
 
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
@@ -432,11 +438,13 @@ if ( is_multisite() ) {
 							<th><label for="redis_password"><?php esc_html_e( 'Password', 'nginx-helper' ); ?></label></th>
 							<td>
 								<div class="password-wrapper">
-									<input id="redis_password" class="medium-text password-input" type="password" name="redis_password" value="<?php echo esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
-									<button type="button" class="password-show-hide-btn"><span class="dashicons dashicons-hidden password-input-icon"></span></button>
+									<input id="redis_password" class="medium-text password-input" type="password" name="redis_password" value="<?php echo $nginx_helper_settings['redis_acl_enabled_by_constant'] ? '' : esc_attr( $nginx_helper_settings['redis_password'] ); ?>" <?php echo ( $nginx_helper_settings['redis_enabled_by_constant'] || $nginx_helper_settings['redis_acl_enabled_by_constant'] ) ? 'readonly="readonly"' : ''; ?> />
+									<?php if ( ! $nginx_helper_settings['redis_acl_enabled_by_constant'] ) : ?>
+										<button type="button" class="password-show-hide-btn"><span class="dashicons dashicons-hidden password-input-icon"></span></button>
+									<?php endif; ?>
 								</div>
 								<?php
-								if ( $nginx_helper_settings['redis_enabled_by_constant'] ) {
+								if ( $nginx_helper_settings['redis_enabled_by_constant'] || $nginx_helper_settings['redis_acl_enabled_by_constant'] ) {
 									echo '<p class="description">';
 									esc_html_e( 'Overridden by constant variables.', 'nginx-helper' );
 									echo '</p>';
