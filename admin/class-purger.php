@@ -1303,15 +1303,16 @@ abstract class Purger {
 	/**
 	 * Check ajax referrer on purge.
 	 *
-	 * @param string $action The Ajax nonce action.
+	 * @param string    $action The Ajax nonce action.
+	 * @param false|int $result False if the nonce is invalid, 1 or 2 if it is valid.
 	 *
 	 * @return bool
 	 */
-	public function purge_on_check_ajax_referer( $action ) {
+	public function purge_on_check_ajax_referer( $action, $result = false ) {
 
 		global $nginx_helper_admin;
 
-		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
+		if ( ! $result || ! $nginx_helper_admin->options['enable_purge'] ) {
 			return;
 		}
 

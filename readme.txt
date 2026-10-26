@@ -110,6 +110,18 @@ Use the [WordPress.org support forum](https://wordpress.org/support/plugin/nginx
 
 No. You need to make some changes at the Nginx end. Please check our [tutorial list](https://easyengine.io/wordpress-nginx/tutorials/).
 
+**Q. Is the plugin log file publicly accessible?**
+
+When logging is enabled, the log is written to `wp-content/uploads/nginx-helper/nginx.log`. Nginx serves files in `uploads` directly, so WordPress cannot check who requests the log, and it contains post titles and URLs. Block direct access to it in your Nginx config:
+
+```nginx
+location ^~ /wp-content/uploads/nginx-helper/ {
+    deny all;
+}
+```
+
+The `^~` stops regex `location` blocks, such as the ones that serve static files, from taking priority.
+
 = FAQ - Nginx Fastcgi Cache Purge =
 
 **Q. There's a 'purge all' button? Does it purge the whole site?**
