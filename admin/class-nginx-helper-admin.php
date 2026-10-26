@@ -643,6 +643,7 @@ class Nginx_Helper_Admin {
 
 		nocache_headers();
 		header( 'Content-Type: text/plain; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="nginx.log"' );
 		header( 'X-Content-Type-Options: nosniff' );
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- Streams the log file without loading it into memory.
 		readfile( $log_file );
