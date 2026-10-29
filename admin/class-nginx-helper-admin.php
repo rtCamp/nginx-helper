@@ -261,12 +261,18 @@ class Nginx_Helper_Admin {
 			$link_title        = __( 'Purge Current Page', 'nginx-helper' );
 		}
 
+		global $wp;
+
+		// Build the front-end link from the request path, as add_query_arg() misreads a request URI containing "=" and no "?".
+		$base_url = is_admin() ? false : home_url( $wp->request );
+
 		$purge_url = add_query_arg(
 			array(
 				'nginx_helper_action'  => 'purge',
 				'nginx_helper_urls'    => $nginx_helper_urls,
 				'nginx_helper_dismiss' => get_transient( 'rt_wp_nginx_helper_suggest_purge_notice' ),
-			)
+			),
+			$base_url
 		);
 
 		$nonced_url = wp_nonce_url( $purge_url, 'nginx_helper-purge_all' );
