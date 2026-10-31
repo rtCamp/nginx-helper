@@ -264,6 +264,9 @@ class Nginx_Helper {
 		// WooCommerce integration.
 		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_woocommerce_hooks' );
 
+		// Elementor integration.
+		$this->loader->add_action( 'plugins_loaded', $nginx_helper_admin, 'init_elementor_hooks' );
+
 		$this->define_cloudflare_hooks( $nginx_helper_admin );
 
 	}

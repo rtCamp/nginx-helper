@@ -370,6 +370,7 @@ class Nginx_Helper_Admin {
 			'is_cache_preloaded'               => 0,
 			'roles_with_purge_cap'             => array(),
 			'purge_woo_products'               => 0,
+			'purge_on_elementor_clear_cache'   => 0,
 		);
 
 	}
@@ -1310,6 +1311,42 @@ class Nginx_Helper_Admin {
 
 		add_action( 'woocommerce_reduce_order_stock', array( $this, 'purge_product_cache_on_purchase' ), 10, 1 );
 		add_action( 'woocommerce_update_product', array( $this, 'purge_product_cache_on_update' ), 10, 1 );
+	}
+
+	/**
+	 * Initialize Elementor hooks if enabled.
+	 *
+	 * Elementor writes its CSS to files under uploads/elementor/css and deletes all of
+	 * them when it clears its cache: after an update, on "Regenerate CSS & Data" and when
+	 * global styles change. Cached pages keep pointing at the deleted files and are served
+	 * without styling until the cache expires.
+	 */
+	public function init_elementor_hooks() {
+
+		if ( ! did_action( 'elementor/loaded' ) || empty( $this->options['purge_on_elementor_clear_cache'] ) ) {
+			return;
+		}
+
+		add_action( 'elementor/core/files/clear_cache', array( $this, 'purge_all_on_elementor_clear_cache' ) );
+	}
+
+	/**
+	 * Purge the entire cache when Elementor clears its CSS files.
+	 *
+	 * @global object $nginx_purger Nginx purger object.
+	 */
+	public function purge_all_on_elementor_clear_cache() {
+
+		global $nginx_purger;
+
+		if ( empty( $nginx_purger ) || ! $this->options['enable_purge'] ) {
+			return;
+		}
+
+		$nginx_purger->log( 'Elementor cleared its CSS files - purging entire cache' );
+
+		// Through the action, so that Cloudflare is purged as well when it is enabled.
+		do_action( 'rt_nginx_helper_purge_all' );
 	}
 
 	/**

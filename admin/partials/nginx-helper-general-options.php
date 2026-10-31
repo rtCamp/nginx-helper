@@ -49,7 +49,8 @@ $args = array(
 	'purge_amp_urls',
 	'preload_cache',
 	'roles_with_purge_cap',
-	'purge_woo_products'
+	'purge_woo_products',
+	'purge_on_elementor_clear_cache',
 );
 
 $all_inputs = array();
@@ -1103,6 +1104,28 @@ if ( is_multisite() ) {
 							<label for="purge_woo_products">
 								<?php esc_html_e( 'Purge product cache on updates', 'nginx-helper' ); ?>
 							</label>
+						</td>
+					</tr>
+				</table>
+			</div> <!-- End of .inside -->
+		</div>
+	<?php endif; ?>
+	<?php if ( did_action( 'elementor/loaded' ) ) : ?>
+		<div class="postbox enable_purge"<?php echo empty( $nginx_helper_settings['enable_purge'] ) ? ' style="display: none;"' : ''; ?>>
+			<h3 class="hndle">
+				<span><?php esc_html_e( 'Elementor Options', 'nginx-helper' ); ?></span>
+			</h3>
+			<div class="inside">
+				<table class="form-table">
+					<tr valign="top">
+						<td>
+							<input type="checkbox" value="1" id="purge_on_elementor_clear_cache" name="purge_on_elementor_clear_cache" <?php checked( $nginx_helper_settings['purge_on_elementor_clear_cache'] ?? 0, 1 ); ?> />
+							<label for="purge_on_elementor_clear_cache">
+								<?php esc_html_e( 'Purge entire cache when Elementor clears its CSS files', 'nginx-helper' ); ?>
+							</label>
+							<p class="description">
+								<?php esc_html_e( 'Elementor deletes its CSS files after an update, on "Regenerate CSS & Data" and when global styles change. Without a purge, cached pages refer to the deleted files and show up unstyled.', 'nginx-helper' ); ?>
+							</p>
 						</td>
 					</tr>
 				</table>

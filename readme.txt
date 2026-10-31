@@ -251,6 +251,7 @@ Please post your problem in [our free support forum](https://github.com/rtCamp/n
 * nginx and fpm on seperate hosts: /purgeall is always sent to 127.0.0.1:80. by - [kmille](https://github.com/kmille), [vedantgandhi28](https://profiles.wordpress.org/vedantgandhi28/)
 * "Purge all" (FastCGI) empties the cache of every site sharing the cache path: add a filter to scope or replace it. - by [webdados](https://github.com/webdados)
 * Purge language-specific homepages with Polylang and WPML - by [todeveni](https://github.com/todeveni)
+* Option to purge the entire cache when Elementor clears its CSS files - by [toineenzo](https://github.com/toineenzo)
 
 
 = 2.4.1 =
