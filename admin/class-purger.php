@@ -75,25 +75,16 @@ abstract class Purger {
 	 * @global object $nginx_helper_admin Nginx helper admin object.
 	 * @global string $blog_id Blog id.
 	 *
-	 * @param int          $post_id Post ID.
-	 * @param WP_Post|null $post    Post object. Not passed by WordPress before 5.5.
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
 	 *
 	 * @return bool|void
 	 */
-	public function purge_on_before_delete_post( $post_id, $post = null ) {
+	public function purge_on_before_delete_post( $post_id, $post ) {
 
 		global $nginx_helper_admin, $blog_id;
 
 		if ( ! $nginx_helper_admin->options['enable_purge'] ) {
-			return;
-		}
-
-		// Load the post because WordPress before 5.5 passes only the ID.
-		if ( null === $post ) {
-			$post = get_post( $post_id );
-		}
-
-		if ( ! $post instanceof \WP_Post ) {
 			return;
 		}
 
@@ -803,7 +794,8 @@ abstract class Purger {
 
 		foreach ( $homepage_urls as $homepage_url ) {
 
-			$this->log(
+			$homepage_url = trailingslashit( home_url() );
+			$this->log( 
 				sprintf(
 					/* translators: %s homepage URL */
 					__( 'Purging homepage %s', 'nginx-helper' ),
