@@ -312,8 +312,8 @@ class Nginx_Helper_Admin {
 
 		add_submenu_page(
 			'options-general.php',
-			__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
-			__( 'EasyEngine Cache Helper for Nginx & Cloudflare', 'nginx-helper' ),
+			__( 'Cloudflare Cache', 'nginx-helper' ),
+			__( 'Cloudflare Cache', 'nginx-helper' ),
 			'manage_options',
 			'nginx-cloudflare',
 			array( &$this, 'cf_site_settings_page' )
