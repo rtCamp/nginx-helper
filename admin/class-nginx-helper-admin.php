@@ -220,6 +220,11 @@ class Nginx_Helper_Admin {
 			$nginx_helper_urls = 'current-url';
 			$link_title        = __( 'Purge Current Page', 'nginx-helper' );
 		}
+
+		global $wp;
+
+		// Build the front-end link from the request path, as add_query_arg() misreads a request URI containing "=" and no "?".
+		$base_url = is_admin() ? false : home_url( $wp->request );
 		
 		$purge_url = add_query_arg(
 			array(
