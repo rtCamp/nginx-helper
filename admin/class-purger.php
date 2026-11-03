@@ -803,7 +803,6 @@ abstract class Purger {
 
 		foreach ( $homepage_urls as $homepage_url ) {
 
-			$homepage_url = trailingslashit( home_url() );
 			$this->log(
 				sprintf(
 					/* translators: %s homepage URL */
