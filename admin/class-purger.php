@@ -296,12 +296,40 @@ abstract class Purger {
 					require_once ABSPATH . '/wp-admin/includes/post.php';
 				}
 
-				$url = get_sample_permalink( $post_id );
+				if ( 'trash' === $post_status ) {
 
-				if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
-					$url = str_replace( array('%postname%', '%pagename%'), $url[1], $url[0] );
+					/*
+					 * get_sample_permalink() and get_permalink() return a plain
+					 * ?p=<id> permalink for trashed posts: 'trash' is not a
+					 * publicly viewable post status, so
+					 * wp_force_plain_post_permalink() returns true. That URL has
+					 * no %postname%/%pagename% placeholder and its path is '/',
+					 * so purge_url() would delete the homepage cache entry
+					 * instead of the post. Rebuild the pretty permalink from a
+					 * copy of the post that pretends to be published.
+					 */
+					$permalink_post = get_post( $post_id );
+
+					if ( $permalink_post ) {
+
+						$permalink_post              = clone $permalink_post;
+						$permalink_post->post_status = 'publish';
+						$permalink_post->post_name   = str_replace( '__trashed', '', $permalink_post->post_name );
+
+						unset( $permalink_post->filter );
+
+						$url = get_permalink( $permalink_post );
+					} else {
+						$url = '';
+					}
 				} else {
-					$url = '';
+					$url = get_sample_permalink( $post_id );
+
+					if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
+						$url = str_replace( array( '%postname%', '%pagename%' ), $url[1], $url[0] );
+					} else {
+						$url = '';
+					}
 				}
 			} else {
 				$url = get_permalink( $post_id );
