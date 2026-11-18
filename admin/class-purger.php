@@ -296,12 +296,54 @@ abstract class Purger {
 					require_once ABSPATH . '/wp-admin/includes/post.php';
 				}
 
-				$url = get_sample_permalink( $post_id );
+				if ( 'trash' === $post_status ) {
 
-				if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
-					$url = str_replace( array('%postname%', '%pagename%'), $url[1], $url[0] );
+					/*
+					 * get_sample_permalink() and get_permalink() return a plain
+					 * ?p=<id> permalink for trashed posts: 'trash' is not a
+					 * publicly viewable post status, so
+					 * wp_force_plain_post_permalink() returns true. That URL has
+					 * no %postname%/%pagename% placeholder and its path is '/',
+					 * so purge_url() would delete the homepage cache entry
+					 * instead of the post. Rebuild the pretty permalink from a
+					 * copy of the post that pretends to be published. Only a
+					 * trailing __trashed suffix is removed, because that is the
+					 * only place WordPress appends it.
+					 */
+					$permalink_post = get_post( $post_id );
+
+					if ( $permalink_post ) {
+
+						$permalink_post = clone $permalink_post;
+
+						$trashed_suffix = '__trashed';
+						$post_name      = $permalink_post->post_name;
+
+						if ( $trashed_suffix === substr( $post_name, -strlen( $trashed_suffix ) ) ) {
+							$post_name = substr( $post_name, 0, -strlen( $trashed_suffix ) );
+						}
+
+						$permalink_post->post_name   = $post_name;
+						$permalink_post->post_status = 'publish';
+
+						/*
+						 * Use the same 'sample' context as get_sample_permalink(), so
+						 * get_permalink() works with the forced status.
+						 */
+						$permalink_post->filter = 'sample';
+
+						$url = get_permalink( $permalink_post );
+					} else {
+						$url = '';
+					}
 				} else {
-					$url = '';
+					$url = get_sample_permalink( $post_id );
+
+					if ( ! empty( $url[0] ) && ! empty( $url[1] ) ) {
+						$url = str_replace( array( '%postname%', '%pagename%' ), $url[1], $url[0] );
+					} else {
+						$url = '';
+					}
 				}
 			} else {
 				$url = get_permalink( $post_id );
